@@ -1,0 +1,61 @@
+title: cvpiaHabitat
+url: https://CVPIA-OSC.github.io/DSMhabitat/
+template:
+  params:
+    bootswatch: yeti
+
+home:
+  links:
+  - text: Fish and Wildlife Service's CVPIA website
+    href: https://www.fws.gov/lodi/anadromous_fish_restoration/afrp_index.htm
+  - text: Bureau of Reclamation's CVPIA website
+    href: https://www.usbr.gov/mp/cvpia/
+
+reference:
+- title: Habitat Functions
+  desc: Functions that create habitat estimates given flow and some additional helper functions.
+  contents:
+  - set_spawning_habitat
+  - set_instream_habitat
+  - set_floodplain_habitat
+  - set_bypass_habitat
+  - wua_to_area
+  - weeks_flooded
+  - apply_suitability
+  - square_meters_to_acres
+  - acres_to_square_meters
+- title: Habitat Datasets
+  desc: Flow to area rearing and spawning modeled relationships
+  contents:
+  - habitat_data
+  - sacramento_habitat
+  - bypass
+  - delta_habitat
+- title: Miscellaneous Datasets
+  desc: Datasets used as reference tables
+  contents:
+  - modeling_exist
+  - watershed_lengths
+  - weeks_inundated
+  - IChab.adult
+  - pools
+
+navbar:
+  type: default
+  left:
+  - text: 'Reference'
+    href: reference/index.html
+  - text: 'Articles'
+    href: articles/floodplain-modeling.html
+  - text: 'News'
+    href: news/index.html
+  right:
+  - icon: fa-github fa-lg
+    href: https://github.com/CVPIA-OSC/DSMhabitat
+
+
+
+
+
+
+
