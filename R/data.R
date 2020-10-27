@@ -3,7 +3,7 @@
 #' rearing habitat areas for Chinook Salmon and Steelhead
 #' @format NULL
 #'
-#' @section Instream:
+#' @section Instream (\{watershedname\}_instream):
 #' Datasets containing the Weighted Usable Area (WUA) in square feet per 1000 feet
 #' as a function of flow in cubic feet per second for Fall Run (FR), Spring Run (SR),
 #' Winter Run (WR), and Steelhead (ST) depending on species occurance and modeling availability.
@@ -17,7 +17,7 @@
 #'   \item{\strong{watershed} - Name of watershed}
 #' }
 #'
-#' @section Floodplain:
+#' @section Floodplain (\{watershedname\}_floodplain):
 #' Datasets containing the total inuncated area in acres as a function of flow in cubic
 #' feet per second for Fall Run (FR), Spring Run (SR), Winter Run (WR), and
 #' Steelhead (ST) depending on species occurance and modeling availability.
@@ -63,13 +63,17 @@
 #'
 #' @section Bypasses:
 #' \itemize{
-#'   \item \link[=bypass]{Sutter and Yolo Bypasses}
+#'   \item \link[=bypass_habitat]{Sutter and Yolo Bypasses}
 #' }
 #'
 #' @section Delta:
 #' \itemize{
 #'   \item \link[=delta_habitat]{North and South Delta}
 #' }
+#' 
+#' @examples 
+#' american_river_instream
+#' american_river_floodplain
 #' @name habitat_data
 NULL
 
@@ -416,14 +420,14 @@ NULL
 #'
 #' @format NULL
 #'
-#' @section Yolo Bypass:
+#' @section yolo_bypass_habitat:
 #' \describe{
 #'   \item{flow_cfs}{integer flow value in cubic feet per second}
 #'   \item{Yolo Bypass 1}{suitable rearing area in square meters in the Yolo Bypass, Fremont Weir to Sacramento Weir}
 #'   \item{Yolo Bypass 2}{suitable rearing area in square meters in the Yolo Bypass below Sacramento Weir}
 #' }
 #'
-#' @section Sutter Bypass:
+#' @section sutter_bypass_habitat:
 #' \describe{
 #'   \item{flow_cfs}{integer flow value in cubic feet per second}
 #'   \item{Sutter Bypass 1}{suitable rearing area in square meters in the Sutter Bypass, to Moulton Weir}
@@ -434,19 +438,20 @@ NULL
 #'
 #'
 #' @examples
-#' yolo_bypass_floodplain
+#' yolo_bypass_habitat
 #'
 #' @source \href{http://cvpia-habitat-docs-markdown.s3-website-us-west-2.amazonaws.com/watershed/bypasses.html}{Sutter and Yolo Bypass Modeling Details}
-#' @name bypass
-#' @aliases NULL
+#' @name bypass_habitat
 NULL
 
-#' @rdname bypass
+#' @rdname bypass_habitat
 #' @format NULL
+#' @usage NULL
 'yolo_bypass_habitat'
 
-#' @rdname bypass
+#' @rdname bypass_habitat
 #' @format NULL
+#' @usage NULL
 'sutter_bypass_habitat'
 
 # DELTA ----
