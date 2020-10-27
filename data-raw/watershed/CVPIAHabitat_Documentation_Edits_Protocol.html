@@ -386,7 +386,7 @@ $(document).ready(function () {
 <div id="general-workflow" class="section level2">
 <h2>General Workflow</h2>
 <ol style="list-style-type: decimal">
-<li>Navgiate to the cvpiaHabitat repo in terminal</li>
+<li>Navgiate to the DSMhabitat repo in terminal</li>
 <li>Create a new branch off of master called “updates/[watershed_name]”</li>
 <li>Make all edits on this branch</li>
 <li>Commit each individual edit with a detailed description of what was changed</li>
@@ -404,7 +404,7 @@ $(document).ready(function () {
 </div>
 <div id="modeling_exists-spreadsheet-specifications" class="section level2">
 <h2>Modeling_exists Spreadsheet Specifications</h2>
-<p><strong>Spreadsheet location:</strong> cvpiaHabitat &gt; data-raw &gt; modeling_exists.csv</p>
+<p><strong>Spreadsheet location:</strong> DSMhabitat &gt; data-raw &gt; modeling_exists.csv</p>
 <p><strong>Spreadsheet description:</strong> This spreadsheet indicates if modeling exists for each species and each lifestage in every watershed. The columns are broken into Fall Run (FR), Spring Run (SR), and Steelhead (ST), and then broken into spawning, fry, juvenile, and for Steelhead, adult (ST_adult). There are also 3 columns that specify whether or not rearing, spawning, or floodplain regional approximations were used in the absence of modeling data. <strong>It is important to update this spreadsheet if new modeling becomes available</strong>.</p>
 <ul>
 <li><strong>NA:</strong> the species is not present in the watershed</li>
@@ -432,8 +432,8 @@ $(document).ready(function () {
 <li>Download new data as a csv file and move file to appropriate location:</li>
 </ol>
 <ul>
-<li>if data is from Mark Gard: move file to cvpiaHabitat &gt; data-raw &gt; mark_gard_data</li>
-<li>otherwise: move file to cvpiaHabitat &gt; data-raw &gt; watershed &gt; [watershed_name] &gt; data</li>
+<li>if data is from Mark Gard: move file to DSMhabitat &gt; data-raw &gt; mark_gard_data</li>
+<li>otherwise: move file to DSMhabitat &gt; data-raw &gt; watershed &gt; [watershed_name] &gt; data</li>
 </ul>
 <ol start="2" style="list-style-type: decimal">
 <li>Check data availability &amp; structures (units, columns, organization, column headers, additional scaling calculations, etc.) to make sure appropriate for being read into R</li>
@@ -443,7 +443,7 @@ $(document).ready(function () {
 <li>if there are organizational errors you can fix yourself for R compatibility, do so</li>
 </ul>
 <ol start="3" style="list-style-type: decimal">
-<li>Open respective Rmd file: cvpiaHabitat &gt; data-raw &gt; watershed &gt; [watershed_name] &gt; [watershed_name].Rmd</li>
+<li>Open respective Rmd file: DSMhabitat &gt; data-raw &gt; watershed &gt; [watershed_name] &gt; [watershed_name].Rmd</li>
 <li>Update path being read into the read.csv function with new file name</li>
 <li>Edit code as necessary to accomodate new data format and be able to create a table with appropriate column headers, units, filled in rows, etc.</li>
 <li>Check that the column titles in the tables conform to naming conventions (see below), and that all column titles are represented in the “Header Descriptions” section above each table</li>

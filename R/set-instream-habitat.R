@@ -69,7 +69,7 @@
 set_instream_habitat <- function(watershed, species, life_stage, flow, ...) {
 
   if (species == 'sr') {
-    if (!cvpiaHabitat::watershed_metadata$sr[cvpiaHabitat::watershed_metadata$watershed == watershed]) {
+    if (!DSMhabitat::watershed_metadata$sr[DSMhabitat::watershed_metadata$watershed == watershed]) {
       return(NA)
     }
   }
@@ -79,7 +79,7 @@ set_instream_habitat <- function(watershed, species, life_stage, flow, ...) {
     return(set_sac_habitat(watershed, flow, ...))
   }
 
-  if (cvpiaHabitat::watershed_metadata$use_mid_sac_rear_proxy[cvpiaHabitat::watershed_metadata$watershed == watershed]) {
+  if (DSMhabitat::watershed_metadata$use_mid_sac_rear_proxy[DSMhabitat::watershed_metadata$watershed == watershed]) {
     w <- "Upper Mid Sac Region"
     species <- "fr"
   } else {
@@ -88,7 +88,7 @@ set_instream_habitat <- function(watershed, species, life_stage, flow, ...) {
 
   watershed_name <- tolower(gsub(pattern = "-| ", replacement = "_", x = w))
   watershed_rda_name <- paste(watershed_name, "instream", sep = "_")
-  df <- as.data.frame(do.call(`::`, list(pkg = "cvpiaHabitat", name = watershed_rda_name)))
+  df <- as.data.frame(do.call(`::`, list(pkg = "DSMhabitat", name = watershed_rda_name)))
 
   wua_selector <- get_wua_selector(names(df), species, life_stage)
   df_na_rm <- df[!is.na(df[, wua_selector]), ]
@@ -106,7 +106,7 @@ set_sac_habitat <- function(watershed, flow, flow2 = NULL) {
 
   watershed_name <- tolower(gsub(pattern = "-| ", replacement = "_", x = watershed))
   watershed_rda_name <- paste(watershed_name, "instream", sep = "_")
-  df <- do.call(`::`, list(pkg = "cvpiaHabitat", name = watershed_rda_name))
+  df <- do.call(`::`, list(pkg = "DSMhabitat", name = watershed_rda_name))
 
   rear_approx <- approxfun(df$flow_cfs, df$rearing_sq_meters, rule = 2)
 

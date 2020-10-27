@@ -1,8 +1,8 @@
-library(cvpiaHabitat)
+library(DSMhabitat)
 context('Battle Creek Habitat')
 
 test_that("modeling of species coverage hasn't changed - Battle", {
-  modeling <- subset(cvpiaHabitat::modeling_exist, Watershed == 'Battle Creek')
+  modeling <- subset(DSMhabitat::modeling_exist, Watershed == 'Battle Creek')
 
   expect_equal(modeling$FR_spawn, TRUE)
   expect_equal(modeling$FR_fry, TRUE)
@@ -23,18 +23,18 @@ test_that("modeling of species coverage hasn't changed - Battle", {
 
 test_that('FR instream Battle Creek works', {
 
-  fry_not_na_index <- which(!is.na(cvpiaHabitat::battle_creek_instream$FR_fry_wua))[1]
-  juv_not_na_index <- which(!is.na(cvpiaHabitat::battle_creek_instream$FR_juv_wua))[1]
-  spawn_not_na_index <- which(!is.na(cvpiaHabitat::battle_creek_instream$FR_spawn_wua))[1]
+  fry_not_na_index <- which(!is.na(DSMhabitat::battle_creek_instream$FR_fry_wua))[1]
+  juv_not_na_index <- which(!is.na(DSMhabitat::battle_creek_instream$FR_juv_wua))[1]
+  spawn_not_na_index <- which(!is.na(DSMhabitat::battle_creek_instream$FR_spawn_wua))[1]
 
-  fry_wua <- cvpiaHabitat::battle_creek_instream$FR_fry_wua[fry_not_na_index]
-  juv_wua <- cvpiaHabitat::battle_creek_instream$FR_juv_wua[juv_not_na_index]
-  spawn_wua <- cvpiaHabitat::battle_creek_instream$FR_spawn_wua[spawn_not_na_index]
+  fry_wua <- DSMhabitat::battle_creek_instream$FR_fry_wua[fry_not_na_index]
+  juv_wua <- DSMhabitat::battle_creek_instream$FR_juv_wua[juv_not_na_index]
+  spawn_wua <- DSMhabitat::battle_creek_instream$FR_spawn_wua[spawn_not_na_index]
 
-  rearing_stream_length <- subset(cvpiaHabitat::watershed_lengths,
+  rearing_stream_length <- subset(DSMhabitat::watershed_lengths,
                                   watershed == 'Battle Creek' & lifestage == 'rearing'
                                   & species == 'fr')$feet
-  spawning_stream_length <- subset(cvpiaHabitat::watershed_lengths,
+  spawning_stream_length <- subset(DSMhabitat::watershed_lengths,
                                    watershed == 'Battle Creek' & lifestage == 'spawning'
                                    & species == 'fr')$feet
 
@@ -42,9 +42,9 @@ test_that('FR instream Battle Creek works', {
   juv_m2 <- (((rearing_stream_length/1000) * juv_wua)/10.7639)
   spawn_m2 <- (((spawning_stream_length/1000) * spawn_wua)/10.7639)
 
-  fry_flow <- cvpiaHabitat::battle_creek_instream$flow_cfs[fry_not_na_index]
-  juv_flow <- cvpiaHabitat::battle_creek_instream$flow_cfs[juv_not_na_index]
-  spawn_flow <- cvpiaHabitat::battle_creek_instream$flow_cfs[spawn_not_na_index]
+  fry_flow <- DSMhabitat::battle_creek_instream$flow_cfs[fry_not_na_index]
+  juv_flow <- DSMhabitat::battle_creek_instream$flow_cfs[juv_not_na_index]
+  spawn_flow <- DSMhabitat::battle_creek_instream$flow_cfs[spawn_not_na_index]
 
   expect_equal(
     set_instream_habitat('Battle Creek', 'fr', 'fry', fry_flow), fry_m2)
@@ -56,18 +56,18 @@ test_that('FR instream Battle Creek works', {
 
 test_that('SR instream Battle Creek works', {
 
-  fry_not_na_index <- which(!is.na(cvpiaHabitat::battle_creek_instream$SR_fry_wua))[1]
-  juv_not_na_index <- which(!is.na(cvpiaHabitat::battle_creek_instream$SR_juv_wua))[1]
-  spawn_not_na_index <- which(!is.na(cvpiaHabitat::battle_creek_instream$SR_spawn_wua))[1]
+  fry_not_na_index <- which(!is.na(DSMhabitat::battle_creek_instream$SR_fry_wua))[1]
+  juv_not_na_index <- which(!is.na(DSMhabitat::battle_creek_instream$SR_juv_wua))[1]
+  spawn_not_na_index <- which(!is.na(DSMhabitat::battle_creek_instream$SR_spawn_wua))[1]
 
-  fry_wua <- cvpiaHabitat::battle_creek_instream$SR_fry_wua[fry_not_na_index]
-  juv_wua <- cvpiaHabitat::battle_creek_instream$SR_juv_wua[juv_not_na_index]
-  spawn_wua <- cvpiaHabitat::battle_creek_instream$SR_spawn_wua[spawn_not_na_index]
+  fry_wua <- DSMhabitat::battle_creek_instream$SR_fry_wua[fry_not_na_index]
+  juv_wua <- DSMhabitat::battle_creek_instream$SR_juv_wua[juv_not_na_index]
+  spawn_wua <- DSMhabitat::battle_creek_instream$SR_spawn_wua[spawn_not_na_index]
 
-  rearing_stream_length <- subset(cvpiaHabitat::watershed_lengths,
+  rearing_stream_length <- subset(DSMhabitat::watershed_lengths,
                                   watershed == 'Battle Creek' & lifestage == 'rearing'
                                   & species == 'sr')$feet
-  spawning_stream_length <- subset(cvpiaHabitat::watershed_lengths,
+  spawning_stream_length <- subset(DSMhabitat::watershed_lengths,
                                    watershed == 'Battle Creek' & lifestage == 'spawning'
                                    & species == 'sr')$feet
 
@@ -75,9 +75,9 @@ test_that('SR instream Battle Creek works', {
   juv_m2 <- (((rearing_stream_length/1000) * juv_wua)/10.7639)
   spawn_m2 <- (((spawning_stream_length/1000) * spawn_wua)/10.7639)
 
-  fry_flow <- cvpiaHabitat::battle_creek_instream$flow_cfs[fry_not_na_index]
-  juv_flow <- cvpiaHabitat::battle_creek_instream$flow_cfs[juv_not_na_index]
-  spawn_flow <- cvpiaHabitat::battle_creek_instream$flow_cfs[spawn_not_na_index]
+  fry_flow <- DSMhabitat::battle_creek_instream$flow_cfs[fry_not_na_index]
+  juv_flow <- DSMhabitat::battle_creek_instream$flow_cfs[juv_not_na_index]
+  spawn_flow <- DSMhabitat::battle_creek_instream$flow_cfs[spawn_not_na_index]
 
   expect_equal(
     set_instream_habitat('Battle Creek', 'sr', 'fry', fry_flow), fry_m2)
@@ -89,18 +89,18 @@ test_that('SR instream Battle Creek works', {
 
 test_that('ST instream Battle Creek works', {
 
-  fry_not_na_index <- which(!is.na(cvpiaHabitat::battle_creek_instream$ST_fry_wua))[1]
-  juv_not_na_index <- which(!is.na(cvpiaHabitat::battle_creek_instream$ST_juv_wua))[1]
-  spawn_not_na_index <- which(!is.na(cvpiaHabitat::battle_creek_instream$ST_spawn_wua))[1]
+  fry_not_na_index <- which(!is.na(DSMhabitat::battle_creek_instream$ST_fry_wua))[1]
+  juv_not_na_index <- which(!is.na(DSMhabitat::battle_creek_instream$ST_juv_wua))[1]
+  spawn_not_na_index <- which(!is.na(DSMhabitat::battle_creek_instream$ST_spawn_wua))[1]
 
-  fry_wua <- cvpiaHabitat::battle_creek_instream$ST_fry_wua[fry_not_na_index]
-  juv_wua <- cvpiaHabitat::battle_creek_instream$ST_juv_wua[juv_not_na_index]
-  spawn_wua <- cvpiaHabitat::battle_creek_instream$ST_spawn_wua[spawn_not_na_index]
+  fry_wua <- DSMhabitat::battle_creek_instream$ST_fry_wua[fry_not_na_index]
+  juv_wua <- DSMhabitat::battle_creek_instream$ST_juv_wua[juv_not_na_index]
+  spawn_wua <- DSMhabitat::battle_creek_instream$ST_spawn_wua[spawn_not_na_index]
 
-  rearing_stream_length <- subset(cvpiaHabitat::watershed_lengths,
+  rearing_stream_length <- subset(DSMhabitat::watershed_lengths,
                                   watershed == 'Battle Creek' & lifestage == 'rearing'
                                   & species == 'st')$feet
-  spawning_stream_length <- subset(cvpiaHabitat::watershed_lengths,
+  spawning_stream_length <- subset(DSMhabitat::watershed_lengths,
                                    watershed == 'Battle Creek' & lifestage == 'spawning'
                                    & species == 'st')$feet
 
@@ -108,9 +108,9 @@ test_that('ST instream Battle Creek works', {
   juv_m2 <- (((rearing_stream_length/1000) * juv_wua)/10.7639)
   spawn_m2 <- (((spawning_stream_length/1000) * spawn_wua)/10.7639)
 
-  fry_flow <- cvpiaHabitat::battle_creek_instream$flow_cfs[fry_not_na_index]
-  juv_flow <- cvpiaHabitat::battle_creek_instream$flow_cfs[juv_not_na_index]
-  spawn_flow <- cvpiaHabitat::battle_creek_instream$flow_cfs[spawn_not_na_index]
+  fry_flow <- DSMhabitat::battle_creek_instream$flow_cfs[fry_not_na_index]
+  juv_flow <- DSMhabitat::battle_creek_instream$flow_cfs[juv_not_na_index]
+  spawn_flow <- DSMhabitat::battle_creek_instream$flow_cfs[spawn_not_na_index]
 
   expect_equal(
     set_instream_habitat('Battle Creek', 'st', 'fry', fry_flow), fry_m2)
@@ -123,16 +123,16 @@ test_that('ST instream Battle Creek works', {
 #this test should fail for now (10/01/20) until stream length & set-instream-habitat.R code updated
 test_that('ST adult Battle Creek works', {
 
-  adult_not_na_index <- which(!is.na(cvpiaHabitat::battle_creek_instream$ST_adult_wua))[1]
-  adult_wua <- cvpiaHabitat::battle_creek_instream$ST_adult_wua[adult_not_na_index]
+  adult_not_na_index <- which(!is.na(DSMhabitat::battle_creek_instream$ST_adult_wua))[1]
+  adult_wua <- DSMhabitat::battle_creek_instream$ST_adult_wua[adult_not_na_index]
 
-  adult_stream_length <- subset(cvpiaHabitat::watershed_lengths,
+  adult_stream_length <- subset(DSMhabitat::watershed_lengths,
                                   watershed == 'Battle Creek' & lifestage == 'rearing'
                                   & species == 'st')$feet
 
   adult_m2 <- (((adult_stream_length/1000) * adult_wua)/10.7639)
 
-  flow <- cvpiaHabitat::battle_creek_instream$flow_cfs[adult_not_na_index]
+  flow <- DSMhabitat::battle_creek_instream$flow_cfs[adult_not_na_index]
 
   expect_equal(
     set_instream_habitat('Battle Creek', 'st', 'adult', flow), adult_m2)

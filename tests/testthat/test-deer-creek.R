@@ -1,8 +1,8 @@
-library(cvpiaHabitat)
+library(DSMhabitat)
 context('Deer Creek Habitat')
 
 test_that("modeling of species coverage hasn't changed - Deer", {
-  modeling <- subset(cvpiaHabitat::modeling_exist, Watershed == 'Deer Creek')
+  modeling <- subset(DSMhabitat::modeling_exist, Watershed == 'Deer Creek')
 
   expect_equal(modeling$FR_spawn, FALSE)
   expect_equal(modeling$FR_fry, FALSE)
@@ -22,10 +22,10 @@ test_that("modeling of species coverage hasn't changed - Deer", {
 })
 
 test_that('FR floodplain Deer Creek works', {
-  first_flood_index <-  which(cvpiaHabitat::deer_creek_floodplain$FR_floodplain_acres > 0)[1]
+  first_flood_index <-  which(DSMhabitat::deer_creek_floodplain$FR_floodplain_acres > 0)[1]
 
-  flow <- cvpiaHabitat::deer_creek_floodplain$flow_cfs[first_flood_index]
-  floodplain <- subset(cvpiaHabitat::deer_creek_floodplain,flow_cfs == flow)$FR_floodplain_acres
+  flow <- DSMhabitat::deer_creek_floodplain$flow_cfs[first_flood_index]
+  floodplain <- subset(DSMhabitat::deer_creek_floodplain,flow_cfs == flow)$FR_floodplain_acres
 
   expect_equal(
     square_meters_to_acres(set_floodplain_habitat('Deer Creek', 'fr', flow)),

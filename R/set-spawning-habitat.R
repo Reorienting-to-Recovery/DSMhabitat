@@ -61,12 +61,12 @@
 #' }
 set_spawning_habitat <- function(watershed, species, flow, ...) {
 
-  if (!cvpiaHabitat::watershed_metadata$spawn[cvpiaHabitat::watershed_metadata$watershed == watershed]) {
+  if (!DSMhabitat::watershed_metadata$spawn[DSMhabitat::watershed_metadata$watershed == watershed]) {
     return(NA)
   }
 
   if (species == 'sr') {
-    if (!cvpiaHabitat::watershed_metadata$sr[cvpiaHabitat::watershed_metadata$watershed == watershed]) {
+    if (!DSMhabitat::watershed_metadata$sr[DSMhabitat::watershed_metadata$watershed == watershed]) {
       return(NA)
     }
   }
@@ -75,7 +75,7 @@ set_spawning_habitat <- function(watershed, species, flow, ...) {
     return(set_upper_sac_spawn_habitat(species, flow, ...))
   }
 
-  if (cvpiaHabitat::watershed_metadata$use_mid_sac_spawn_proxy[cvpiaHabitat::watershed_metadata$watershed == watershed]) {
+  if (DSMhabitat::watershed_metadata$use_mid_sac_spawn_proxy[DSMhabitat::watershed_metadata$watershed == watershed]) {
     w <- "Upper Mid Sac Region"
     s <- "fr"
   } else {
@@ -85,7 +85,7 @@ set_spawning_habitat <- function(watershed, species, flow, ...) {
   watershed_name <- tolower(gsub(pattern = "-| ", replacement = "_", x = w))
 
   watershed_rda_name <- paste(watershed_name, "instream", sep = "_")
-  df <- as.data.frame(do.call(`::`, list(pkg = "cvpiaHabitat", name = watershed_rda_name)))
+  df <- as.data.frame(do.call(`::`, list(pkg = "DSMhabitat", name = watershed_rda_name)))
 
   wua_selector <- get_wua_selector(names(df), s, "spawn")
   df_na_rm <- df[!is.na(df[, wua_selector]), ]
@@ -110,25 +110,25 @@ set_upper_sac_spawn_habitat <- function(species, flow, month) {
   # for fall run fry modeling does not exist so we use fall run juv
   if (species == 'wr') {
     # winter run spawning
-    upper_sac_IN_approx <- approxfun(cvpiaHabitat::upper_sac_ACID_boards_in$flow_cfs,
-                                     cvpiaHabitat::upper_sac_ACID_boards_in$WR_spawn_WUA, rule = 2)
+    upper_sac_IN_approx <- approxfun(DSMhabitat::upper_sac_ACID_boards_in$flow_cfs,
+                                     DSMhabitat::upper_sac_ACID_boards_in$WR_spawn_WUA, rule = 2)
 
-    upper_sac_OUT_approx <- approxfun(cvpiaHabitat::upper_sac_ACID_boards_out$flow_cfs,
-                                      cvpiaHabitat::upper_sac_ACID_boards_out$WR_spawn_WUA, rule = 2)
+    upper_sac_OUT_approx <- approxfun(DSMhabitat::upper_sac_ACID_boards_out$flow_cfs,
+                                      DSMhabitat::upper_sac_ACID_boards_out$WR_spawn_WUA, rule = 2)
   } else if (species == 'st') {
     # steelhead spawning
-    upper_sac_IN_approx <- approxfun(cvpiaHabitat::upper_sac_ACID_boards_in$flow_cfs,
-                                     cvpiaHabitat::upper_sac_ACID_boards_in$ST_spawn_WUA, rule = 2)
+    upper_sac_IN_approx <- approxfun(DSMhabitat::upper_sac_ACID_boards_in$flow_cfs,
+                                     DSMhabitat::upper_sac_ACID_boards_in$ST_spawn_WUA, rule = 2)
 
-    upper_sac_OUT_approx <- approxfun(cvpiaHabitat::upper_sac_ACID_boards_out$flow_cfs,
-                                      cvpiaHabitat::upper_sac_ACID_boards_out$ST_spawn_WUA, rule = 2)
+    upper_sac_OUT_approx <- approxfun(DSMhabitat::upper_sac_ACID_boards_out$flow_cfs,
+                                      DSMhabitat::upper_sac_ACID_boards_out$ST_spawn_WUA, rule = 2)
   } else {
     # fall run and spring run spawning
-    upper_sac_IN_approx <- approxfun(cvpiaHabitat::upper_sac_ACID_boards_in$flow_cfs,
-                                     cvpiaHabitat::upper_sac_ACID_boards_in$FR_spawn_WUA, rule = 2)
+    upper_sac_IN_approx <- approxfun(DSMhabitat::upper_sac_ACID_boards_in$flow_cfs,
+                                     DSMhabitat::upper_sac_ACID_boards_in$FR_spawn_WUA, rule = 2)
 
-    upper_sac_OUT_approx <- approxfun(cvpiaHabitat::upper_sac_ACID_boards_out$flow_cfs,
-                                      cvpiaHabitat::upper_sac_ACID_boards_out$FR_spawn_WUA, rule = 2)
+    upper_sac_OUT_approx <- approxfun(DSMhabitat::upper_sac_ACID_boards_out$flow_cfs,
+                                      DSMhabitat::upper_sac_ACID_boards_out$FR_spawn_WUA, rule = 2)
   }
 
 

@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, out.width 
 knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 library(tidyverse)
 library(readxl)
-library(cvpiaHabitat)
+library(DSMhabitat)
 library(lubridate)
 library(cvpiaFlow)
 options(usethis.quiet = TRUE)
@@ -39,15 +39,15 @@ There is habitat modeling for adult trout or steelhead on 5 watersheds:
 ## Modeled WUA Exploration
 
 ```{r}
-bac <- cvpiaHabitat::battle_creek_instream %>%
+bac <- DSMhabitat::battle_creek_instream %>%
   select(flow_cfs, ST_adult_wua, watershed)
-buc <- cvpiaHabitat::butte_creek_instream %>%
+buc <- DSMhabitat::butte_creek_instream %>%
   select(flow_cfs, ST_adult_wua, watershed)
-mr <- cvpiaHabitat::merced_river_instream %>%
+mr <- DSMhabitat::merced_river_instream %>%
   select(flow_cfs, ST_adult_wua, watershed)
-tr <- cvpiaHabitat::tuolumne_river_instream %>%
+tr <- DSMhabitat::tuolumne_river_instream %>%
   select(flow_cfs, ST_adult_wua, watershed)
-yr <- cvpiaHabitat::yuba_river_instream %>%
+yr <- DSMhabitat::yuba_river_instream %>%
   select(flow_cfs, ST_adult_wua, watershed)
 
 bind_rows(bac, buc, mr, tr, yr) %>% 
@@ -153,7 +153,7 @@ merced_approx <- approxfun(merced_river_instream$flow_cfs, merced_river_instream
 
 other_st_adult <- prop_merced_flows %>% 
   mutate(ST_adult_wua = merced_approx(mean_flow) * prop_merced) %>% 
-  full_join(cvpiaHabitat::watershed_lengths) %>% 
+  full_join(DSMhabitat::watershed_lengths) %>% 
   filter(lifestage == 'rearing', species != 'sr') %>% 
   select(-source, -lifestage) %>% 
   group_by(watershed) %>% 
@@ -176,7 +176,7 @@ flows <- cvpiaFlow::flows_cfs %>%
   select(date, `Tuolumne River`, `Yuba River`, `Merced River`, `Battle Creek`, `Butte Creek`) %>% 
   filter(between(year(date), 1980, 2000))
 
-fts <- cvpiaHabitat::watershed_lengths %>% 
+fts <- DSMhabitat::watershed_lengths %>% 
   filter(watershed %in% c('Tuolumne River', 'Yuba River', 'Merced River', 
                           'Butte Creek', 'Battle Creek'), lifestage == 'rearing') %>% 
   group_by(watershed) %>% 

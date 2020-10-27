@@ -2,17 +2,17 @@ library(tidyverse)
 library(lubridate)
 library(CDECRetrieve)
 library(dataRetrieval)
-library(cvpiaHabitat)
+library(DSMhabitat)
 
-cvpiaHabitat::apply_suitability(
-  cvpiaHabitat::square_meters_to_acres(
-    cvpiaHabitat::set_floodplain_habitat(watershed = 'San Joaquin River', species = 'fr', flow = 12000)))
+DSMhabitat::apply_suitability(
+  DSMhabitat::square_meters_to_acres(
+    DSMhabitat::set_floodplain_habitat(watershed = 'San Joaquin River', species = 'fr', flow = 12000)))
 
 # SAN JOAQUIN R NR NEWMAN CA-------------------
 san_joaquin <- dataRetrieval::readNWISdv(siteNumbers = '11274000', parameterCd = '00060',
                                          startDate = '1980-01-01', endDate = '2000-12-31')
 
-fp_threshold_flow <- cvpiaHabitat::san_joaquin_river_floodplain$flow_cfs[which(cumsum(cvpiaHabitat::san_joaquin_river_floodplain$FR_floodplain_acres != 0) == 1)-1]
+fp_threshold_flow <- DSMhabitat::san_joaquin_river_floodplain$flow_cfs[which(cumsum(DSMhabitat::san_joaquin_river_floodplain$FR_floodplain_acres != 0) == 1)-1]
 fp_threshold_flow <- 1520 #TODO check out why this ^ is weird
 
 san_joaquin %>%
@@ -29,9 +29,9 @@ days_inundated <- san_joaquin %>%
   group_by(year = year(date), month = month(date)) %>%
   summarise(days_inundated = sum(fp_active),
             monthly_mean_flow = mean(flow_cfs, na.rm = TRUE)) %>%
-  mutate(fp_area_acres = cvpiaHabitat::apply_suitability(
-    cvpiaHabitat::square_meters_to_acres(
-      cvpiaHabitat::set_floodplain_habitat(watershed = 'San Joaquin River', species = 'fr', flow = monthly_mean_flow))))
+  mutate(fp_area_acres = DSMhabitat::apply_suitability(
+    DSMhabitat::square_meters_to_acres(
+      DSMhabitat::set_floodplain_habitat(watershed = 'San Joaquin River', species = 'fr', flow = monthly_mean_flow))))
 
 
 days_inundated %>%
