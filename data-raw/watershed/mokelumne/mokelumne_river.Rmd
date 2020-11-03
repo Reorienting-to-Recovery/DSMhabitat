@@ -10,7 +10,7 @@ knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 options(usethis.quiet = TRUE)
 library(tidyverse)
 library(readxl)
-library(cvpiaHabitat)
+library(DSMhabitat)
 library(scales)
 ```
 
@@ -28,7 +28,7 @@ Instream spawning and rearing habitat for Fall Run Chinook Salmon and Steelhead 
 The instream spawning and rearing habitat data described above are combined for use in the Decision Support Model (DSM) in the following format. Units are in square feet per 1000 feet. 
 ```{r}
 # spawning reach length
-moke_spawn_len <- cvpiaHabitat::watershed_lengths %>% 
+moke_spawn_len <- DSMhabitat::watershed_lengths %>% 
   filter(watershed == 'Mokelumne River', lifestage == 'spawning') %>% 
   pull(feet)
 
@@ -44,7 +44,7 @@ spawning_moke <- read_excel('data-raw/watershed/mokelumne/data/LMR_habitat__s_v2
 
 ```{r}
 # rearing reach length
-moke_rear_len <- cvpiaHabitat::watershed_lengths %>% 
+moke_rear_len <- DSMhabitat::watershed_lengths %>% 
   filter(watershed == 'Mokelumne River', lifestage == 'rearing') %>% 
   pull(feet)
 

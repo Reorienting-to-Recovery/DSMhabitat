@@ -1,8 +1,8 @@
-library(cvpiaHabitat)
+library(DSMhabitat)
 context('Stanislaus River Habitat')
 
 test_that("modeling of species coverage hasn't changed - Stanislaus", {
-  modeling <- subset(cvpiaHabitat::modeling_exist, Watershed == 'Stanislaus River')
+  modeling <- subset(DSMhabitat::modeling_exist, Watershed == 'Stanislaus River')
 
   expect_equal(modeling$FR_spawn, TRUE)
   expect_equal(modeling$FR_fry, TRUE)
@@ -23,18 +23,18 @@ test_that("modeling of species coverage hasn't changed - Stanislaus", {
 
 test_that('FR instream Stanislaus River works', {
 
-  fry_not_na_index <- which(!is.na(cvpiaHabitat::stanislaus_river_instream$FR_fry_wua))[1]
-  juv_not_na_index <- which(!is.na(cvpiaHabitat::stanislaus_river_instream$FR_juv_wua))[1]
-  spawn_not_na_index <- which(!is.na(cvpiaHabitat::stanislaus_river_instream$FR_spawn_wua))[1]
+  fry_not_na_index <- which(!is.na(DSMhabitat::stanislaus_river_instream$FR_fry_wua))[1]
+  juv_not_na_index <- which(!is.na(DSMhabitat::stanislaus_river_instream$FR_juv_wua))[1]
+  spawn_not_na_index <- which(!is.na(DSMhabitat::stanislaus_river_instream$FR_spawn_wua))[1]
 
-  fry_wua <- cvpiaHabitat::stanislaus_river_instream$FR_fry_wua[fry_not_na_index]
-  juv_wua <- cvpiaHabitat::stanislaus_river_instream$FR_juv_wua[juv_not_na_index]
-  spawn_wua <- cvpiaHabitat::stanislaus_river_instream$FR_spawn_wua[spawn_not_na_index]
+  fry_wua <- DSMhabitat::stanislaus_river_instream$FR_fry_wua[fry_not_na_index]
+  juv_wua <- DSMhabitat::stanislaus_river_instream$FR_juv_wua[juv_not_na_index]
+  spawn_wua <- DSMhabitat::stanislaus_river_instream$FR_spawn_wua[spawn_not_na_index]
 
-  rearing_stream_length <- subset(cvpiaHabitat::watershed_lengths,
+  rearing_stream_length <- subset(DSMhabitat::watershed_lengths,
                                   watershed == 'Stanislaus River' & lifestage == 'rearing'
                                   & species == 'fr')$feet
-  spawning_stream_length <- subset(cvpiaHabitat::watershed_lengths,
+  spawning_stream_length <- subset(DSMhabitat::watershed_lengths,
                                    watershed == 'Stanislaus River' & lifestage == 'spawning'
                                    & species == 'fr')$feet
 
@@ -42,9 +42,9 @@ test_that('FR instream Stanislaus River works', {
   juvx <- (((rearing_stream_length/1000) * juv_wua)/10.7639)
   spawnx <- (((spawning_stream_length/1000) * spawn_wua)/10.7639)
 
-  fry_flow <- cvpiaHabitat::stanislaus_river_instream$flow_cfs[fry_not_na_index]
-  juv_flow <- cvpiaHabitat::stanislaus_river_instream$flow_cfs[juv_not_na_index]
-  spawn_flow <- cvpiaHabitat::stanislaus_river_instream$flow_cfs[spawn_not_na_index]
+  fry_flow <- DSMhabitat::stanislaus_river_instream$flow_cfs[fry_not_na_index]
+  juv_flow <- DSMhabitat::stanislaus_river_instream$flow_cfs[juv_not_na_index]
+  spawn_flow <- DSMhabitat::stanislaus_river_instream$flow_cfs[spawn_not_na_index]
 
   expect_equal(
     set_instream_habitat('Stanislaus River', 'fr', 'fry', fry_flow), fryx)
@@ -56,21 +56,21 @@ test_that('FR instream Stanislaus River works', {
 
 test_that('ST rearing Stanislaus River works', {
 
-  fry_not_na_index <- which(!is.na(cvpiaHabitat::stanislaus_river_instream$ST_fry_wua))[1]
-  juv_not_na_index <- which(!is.na(cvpiaHabitat::stanislaus_river_instream$ST_juv_wua))[1]
+  fry_not_na_index <- which(!is.na(DSMhabitat::stanislaus_river_instream$ST_fry_wua))[1]
+  juv_not_na_index <- which(!is.na(DSMhabitat::stanislaus_river_instream$ST_juv_wua))[1]
 
-  fry_wua <- cvpiaHabitat::stanislaus_river_instream$ST_fry_wua[fry_not_na_index]
-  juv_wua <- cvpiaHabitat::stanislaus_river_instream$ST_juv_wua[juv_not_na_index]
+  fry_wua <- DSMhabitat::stanislaus_river_instream$ST_fry_wua[fry_not_na_index]
+  juv_wua <- DSMhabitat::stanislaus_river_instream$ST_juv_wua[juv_not_na_index]
 
-  rearing_stream_length <- subset(cvpiaHabitat::watershed_lengths,
+  rearing_stream_length <- subset(DSMhabitat::watershed_lengths,
                                   watershed == 'Stanislaus River' & lifestage == 'rearing'
                                   & species == 'fr')$feet
 
   fryx <- (((rearing_stream_length/1000) * fry_wua)/10.7639)
   juvx <- (((rearing_stream_length/1000) * juv_wua)/10.7639)
 
-  fry_flow <- cvpiaHabitat::stanislaus_river_instream$flow_cfs[fry_not_na_index]
-  juv_flow <- cvpiaHabitat::stanislaus_river_instream$flow_cfs[juv_not_na_index]
+  fry_flow <- DSMhabitat::stanislaus_river_instream$flow_cfs[fry_not_na_index]
+  juv_flow <- DSMhabitat::stanislaus_river_instream$flow_cfs[juv_not_na_index]
 
   expect_equal(
     set_instream_habitat('Stanislaus River', 'st', 'fry', fry_flow), fryx)
@@ -79,10 +79,10 @@ test_that('ST rearing Stanislaus River works', {
 })
 
 test_that('FR floodplain Stanislaus River works', {
-  first_flood_index <-  which(cvpiaHabitat::stanislaus_river_floodplain$FR_floodplain_acres > 0)[1]
+  first_flood_index <-  which(DSMhabitat::stanislaus_river_floodplain$FR_floodplain_acres > 0)[1]
 
-  flow <- cvpiaHabitat::stanislaus_river_floodplain$flow_cfs[first_flood_index]
-  floodplain <- subset(cvpiaHabitat::stanislaus_river_floodplain,flow_cfs == flow)$FR_floodplain_acres
+  flow <- DSMhabitat::stanislaus_river_floodplain$flow_cfs[first_flood_index]
+  floodplain <- subset(DSMhabitat::stanislaus_river_floodplain,flow_cfs == flow)$FR_floodplain_acres
 
   expect_equal(
     square_meters_to_acres(set_floodplain_habitat('Stanislaus River', 'fr', flow)),

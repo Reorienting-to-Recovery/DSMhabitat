@@ -10,7 +10,7 @@ knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 options(usethis.quiet = TRUE)
 library(tidyverse)
 library(readxl)
-library(cvpiaHabitat)
+library(DSMhabitat)
 library(scales)
 ```
 
@@ -76,7 +76,7 @@ rearing <- eng_dag_approx %>%
   select(flow_cfs, FR_spawn_wua, SR_spawn_wua, ST_spawn_wua,
          FR_fry_wua, ST_fry_wua, FR_juv_wua, ST_juv_wua)
 
-rear_len <- cvpiaHabitat::watershed_lengths %>% 
+rear_len <- DSMhabitat::watershed_lengths %>% 
   filter(watershed == 'Yuba River', lifestage == 'rearing') %>% 
   pull(miles)
 

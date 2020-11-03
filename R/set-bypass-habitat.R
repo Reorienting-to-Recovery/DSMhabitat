@@ -20,9 +20,9 @@ set_bypass_habitat <- function(bypass, flow) {
                      'sutter4' = 'Sutter Bypass 4')
 
   if (grepl('yolo', bypass)) {
-    df <- as.data.frame(cvpiaHabitat::yolo_bypass_habitat[, c('flow_cfs', col_name)])
+    df <- as.data.frame(DSMhabitat::yolo_bypass_habitat[, c('flow_cfs', col_name)])
   } else {
-    df <- as.data.frame(cvpiaHabitat::sutter_bypass_habitat[, c('flow_cfs', col_name)])
+    df <- as.data.frame(DSMhabitat::sutter_bypass_habitat[, c('flow_cfs', col_name)])
   }
   habitat_approx <- approxfun(df[, 1], df[, 2], yleft = 0, yright = max(df[, 2], na.rm = TRUE))
   return(habitat_approx(flow))

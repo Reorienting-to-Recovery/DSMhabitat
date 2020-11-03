@@ -10,7 +10,7 @@ knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 options(usethis.quiet = TRUE)
 library(tidyverse)
 library(readxl)
-library(cvpiaHabitat)
+library(DSMhabitat)
 library(scales)
 ```
 ## Future Data Improvements
@@ -29,19 +29,19 @@ get_approx_juv <- function(df) {approxfun(df$flow_cfs, df$FR_juv_wua, rule = 2)}
 get_approx_spawn <- function(df) {approxfun(df$flow_cfs, df$FR_spawn_wua, rule = 2)}
 
 # san joaq -----
-san_joaq_juv <- list(get_approx_juv(cvpiaHabitat::merced_river_instream),
-                     get_approx_juv(cvpiaHabitat::stanislaus_river_instream),
-                     get_approx_juv(cvpiaHabitat::tuolumne_river_instream))
+san_joaq_juv <- list(get_approx_juv(DSMhabitat::merced_river_instream),
+                     get_approx_juv(DSMhabitat::stanislaus_river_instream),
+                     get_approx_juv(DSMhabitat::tuolumne_river_instream))
 
-san_joaq_fry <- list(get_approx_fry(cvpiaHabitat::merced_river_instream),
-                     get_approx_fry(cvpiaHabitat::stanislaus_river_instream),
-                     get_approx_fry(cvpiaHabitat::tuolumne_river_instream))
+san_joaq_fry <- list(get_approx_fry(DSMhabitat::merced_river_instream),
+                     get_approx_fry(DSMhabitat::stanislaus_river_instream),
+                     get_approx_fry(DSMhabitat::tuolumne_river_instream))
 
-san_joaq_spawn <- list(get_approx_spawn(cvpiaHabitat::merced_river_instream),
-                     get_approx_spawn(cvpiaHabitat::stanislaus_river_instream),
-                     get_approx_spawn(cvpiaHabitat::tuolumne_river_instream))
+san_joaq_spawn <- list(get_approx_spawn(DSMhabitat::merced_river_instream),
+                     get_approx_spawn(DSMhabitat::stanislaus_river_instream),
+                     get_approx_spawn(DSMhabitat::tuolumne_river_instream))
 
-flows <- sort(unique(cvpiaHabitat::stanislaus_river_instream$flow_cfs))
+flows <- sort(unique(DSMhabitat::stanislaus_river_instream$flow_cfs))
 
 san_joaquin_river_instream <- purrr::map_df(flows, function(flow) {
   spawn <- mean(purrr::map_dbl(1:length(san_joaq_juv), function(i){san_joaq_spawn[[i]](flow)}))

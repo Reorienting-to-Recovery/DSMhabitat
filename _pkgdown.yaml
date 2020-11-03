@@ -29,7 +29,7 @@ reference:
   contents:
   - habitat_data
   - sacramento_habitat
-  - bypass
+  - bypass_habitat
   - delta_habitat
 - title: Miscellaneous Datasets
   desc: Datasets used as reference tables
@@ -37,7 +37,7 @@ reference:
   - modeling_exist
   - watershed_lengths
   - weeks_inundated
-  - IChab.adult
+  - inchannel_habitat_adult
   - pools
 
 navbar:

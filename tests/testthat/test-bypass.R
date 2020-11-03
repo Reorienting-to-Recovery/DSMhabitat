@@ -1,10 +1,10 @@
-library(cvpiaHabitat)
+library(DSMhabitat)
 context('Sutter Bypass Habitat')
 
 # Sutter bypass -----
 
 test_that("modeling of species coverage hasn't changed - Sutter Bypass", {
-  modeling <- subset(cvpiaHabitat::modeling_exist, Watershed == 'Sutter Bypass')
+  modeling <- subset(DSMhabitat::modeling_exist, Watershed == 'Sutter Bypass')
 
   expect_equal(is.na(modeling$FR_spawn), TRUE)
   expect_equal(modeling$FR_fry, FALSE)
@@ -30,9 +30,9 @@ test_that("modeling of species coverage hasn't changed - Sutter Bypass", {
 
 
 test_that('Sutter Bypass 1 instream works', {
-  bypass1_not_na_index <- which(!is.na(cvpiaHabitat::sutter_bypass_habitat$'Sutter Bypass 1'))[1]
+  bypass1_not_na_index <- which(!is.na(DSMhabitat::sutter_bypass_habitat$'Sutter Bypass 1'))[1]
 
-  bypass1 <- cvpiaHabitat::sutter_bypass_habitat$'Sutter Bypass 1'[bypass1_not_na_index]
+  bypass1 <- DSMhabitat::sutter_bypass_habitat$'Sutter Bypass 1'[bypass1_not_na_index]
   flow = sutter_bypass_habitat$flow_cfs[bypass1_not_na_index]
 
   expect_equal(
@@ -42,9 +42,9 @@ test_that('Sutter Bypass 1 instream works', {
 })
 
 test_that('Sutter Bypass 2 instream works', {
-  bypass2_not_na_index <- which(!is.na(cvpiaHabitat::sutter_bypass_habitat$'Sutter Bypass 2'))[1]
+  bypass2_not_na_index <- which(!is.na(DSMhabitat::sutter_bypass_habitat$'Sutter Bypass 2'))[1]
 
-  bypass2 <- cvpiaHabitat::sutter_bypass_habitat$'Sutter Bypass 2'[bypass2_not_na_index]
+  bypass2 <- DSMhabitat::sutter_bypass_habitat$'Sutter Bypass 2'[bypass2_not_na_index]
   flow = sutter_bypass_habitat$flow_cfs[bypass2_not_na_index]
 
   expect_equal(
@@ -57,7 +57,7 @@ test_that('Sutter Bypass 2 instream works', {
 # Yolo bypass -----
 
 test_that("modeling of species coverage hasn't changed - Yolo Bypass", {
-  modeling <- subset(cvpiaHabitat::modeling_exist, Watershed == 'Yolo Bypass')
+  modeling <- subset(DSMhabitat::modeling_exist, Watershed == 'Yolo Bypass')
 
   expect_equal(is.na(modeling$FR_spawn), TRUE)
   expect_equal(modeling$FR_fry, FALSE)
@@ -82,9 +82,9 @@ test_that("modeling of species coverage hasn't changed - Yolo Bypass", {
 })
 
 test_that('Yolo Bypass 1 instream works', {
-  bypass1_not_na_index <- which(!is.na(cvpiaHabitat::yolo_bypass_habitat$'Yolo Bypass 1'))[1]
+  bypass1_not_na_index <- which(!is.na(DSMhabitat::yolo_bypass_habitat$'Yolo Bypass 1'))[1]
 
-  bypass1 <- cvpiaHabitat::yolo_bypass_habitat$'Yolo Bypass 1'[bypass1_not_na_index]
+  bypass1 <- DSMhabitat::yolo_bypass_habitat$'Yolo Bypass 1'[bypass1_not_na_index]
   flow = yolo_bypass_habitat$flow_cfs[bypass1_not_na_index]
 
   expect_equal(
@@ -94,9 +94,9 @@ test_that('Yolo Bypass 1 instream works', {
 })
 
 test_that('Yolo Bypass 2 instream works', {
-  bypass2_not_na_index <- which(!is.na(cvpiaHabitat::yolo_bypass_habitat$'Yolo Bypass 2'))[1]
+  bypass2_not_na_index <- which(!is.na(DSMhabitat::yolo_bypass_habitat$'Yolo Bypass 2'))[1]
 
-  bypass2 <- cvpiaHabitat::yolo_bypass_habitat$'Yolo Bypass 2'[bypass2_not_na_index]
+  bypass2 <- DSMhabitat::yolo_bypass_habitat$'Yolo Bypass 2'[bypass2_not_na_index]
   flow = yolo_bypass_habitat$flow_cfs[bypass2_not_na_index]
 
   expect_equal(

@@ -1,6 +1,6 @@
 library(tidyverse)
 
-me <- cvpiaHabitat::modeling_exist
+me <- DSMhabitat::modeling_exist
 me %>% glimpse()
 me$Region %>% unique
 
@@ -10,29 +10,29 @@ me %>%
   select(Watershed, starts_with('FR'), Region) %>%
   filter(FR_fry, FR_juv)
 
-ba <- cvpiaHabitat::battle_creek_instream %>%
+ba <- DSMhabitat::battle_creek_instream %>%
   mutate(ratio = FR_fry_wua/FR_juv_wua) %>%
   select(flow_cfs, ratio) %>%
   mutate(creek = 'battle')
 
-bu <- cvpiaHabitat::butte_creek_instream %>%
+bu <- DSMhabitat::butte_creek_instream %>%
   mutate(ratio = FR_fry_wua/FR_juv_wua) %>%
   select(flow_cfs, ratio) %>%
   filter(!is.na(ratio)) %>%
   mutate(creek = 'butte')
 
-cl <- cvpiaHabitat::clear_creek_instream %>%
+cl <- DSMhabitat::clear_creek_instream %>%
   mutate(ratio = FR_fry_wua/FR_juv_wua) %>%
   select(flow_cfs, ratio) %>%
   mutate(creek = 'clear')
 
-cot <- cvpiaHabitat::cottonwood_creek_instream %>%
+cot <- DSMhabitat::cottonwood_creek_instream %>%
   mutate(ratio = FR_fry_wua/FR_juv_wua) %>%
   select(flow_cfs, ratio) %>%
   filter(!is.na(ratio), flow_cfs < 1000) %>%
   mutate(creek = 'cottonwood')
 
-cow <- cvpiaHabitat::cow_creek_instream %>%
+cow <- DSMhabitat::cow_creek_instream %>%
   mutate(ratio = FR_fry_wua/FR_juv_wua) %>%
   select(flow_cfs, ratio) %>%
   mutate(creek = 'cow')
@@ -60,19 +60,19 @@ me %>%
   select(Watershed, starts_with('FR'), Region) %>%
   filter(FR_juv)
 
-cal <- cvpiaHabitat::calaveras_river_instream %>%
+cal <- DSMhabitat::calaveras_river_instream %>%
   mutate(ratio = FR_fry_wua/FR_juv_wua) %>%
   select(flow_cfs, ratio) %>%
   mutate(river = 'calaveras')
 
-cvpiaHabitat::mokelumne_river_instream
-moke_fry <- approxfun(x = cvpiaHabitat::mokelumne_river_instream$flow_cfs,
-                      y = cvpiaHabitat::mokelumne_river_instream$FR_fry_wua, rule = 2)
+DSMhabitat::mokelumne_river_instream
+moke_fry <- approxfun(x = DSMhabitat::mokelumne_river_instream$flow_cfs,
+                      y = DSMhabitat::mokelumne_river_instream$FR_fry_wua, rule = 2)
 
-moke_juv <- approxfun(x = cvpiaHabitat::mokelumne_river_instream$flow_cfs,
-                      y = cvpiaHabitat::mokelumne_river_instream$FR_juv_wua, rule = 2)
-ratio <- moke_fry(cvpiaHabitat::mokelumne_river_instream$flow_cfs) / moke_juv(cvpiaHabitat::mokelumne_river_instream$flow_cfs)
-flows_cfs <- cvpiaHabitat::mokelumne_river_instream$flow_cfs
+moke_juv <- approxfun(x = DSMhabitat::mokelumne_river_instream$flow_cfs,
+                      y = DSMhabitat::mokelumne_river_instream$FR_juv_wua, rule = 2)
+ratio <- moke_fry(DSMhabitat::mokelumne_river_instream$flow_cfs) / moke_juv(DSMhabitat::mokelumne_river_instream$flow_cfs)
+flows_cfs <- DSMhabitat::mokelumne_river_instream$flow_cfs
 moke <- tibble(flow_cfs = flows_cfs, ratio = ratio, river = 'moke') %>%
   filter(flows_cfs < 500)
 

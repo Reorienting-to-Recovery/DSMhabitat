@@ -50,7 +50,7 @@
 Datasets used to calculate spawning, instream, and floodplain
 rearing habitat areas for Chinook Salmon and Steelhead
 }
-\section{Instream}{
+\section{Instream (\{watershedname\}_instream)}{
 
 Datasets containing the Weighted Usable Area (WUA) in square feet per 1000 feet
 as a function of flow in cubic feet per second for Fall Run (FR), Spring Run (SR),
@@ -66,7 +66,7 @@ Typical data structure for streams:
 }
 }
 
-\section{Floodplain}{
+\section{Floodplain (\{watershedname\}_floodplain)}{
 
 Datasets containing the total inuncated area in acres as a function of flow in cubic
 feet per second for Fall Run (FR), Spring Run (SR), Winter Run (WR), and
@@ -117,7 +117,7 @@ Typical data structure for streams:
 \section{Bypasses}{
 
 \itemize{
-  \item \link[=bypass]{Sutter and Yolo Bypasses}
+  \item \link[=bypass_habitat]{Sutter and Yolo Bypasses}
 }
 }
 
@@ -128,4 +128,8 @@ Typical data structure for streams:
 }
 }
 
+\examples{
+american_river_instream
+american_river_floodplain
+}
 \keyword{datasets}

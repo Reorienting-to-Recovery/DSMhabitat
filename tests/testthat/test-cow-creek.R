@@ -1,8 +1,8 @@
-library(cvpiaHabitat)
+library(DSMhabitat)
 context('Cow Creek Habitat')
 
 test_that("modeling of species coverage hasn't changed - Cow", {
-  modeling <- subset(cvpiaHabitat::modeling_exist, Watershed == 'Cow Creek')
+  modeling <- subset(DSMhabitat::modeling_exist, Watershed == 'Cow Creek')
 
   expect_equal(modeling$FR_spawn, FALSE)
   expect_equal(modeling$FR_fry, TRUE)
@@ -23,23 +23,23 @@ test_that("modeling of species coverage hasn't changed - Cow", {
 
 test_that('FR rearing Cow Creek works', {
 
-  fry_not_na_index <- which(!is.na(cvpiaHabitat::cow_creek_instream$FR_fry_wua))[1]
-  juv_not_na_index <- which(!is.na(cvpiaHabitat::cow_creek_instream$FR_juv_wua))[1]
+  fry_not_na_index <- which(!is.na(DSMhabitat::cow_creek_instream$FR_fry_wua))[1]
+  juv_not_na_index <- which(!is.na(DSMhabitat::cow_creek_instream$FR_juv_wua))[1]
 
 
-  fry_wua <- cvpiaHabitat::cow_creek_instream$FR_fry_wua[fry_not_na_index]
-  juv_wua <- cvpiaHabitat::cow_creek_instream$FR_juv_wua[juv_not_na_index]
+  fry_wua <- DSMhabitat::cow_creek_instream$FR_fry_wua[fry_not_na_index]
+  juv_wua <- DSMhabitat::cow_creek_instream$FR_juv_wua[juv_not_na_index]
 
 
-  rearing_stream_length <- subset(cvpiaHabitat::watershed_lengths,
+  rearing_stream_length <- subset(DSMhabitat::watershed_lengths,
                                   watershed == 'Cow Creek' & lifestage == 'rearing'
                                   & species == 'fr')$feet
 
   fryx <- (((rearing_stream_length/1000) * fry_wua)/10.7639)
   juvx <- (((rearing_stream_length/1000) * juv_wua)/10.7639)
 
-  fry_flow <- cvpiaHabitat::cow_creek_instream$flow_cfs[fry_not_na_index]
-  juv_flow <- cvpiaHabitat::cow_creek_instream$flow_cfs[juv_not_na_index]
+  fry_flow <- DSMhabitat::cow_creek_instream$flow_cfs[fry_not_na_index]
+  juv_flow <- DSMhabitat::cow_creek_instream$flow_cfs[juv_not_na_index]
 
   expect_equal(
     set_instream_habitat('Cow Creek', 'fr', 'fry', fry_flow), fryx)
@@ -52,18 +52,18 @@ test_that('FR rearing Cow Creek works', {
 
 test_that('ST instream Cow Creek works', {
 
-  fry_not_na_index <- which(!is.na(cvpiaHabitat::cow_creek_instream$FR_fry_wua))[1]
-  juv_not_na_index <- which(!is.na(cvpiaHabitat::cow_creek_instream$FR_juv_wua))[1]
-  spawn_not_na_index <- which(!is.na(cvpiaHabitat::upper_mid_sac_region_instream$FR_spawn_wua))[1]
+  fry_not_na_index <- which(!is.na(DSMhabitat::cow_creek_instream$FR_fry_wua))[1]
+  juv_not_na_index <- which(!is.na(DSMhabitat::cow_creek_instream$FR_juv_wua))[1]
+  spawn_not_na_index <- which(!is.na(DSMhabitat::upper_mid_sac_region_instream$FR_spawn_wua))[1]
 
-  fry_wua <- cvpiaHabitat::cow_creek_instream$FR_fry_wua[fry_not_na_index]
-  juv_wua <- cvpiaHabitat::cow_creek_instream$FR_juv_wua[juv_not_na_index]
-  spawn_wua <- cvpiaHabitat::upper_mid_sac_region_instream$FR_spawn_wua[spawn_not_na_index]
+  fry_wua <- DSMhabitat::cow_creek_instream$FR_fry_wua[fry_not_na_index]
+  juv_wua <- DSMhabitat::cow_creek_instream$FR_juv_wua[juv_not_na_index]
+  spawn_wua <- DSMhabitat::upper_mid_sac_region_instream$FR_spawn_wua[spawn_not_na_index]
 
-  rearing_stream_length <- subset(cvpiaHabitat::watershed_lengths,
+  rearing_stream_length <- subset(DSMhabitat::watershed_lengths,
                                   watershed == 'Cow Creek' & lifestage == 'rearing'
                                   & species == 'st')$feet
-  spawning_stream_length <- subset(cvpiaHabitat::watershed_lengths,
+  spawning_stream_length <- subset(DSMhabitat::watershed_lengths,
                                    watershed == 'Cow Creek' & lifestage == 'spawning'
                                    & species == 'st')$feet
 
@@ -71,9 +71,9 @@ test_that('ST instream Cow Creek works', {
   juvx <- (((rearing_stream_length/1000) * juv_wua)/10.7639)
   spawnx <- (((spawning_stream_length/1000) * spawn_wua)/10.7639)
 
-  fry_flow <- cvpiaHabitat::cow_creek_instream$flow_cfs[fry_not_na_index]
-  juv_flow <- cvpiaHabitat::cow_creek_instream$flow_cfs[juv_not_na_index]
-  spawn_flow <- cvpiaHabitat::upper_mid_sac_region_instream$flow_cfs[spawn_not_na_index]
+  fry_flow <- DSMhabitat::cow_creek_instream$flow_cfs[fry_not_na_index]
+  juv_flow <- DSMhabitat::cow_creek_instream$flow_cfs[juv_not_na_index]
+  spawn_flow <- DSMhabitat::upper_mid_sac_region_instream$flow_cfs[spawn_not_na_index]
 
   expect_equal(
     set_instream_habitat('Cow Creek', 'st', 'fry', fry_flow), fryx)

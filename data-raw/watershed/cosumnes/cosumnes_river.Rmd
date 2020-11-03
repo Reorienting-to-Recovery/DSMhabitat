@@ -11,7 +11,7 @@ knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 options(usethis.quiet = TRUE)
 library(tidyverse)
 library(readxl)
-library(cvpiaHabitat)
+library(DSMhabitat)
 library(scales)
 
 ```
@@ -28,7 +28,7 @@ There were no watershed specific salmonid habitat data available for the Consumn
 The instream spawning and rearing habitat data described above for Fall Run Chinook Salmon (FR) is combined for use in the Decision Support Model (DSM) in the following format. Units are in square feet per 1000 feet.
 ```{r}
  #cosumnes -----
- region <- cvpiaHabitat::modeling_exist %>%
+ region <- DSMhabitat::modeling_exist %>%
    filter(Region == 'South Delta') %>%
    select(Watershed, Region, FR_fry, FR_juv)
  

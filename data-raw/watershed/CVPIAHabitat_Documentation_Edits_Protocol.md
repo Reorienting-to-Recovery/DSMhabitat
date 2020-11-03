@@ -8,7 +8,7 @@ output: html_document
 
 ## General Workflow
 
-1. Navigate to the cvpiaHabitat repo in terminal 
+1. Navigate to the DSMhabitat repo in terminal 
 2. Create a new branch off of master called "updates/[watershed_name]"
 3. Make all edits on this branch 
 4. Commit each individual edit with a detailed description of what was changed 
@@ -23,7 +23,7 @@ output: html_document
 
 ## Modeling_exists Spreadsheet Specifications 
 
-**Spreadsheet location:** cvpiaHabitat > data-raw > modeling_exists.csv 
+**Spreadsheet location:** DSMhabitat > data-raw > modeling_exists.csv 
 
 **Spreadsheet description:** This spreadsheet indicates if modeling exists for each species and each life stage in every watershed. The columns are broken into Fall Run (FR), Spring Run (SR), and Steelhead (ST), and then broken into spawning, fry, juvenile, and for Steelhead, adult (ST_adult). There are also 3 columns that specify whether or not rearing, spawning, or floodplain regional approximations were used in the absence of modeling data. **It is important to update this spreadsheet if new modeling becomes available**. 
 
@@ -47,12 +47,12 @@ For example, the CVPIA Annual Progress Report is updated annually, and hence the
 For example, if new data are presented for a certain species/life stage or the previous data are edited. 
 
 1. Download new data as a csv file and move file to appropriate location: 
-  * if data is from Mark Gard: move file to cvpiaHabitat > data-raw > mark_gard_data
-  * otherwise: move file to cvpiaHabitat > data-raw > watershed > [watershed_name] > data 
+  * if data is from Mark Gard: move file to DSMhabitat > data-raw > mark_gard_data
+  * otherwise: move file to DSMhabitat > data-raw > watershed > [watershed_name] > data 
 2. Check data availability & structures (units, columns, organization, column headers, additional scaling calculations, etc.) to make sure appropriate for being read into R 
   * if more information is needed to use the data, reach out to the person/organization who provided the data
   * if there are organizational errors you can fix yourself for R compatibility, do so 
-3. Open respective Rmd file: cvpiaHabitat > data-raw > watershed > [watershed_name] > [watershed_name].Rmd 
+3. Open respective Rmd file: DSMhabitat > data-raw > watershed > [watershed_name] > [watershed_name].Rmd 
 4. Update path being read into the read.csv function with new file name 
 5. Edit code as necessary to accommodate new data format and be able to create a table with appropriate column headers, units, filled in rows, etc. 
 6. Check that the column titles in the tables conform to naming conventions (see below), and that all column titles are represented in the "Header Descriptions" section above each table 

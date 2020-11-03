@@ -29,7 +29,7 @@
 set_floodplain_habitat <- function(watershed, species, flow, flow2 = NULL) {
 
   if (species == 'sr' &
-      is.na(cvpiaHabitat::modeling_exist[cvpiaHabitat::modeling_exist$Watershed == watershed, 'SR_floodplain'])) {
+      is.na(DSMhabitat::modeling_exist[DSMhabitat::modeling_exist$Watershed == watershed, 'SR_floodplain'])) {
     warning("no spring run in this watershed")
     return(NA)
   }
@@ -39,7 +39,7 @@ set_floodplain_habitat <- function(watershed, species, flow, flow2 = NULL) {
     watershed_name <- tolower(gsub(pattern = " |-", replacement = "_", x = watershed))
     watershed_rda_name <- paste(watershed_name, "floodplain", sep = "_")
 
-    df <- do.call(`::`, list(pkg = "cvpiaHabitat", name = watershed_rda_name))
+    df <- do.call(`::`, list(pkg = "DSMhabitat", name = watershed_rda_name))
     fp_approx <- approxfun(df$flow_cfs, df$floodplain_sq_meters, yleft = 0, yright = max(df$floodplain_sq_meters))
 
     if (watershed == 'Lower-mid Sacramento River') {
@@ -66,7 +66,7 @@ floodplain_approx <- function(watershed, species) {
   watershed_name <- tolower(gsub(pattern = " |-", replacement = "_", x = watershed))
   watershed_rda_name <- paste(watershed_name, "floodplain", sep = "_")
 
-  df <- do.call(`::`, list(pkg = "cvpiaHabitat", name = watershed_rda_name))
+  df <- do.call(`::`, list(pkg = "DSMhabitat", name = watershed_rda_name))
 
 
   switch(species,

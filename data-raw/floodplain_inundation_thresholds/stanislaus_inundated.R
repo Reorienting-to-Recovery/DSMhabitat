@@ -2,17 +2,17 @@ library(tidyverse)
 library(lubridate)
 library(CDECRetrieve)
 library(dataRetrieval)
-library(cvpiaHabitat)
+library(DSMhabitat)
 
-cvpiaHabitat::apply_suitability(
-  cvpiaHabitat::square_meters_to_acres(
-    cvpiaHabitat::set_floodplain_habitat(watershed = 'Stanislaus River', species = 'fr', flow = 2000)))
+DSMhabitat::apply_suitability(
+  DSMhabitat::square_meters_to_acres(
+    DSMhabitat::set_floodplain_habitat(watershed = 'Stanislaus River', species = 'fr', flow = 2000)))
 
 # STANISLAUS R A RIPON CA-------------------
 stanislaus <- dataRetrieval::readNWISdv(siteNumbers = '11303000', parameterCd = '00060',
                                         startDate = '1980-01-01', endDate = '2000-12-31')
 
-fp_threshold_flow <- cvpiaHabitat::stanislaus_river_floodplain$flow_cfs[which(cumsum(cvpiaHabitat::stanislaus_river_floodplain$FR_floodplain_acres != 0) == 1)]
+fp_threshold_flow <- DSMhabitat::stanislaus_river_floodplain$flow_cfs[which(cumsum(DSMhabitat::stanislaus_river_floodplain$FR_floodplain_acres != 0) == 1)]
 
 
 stanislaus %>%
@@ -29,9 +29,9 @@ days_inundated <- stanislaus %>%
   group_by(year = year(date), month = month(date)) %>%
   summarise(days_inundated = sum(fp_active),
             monthly_mean_flow = mean(flow_cfs, na.rm = TRUE)) %>%
-  mutate(fp_area_acres = cvpiaHabitat::apply_suitability(
-    cvpiaHabitat::square_meters_to_acres(
-      cvpiaHabitat::set_floodplain_habitat(watershed = 'Stanislaus River', species = 'fr', flow = monthly_mean_flow))))
+  mutate(fp_area_acres = DSMhabitat::apply_suitability(
+    DSMhabitat::square_meters_to_acres(
+      DSMhabitat::set_floodplain_habitat(watershed = 'Stanislaus River', species = 'fr', flow = monthly_mean_flow))))
 
 
 days_inundated %>%

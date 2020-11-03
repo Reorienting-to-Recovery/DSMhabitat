@@ -8,12 +8,12 @@
 #' @param species species, "fr" - fall run or "sr" - spring run or "st" - steel head
 #' @param life_stage life stage
 wua_to_area <- function(wua, watershed_name,  life_stage, species_name) {
-  stream_length <- dplyr::pull(dplyr::filter(cvpiaHabitat::watershed_lengths,
+  stream_length <- dplyr::pull(dplyr::filter(DSMhabitat::watershed_lengths,
                                     watershed == watershed_name,
                                     species == species_name,
                                     lifestage == life_stage), feet)
   if (length(stream_length) == 0) {
-    stream_length <- dplyr::pull(dplyr::filter(cvpiaHabitat::watershed_lengths,
+    stream_length <- dplyr::pull(dplyr::filter(DSMhabitat::watershed_lengths,
                                                watershed == watershed_name,
                                                species == 'fr',
                                                lifestage == life_stage), feet)
@@ -95,7 +95,7 @@ acres_to_square_meters <- function(acres) {
 #'
 weeks_flooded <- function(ws, flow_cfs) {
 
-  flow_thresholds <- cvpiaHabitat::weeks_inundated[cvpiaHabitat::weeks_inundated$watershed == ws, 'flow_threshold']
+  flow_thresholds <- DSMhabitat::weeks_inundated[DSMhabitat::weeks_inundated$watershed == ws, 'flow_threshold']
   if (length(flow_thresholds) == 0) {
     return(2)
   }

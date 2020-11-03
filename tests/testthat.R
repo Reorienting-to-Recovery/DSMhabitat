@@ -1,4 +1,4 @@
 library(testthat)
-library(cvpiaHabitat)
+library(DSMhabitat)
 
-test_check("cvpiaHabitat")
+test_check("DSMhabitat")

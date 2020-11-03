@@ -2,11 +2,11 @@ library(tidyverse)
 library(lubridate)
 library(CDECRetrieve)
 library(dataRetrieval)
-library(cvpiaHabitat)
+library(DSMhabitat)
 
-cvpiaHabitat::apply_suitability(
-  cvpiaHabitat::square_meters_to_acres(
-    cvpiaHabitat::set_floodplain_habitat(watershed = 'Big Chico Creek', species = 'fr', flow = 500)))
+DSMhabitat::apply_suitability(
+  DSMhabitat::square_meters_to_acres(
+    DSMhabitat::set_floodplain_habitat(watershed = 'Big Chico Creek', species = 'fr', flow = 500)))
 
 # BIG CHICO CREEK NEAR CHICO-------------------
 big_chico <- CDECRetrieve::cdec_query(stations = 'BIC', sensor_num = '20', dur_code = 'H',
@@ -20,7 +20,7 @@ big_chico %>%
   ggplot(aes(x = date, y = daily_mean_flow)) +
   geom_col()
 
-fp_threshold_flow <- cvpiaHabitat::big_chico_creek_floodplain$flow_cfs[which(cumsum(cvpiaHabitat::big_chico_creek_floodplain$FR_floodplain_acres != 0) == 1) - 1]
+fp_threshold_flow <- DSMhabitat::big_chico_creek_floodplain$flow_cfs[which(cumsum(DSMhabitat::big_chico_creek_floodplain$FR_floodplain_acres != 0) == 1) - 1]
 
 days_inundated <- big_chico %>%
   mutate(date = as_date(datetime)) %>%
@@ -31,9 +31,9 @@ days_inundated <- big_chico %>%
   group_by(year = year(date), month = month(date)) %>%
   summarise(days_inundated = sum(fp_active),
             monthly_mean_flow = mean(daily_mean_flow, na.rm = TRUE)) %>%
-  mutate(fp_area_acres = cvpiaHabitat::apply_suitability(
-    cvpiaHabitat::square_meters_to_acres(
-      cvpiaHabitat::set_floodplain_habitat(watershed = 'Big Chico Creek', species = 'fr', flow = monthly_mean_flow))))
+  mutate(fp_area_acres = DSMhabitat::apply_suitability(
+    DSMhabitat::square_meters_to_acres(
+      DSMhabitat::set_floodplain_habitat(watershed = 'Big Chico Creek', species = 'fr', flow = monthly_mean_flow))))
 
 days_inundated %>%
   # filter(days_inundated > 0) %>%

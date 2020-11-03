@@ -7,7 +7,7 @@ mean_wua_area <- read.csv('data-raw/watershed/mean_wua_values.csv', skip = 1)
 
 mean_wua_details <- mean_wua_area %>%
   select(watershed, channel_area_sqm, watershed_area_sqkm) %>%
-  left_join(cvpiaHabitat::watershed_lengths) %>%
+  left_join(DSMhabitat::watershed_lengths) %>%
   filter(species == 'fr', lifestage == 'rearing') %>%
   mutate(meters = miles * 1609.34, width_meters = channel_area_sqm / meters) %>%
   select(watershed, watershed_area_sqkm, width_meters) %>%

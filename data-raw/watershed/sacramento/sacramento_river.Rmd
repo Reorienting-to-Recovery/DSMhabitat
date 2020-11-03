@@ -9,7 +9,7 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, out.width = '100%')
 options(usethis.quiet = TRUE)
 library(tidyverse)
 library(readxl)
-library(cvpiaHabitat)
+library(DSMhabitat)
 ```
 
 ## Future Data Improvement

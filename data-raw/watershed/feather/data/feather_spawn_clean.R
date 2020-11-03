@@ -29,7 +29,7 @@ tibble(
   select(flow_cfs, FR_spawn_wua) %>%
   write_csv('data-raw/instream/feather/feather_river_spawning.csv')
 
-cvpiaHabitat::watershed_lengths %>%
+DSMhabitat::watershed_lengths %>%
   filter(watershed == 'Feather River')
 
 # 18 miles for our mapped spawning
