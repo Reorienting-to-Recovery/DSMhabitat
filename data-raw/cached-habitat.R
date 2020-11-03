@@ -33,7 +33,6 @@ get_flow <- function(watershed, years=c(1980, 1999)) {
 get_rear_hab_all <- function(watersheds, species, life_stage, years = 1980:1999) {
   total_obs <- 12 * length(years)
   most <- map_df(watersheds, function(watershed) {
-    
     flows <- get_flow(watershed, range(years))
     habitat <- DSMhabitat::set_instream_habitat(watershed,
                                                 species = species,
@@ -72,7 +71,7 @@ get_rear_hab_all <- function(watersheds, species, life_stage, years = 1980:1999)
     mutate(date = lubridate::ymd(paste(year, month, 1, '-'))) %>%
     select(date, watershed, habitat) %>%
     spread(date, habitat) %>%
-    left_join(cvpiaData::watershed_ordering) %>%
+    left_join(select(DSMhabitat::watershed_metadata, order, watershed)) %>%
     arrange(order) %>%
     select(-watershed, -order) %>%
     replace(., is.na(.), 0) %>%
@@ -246,9 +245,10 @@ usethis::use_data(sr_spawn, overwrite = TRUE)
 usethis::use_data(st_spawn, overwrite = TRUE)
 
 # rearing--------------------
-watersheds_in_order <- cvpiaData::watershed_ordering %>%
+watersheds_in_order <- DSMhabitat::watershed_metadata %>%
   filter(!(watershed  %in% c('Sutter Bypass',
-                             'Lower-mid Sacramento River', 'Yolo Bypass'))) %>%
+                             'Lower-mid Sacramento River', 'Yolo Bypass', 
+                             'Upper Mid Sac Region'))) %>%
   pull(watershed)
 
 #fry------
