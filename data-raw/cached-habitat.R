@@ -426,40 +426,38 @@ usethis::use_data(st_fp, overwrite = TRUE)
 bpf <- DSMflow::bypass_flows %>%
   filter(between(year(date), 1980, 2000))
 
-bypass_instream <- bind_cols(
+sutter_habitat <- bind_cols(
   'date' = pull(bpf, date),
-  'yolo1' = cvpiaHabitat::set_bypass_instream_habitat(bypass = 'yolo1', flow = pull(bpf, yolo1)),
-  'yolo2' = cvpiaHabitat::set_bypass_instream_habitat(bypass = 'yolo2', flow = pull(bpf, yolo2)),
-  'sutter1' = cvpiaHabitat::set_bypass_instream_habitat(bypass = 'sutter1', flow = pull(bpf, sutter1)),
-  'sutter2' = cvpiaHabitat::set_bypass_instream_habitat(bypass = 'sutter2', flow = pull(bpf, sutter2)),
-  'sutter3' = cvpiaHabitat::set_bypass_instream_habitat(bypass = 'sutter3', flow = pull(bpf, sutter3)),
-  'sutter4' = cvpiaHabitat::set_bypass_instream_habitat(bypass = 'sutter4', flow = pull(bpf, sutter4))
-)
+  square_meters = DSMhabitat::set_bypass_habitat(bypass = 'sutter1', flow = pull(bpf, sutter1)) + 
+    DSMhabitat::set_bypass_habitat(bypass = 'sutter2', flow = pull(bpf, sutter2)) + 
+    DSMhabitat::set_bypass_habitat(bypass = 'sutter3', flow = pull(bpf, sutter3)) +
+    DSMhabitat::set_bypass_habitat(bypass = 'sutter4', flow = pull(bpf, sutter4))
+) %>% 
+  mutate(year = year(date), 
+         month = month(date)) %>%
+  select(-date) %>% 
+  spread(year, square_meters) %>% 
+  select(-month) %>% 
+  as.matrix()
 
-bypass_floodplain <- bind_cols(
+rownames(sutter_habitat) <- month.abb
+
+yolo_habitat <- bind_cols(
   'date' = pull(bpf, date),
-  'yolo1' = cvpiaHabitat::set_bypass_floodplain_habitat(bypass = 'yolo1', flow = pull(bpf, yolo1)),
-  'yolo2' = rep(0, 252),
-  'sutter1' = cvpiaHabitat::set_bypass_floodplain_habitat(bypass = 'sutter1', flow = pull(bpf, sutter1)),
-  'sutter2' = cvpiaHabitat::set_bypass_floodplain_habitat(bypass = 'sutter2', flow = pull(bpf, sutter2)),
-  'sutter3' = cvpiaHabitat::set_bypass_floodplain_habitat(bypass = 'sutter3', flow = pull(bpf, sutter3)),
-  'sutter4' = cvpiaHabitat::set_bypass_floodplain_habitat(bypass = 'sutter4', flow = pull(bpf, sutter4))
-)
+  square_meters = DSMhabitat::set_bypass_habitat(bypass = 'yolo1', flow = pull(bpf, yolo1)) + 
+    DSMhabitat::set_bypass_habitat(bypass = 'yolo2', flow = pull(bpf, yolo2)),
+) %>%
+  mutate(year = year(date), 
+         month = month(date)) %>%
+  select(-date) %>% 
+  spread(year, square_meters) %>% 
+  select(-month) %>% 
+  as.matrix()
 
-inchannel_bypass <- bypass_instream %>%
-  gather(bypass, sq_meters, -date) %>%
-  spread(date, sq_meters) %>%
-  select(-bypass) %>%
-  create_SIT_array()
+rownames(yolo_habitat) <- month.abb
 
-floodplain_bypass <- bypass_floodplain %>%
-  gather(bypass, sq_meters, -date) %>%
-  spread(date, sq_meters) %>%
-  select(-bypass) %>%
-  create_SIT_array()
-
-usethis::use_data(inchannel_bypass, overwrite = TRUE)
-usethis::use_data(floodplain_bypass, overwrite = TRUE)
+usethis::use_data(sutter_habitat, overwrite = TRUE)
+usethis::use_data(yolo_habitat, overwrite = TRUE)
 
 
 
