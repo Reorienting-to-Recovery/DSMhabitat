@@ -698,3 +698,66 @@ NULL
 #' @format NULL
 "st_spawn"
 
+#' Juvenile Inchannel Habitat
+#' @description The 1980-1999 juvenile suitable inchannel rearing habitat area in square meters for  
+#' Steelhead and 1980-2000 juvenile suitable inchannel rearing habitat area in square meters
+#' for Fall Run, Spring Run and Winter Run.
+#' @format
+#' \itemize{
+#' \item Steelhead: 3 dimensional array [31 watersheds, 12 months, 20 years]
+#' \item Fall Run, Spring Run and Winter Run: 3 dimensional array [31 watersheds, 12 months, 21 years]
+#' }
+#' @details 
+#' Values created using the function \code{\link[=set_spawning_habitat]{set_spawning_habitat}}
+#' @name juvenile
+#' @aliases NULL
+NULL
+
+#' Fry Inchannel Habitat
+#' @description The 1980-1999 fry suitable inchannel rearing habitat area in square meters for Steelhead
+#' and 1979-2000 suitable inchannel rearing habitat area in square meters for Fall Run, Spring Run and Winter Run.
+#' @format
+#' \itemize{
+#' \item Steelhead: 3 dimensional array [31 watersheds, 12 months, 20 years]
+#' \item Fall Run, Spring Run and Winter Run: 3 dimensional array [31 watersheds, 12 months, 21 years]
+#' }
+#' @details 
+#' Values created using the function \code{\link[=set_spawning_habitat]{set_spawning_habitat}}
+#' @name fry
+#' @aliases NULL
+NULL
+
+#' @rdname fry
+#' @format NULL
+"fr_fry"
+
+#' @rdname fry
+#' @format NULL
+"wr_fry"
+
+#' @rdname fry
+#' @format NULL
+"sr_fry"
+
+#' @rdname fry
+#' @format NULL
+"st_fry"
+
+#' @rdname juvenile
+#' @format NULL
+"fr_juv"
+
+#' @rdname juvenile
+#' @format NULL
+"wr_juv"
+
+#' @rdname juvenile
+#' @format NULL
+"sr_juv"
+
+#' @rdname juvenile
+#' @format NULL
+"st_juv"
+
+
+
