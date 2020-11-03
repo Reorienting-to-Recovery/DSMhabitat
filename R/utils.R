@@ -36,6 +36,7 @@ get_wua_selector <- function(species_wuas, species, life_stage) {
   species_lifestage <- paste(toupper(species), life_stage, sep = "_")
 
   combos <- switch(species_lifestage,
+                   WR_spawn = c("WR_spawn_wua", "FR_spawn_wua", "SR_spawn_wua", "ST_spawn_wua"),
                    SR_spawn = c("SR_spawn_wua", "FR_spawn_wua", "ST_spawn_wua"),
                    FR_spawn = c("FR_spawn_wua", "SR_spawn_wua", "ST_spawn_wua"),
                    ST_spawn = c("ST_spawn_wua", "SR_spawn_wua", "FR_spawn_wua"),

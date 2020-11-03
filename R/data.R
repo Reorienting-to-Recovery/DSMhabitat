@@ -656,3 +656,41 @@ NULL
 #' }
 #'
 'inchannel_habitat_adult'
+
+
+
+# Habitat cached ------------------
+
+#' Spawning Habitat
+#' @description The 1979-1999 suitable spawning habitat area in square meters for Steelhead
+#' and 1979-2000 suitable spawning habitat area in square meters for Fall Run, Spring Run and Winter Run.
+#' @format
+#' \itemize{
+#' \item Steelhead: 3 dimensional array [31 watersheds, 12 months, 21 years]
+#' \item Fall Run, Spring Run and Winter Run: 3 dimensional array [31 watersheds, 12 months, 22 years]
+#' }
+#' @details
+#' \itemize{
+#'   \item use this link within R \code{\link[cvpiaHabitat]{set_spawning_habitat}}
+#'   \item use this \href{https://flowwest.github.io/cvpiaHabitat/reference/set_spawning_habitat.html}{link} if in a web browser
+#' }
+#'
+#' @name spawn
+#' @aliases NULL
+NULL
+
+
+#' @rdname spawn
+"fr_spawn"
+
+#' @rdname spawn
+"wr_spawn"
+
+#' @rdname spawn
+"sr_spawn"
+
+#' @rdname spawn
+"st_spawn"
+
+
+

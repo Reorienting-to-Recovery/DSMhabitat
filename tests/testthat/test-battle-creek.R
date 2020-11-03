@@ -138,3 +138,14 @@ test_that('ST adult Battle Creek works', {
     set_instream_habitat('Battle Creek', 'st', 'adult', flow), adult_m2)
 
 })
+
+
+
+
+
+
+
+
+
+
+
