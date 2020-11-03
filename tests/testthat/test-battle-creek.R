@@ -13,6 +13,11 @@ test_that("modeling of species coverage hasn't changed - Battle", {
   expect_equal(modeling$SR_fry, TRUE)
   expect_equal(modeling$SR_juv, TRUE)
   expect_equal(modeling$SR_floodplain, FALSE)
+  
+  expect_equal(modeling$WR_spawn, TRUE)
+  expect_equal(modeling$WR_fry, TRUE)
+  expect_equal(modeling$WR_juv, TRUE)
+  expect_equal(modeling$WR_floodplain, FALSE)
 
   expect_equal(modeling$ST_spawn, TRUE)
   expect_equal(modeling$ST_fry, TRUE)
