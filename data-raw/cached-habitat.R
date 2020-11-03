@@ -136,7 +136,8 @@ get_floodplain_hab_all <- function(watersheds, species, years = 1980:1999) {
   total_obs <- 12 * length(years)
   most <- map_df(watersheds, function(watershed) {
     flows <- get_flow(watershed, range(years))
-    habitat <- DSMhabitat::set_floodplain_habitat(watershed, species, flows)
+    # TODO check if the .27 is being applied in the model already
+    habitat <- DSMhabitat::apply_suitability(DSMhabitat::set_floodplain_habitat(watershed, species, flows))
     
     tibble(
       year = rep(years, each = 12),
@@ -422,7 +423,7 @@ usethis::use_data(st_fp, overwrite = TRUE)
 
 # bypass in stream ----------------
 
-bpf <- cvpiaFlow::bypass_flows %>%
+bpf <- DSMflow::bypass_flows %>%
   filter(between(year(date), 1980, 2000))
 
 bypass_instream <- bind_cols(
