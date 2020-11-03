@@ -27,6 +27,6 @@ The 1980-1999 fry suitable inchannel rearing habitat area in square meters for S
 and 1979-2000 suitable inchannel rearing habitat area in square meters for Fall Run, Spring Run and Winter Run.
 }
 \details{
-Values created using the function \code{\link[=set_spawning_habitat]{set_spawning_habitat}}
+Values created using the function \code{\link[=set_instream_habitat]{set_instream_habitat}}
 }
 \keyword{datasets}

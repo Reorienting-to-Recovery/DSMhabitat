@@ -708,7 +708,7 @@ NULL
 #' \item Fall Run, Spring Run and Winter Run: 3 dimensional array [31 watersheds, 12 months, 21 years]
 #' }
 #' @details 
-#' Values created using the function \code{\link[=set_spawning_habitat]{set_spawning_habitat}}
+#' Values created using the function \code{\link[=set_instream_habitat]{set_instream_habitat}}
 #' @name juvenile
 #' @aliases NULL
 NULL
@@ -722,7 +722,7 @@ NULL
 #' \item Fall Run, Spring Run and Winter Run: 3 dimensional array [31 watersheds, 12 months, 21 years]
 #' }
 #' @details 
-#' Values created using the function \code{\link[=set_spawning_habitat]{set_spawning_habitat}}
+#' Values created using the function \code{\link[=set_instream_habitat]{set_instream_habitat}}
 #' @name fry
 #' @aliases NULL
 NULL
@@ -758,6 +758,41 @@ NULL
 #' @rdname juvenile
 #' @format NULL
 "st_juv"
+
+
+#' Floodplain Habitat
+#' @description The 1980-1999 total floodplain rearing habitat area in square meters for 
+#' Steelhead and 1980-2000 total floodplain rearing habitat area in square meters for Fall Run, Spring Run and
+#' Winter Run
+#' @format
+#' \itemize{
+#' \item Steelhead: 3 dimensional array [31 watersheds, 12 months, 20 years]
+#' \item Fall Run, Spring Run and Winter Run: 3 dimensional array [31 watersheds, 12 months, 21 years]
+#' }
+#' @details 
+#' Values created using the function \code{\link[=set_floodplain_habitat]{set_floodplain_habitat}}
+#' Need to apply a suitability factor, recommend 27\%.
+#'  
+#' @name floodplain
+#' @aliases NULL
+NULL
+
+#' @rdname floodplain
+#' @format NULL
+"fr_fp"
+
+#' @rdname floodplain
+#' @format NULL
+"wr_fp"
+
+#' @rdname floodplain
+#' @format NULL
+"sr_fp"
+
+#' @rdname floodplain
+#' @format NULL
+"st_fp"
+
 
 
 

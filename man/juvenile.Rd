@@ -28,6 +28,6 @@ Steelhead and 1980-2000 juvenile suitable inchannel rearing habitat area in squa
 for Fall Run, Spring Run and Winter Run.
 }
 \details{
-Values created using the function \code{\link[=set_spawning_habitat]{set_spawning_habitat}}
+Values created using the function \code{\link[=set_instream_habitat]{set_instream_habitat}}
 }
 \keyword{datasets}
