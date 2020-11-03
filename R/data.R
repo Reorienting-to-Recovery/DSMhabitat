@@ -675,10 +675,7 @@ NULL
 #' \item Fall Run, Spring Run and Winter Run: 3 dimensional array [31 watersheds, 12 months, 22 years]
 #' }
 #' @details
-#' \itemize{
-#'   \item use this link within R \code{\link[cvpiaHabitat]{set_spawning_habitat}}
-#'   \item use this \href{https://flowwest.github.io/cvpiaHabitat/reference/set_spawning_habitat.html}{link} if in a web browser
-#' }
+#' Values created using the function \code{\link[=set_spawning_habitat]{set_spawning_habitat}}
 #'
 #' @name spawn
 #' @aliases NULL
@@ -686,16 +683,18 @@ NULL
 
 
 #' @rdname spawn
+#' @format NULL
 "fr_spawn"
 
 #' @rdname spawn
+#' @format NULL
 "wr_spawn"
 
 #' @rdname spawn
+#' @format NULL
 "sr_spawn"
 
 #' @rdname spawn
+#' @format NULL
 "st_spawn"
-
-
 
