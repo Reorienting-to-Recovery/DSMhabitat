@@ -795,4 +795,38 @@ NULL
 
 
 
+#' Bypass Habitat Area
+#' @description The 1980-2000 suitable juvenile rearing habitat area in square meters
+#' @format a 2 dimensional array [12 months, 21 years]
+#' @details 
+#' Calculated using the function \code{\link[=set_bypass_habitat]{set_bypass_habitat}}
+#' @section Sutter Bypass:
+#' 
+#' The area within Sutter Bypass is the summation of the four sections listed below
+#' \itemize{
+#'   \item sutter1 = to Moulton Weir
+#'   \item sutter2 = to Colusa Weir
+#'   \item sutter3 = to Tisdale Weir
+#'   \item sutter4 = below Tisdale Weir
+#' }
+#' 
+#' @section Yolo Bypass:
+#' 
+#' The area within Yolo Bypass is the summation of the two sections listed below
+#' 
+#' \itemize{
+#'   \item yolo1 = Fremont Weir to Sacramento Weir
+#'   \item yolo2 = below Sacramento Weir
+#' }
+#' @name bypass
+#' @aliases NULL
+NULL
 
+
+#' @rdname bypass
+#' @format NULL
+"sutter_habitat"
+
+#' @rdname bypass
+#' @format NULL
+"yolo_habitat"
