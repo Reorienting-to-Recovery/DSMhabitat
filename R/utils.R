@@ -95,9 +95,9 @@ acres_to_square_meters <- function(acres) {
 #' For watersheds without a defined relationship, a two week inundation duration is assumed.
 #'
 #' @examples
-#' weeks_flooded('Yuba River', 900)
+#' get_weeks_flooded('Yuba River', 900)
 #'
-weeks_flooded <- function(ws, flow_cfs) {
+get_weeks_flooded <- function(ws, flow_cfs) {
 
   flow_thresholds <- DSMhabitat::weeks_inundated[DSMhabitat::weeks_inundated$watershed == ws, 'flow_threshold']
   if (length(flow_thresholds) == 0) {
