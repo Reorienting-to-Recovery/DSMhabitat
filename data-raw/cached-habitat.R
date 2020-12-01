@@ -4,6 +4,9 @@ library(purrr)
 library(lubridate)
 library(DSMhabitat)
 
+
+watersheds <- DSMhabitat::watershed_metadata$watershed[-32]
+
 #' Generate SIT Model Compatible Array
 #' @description transforms to array data structure for SIT model input
 #' @name create_Sit_array
@@ -136,7 +139,6 @@ get_floodplain_hab_all <- function(watersheds, species, years = 1980:1999) {
   total_obs <- 12 * length(years)
   most <- map_df(watersheds, function(watershed) {
     flows <- get_flow(watershed, range(years))
-    # TODO check if the .27 is being applied in the model already
     habitat <- DSMhabitat::apply_suitability(DSMhabitat::set_floodplain_habitat(watershed, species, flows))
     
     tibble(
@@ -385,6 +387,8 @@ watersheds_fp <- DSMhabitat::watershed_metadata %>%
   pull(watershed)
 
 fr_fp <- get_floodplain_hab_all(watersheds_fp, 'fr', 1980:2000)
+dimnames(fr_fp) <- list(watersheds, month.abb, 1980:2000)
+
 st_fp <- get_floodplain_hab_all(watersheds_fp, 'st')
 
 sr_fp <- get_floodplain_hab_all(watersheds_fp, 'sr', years = 1980:2000)
@@ -415,6 +419,9 @@ low_mid_sac_fp <- DSMhabitat::set_floodplain_habitat('Lower-mid Sacramento River
                                                        low_mid_sac_flows1, flow2 = low_mid_sac_flows2)
 
 wr_fp[21,,] <- low_mid_sac_fp
+dimnames(wr_fp) <- list(watersheds, month.abb, 1980:2000)
+
+
 
 usethis::use_data(wr_fp, overwrite = TRUE)
 usethis::use_data(fr_fp, overwrite = TRUE)
@@ -458,6 +465,25 @@ rownames(yolo_habitat) <- month.abb
 
 usethis::use_data(sutter_habitat, overwrite = TRUE)
 usethis::use_data(yolo_habitat, overwrite = TRUE)
+
+
+# weeks flooded 
+weeks_flooded <- array(2, dim = c(31, 12, 21))
+watersheds <- DSMhabitat::watershed_metadata$watershed[-32]
+
+for (i in 1:31) {
+  if (i %in% c(17, 21, 22)) next
+  flow <- get_flow(watersheds[i], years = c(1980, 2000))
+  flooded_weeks <- map_dbl(flow, ~get_weeks_flooded(watersheds[i], .))
+  weeks_flooded[i,,] <- matrix(flooded_weeks, ncol = 12)
+}
+
+dimnames(weeks_flooded) <- list(watersheds, month.abb, 1980:2000)
+
+usethis::use_data(weeks_flooded, overwrite = TRUE)
+
+
+
 
 
 

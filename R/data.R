@@ -830,3 +830,16 @@ NULL
 #' @rdname bypass
 #' @format NULL
 "yolo_habitat"
+
+
+#' Floodplain Habitat Activation Duration
+#' @description The 1980-2000 floodplain rearing habitat event duration in number of weeks
+#' @format a 3 dimensional array [31 watersheds, 12 months, 21 years]
+#' @details 
+#' Values created using the function \code{\link[=get_weeks_flooded]{get_weeks_flooded}}
+"weeks_flooded"
+
+
+
+
+
