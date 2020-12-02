@@ -124,7 +124,7 @@ Typical data structure for streams:
 \section{Delta}{
 
 \itemize{
-  \item \link[=delta_habitat]{North and South Delta}
+  \item \link[=delta_rearing_habitat]{North and South Delta}
 }
 }
 

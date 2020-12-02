@@ -474,7 +474,7 @@ usethis::use_data(sutter_habitat, overwrite = TRUE)
 usethis::use_data(yolo_habitat, overwrite = TRUE)
 
 
-# weeks flooded 
+# weeks flooded -----
 weeks_flooded <- array(2, dim = c(31, 12, 21))
 watersheds <- DSMhabitat::watershed_metadata$watershed[-32]
 
@@ -489,8 +489,13 @@ dimnames(weeks_flooded) <- list(watersheds, month.abb, year_range_1)
 
 usethis::use_data(weeks_flooded, overwrite = TRUE)
 
-
-
-
+# delta -----
+delta_habitat <- array(0, dim = c(12, 21, 2))
+delta_rearing_habitat_filtered <- delta_rearing_habitat %>% 
+  filter(year(date) < 2001)
+delta_habitat[ , , 1] <- matrix(delta_rearing_habitat_filtered$`North Delta`, ncol = 21)
+delta_habitat[ , , 2] <- matrix(delta_rearing_habitat_filtered$`South Delta`, ncol = 21)
+dimnames(delta_habitat) <- list(month.abb, year_range_1, c("North Delta", "South Delta"))
+usethis::use_data(delta_habitat, overwrite = TRUE)
 
 

@@ -68,7 +68,7 @@
 #'
 #' @section Delta:
 #' \itemize{
-#'   \item \link[=delta_habitat]{North and South Delta}
+#'   \item \link[=delta_rearing_habitat]{North and South Delta}
 #' }
 #' 
 #' @examples 
@@ -476,7 +476,7 @@ NULL
 #'   \item Delta Node Selection: Mark Tompkins \email{mtompkins@@flowwest.com}
 #'   \item Data Wrangling: Sadie Gill \email{sgill@@flowwest.com}
 #' }
-'delta_habitat'
+'delta_rearing_habitat'
 
 # OTHER-------------
 #' Habitat Extent Lengths
@@ -839,7 +839,12 @@ NULL
 #' Values created using the function \code{\link[=get_weeks_flooded]{get_weeks_flooded}}
 "weeks_flooded"
 
-
-
+#' Delta Habitat Array
+#' @description The 1980-2000 delta rearing habitat
+#' @format a 3 dimensional array [12 months, 21 years, 2 deltas]
+#' @details 
+#' North Delta data is stored at [ , , 1] and South Delta data is stored at [ , , 2]
+#' Values created using \code{\link[=delta_rearing_habitat]{delta_rearing_habitat}}
+"delta_habitat"
 
 
