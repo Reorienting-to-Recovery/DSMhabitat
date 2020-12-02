@@ -847,4 +847,82 @@ NULL
 #' Values created using \code{\link[=delta_rearing_habitat]{delta_rearing_habitat}}
 "delta_habitat"
 
+# MISCELLANEOUS DATA ----
+
+#' Watershed Routing
+#' @description Indicator of whether fish have access to a region 
+#' @format 1 dimensional array [31 watersheds]
+#' @source 
+#' Various \href{https://s3-us-west-2.amazonaws.com/cvpia-reference-docs/AWP+Attachment+1.pdf}{CVPIA Science Integration Team: FY18 Decision Support Model activities and FY17 priorities Memorandum}
+#'
+#' Compiled by: James T. Peterson \email{jt.peterson@@oregonstate.edu}
+#' @name watershed_routing_indicators
+NULL
+
+#' @rdname watershed_routing_indicators
+#' @format NULL
+"tisdale_bypass_watershed"
+
+#' @rdname watershed_routing_indicators
+#' @format NULL
+"yolo_bypass_watershed"
+
+#' @rdname watershed_routing_indicators
+#' @format NULL
+"south_delta_routed_watersheds"
+
+#' Number of Contact Points
+#' @description Number of contact points, estimated using PAD
+#' Contact points were derived from the Passage Assessment Database \href{https://nrm.dfg.ca.gov/PAD/view/query.aspx}{(PAD)}
+#' maintained by California Department of Fish and Wildlife. Each location considered 
+#' in the model (e.g., tributary, Sacramento reach, and delta subdivisions) was 
+#' assessed for all structures identified in the PAD.
+#' @format 1 dimensional array [31 watersheds]
+#' @details 
+#' Delta data is length two (North, South)
+#' Watershed data is length 31 (Mainstems, Bypasses, and Tributaries) 
+#' @source
+#' Various \href{https://s3-us-west-2.amazonaws.com/cvpia-reference-docs/AWP+Attachment+1.pdf}{CVPIA Science Integration Team: FY18 Decision Support Model activities and FY17 priorities Memorandum}
+#'
+#' Compiled by: James T. Peterson \email{jt.peterson@@oregonstate.edu}
+#' @name pad_structures
+NULL
+
+#' @rdname pad_structures
+#' @format NULL
+"contact_points"
+
+#' @rdname pad_structures
+#' @format NULL
+"delta_contact_points"
+
+#' Probability High Predation in the Deltas
+#' @description Expert estimated high predation probabilities
+"delta_prop_high_predation"
+
+#' Expert Estimated Probabilities
+#' @description Experts estimated probabilities for predation, stranding, and nest scouring
+#' @format 1 dimensional array [31 watersheds]
+#' @source
+#' Various \href{https://s3-us-west-2.amazonaws.com/cvpia-reference-docs/AWP+Attachment+1.pdf}{CVPIA Science Integration Team: FY18 Decision Support Model activities and FY17 priorities Memorandum}
+#'
+#' Compiled by: James T. Peterson \email{jt.peterson@@oregonstate.edu}
+#' @name estimated_probs
+NULL
+
+#' @rdname estimated_probs
+#' @format NULL
+"prop_high_predation"
+
+#' @rdname estimated_probs
+#' @format NULL
+"prob_strand_early"
+
+#' @rdname estimated_probs
+#' @format NULL
+"prob_strand_late"
+
+#' @rdname estimated_probs
+#' @format NULL
+"prob_nest_scoured"
 

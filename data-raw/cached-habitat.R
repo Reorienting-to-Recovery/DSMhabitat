@@ -4,7 +4,6 @@ library(purrr)
 library(lubridate)
 library(DSMhabitat)
 
-
 watersheds <- DSMhabitat::watershed_metadata$watershed[-32]
 year_range_1 <- 1980:2000
 year_range_2 <- 1980:1999
@@ -498,4 +497,53 @@ delta_habitat[ , , 2] <- matrix(delta_rearing_habitat_filtered$`South Delta`, nc
 dimnames(delta_habitat) <- list(month.abb, year_range_1, c("North Delta", "South Delta"))
 usethis::use_data(delta_habitat, overwrite = TRUE)
 
+tisdale_bypass_watershed <- c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 
+                              1L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L)
+names(tisdale_bypass_watershed) <- watersheds
+usethis::use_data(tisdale_bypass_watershed, overwrite = TRUE)
 
+yolo_bypass_watershed <- c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 
+                              1L, 0L, 1L, 1L, 1L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L)
+names(yolo_bypass_watershed) <- watersheds
+usethis::use_data(yolo_bypass_watershed, overwrite = TRUE)
+
+south_delta_routed_watersheds <- c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 
+                                   0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 1L, 1L, 1L, 1L, 1L, 1L, 0L)
+names(south_delta_routed_watersheds) <- watersheds
+usethis::use_data(south_delta_routed_watersheds, overwrite = TRUE)
+
+prop_high_predation <- c(0.3, 0.17, 0.1, 0.17, 0.07, 0.07, 1, 0.27, 0.17, 0.11, 0.27, 
+                                   0.11, 0.17, 0, 0.27, 0.3, 0, 0.67, 0.72, 0.17, 1, 0, 0.2, 1, 
+                                   0.5, 0.33, 0.33, 0.33, 0.83, 0.34, 0.83)
+names(prop_high_predation) <- watersheds
+usethis::use_data(prop_high_predation, overwrite = TRUE)
+
+contact_points <- c(33L, 14L, 18L, 5L, 12L, 81L, 10L, 5L, 50L, 12L, 5L, 5L, 2L, 
+                    23L, 7L, 121L, 0L, 16L, 123L, 71L, 352L, 0L, 27L, 101L, 179L, 
+                    39L, 170L, 197L, 109L, 126L, 220L)
+names(contact_points) <- watersheds
+usethis::use_data(contact_points, overwrite = TRUE)
+
+prob_strand_early <- c(0.32, 0.15, 0.09, 0.15, 0.19, 0.09, 0.1, 0.15, 0.23, 0.07, 
+                       0.19, 0.17, 0.15, 0.08, 0.15, 0.32, 0, 0.16, 0.31, 0.12, 0, 0, 
+                       0.02, 0, 0.05, 0.13, 0.02, 0.16, 0.04, 0.32, 0.5)
+names(prob_strand_early) <- watersheds
+usethis::use_data(prob_strand_early, overwrite = TRUE)
+
+prob_strand_late <- c(0.36, 0.03, 0.01, 0.03, 0.01, 0.01, 0.03, 0.03, 0.05, 0.01, 
+                      0.04, 0.27, 0.08, 0.01, 0.02, 0.36, 0, 0.15, 0.2, 0.37, 0.22, 
+                      0, 0.01, 0.22, 0.01, 0.01, 0.3, 0.01, 0.5, 0.04, 0.03)
+names(prob_strand_late) <- watersheds
+usethis::use_data(prob_strand_late, overwrite = TRUE)
+
+prob_nest_scoured <- c(0.18, 0.04, 0.04, 0.04, 0.03, 0.03, 0.05, 0.01, 0.04, 0.05, 
+                       0, 0.03, 0.04, 0.05, 0.03, 0.18, 0, 0.04, 0.2, 0.02, 0.01, 0, 
+                       0.01, 0.01, 0.05, 0.02, 0.04, 0.04, 0.04, 0.05, 0.01)
+names(prob_nest_scoured) <- watersheds
+usethis::use_data(prob_nest_scoured, overwrite = TRUE)
+
+delta_contact_points <- c("North Delta" = 718, "South Delta" = 1437)
+usethis::use_data(delta_contact_points, overwrite = TRUE)
+
+delta_prop_high_predation <- c("North Delta" = 1, "South Delta" = 1)
+usethis::use_data(delta_prop_high_predation, overwrite = TRUE)
