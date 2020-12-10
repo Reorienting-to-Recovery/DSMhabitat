@@ -68,7 +68,7 @@
 #'
 #' @section Delta:
 #' \itemize{
-#'   \item \link[=delta_habitat]{North and South Delta}
+#'   \item \link[=delta_rearing_habitat]{North and South Delta}
 #' }
 #' 
 #' @examples 
@@ -476,7 +476,7 @@ NULL
 #'   \item Delta Node Selection: Mark Tompkins \email{mtompkins@@flowwest.com}
 #'   \item Data Wrangling: Sadie Gill \email{sgill@@flowwest.com}
 #' }
-'delta_habitat'
+'delta_rearing_habitat'
 
 # OTHER-------------
 #' Habitat Extent Lengths
@@ -661,3 +661,268 @@ NULL
 #' }
 #'
 'inchannel_habitat_adult'
+
+
+
+# Habitat cached ------------------
+
+#' Spawning Habitat
+#' @description The 1979-1999 suitable spawning habitat area in square meters for Steelhead
+#' and 1979-2000 suitable spawning habitat area in square meters for Fall Run, Spring Run and Winter Run.
+#' @format
+#' \itemize{
+#' \item Steelhead: 3 dimensional array [31 watersheds, 12 months, 21 years]
+#' \item Fall Run, Spring Run and Winter Run: 3 dimensional array [31 watersheds, 12 months, 22 years]
+#' }
+#' @details
+#' Values created using the function \code{\link[=set_spawning_habitat]{set_spawning_habitat}}
+#'
+#' @name spawn
+#' @aliases NULL
+NULL
+
+
+#' @rdname spawn
+#' @format NULL
+"fr_spawn"
+
+#' @rdname spawn
+#' @format NULL
+"wr_spawn"
+
+#' @rdname spawn
+#' @format NULL
+"sr_spawn"
+
+#' @rdname spawn
+#' @format NULL
+"st_spawn"
+
+#' Juvenile Inchannel Habitat
+#' @description The 1980-1999 juvenile suitable inchannel rearing habitat area in square meters for  
+#' Steelhead and 1980-2000 juvenile suitable inchannel rearing habitat area in square meters
+#' for Fall Run, Spring Run and Winter Run.
+#' @format
+#' \itemize{
+#' \item Steelhead: 3 dimensional array [31 watersheds, 12 months, 20 years]
+#' \item Fall Run, Spring Run and Winter Run: 3 dimensional array [31 watersheds, 12 months, 21 years]
+#' }
+#' @details 
+#' Values created using the function \code{\link[=set_instream_habitat]{set_instream_habitat}}
+#' @name juvenile
+#' @aliases NULL
+NULL
+
+#' Fry Inchannel Habitat
+#' @description The 1980-1999 fry suitable inchannel rearing habitat area in square meters for Steelhead
+#' and 1979-2000 suitable inchannel rearing habitat area in square meters for Fall Run, Spring Run and Winter Run.
+#' @format
+#' \itemize{
+#' \item Steelhead: 3 dimensional array [31 watersheds, 12 months, 20 years]
+#' \item Fall Run, Spring Run and Winter Run: 3 dimensional array [31 watersheds, 12 months, 21 years]
+#' }
+#' @details 
+#' Values created using the function \code{\link[=set_instream_habitat]{set_instream_habitat}}
+#' @name fry
+#' @aliases NULL
+NULL
+
+#' @rdname fry
+#' @format NULL
+"fr_fry"
+
+#' @rdname fry
+#' @format NULL
+"wr_fry"
+
+#' @rdname fry
+#' @format NULL
+"sr_fry"
+
+#' @rdname fry
+#' @format NULL
+"st_fry"
+
+#' @rdname juvenile
+#' @format NULL
+"fr_juv"
+
+#' @rdname juvenile
+#' @format NULL
+"wr_juv"
+
+#' @rdname juvenile
+#' @format NULL
+"sr_juv"
+
+#' @rdname juvenile
+#' @format NULL
+"st_juv"
+
+
+#' Floodplain Habitat
+#' @description The 1980-1999 total floodplain rearing habitat area in square meters for 
+#' Steelhead and 1980-2000 total floodplain rearing habitat area in square meters for Fall Run, Spring Run and
+#' Winter Run
+#' @format
+#' \itemize{
+#' \item Steelhead: 3 dimensional array [31 watersheds, 12 months, 20 years]
+#' \item Fall Run, Spring Run and Winter Run: 3 dimensional array [31 watersheds, 12 months, 21 years]
+#' }
+#' @details 
+#' Values created using the function \code{\link[=set_floodplain_habitat]{set_floodplain_habitat}}
+#' Need to apply a suitability factor, recommend 27\%.
+#'  
+#' @name floodplain
+#' @aliases NULL
+NULL
+
+#' @rdname floodplain
+#' @format NULL
+"fr_fp"
+
+#' @rdname floodplain
+#' @format NULL
+"wr_fp"
+
+#' @rdname floodplain
+#' @format NULL
+"sr_fp"
+
+#' @rdname floodplain
+#' @format NULL
+"st_fp"
+
+
+
+#' Bypass Habitat Area
+#' @description The 1980-2000 suitable juvenile rearing habitat area in square meters
+#' @format a 2 dimensional array [12 months, 21 years]
+#' @details 
+#' Calculated using the function \code{\link[=set_bypass_habitat]{set_bypass_habitat}}
+#' @section Sutter Bypass:
+#' 
+#' The area within Sutter Bypass is the summation of the four sections listed below
+#' \itemize{
+#'   \item sutter1 = to Moulton Weir
+#'   \item sutter2 = to Colusa Weir
+#'   \item sutter3 = to Tisdale Weir
+#'   \item sutter4 = below Tisdale Weir
+#' }
+#' 
+#' @section Yolo Bypass:
+#' 
+#' The area within Yolo Bypass is the summation of the two sections listed below
+#' 
+#' \itemize{
+#'   \item yolo1 = Fremont Weir to Sacramento Weir
+#'   \item yolo2 = below Sacramento Weir
+#' }
+#' @name bypass
+#' @aliases NULL
+NULL
+
+
+#' @rdname bypass
+#' @format NULL
+"sutter_habitat"
+
+#' @rdname bypass
+#' @format NULL
+"yolo_habitat"
+
+
+#' Floodplain Habitat Activation Duration
+#' @description The 1980-2000 floodplain rearing habitat event duration in number of weeks
+#' @format a 3 dimensional array [31 watersheds, 12 months, 21 years]
+#' @details 
+#' Values created using the function \code{\link[=get_weeks_flooded]{get_weeks_flooded}}
+"weeks_flooded"
+
+#' Delta Habitat Array
+#' @description The 1980-2000 delta rearing habitat
+#' @format a 3 dimensional array [12 months, 21 years, 2 deltas]
+#' @details 
+#' North Delta data is stored at [ , , 1] and South Delta data is stored at [ , , 2]
+#' Values created using \code{\link[=delta_rearing_habitat]{delta_rearing_habitat}}
+"delta_habitat"
+
+# MISCELLANEOUS DATA ----
+
+#' Watershed Routing
+#' @description Indicator of whether fish have access to a region 
+#' @format 1 dimensional array [31 watersheds]
+#' @source 
+#' Various \href{https://s3-us-west-2.amazonaws.com/cvpia-reference-docs/AWP+Attachment+1.pdf}{CVPIA Science Integration Team: FY18 Decision Support Model activities and FY17 priorities Memorandum}
+#'
+#' Compiled by: James T. Peterson \email{jt.peterson@@oregonstate.edu}
+#' @name watershed_routing_indicators
+NULL
+
+#' @rdname watershed_routing_indicators
+#' @format NULL
+"tisdale_bypass_watershed"
+
+#' @rdname watershed_routing_indicators
+#' @format NULL
+"yolo_bypass_watershed"
+
+#' @rdname watershed_routing_indicators
+#' @format NULL
+"south_delta_routed_watersheds"
+
+#' Number of Contact Points
+#' @description Number of contact points, estimated using PAD
+#' Contact points were derived from the Passage Assessment Database \href{https://nrm.dfg.ca.gov/PAD/view/query.aspx}{(PAD)}
+#' maintained by California Department of Fish and Wildlife. Each location considered 
+#' in the model (e.g., tributary, Sacramento reach, and delta subdivisions) was 
+#' assessed for all structures identified in the PAD.
+#' @format 1 dimensional array [31 watersheds]
+#' @details 
+#' Delta data is length two (North, South)
+#' Watershed data is length 31 (Mainstems, Bypasses, and Tributaries) 
+#' @source
+#' Various \href{https://s3-us-west-2.amazonaws.com/cvpia-reference-docs/AWP+Attachment+1.pdf}{CVPIA Science Integration Team: FY18 Decision Support Model activities and FY17 priorities Memorandum}
+#'
+#' Compiled by: James T. Peterson \email{jt.peterson@@oregonstate.edu}
+#' @name pad_structures
+NULL
+
+#' @rdname pad_structures
+#' @format NULL
+"contact_points"
+
+#' @rdname pad_structures
+#' @format NULL
+"delta_contact_points"
+
+#' Probability High Predation in the Deltas
+#' @description Expert estimated high predation probabilities
+"delta_prop_high_predation"
+
+#' Expert Estimated Probabilities
+#' @description Experts estimated probabilities for predation, stranding, and nest scouring
+#' @format 1 dimensional array [31 watersheds]
+#' @source
+#' Various \href{https://s3-us-west-2.amazonaws.com/cvpia-reference-docs/AWP+Attachment+1.pdf}{CVPIA Science Integration Team: FY18 Decision Support Model activities and FY17 priorities Memorandum}
+#'
+#' Compiled by: James T. Peterson \email{jt.peterson@@oregonstate.edu}
+#' @name estimated_probs
+NULL
+
+#' @rdname estimated_probs
+#' @format NULL
+"prop_high_predation"
+
+#' @rdname estimated_probs
+#' @format NULL
+"prob_strand_early"
+
+#' @rdname estimated_probs
+#' @format NULL
+"prob_strand_late"
+
+#' @rdname estimated_probs
+#' @format NULL
+"prob_nest_scoured"
+

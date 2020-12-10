@@ -36,9 +36,14 @@ get_wua_selector <- function(species_wuas, species, life_stage) {
   species_lifestage <- paste(toupper(species), life_stage, sep = "_")
 
   combos <- switch(species_lifestage,
+                   WR_spawn = c("WR_spawn_wua", "FR_spawn_wua", "SR_spawn_wua", "ST_spawn_wua"),
                    SR_spawn = c("SR_spawn_wua", "FR_spawn_wua", "ST_spawn_wua"),
                    FR_spawn = c("FR_spawn_wua", "SR_spawn_wua", "ST_spawn_wua"),
                    ST_spawn = c("ST_spawn_wua", "SR_spawn_wua", "FR_spawn_wua"),
+                   WR_juv = c("WR_juv_wua", "SR_juv_wua", "FR_juv_wua", "WR_fry_wua",
+                              "SR_fry_wua", "FR_fry_wua", "ST_juv_wua", "ST_fry_wua"),
+                   WR_fry = c("WR_fry_wua", "SR_fry_wua",  "FR_fry_wua", "WR_juv_wua", 
+                              "SR_juv_wua", "FR_juv_wua", "ST_fry_wua", "ST_juv_wua"),
                    SR_juv = c("SR_juv_wua", "FR_juv_wua", "SR_fry_wua",
                               "FR_fry_wua", "ST_juv_wua", "ST_fry_wua"),
                    SR_fry = c("SR_fry_wua",  "FR_fry_wua", "SR_juv_wua",
@@ -90,9 +95,9 @@ acres_to_square_meters <- function(acres) {
 #' For watersheds without a defined relationship, a two week inundation duration is assumed.
 #'
 #' @examples
-#' weeks_flooded('Yuba River', 900)
+#' get_weeks_flooded('Yuba River', 900)
 #'
-weeks_flooded <- function(ws, flow_cfs) {
+get_weeks_flooded <- function(ws, flow_cfs) {
 
   flow_thresholds <- DSMhabitat::weeks_inundated[DSMhabitat::weeks_inundated$watershed == ws, 'flow_threshold']
   if (length(flow_thresholds) == 0) {
