@@ -1,5 +1,5 @@
 ---
-title: "Interactive Floodplain Habitat Map"
+title: "Map of Spawning and Rearing Habitat"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Interactive Floodplain Habitat Map}
@@ -17,9 +17,9 @@ library(widgetframe)
 library(DSMhabitat)
 ```
 
-### Map of Floodplain Spawning and Rearing Habitat
+### Map of Spawning and Rearing Habitat
 
-The map below displays spawning and rearing habitat for Fall Run Chinook salmon, Spring Run Chinook salmon, and steelhead in the Central Valley. For the methodology used to model spawning and rearing habitats please see the article on [floodplain modeling.](https://cvpia-osc.github.io/DSMhabitat/articles/floodplain-modeling.html) 
+The map below displays spawning and rearing habitat for Fall Run Chinook salmon, Spring Run Chinook salmon, and Steelhead in the Central Valley. For the methodology used to model spawning and rearing habitats please see the documentation on [habitat modeling.](https://cvpia-osc.github.io/DSMhabitat/reference/habitat_data.html#modeling-details-for-streams) 
 
 Click on the square in the top right of the map to add or hide layers showing the habitat for different species and life stages. Hover above a line on the map to see the name of the river and the name of the expert who provided habitat boundaries. 
 
@@ -71,6 +71,6 @@ leaflet() %>%
       hideGroup('Steelhead Rearing') %>%
       addLegend(colors = c('#5e3c99', '#e66101'), labels = c('rearing', 'spawning'),
                 position = 'topleft', title = 'Habitat Type') %>% 
-      setView(lat = 40.61158, lng = -122.4461, zoom = 10)
+      setView(lat = 38.85, lng = -121.49, zoom = 7.5)
 
 ```

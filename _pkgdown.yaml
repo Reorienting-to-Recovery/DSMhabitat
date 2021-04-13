@@ -49,8 +49,8 @@ navbar:
     menu: 
       - text: 'Floodplain Modeling Methodology'
         href: articles/floodplain-modeling.html
-      - text: 'Map of Floodplain Habitat'
-        href: articles/floodplain-map.html
+      - text: 'Map of Spawning and Rearing Habitat'
+        href: articles/habitat-extents-map.html
   - text: 'News'
     href: news/index.html
   right:
