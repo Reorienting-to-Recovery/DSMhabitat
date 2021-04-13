@@ -3,29 +3,18 @@
 \docType{data}
 \name{delta_habitat}
 \alias{delta_habitat}
-\title{Delta Habitat Area}
+\title{Delta Habitat Array}
 \format{
-dataframe with 372 rows and 3 variables
-\describe{
-  \item{date}{modeled results for 1980-2010}
-  \item{North Delta}{high quality habitat area in square meters}
-  \item{South Delta}{high quality habitat area in square meters}
-}
-}
-\source{
-\href{http://cvpia-habitat-docs-markdown.s3-website-us-west-2.amazonaws.com/watershed/delta.html}{North and South Delta Modeling Details}
-
-\itemize{
-  \item Modeling Output: Correigh Green \email{correigh.greene@noaa.gov}
-  \item Delta Node Selection: Mark Tompkins \email{mtompkins@flowwest.com}
-  \item Data Wrangling: Sadie Gill \email{sgill@flowwest.com}
-}
+a 3 dimensional array [12 months, 21 years, 2 deltas]
 }
 \usage{
 delta_habitat
 }
 \description{
-A dataset containing the area of highly suitable habitat within the
-North and South Deltas
+The 1980-2000 delta rearing habitat
+}
+\details{
+North Delta data is stored at [ , , 1] and South Delta data is stored at [ , , 2]
+Values created using \code{\link[=delta_rearing_habitat]{delta_rearing_habitat}}
 }
 \keyword{datasets}
