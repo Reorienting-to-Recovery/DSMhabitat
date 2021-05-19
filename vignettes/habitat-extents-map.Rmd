@@ -29,8 +29,7 @@ library(rgdal)
 library(tidyverse)
 library(readxl)
 
-setwd("C:/Users/Erin Cain/Documents/Git/DSMhabitat")
-salmonid_extents <- readOGR("data-raw/rearing_spatial_data/salmonid_habitat_extents/salmonid_habitat_extents.shp", 
+salmonid_extents <- readOGR("../data-raw/rearing_spatial_data/salmonid_habitat_extents/salmonid_habitat_extents.shp", 
                             stringsAsFactors = FALSE, verbose = FALSE) %>%
   spTransform(CRS("+proj=longlat +datum=WGS84 +no_defs"))
 
@@ -43,8 +42,10 @@ str <- subset(salmonid_extents, Species == 'Steelhead' & Habitat == 'rearing')
 ```
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE, results='asis'}
-labels <- sprintf("River: <strong>%s</strong><br/> Source: %s",
-                    salmonid_extents$River, salmonid_extents$Source) %>% lapply(htmltools::HTML)
+labels <- sprintf("River: <strong>%s</strong><br/> Source: %s <br/> Reach Length (mi): %s",
+                  salmonid_extents$River, 
+                  salmonid_extents$Source, 
+                  round(salmonid_extents$miles, 1)) %>% lapply(htmltools::HTML)
 leaflet() %>% 
       addProviderTiles(providers$Esri.WorldTopoMap, group = "Map") %>% 
       addProviderTiles(providers$Esri.WorldImagery, group = "Satellite") %>%
