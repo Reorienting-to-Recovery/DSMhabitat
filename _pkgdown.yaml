@@ -41,6 +41,9 @@ reference:
   - pools
 
 navbar:
+  structure:
+    left:  [home, reference, articles, news]
+    right: [github]  
   type: default
   left:
   - text: 'Reference'
@@ -53,10 +56,11 @@ navbar:
         href: articles/habitat-extents-map.html
   - text: 'News'
     href: news/index.html
-  right:
-  - icon: fa-github fa-lg
-    href: https://github.com/CVPIA-OSC/DSMhabitat
 
+repo:
+ url:
+  home: https://github.com/CVPIA-OSC/DSMhabitat
+  issue: https://github.com/CVPIA-OSC/DSMhabitat/issues/
 
 
 
