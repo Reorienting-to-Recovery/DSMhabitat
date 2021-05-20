@@ -42,24 +42,27 @@ str <- subset(salmonid_extents, Species == 'Steelhead' & Habitat == 'rearing')
 ```
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE, results='asis'}
-labels <- sprintf("River: <strong>%s</strong><br/> Source: %s <br/> Reach Length (mi): %s",
-                  salmonid_extents$River, 
-                  salmonid_extents$Source, 
-                  round(salmonid_extents$miles, 1)) %>% lapply(htmltools::HTML)
+make_label <- function(data) {
+  labels <- sprintf("<strong>%s</strong> <br/> %s: %s miles",
+                  data$River, 
+                  data$Habitat,
+                  round(data$miles, 1)) %>% lapply(htmltools::HTML)
+}
+
 leaflet() %>% 
       addProviderTiles(providers$Esri.WorldTopoMap, group = "Map") %>% 
       addProviderTiles(providers$Esri.WorldImagery, group = "Satellite") %>%
-      addPolylines(data = str, group = 'Steelhead Rearing', label = labels,
+      addPolylines(data = str, group = 'Steelhead Rearing', label = make_label(str),
                    color = '#5e3c99', opacity = .8, weight = 3) %>%
-      addPolylines(data = sts, group = 'Steelhead Spawning', label = labels,
+      addPolylines(data = sts, group = 'Steelhead Spawning', label = make_label(sts),
                    color = '#e66101', opacity = 1, weight = 3) %>%
-      addPolylines(data = spr, group = 'Spring Run Rearing', label = labels,
+      addPolylines(data = spr, group = 'Spring Run Rearing', label = make_label(spr),
                    color = '#5e3c99', opacity = .8, weight = 3) %>% 
-      addPolylines(data = sps, group = 'Spring Run Spawning', label = labels,
+      addPolylines(data = sps, group = 'Spring Run Spawning', label = make_label(spr),
                    color = '#e66101', opacity = 1, weight = 3) %>% 
-      addPolylines(data = fr, group = 'Fall Run Rearing', label = labels,
+      addPolylines(data = fr, group = 'Fall Run Rearing', label = make_label(fr),
                    color = '#5e3c99', opacity = .8, weight = 3) %>% 
-      addPolylines(data = fs, group = 'Fall Run Spawning', label = labels,
+      addPolylines(data = fs, group = 'Fall Run Spawning', label = make_label(fs),
                    color = '#e66101', opacity = 1, weight = 3) %>% 
       addLayersControl(
         baseGroups = c("Map", "Satellite"),
