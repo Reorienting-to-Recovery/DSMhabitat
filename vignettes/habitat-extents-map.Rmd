@@ -29,7 +29,7 @@ library(rgdal)
 library(tidyverse)
 library(readxl)
 
-salmonid_extents <- readOGR("../data-raw/rearing_spatial_data/salmonid_habitat_extents/salmonid_habitat_extents.shp", 
+salmonid_extents <- readOGR("../data-raw/rearing_spatial_data/salmonid_habitat_extents_updated/salmonid_habitat_extents.shp", 
                             stringsAsFactors = FALSE, verbose = FALSE) %>%
   spTransform(CRS("+proj=longlat +datum=WGS84 +no_defs"))
 
@@ -37,6 +37,8 @@ sps <- subset(salmonid_extents, Species == 'Spring Run Chinook' & Habitat == 'sp
 spr <- subset(salmonid_extents, Species == 'Spring Run Chinook' & Habitat == 'rearing')
 fs <- subset(salmonid_extents, Species == 'Fall Run Chinook' & Habitat == 'spawning')
 fr <- subset(salmonid_extents, Species == 'Fall Run Chinook' & Habitat == 'rearing')
+lfs <- subset(salmonid_extents, Species == 'Late-Fall Run Chinook' & Habitat == 'spawning')
+lfr <- subset(salmonid_extents, Species == 'Late-Fall Run Chinook' & Habitat == 'rearing')
 sts <- subset(salmonid_extents, Species == 'Steelhead' & Habitat == 'spawning')
 str <- subset(salmonid_extents, Species == 'Steelhead' & Habitat == 'rearing')
 ```
@@ -64,13 +66,20 @@ leaflet() %>%
                    color = '#5e3c99', opacity = .8, weight = 3) %>% 
       addPolylines(data = fs, group = 'Fall Run Spawning', label = make_label(fs),
                    color = '#e66101', opacity = 1, weight = 3) %>% 
+      addPolylines(data = lfr, group = 'Late-Fall Run Rearing', label = make_label(lfr),
+                   color = '#5e3c99', opacity = .8, weight = 3) %>% 
+      addPolylines(data = lfs, group = 'Late-Fall Run Spawning', label = make_label(lfs),
+                   color = '#e66101', opacity = 1, weight = 3) %>%
       addLayersControl(
         baseGroups = c("Map", "Satellite"),
         overlayGroups = c('Fall Run Rearing', 'Fall Run Spawning', 
+                          'Late-Fall Run Rearing', 'Late-Fall Run Spawning',
                           'Spring Run Rearing','Spring Run Spawning', 
                           'Steelhead Rearing', 'Steelhead Spawning')) %>% 
       hideGroup('Spring Run Spawning') %>%
       hideGroup('Spring Run Rearing') %>%
+      hideGroup('Late-Fall Run Spawning') %>%
+      hideGroup('Late-Fall Run Rearing') %>%
       hideGroup('Steelhead Spawning') %>%
       hideGroup('Steelhead Rearing') %>%
       addLegend(colors = c('#5e3c99', '#e66101'), labels = c('rearing', 'spawning'),
