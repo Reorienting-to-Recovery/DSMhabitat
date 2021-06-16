@@ -20,17 +20,19 @@ reference:
   - set_floodplain_habitat
   - set_bypass_habitat
   - wua_to_area
-  - weeks_flooded
   - apply_suitability
   - square_meters_to_acres
   - acres_to_square_meters
+  - get_weeks_flooded
+  - get_wua_selector
+  
 - title: Habitat Datasets
   desc: Flow to area rearing and spawning modeled relationships
   contents:
   - habitat_data
   - sacramento_habitat
   - bypass_habitat
-  - delta_habitat
+  
 - title: Miscellaneous Datasets
   desc: Datasets used as reference tables
   contents:
@@ -39,7 +41,40 @@ reference:
   - weeks_inundated
   - inchannel_habitat_adult
   - pools
-
+- title: Model Input Data
+  desc: Data used directly as inputs to the DSM model
+  contents:
+  - fr_fry
+  - sr_fry
+  - st_fry
+  - wr_fry
+  - fr_juv
+  - sr_juv
+  - st_juv
+  - wr_juv
+  - fr_spawn
+  - sr_spawn
+  - st_spawn
+  - wr_spawn
+  - fr_fp
+  - sr_fp
+  - st_fp 
+  - wr_fp
+  - weeks_flooded
+  - delta_habitat
+  - sutter_habitat
+  - yolo_habitat
+  - tisdale_bypass_watershed
+  - yolo_bypass_watershed
+  - south_delta_routed_watersheds
+  - prop_high_predation
+  - contact_points
+  - delta_contact_points
+  - delta_prop_high_predation
+  - prob_strand_early
+  - prob_strand_late
+  - prob_nest_scoured
+  
 navbar:
   structure:
     left:  [home, reference, articles, news]
