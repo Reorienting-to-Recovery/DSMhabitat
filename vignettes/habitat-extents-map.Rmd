@@ -29,7 +29,7 @@ library(rgdal)
 library(tidyverse)
 library(readxl)
 
-salmonid_extents <- readOGR("../data-raw/rearing_spatial_data/salmonid_habitat_extents_updated/salmonid_habitat_extents.shp", 
+salmonid_extents <- readOGR("../data-raw/rearing_spatial_data/salmonid_habitat_extents/salmonid_habitat_extents.shp", 
                             stringsAsFactors = FALSE, verbose = FALSE) %>%
   spTransform(CRS("+proj=longlat +datum=WGS84 +no_defs"))
 
