@@ -154,20 +154,22 @@
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='va'>watershed_lengths</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 166 x 7</span>
-#&gt;    order watershed                      lifestage miles    feet source   species
-#&gt;    <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                          <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  
-#&gt; <span style='color: #BCBCBC;'> 1</span>     0 Sacramento River (Battle to F~ <span style='color: #BB0000;'>NA</span>        189.  <span style='text-decoration: underline;'>998</span>483. <span style='color: #BB0000;'>NA</span>       fr     
-#&gt; <span style='color: #BCBCBC;'> 2</span>     0 Sacramento River (keswick to ~ <span style='color: #BB0000;'>NA</span>         55.5 <span style='text-decoration: underline;'>293</span>152. <span style='color: #BB0000;'>NA</span>       fr     
-#&gt; <span style='color: #BCBCBC;'> 3</span>     0 Sacramento River (Feather to ~ <span style='color: #BB0000;'>NA</span>         33.4 <span style='text-decoration: underline;'>176</span>546. <span style='color: #BB0000;'>NA</span>       fr     
-#&gt; <span style='color: #BCBCBC;'> 4</span>     0 Wilkins Slough  to Feather     <span style='color: #BB0000;'>NA</span>         38.2 <span style='text-decoration: underline;'>201</span>843. <span style='color: #BB0000;'>NA</span>       fr     
-#&gt; <span style='color: #BCBCBC;'> 5</span>     0 Feather to American            <span style='color: #BB0000;'>NA</span>         19.7 <span style='text-decoration: underline;'>104</span>199. <span style='color: #BB0000;'>NA</span>       fr     
-#&gt; <span style='color: #BCBCBC;'> 6</span>     0 wilkins slough  to feather     <span style='color: #BB0000;'>NA</span>         38.2 <span style='text-decoration: underline;'>201</span>843. <span style='color: #BB0000;'>NA</span>       fr     
-#&gt; <span style='color: #BCBCBC;'> 7</span>     0 Lower-mid Sac above fremont    <span style='color: #BB0000;'>NA</span>         35.6 <span style='text-decoration: underline;'>187</span>720. Mike Ur~ fr     
-#&gt; <span style='color: #BCBCBC;'> 8</span>     0 Lower-mid Sac below fremont    <span style='color: #BB0000;'>NA</span>         22.4 <span style='text-decoration: underline;'>118</span>322. Mike Ur~ fr     
-#&gt; <span style='color: #BCBCBC;'> 9</span>     1 Upper Sacramento River         spawning   59.4 <span style='text-decoration: underline;'>313</span>369. Jim Smi~ fr     
-#&gt; <span style='color: #BCBCBC;'>10</span>     1 Upper Sacramento River         rearing    59.2 <span style='text-decoration: underline;'>312</span>500. Jim Smi~ fr     
-#&gt; <span style='color: #949494;'># ... with 156 more rows</span></div><div class='input'>
+
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 94 x 7</span>
+#&gt;    order watershed              lifestage miles    feet source          species
+#&gt;    <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                  <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>           <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  
+#&gt; <span style='color: #BCBCBC;'> 1</span>     1 Upper Sacramento River spawning  59.4  <span style='text-decoration: underline;'>313</span>369. Jim Smith       fr     
+#&gt; <span style='color: #BCBCBC;'> 2</span>     1 Upper Sacramento River rearing   59.2  <span style='text-decoration: underline;'>312</span>500. Jim Smith       fr     
+#&gt; <span style='color: #BCBCBC;'> 3</span>     2 Antelope Creek         spawning  23.7  <span style='text-decoration: underline;'>125</span>060. Matt Johnson    fr     
+#&gt; <span style='color: #BCBCBC;'> 4</span>     2 Antelope Creek         rearing   31.6  <span style='text-decoration: underline;'>166</span>949. Matt Johnson    fr     
+#&gt; <span style='color: #BCBCBC;'> 5</span>     3 Battle Creek           spawning   3.97  <span style='text-decoration: underline;'>20</span>945. Jim Smith       fr     
+#&gt; <span style='color: #BCBCBC;'> 6</span>     3 Battle Creek           rearing    5.87  <span style='text-decoration: underline;'>31</span>003. Jim Smith       fr     
+#&gt; <span style='color: #BCBCBC;'> 7</span>     4 Bear Creek             spawning  17.1   <span style='text-decoration: underline;'>90</span>309. Tricia Bratcher fr     
+#&gt; <span style='color: #BCBCBC;'> 8</span>     4 Bear Creek             rearing   17.3   <span style='text-decoration: underline;'>91</span>324. Tricia Bratcher fr     
+#&gt; <span style='color: #BCBCBC;'> 9</span>     5 Big Chico Creek        rearing   15.1   <span style='text-decoration: underline;'>79</span>488. Clint Garman    fr     
+#&gt; <span style='color: #BCBCBC;'>10</span>     5 Big Chico Creek        spawning  15.1   <span style='text-decoration: underline;'>79</span>488. Clint Garman    fr     
+#&gt; <span style='color: #949494;'># ... with 84 more rows</span></div><div class='input'>
+
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
