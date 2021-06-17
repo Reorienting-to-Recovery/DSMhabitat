@@ -9,7 +9,7 @@ set_instream_habitat(watershed, species, life_stage, flow, ...)
 \arguments{
 \item{watershed}{one of the watersheds defined for the SIT model}
 
-\item{species}{one of 'fr' (Fall Run), 'sr' (Spring Run), or 'st' (Steelhead)}
+\item{species}{one of 'fr' (Fall Run), 'lfr' (Late Fall Run), sr' (Spring Run), or 'st' (Steelhead)}
 
 \item{life_stage}{life stage of fish, one of 'juv', 'adult' or 'fry'}
 

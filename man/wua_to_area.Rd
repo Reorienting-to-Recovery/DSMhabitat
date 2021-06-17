@@ -13,7 +13,7 @@ wua_to_area(wua, watershed_name, life_stage, species_name)
 
 \item{watershed}{watershed}
 
-\item{species}{species, "fr" - fall run or "sr" - spring run or "st" - steel head}
+\item{species}{species, "fr" - fall run or "sr" - spring run or "st" - steel head or "lfr" - late fall run}
 }
 \description{
 Function converts a Weighted Usable Area (WUA) to an
