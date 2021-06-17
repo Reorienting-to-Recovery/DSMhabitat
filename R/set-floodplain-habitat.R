@@ -2,7 +2,7 @@
 #' @description This function returns an estimated floodplain area based on watershed, species and flow.
 #'
 #' @param watershed a watershed defined for the SIT model
-#' @param species one of 'fr' (Fall Run), 'sr' (Spring Run), or 'st' (Steelhead)
+#' @param species one of 'fr' (Fall Run), 'lfr' (Late Fall Run), 'sr' (Spring Run), or 'st' (Steelhead)
 #' @param flow a flow value in cubic feet per second
 #' @examples
 #' # floodplain habitat value in square meters for Fall Run in the American River

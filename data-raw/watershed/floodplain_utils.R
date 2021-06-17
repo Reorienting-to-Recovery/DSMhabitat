@@ -3,6 +3,7 @@ library(readxl)
 library(glue)
 
 # TODO check that metadata sheet is up to date
+# TODO add late fall run to sheet 
 metadata <- read_excel('data-raw/watershed/CVPIA_FloodplainAreas.xlsx', sheet = 'MetaData',
                        col_types = c('text', 'text', 'text', 'text',
                                      rep('numeric', 17), 'text', 'numeric', 'text'), na = 'na')
@@ -15,6 +16,7 @@ scale_fp_flow_area_partial_model <- function(ws, df) {
   watershed_metadata <- filter(metadata, watershed == ws)
   spring_run_present <- !is.na(watershed_metadata$SR_rearing_length_mi)
   steelhead_present <- !is.na(watershed_metadata$ST_rearing_length_mi)
+  late_fall_run_present <- !is.na(watershed_metadata$LFR_rearing_length_mi) # TODO add late fall run into spreadsheet Column does not exist 
 
   fp_area <- df$modeled_floodplain_area_acres
 
@@ -69,6 +71,7 @@ scale_fp_flow_area <- function(ws) {
   watershed_metadata <- filter(metadata, watershed == ws)
   spring_run_present <- !is.na(watershed_metadata$SR_rearing_length_mi)
   steelhead_present <- !is.na(watershed_metadata$ST_rearing_length_mi)
+  late_fall_run_present <- !is.na(watershed_metadata$LFR_rearing_length_mi)
 
   # appropriate proxy from watershed, df has flow to area curve
   proxy_watershed <- watershed_metadata$scaling_watershed
@@ -157,6 +160,14 @@ print_model_details <- function(ws, species) {
   watershed_name <- ws
 
   if (species == 'fr') {
+    rearing_length <- round(watershed_doc_vars$FR_rearing_length_mi, 1)
+    channel_area_modeled <- watershed_doc_vars$FR_channel_area_of_length_modeled_acres
+    low_grad <- round(watershed_doc_vars$FR_low_gradient_length_mi, 1)
+    high_grad <- round(watershed_doc_vars$FR_high_gradient_length_mi, 1)
+    modeled_length <- round(watershed_doc_vars$FR_length_modeled_mi, 1)
+  }
+  # TODO once late fall run is added to spreadsheet replace fr values with lfr
+  if (species == 'lfr') {
     rearing_length <- round(watershed_doc_vars$FR_rearing_length_mi, 1)
     channel_area_modeled <- watershed_doc_vars$FR_channel_area_of_length_modeled_acres
     low_grad <- round(watershed_doc_vars$FR_low_gradient_length_mi, 1)
