@@ -74,7 +74,8 @@ test_that('ST spawn Upper Sac works', {
   wua1 <- DSMhabitat::upper_sac_ACID_boards_in$ST_spawn_WUA[1]
   wua2 <- DSMhabitat::upper_sac_ACID_boards_out$ST_spawn_WUA[1]
   stream_length <- as.numeric(DSMhabitat::watershed_lengths[DSMhabitat::watershed_lengths$watershed == 'Upper Sacramento River' &
-                                                                DSMhabitat::watershed_lengths$lifestage == 'spawning','feet'])
+                                                            DSMhabitat::watershed_lengths$lifestage == 'spawning' &
+                                                            DSMhabitat::watershed_lengths$species == 'st','feet'])
 
   x1 <- ((stream_length/1000) * wua1)/10.7639
   x2 <- ((stream_length/1000) * wua2)/10.7639
