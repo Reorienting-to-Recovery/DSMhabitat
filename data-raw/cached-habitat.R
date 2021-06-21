@@ -221,7 +221,7 @@ usethis::use_data(sr_spawn, overwrite = TRUE)
 # Winter Run 
 # only in sacramento and battle creek
 # spawn just in Upper Sac
-wr_spawn <- DSMhabitat::fr_spawn #Sets base habitat to fr values 
+wr_spawn <- DSMhabitat::fr_spawn # Set default values to fall run to allow for straying
 up_sac_flows <- get_flow('Upper Sacramento River', years = c(1979, 2000))
 months <- rep(1:12, 22)
 up_sac_hab <- map2_dbl(months, up_sac_flows, function(month, flow) {
@@ -248,7 +248,7 @@ usethis::use_data(wr_spawn, overwrite = TRUE)
 # Late Fall Run 
 # only in sacramento clear creek and battle creek
 # spawn just in Upper Sac
-lfr_spawn <- DSMhabitat::fr_spawn #Sets base habitat to fr values 
+lfr_spawn <- DSMhabitat::fr_spawn # Set default values to fall run to allow for straying
 up_sac_flows <- get_flow('Upper Sacramento River', years = c(1979, 2000))
 months <- rep(1:12, 22)
 up_sac_hab <- map2_dbl(months, up_sac_flows, function(month, flow) {
@@ -311,7 +311,7 @@ usethis::use_data(sr_fry, overwrite = TRUE)
 
 # winter run 
 # fry and juv
-wr_fry <- array(NA, c(31, 12, 21)) # 1980 - 2000
+wr_fry <- DSMhabitat::fr_fry # Set default values to fall run to allow for straying
 wr_fry[1, , ] <- DSMhabitat::set_instream_habitat('Upper Sacramento River',
                                                   species = 'wr',
                                                   life_stage = 'fry',
@@ -357,7 +357,7 @@ dimnames(wr_fry) <- list(watersheds, month.abb, year_range_1)
 usethis::use_data(wr_fry, overwrite = TRUE)
 
 # Late fall run fry 
-lfr_fry <- DSMhabitat::fr_fry # Set default values as fall run 
+lfr_fry <- DSMhabitat::fr_fry # Set default values to fall run to allow for straying
 lfr_fry[1, , ] <- DSMhabitat::set_instream_habitat('Upper Sacramento River',
                                                   species = 'lfr',
                                                   life_stage = 'fry',
@@ -425,7 +425,7 @@ dimnames(sr_juv) <- list(watersheds, month.abb, year_range_1)
 usethis::use_data(sr_juv, overwrite = TRUE)
 
 # winter run
-wr_juv <- array(0, c(31, 12, 21)) # 1980-2000
+wr_juv <- DSMhabitat::fr_juv # Set default values to fall run to allow for straying
 wr_juv[1, , ] <- DSMhabitat::set_instream_habitat('Upper Sacramento River',
                                                   species = 'wr',
                                                   life_stage = 'juv',
@@ -467,7 +467,7 @@ dimnames(wr_juv) <- list(watersheds, month.abb, year_range_1)
 usethis::use_data(wr_juv, overwrite = TRUE)
 
 # Late fall Run juvenile 
-lfr_juv <- DSMhabitat::fr_juv # Set default values as fall run 
+lfr_juv <- DSMhabitat::fr_fry # Set default values to fall run to allow for straying
 lfr_juv[1, , ] <- DSMhabitat::set_instream_habitat('Upper Sacramento River',
                                                   species = 'lfr',
                                                   life_stage = 'juv',
@@ -541,7 +541,7 @@ sr_fp[28, , ] <- fr_fp_filler[28, , ] # Merced River
 dimnames(sr_fp) <- list(watersheds, month.abb, year_range_1)
 usethis::use_data(sr_fp, overwrite = TRUE)
 
-wr_fp <- array(0, c(31, 12, 21))
+wr_fp <- DSMhabitat::fr_fp # Set default values to fall run to allow for straying
 wr_fp[1,,] <- DSMhabitat::set_floodplain_habitat('Upper Sacramento River', 'wr',
                                                  get_flow('Upper Sacramento River',
                                                           years = c(1980, 2000)))
@@ -563,7 +563,7 @@ dimnames(wr_fp) <- list(watersheds, month.abb, year_range_1)
 usethis::use_data(wr_fp, overwrite = TRUE)
 
 # Late fall run floodplain 
-lfr_fp <- DSMhabitat::fr_fp # Set defalt floodplain hab as fr values
+lfr_fp <- DSMhabitat::fr_fp # Set default values to fall run to allow for straying
 lfr_fp[1,,] <- DSMhabitat::set_floodplain_habitat('Upper Sacramento River', 'lfr',
                                                  get_flow('Upper Sacramento River',
                                                           years = c(1980, 2000)))
