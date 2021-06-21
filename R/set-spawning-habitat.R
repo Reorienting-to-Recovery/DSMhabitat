@@ -2,7 +2,7 @@
 #' @description This function returns an estimated spawning area based on watershed, species, and flow.
 #'
 #' @param watershed one of the watersheds defined for the SIT model
-#' @param species one of 'fr' (Fall Run), 'sr' (Spring Run), or 'st' (Steelhead)
+#' @param species one of 'fr' (Fall Run), 'sr' (Spring Run), 'lfr' (Late Fall Run), or 'st' (Steelhead)
 #' @param flow a flow value in cubic feet per second used to determine habitat area
 #' @return habitat area in square meters
 #' @export
@@ -122,6 +122,14 @@ set_upper_sac_spawn_habitat <- function(species, flow, month) {
 
     upper_sac_OUT_approx <- approxfun(DSMhabitat::upper_sac_ACID_boards_out$flow_cfs,
                                       DSMhabitat::upper_sac_ACID_boards_out$ST_spawn_WUA, rule = 2)
+    
+  } else if (species == 'lfr') {
+    # steelhead spawning
+    upper_sac_IN_approx <- approxfun(DSMhabitat::upper_sac_ACID_boards_in$flow_cfs,
+                                     DSMhabitat::upper_sac_ACID_boards_in$LFR_spawn_WUA, rule = 2)
+    
+    upper_sac_OUT_approx <- approxfun(DSMhabitat::upper_sac_ACID_boards_out$flow_cfs,
+                                      DSMhabitat::upper_sac_ACID_boards_out$LFR_spawn_WUA, rule = 2)
   } else {
     # fall run and spring run spawning
     upper_sac_IN_approx <- approxfun(DSMhabitat::upper_sac_ACID_boards_in$flow_cfs,
