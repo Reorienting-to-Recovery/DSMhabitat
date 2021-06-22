@@ -3,7 +3,6 @@ library(readxl)
 library(glue)
 
 # TODO check that metadata sheet is up to date
-# TODO add late fall run to sheet 
 metadata <- read_excel('data-raw/watershed/CVPIA_FloodplainAreas.xlsx', sheet = 'MetaData',
                        col_types = c('text', 'text', 'text', 'text',
                                      rep('numeric', 22), 'text', 'numeric', 'text'), na = 'na')
@@ -16,7 +15,7 @@ scale_fp_flow_area_partial_model <- function(ws, df) {
   watershed_metadata <- filter(metadata, watershed == ws)
   spring_run_present <- !is.na(watershed_metadata$SR_rearing_length_mi)
   steelhead_present <- !is.na(watershed_metadata$ST_rearing_length_mi)
-  late_fall_run_present <- !is.na(watershed_metadata$LFR_rearing_length_mi) # TODO add late fall run into spreadsheet Column does not exist 
+  late_fall_run_present <- !is.na(watershed_metadata$LFR_rearing_length_mi) 
 
   fp_area <- df$modeled_floodplain_area_acres
 
@@ -141,7 +140,7 @@ scale_fp_flow_area <- function(ws) {
       watershed_metadata$dec_jun_mean_flow_scaling
     
     fp_area_LFR <- (scaled_area_per_mile_LFR * watershed_metadata$LFR_low_gradient_length_mi) +
-      (scaled_area_per_mile_ST * watershed_metadata$LFR_high_gradient_length_mi * 0.1)
+      (scaled_area_per_mile_LFR * watershed_metadata$LFR_high_gradient_length_mi * 0.1)
     
     result <- bind_cols(result, LFR_floodplain_acres = fp_area_LFR)
   }
