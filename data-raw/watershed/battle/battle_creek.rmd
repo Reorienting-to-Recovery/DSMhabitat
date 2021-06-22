@@ -257,6 +257,9 @@ source('data-raw/watershed/floodplain_utils.R')
 ### Fall Run
 `r print_model_details('Battle Creek', 'fr')`
 
+### Late Fall Run
+`r print_model_details('Battle Creek', 'lfr')`
+
 ### Spring Run and Steelhead 
 `r print_model_details('Battle Creek', 'sr')`
 
@@ -266,7 +269,7 @@ The areas represent total inundated area in acres.
 battle_creek_floodplain <- scale_fp_flow_area('Battle Creek') %>% 
   mutate(WR_floodplain_acres = 0) %>% 
   select(flow_cfs, FR_floodplain_acres, SR_floodplain_acres, WR_floodplain_acres, 
-         ST_floodplain_acres, watershed)
+         ST_floodplain_acres, LFR_floodplain_acres, watershed)
 
 knitr::kable(align = 'c', head(battle_creek_floodplain, 5), 
              caption = "Header Descriptions: flow_cfs = flow in cubic feet per second,
@@ -274,6 +277,7 @@ knitr::kable(align = 'c', head(battle_creek_floodplain, 5),
              SR_floodplain_acres = Spring Run Chinook floodplain acres,
              WR_floodplain_acres = Winter Run floodplain acres,
              ST_floodplain_acres = Steelhead floodplain acres,
+             LFR_floodplain_acres = Late Fall Run Chinook floodplain acres,
              watershed = section of stream modeled for CVPIA SDM") 
 
 usethis::use_data(battle_creek_floodplain, overwrite = TRUE)
@@ -284,9 +288,10 @@ usethis::use_data(battle_creek_floodplain, overwrite = TRUE)
 ## Floodplain Plot
 ```{r}
 battle_creek_floodplain %>% 
-  select(flow_cfs, FR_floodplain_acres, ST_floodplain_acres, watershed) %>%
+  select(flow_cfs, FR_floodplain_acres, ST_floodplain_acres, LFR_floodplain_acres, watershed) %>%
   rename(`Fall Run Chinook` = FR_floodplain_acres, 
-         `Steelhead and Spring Run Chinook` = ST_floodplain_acres) %>% 
+         `Steelhead and Spring Run Chinook` = ST_floodplain_acres,
+         `Late Fall Run Chinook` = LFR_floodplain_acres) %>% 
   gather(Species, acres, -flow_cfs, -watershed) %>% 
   ggplot(aes(flow_cfs, acres, color = Species)) +
   geom_line() +

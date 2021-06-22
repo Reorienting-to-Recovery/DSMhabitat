@@ -155,6 +155,9 @@ source('data-raw/watershed/floodplain_utils.R')
 ### Fall Run
 `r print_model_details('Clear Creek', 'fr')`
 
+### Late Fall Run
+`r print_model_details('Clear Creek', 'lfr')`
+
 ### Spring Run and Steelhead
 `r print_model_details('Clear Creek', 'sr')`
 
@@ -168,6 +171,7 @@ knitr::kable(align = 'c', head(clear_creek_floodplain, 5),
              FR_floodplain_acres = Fall Run Chinook floodplain acres, 
              SR_floodplain_acres = Spring Run Chinook floodplain acres, 
              ST_floodplain_acres = Steelhead floodplain acres,
+             LFR_floodplain_acres = Late Fall Run Chinook floodplain acres,
              watershed = section of stream modeled for CVPIA SDM") 
 
 usethis::use_data(clear_creek_floodplain, overwrite = TRUE)
@@ -178,9 +182,10 @@ usethis::use_data(clear_creek_floodplain, overwrite = TRUE)
 ## Floodplain Plot
 ```{r, echo = FALSE}
 clear_creek_floodplain %>% 
-  select(flow_cfs, FR_floodplain_acres, ST_floodplain_acres, watershed) %>%
+  select(flow_cfs, FR_floodplain_acres, ST_floodplain_acres, LFR_floodplain_acres, watershed) %>%
   rename(`Fall Run Chinook` = FR_floodplain_acres, 
-         `Steelhead and Spring Run Chinook` = ST_floodplain_acres) %>% 
+         `Steelhead and Spring Run Chinook` = ST_floodplain_acres,
+         `Late Fall Run Chinook` = LFR_floodplain_acres) %>% 
   gather(Species, acres, -flow_cfs, -watershed) %>% 
   ggplot(aes(flow_cfs, acres, color = Species)) +
   geom_line() +
