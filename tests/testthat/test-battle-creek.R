@@ -217,5 +217,21 @@ test_that('LFR instream Battle Creek works', {
     set_spawning_habitat('Battle Creek', 'lfr', spawn_flow), spawn_m2)
 })
 
+# late fall run  -----
+
+test_that('LFR floodplain Battle Creek works', {
+  
+  index <- which(!is.na(DSMhabitat::battle_creek_floodplain$LFR_floodplain_acres))[1]
+  
+  fp_value <- DSMhabitat::battle_creek_floodplain$LFR_floodplain_acres[index]
+  
+  flow_at_fp_value <- DSMhabitat::battle_creek_floodplain$flow_cfs[index]
+  
+  expect_equal(
+    set_floodplain_habitat('Battle Creek', 'lfr', flow_at_fp_value), fp_value)
+})
+
+
+
 
 
