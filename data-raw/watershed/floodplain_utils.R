@@ -6,7 +6,7 @@ library(glue)
 # TODO add late fall run to sheet 
 metadata <- read_excel('data-raw/watershed/CVPIA_FloodplainAreas.xlsx', sheet = 'MetaData',
                        col_types = c('text', 'text', 'text', 'text',
-                                     rep('numeric', 17), 'text', 'numeric', 'text'), na = 'na')
+                                     rep('numeric', 22), 'text', 'numeric', 'text'), na = 'na')
 
 # function for partially modeled watersheds---------------------------------
 # ws = watershed
@@ -177,11 +177,11 @@ print_model_details <- function(ws, species) {
   }
   # TODO once late fall run is added to spreadsheet replace fr values with lfr
   if (species == 'lfr') {
-    rearing_length <- round(watershed_doc_vars$FR_rearing_length_mi, 1)
-    channel_area_modeled <- watershed_doc_vars$FR_channel_area_of_length_modeled_acres
-    low_grad <- round(watershed_doc_vars$FR_low_gradient_length_mi, 1)
-    high_grad <- round(watershed_doc_vars$FR_high_gradient_length_mi, 1)
-    modeled_length <- round(watershed_doc_vars$FR_length_modeled_mi, 1)
+    rearing_length <- round(watershed_doc_vars$LFR_rearing_length_mi, 1)
+    channel_area_modeled <- watershed_doc_vars$LFR_channel_area_of_length_modeled_acres
+    low_grad <- round(watershed_doc_vars$LFR_low_gradient_length_mi, 1)
+    high_grad <- round(watershed_doc_vars$LFR_high_gradient_length_mi, 1)
+    modeled_length <- round(watershed_doc_vars$LFR_length_modeled_mi, 1)
   }
 
   if (species == 'sr') {
