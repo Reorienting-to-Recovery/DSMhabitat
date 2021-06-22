@@ -155,7 +155,7 @@ source('data-raw/watershed/floodplain_utils.R')
 ### Fall Run
 `r print_model_details('Clear Creek', 'fr')`
 
-### Fall Run
+### Late Fall Run
 `r print_model_details('Clear Creek', 'lfr')`
 
 ### Spring Run and Steelhead
