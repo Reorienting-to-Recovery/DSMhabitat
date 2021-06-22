@@ -136,6 +136,15 @@ scale_fp_flow_area <- function(ws) {
 
     result <- bind_cols(result, ST_floodplain_acres = fp_area_ST)
   }
+  if (late_fall_run_present) {
+    scaled_area_per_mile_LFR <- (df$modeled_floodplain_area_acres / proxy_watershed_metadata$FR_length_modeled_mi) *
+      watershed_metadata$dec_jun_mean_flow_scaling
+    
+    fp_area_LFR <- (scaled_area_per_mile_LFR * watershed_metadata$LFR_low_gradient_length_mi) +
+      (scaled_area_per_mile_ST * watershed_metadata$LFR_high_gradient_length_mi * 0.1)
+    
+    result <- bind_cols(result, LFR_floodplain_acres = fp_area_LFR)
+  }
 
   return(
     mutate(result, watershed = ws)
