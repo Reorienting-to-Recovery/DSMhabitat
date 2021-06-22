@@ -5,7 +5,7 @@
 #'  \code{\link{watershed_lengths}}.
 #' @param wua WUA in square feet per 1000 feet
 #' @param watershed watershed
-#' @param species species, "fr" - fall run or "sr" - spring run or "st" - steel head
+#' @param species species, "fr" - fall run or "sr" - spring run or "st" - steel head or "lfr" - late fall run
 #' @param life_stage life stage
 wua_to_area <- function(wua, watershed_name,  life_stage, species_name) {
   stream_length <- dplyr::pull(dplyr::filter(DSMhabitat::watershed_lengths,
@@ -28,7 +28,7 @@ wua_to_area <- function(wua, watershed_name,  life_stage, species_name) {
 #' combination of species and lifestage is not present in modeling data table for a watershed,
 #' then the column representing the most appropriate proxy will be returned.
 #' @param species_wuas vector of column names within modeling data table for the targeted watershed
-#' @param species target species: "fr" for fall run, "sr" for spring run, and "st" for steelhead
+#' @param species target species: "fr" for fall run, "lfr" for late fall run, "sr" for spring run, and "st" for steelhead
 #' @param life_stage "spawn", fry", "juv", or "adult"
 #' @return column name of desired habitat relationship
 get_wua_selector <- function(species_wuas, species, life_stage) {
@@ -36,9 +36,12 @@ get_wua_selector <- function(species_wuas, species, life_stage) {
   species_lifestage <- paste(toupper(species), life_stage, sep = "_")
 
   combos <- switch(species_lifestage,
-                   WR_spawn = c("WR_spawn_wua", "FR_spawn_wua", "SR_spawn_wua", "ST_spawn_wua"),
+                   WR_spawn = c("WR_spawn_wua", "FR_spawn_wua", "SR_spawn_wua", 
+                                "ST_spawn_wua"),
                    SR_spawn = c("SR_spawn_wua", "FR_spawn_wua", "ST_spawn_wua"),
                    FR_spawn = c("FR_spawn_wua", "SR_spawn_wua", "ST_spawn_wua"),
+                   LFR_spawn = c("LFR_spawn_wua", "FR_spawn_wua", "SR_spawn_wua", 
+                                 "ST_spawn_wua"),
                    ST_spawn = c("ST_spawn_wua", "SR_spawn_wua", "FR_spawn_wua"),
                    WR_juv = c("WR_juv_wua", "SR_juv_wua", "FR_juv_wua", "WR_fry_wua",
                               "SR_fry_wua", "FR_fry_wua", "ST_juv_wua", "ST_fry_wua"),
@@ -46,12 +49,16 @@ get_wua_selector <- function(species_wuas, species, life_stage) {
                               "SR_juv_wua", "FR_juv_wua", "ST_fry_wua", "ST_juv_wua"),
                    SR_juv = c("SR_juv_wua", "FR_juv_wua", "SR_fry_wua",
                               "FR_fry_wua", "ST_juv_wua", "ST_fry_wua"),
-                   SR_fry = c("SR_fry_wua",  "FR_fry_wua", "SR_juv_wua",
+                   SR_fry = c("SR_fry_wua", "FR_fry_wua", "SR_juv_wua",
                               "FR_juv_wua", "ST_fry_wua", "ST_juv_wua"),
                    FR_juv = c("FR_juv_wua", "SR_juv_wua", "FR_fry_wua",
                               "SR_fry_wua", "ST_juv_wua", "ST_fry_wua"),
                    FR_fry = c("FR_fry_wua", "FR_juv_wua", "SR_fry_wua",
                               "ST_fry_wua", "SR_juv_wua", "ST_juv_wua"),
+                   LFR_juv = c("LFR_juv_wua", "FR_juv_wua", "SR_juv_wua", 
+                               "FR_fry_wua", "SR_fry_wua", "ST_juv_wua", "ST_fry_wua"),
+                   LFR_fry = c("LFR_fry_wua", "FR_fry_wua", "FR_juv_wua", 
+                               "SR_fry_wua", "ST_fry_wua", "SR_juv_wua", "ST_juv_wua"),
                    ST_adult = c("ST_adult_wua"),
                    ST_juv = c("ST_juv_wua", "ST_fry_wua", "SR_juv_wua",
                               "SR_fry_wua", "FR_juv_wua", "FR_fry_wua"),

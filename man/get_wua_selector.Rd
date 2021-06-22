@@ -9,7 +9,7 @@ get_wua_selector(species_wuas, species, life_stage)
 \arguments{
 \item{species_wuas}{vector of column names within modeling data table for the targeted watershed}
 
-\item{species}{target species: "fr" for fall run, "sr" for spring run, and "st" for steelhead}
+\item{species}{target species: "fr" for fall run, "lfr" for late fall run, "sr" for spring run, and "st" for steelhead}
 
 \item{life_stage}{"spawn", fry", "juv", or "adult"}
 }

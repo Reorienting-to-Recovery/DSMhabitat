@@ -2,7 +2,7 @@
 #' @description This function returns an estimated instream habitat area based on watershed, species, life stage, and flow.
 #'
 #' @param watershed one of the watersheds defined for the SIT model
-#' @param species one of 'fr' (Fall Run), 'sr' (Spring Run), or 'st' (Steelhead)
+#' @param species one of 'fr' (Fall Run), 'lfr' (Late Fall Run), sr' (Spring Run), or 'st' (Steelhead)
 #' @param life_stage life stage of fish, one of 'juv', 'adult' or 'fry'
 #' @param flow value used to determine habitat area
 #' @return habitat area in square meters
