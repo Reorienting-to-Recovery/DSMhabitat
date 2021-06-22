@@ -2,10 +2,10 @@ library(tidyverse)
 library(readxl)
 library(glue)
 
-# TODO check that metadata sheet is up to date
+# TODO make sure to merge updates to deer creek model and cow creek lengths
 metadata <- read_excel('data-raw/watershed/CVPIA_FloodplainAreas.xlsx', sheet = 'MetaData',
                        col_types = c('text', 'text', 'text', 'text',
-                                     rep('numeric', 17), 'text', 'numeric', 'text'), na = 'na')
+                                     rep('numeric', 22), 'text', 'numeric', 'text'), na = 'na')
 
 # function for partially modeled watersheds---------------------------------
 # ws = watershed
@@ -15,6 +15,7 @@ scale_fp_flow_area_partial_model <- function(ws, df) {
   watershed_metadata <- filter(metadata, watershed == ws)
   spring_run_present <- !is.na(watershed_metadata$SR_rearing_length_mi)
   steelhead_present <- !is.na(watershed_metadata$ST_rearing_length_mi)
+  late_fall_run_present <- !is.na(watershed_metadata$LFR_rearing_length_mi) 
 
   fp_area <- df$modeled_floodplain_area_acres
 
@@ -69,6 +70,7 @@ scale_fp_flow_area <- function(ws) {
   watershed_metadata <- filter(metadata, watershed == ws)
   spring_run_present <- !is.na(watershed_metadata$SR_rearing_length_mi)
   steelhead_present <- !is.na(watershed_metadata$ST_rearing_length_mi)
+  late_fall_run_present <- !is.na(watershed_metadata$LFR_rearing_length_mi)
 
   # appropriate proxy from watershed, df has flow to area curve
   proxy_watershed <- watershed_metadata$scaling_watershed
@@ -133,6 +135,15 @@ scale_fp_flow_area <- function(ws) {
 
     result <- bind_cols(result, ST_floodplain_acres = fp_area_ST)
   }
+  if (late_fall_run_present) {
+    scaled_area_per_mile_LFR <- (df$modeled_floodplain_area_acres / proxy_watershed_metadata$FR_length_modeled_mi) *
+      watershed_metadata$dec_jun_mean_flow_scaling
+    
+    fp_area_LFR <- (scaled_area_per_mile_LFR * watershed_metadata$LFR_low_gradient_length_mi) +
+      (scaled_area_per_mile_LFR * watershed_metadata$LFR_high_gradient_length_mi * 0.1)
+    
+    result <- bind_cols(result, LFR_floodplain_acres = fp_area_LFR)
+  }
 
   return(
     mutate(result, watershed = ws)
@@ -162,6 +173,14 @@ print_model_details <- function(ws, species) {
     low_grad <- round(watershed_doc_vars$FR_low_gradient_length_mi, 1)
     high_grad <- round(watershed_doc_vars$FR_high_gradient_length_mi, 1)
     modeled_length <- round(watershed_doc_vars$FR_length_modeled_mi, 1)
+  }
+  
+  if (species == 'lfr') {
+    rearing_length <- round(watershed_doc_vars$LFR_rearing_length_mi, 1)
+    channel_area_modeled <- watershed_doc_vars$LFR_channel_area_of_length_modeled_acres
+    low_grad <- round(watershed_doc_vars$LFR_low_gradient_length_mi, 1)
+    high_grad <- round(watershed_doc_vars$LFR_high_gradient_length_mi, 1)
+    modeled_length <- round(watershed_doc_vars$LFR_length_modeled_mi, 1)
   }
 
   if (species == 'sr') {

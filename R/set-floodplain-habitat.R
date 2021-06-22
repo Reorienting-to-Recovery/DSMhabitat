@@ -2,7 +2,7 @@
 #' @description This function returns an estimated floodplain area based on watershed, species and flow.
 #'
 #' @param watershed a watershed defined for the SIT model
-#' @param species one of 'fr' (Fall Run), 'sr' (Spring Run), or 'st' (Steelhead)
+#' @param species one of 'fr' (Fall Run), 'lfr' (Late Fall Run), 'sr' (Spring Run), or 'st' (Steelhead)
 #' @param flow a flow value in cubic feet per second
 #' @examples
 #' # floodplain habitat value in square meters for Fall Run in the American River
@@ -72,7 +72,8 @@ floodplain_approx <- function(watershed, species) {
   switch(species,
          'fr' = approxfun(df$flow_cfs, df$FR_floodplain_acres, yleft = 0, yright = max(df$FR_floodplain_acres)),
          'sr' = approxfun(df$flow_cfs, df$SR_floodplain_acres, yleft = 0, yright = max(df$SR_floodplain_acres)),
-         'st' = approxfun(df$flow_cfs, df$ST_floodplain_acres, yleft = 0, yright = max(df$ST_floodplain_acres)))
+         'st' = approxfun(df$flow_cfs, df$ST_floodplain_acres, yleft = 0, yright = max(df$ST_floodplain_acres)),
+         'lfr' = approxfun(df$flow_cfs, df$LFR_floodplain_acres, yleft = 0, yright = max(df$LFR_floodplain_acres))) 
 
 }
 

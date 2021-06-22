@@ -24,6 +24,11 @@ test_that("modeling of species coverage hasn't changed - Upper-mid Sac", {
   expect_equal(modeling$ST_juv, FALSE)
   expect_equal(modeling$ST_floodplain, FALSE)
   expect_equal(modeling$ST_adult, FALSE)
+  
+  expect_equal(is.na(modeling$LFR_spawn), TRUE)
+  expect_equal(modeling$LFR_fry, FALSE)
+  expect_equal(modeling$LFR_juv, FALSE)
+  expect_equal(modeling$LFR_floodplain, FALSE)
 })
 
 test_that('FR juv Upper-mid Sac River works', {
@@ -48,4 +53,22 @@ test_that('FR floodplain Upper-mid Sac River works', {
     set_floodplain_habitat('Upper-mid Sacramento River', 'fr', flow),
     floodplain,
     tolerance = .01)
+})
+
+# Late fall run ----
+test_that('LFR instream Upper-mid Sac River works', {
+  
+  flow1 <- DSMhabitat::upper_mid_sacramento_river_instream$flow_cfs[1]
+  
+  expect_equal(
+    set_instream_habitat(watershed = 'Upper-mid Sacramento River',
+                         species = 'lfr', life_stage = 'juv',
+                         flow = flow1),
+    DSMhabitat::upper_mid_sacramento_river_instream$rearing_sq_meters[1])
+  expect_equal(
+    set_instream_habitat(watershed = 'Upper-mid Sacramento River',
+                         species = 'lfr', life_stage = 'fry',
+                         flow = flow1),
+    DSMhabitat::upper_mid_sacramento_river_instream$rearing_sq_meters[1])
+  
 })

@@ -9,7 +9,7 @@ set_floodplain_habitat(watershed, species, flow, flow2 = NULL)
 \arguments{
 \item{watershed}{a watershed defined for the SIT model}
 
-\item{species}{one of 'fr' (Fall Run), 'sr' (Spring Run), or 'st' (Steelhead)}
+\item{species}{one of 'fr' (Fall Run), 'lfr' (Late Fall Run), 'sr' (Spring Run), or 'st' (Steelhead)}
 
 \item{flow}{a flow value in cubic feet per second}
 }

@@ -9,7 +9,7 @@ set_spawning_habitat(watershed, species, flow, ...)
 \arguments{
 \item{watershed}{one of the watersheds defined for the SIT model}
 
-\item{species}{one of 'fr' (Fall Run), 'sr' (Spring Run), or 'st' (Steelhead)}
+\item{species}{one of 'fr' (Fall Run), 'sr' (Spring Run), 'lfr' (Late Fall Run), or 'st' (Steelhead)}
 
 \item{flow}{a flow value in cubic feet per second used to determine habitat area}
 }

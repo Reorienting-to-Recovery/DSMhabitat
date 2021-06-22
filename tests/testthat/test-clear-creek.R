@@ -146,3 +146,49 @@ test_that('SR floodplain Clear Creek works', {
     floodplain,
     tolerance = .01)
 })
+# LRF ----
+
+test_that('LFR instream Clear Creek works', {
+  
+  fry_index <- 6
+  juv_index <- 6
+  spawn_index <- 6
+  
+  fry_wua <- DSMhabitat::clear_creek_instream$FR_fry_wua[fry_index]
+  juv_wua <- DSMhabitat::clear_creek_instream$FR_juv_wua[juv_index]
+  spawn_wua <- DSMhabitat::clear_creek_instream$FR_spawn_wua[spawn_index]
+  
+  rearing_stream_length <- subset(DSMhabitat::watershed_lengths,
+                                  watershed == 'Clear Creek' & lifestage == 'rearing'
+                                  & species == 'lfr')$feet
+  spawning_stream_length <- subset(DSMhabitat::watershed_lengths,
+                                   watershed == 'Clear Creek' & lifestage == 'spawning'
+                                   & species == 'lfr')$feet
+  
+  fry_m2 <- (((rearing_stream_length/1000) * fry_wua)/10.7639)
+  juv_m2 <- (((rearing_stream_length/1000) * juv_wua)/10.7639)
+  spawn_m2 <- (((spawning_stream_length/1000) * spawn_wua)/10.7639)
+  
+  fry_flow <- DSMhabitat::clear_creek_instream$flow_cfs[fry_index]
+  juv_flow <- DSMhabitat::clear_creek_instream$flow_cfs[juv_index]
+  spawn_flow <- DSMhabitat::clear_creek_instream$flow_cfs[spawn_index]
+  
+  expect_equal(
+    set_instream_habitat('Clear Creek', 'lfr', 'fry', fry_flow), fry_m2)
+  expect_equal(
+    set_instream_habitat('Clear Creek', 'lfr', 'juv', juv_flow), juv_m2)
+  expect_equal(
+    set_spawning_habitat('Clear Creek', 'lfr', spawn_flow), spawn_m2)
+})
+
+test_that('LFR floodplain Clear Creek works', {
+  first_flood_index <-  which(DSMhabitat::clear_creek_floodplain$LFR_floodplain_acres > 0)[1]
+  
+  flow <- DSMhabitat::clear_creek_floodplain$flow_cfs[first_flood_index]
+  floodplain <- subset(DSMhabitat::clear_creek_floodplain,flow_cfs == flow)$LFR_floodplain_acres
+  
+  expect_equal(
+    square_meters_to_acres(set_floodplain_habitat('Clear Creek', 'lfr', flow)),
+    floodplain,
+    tolerance = .01)
+})
