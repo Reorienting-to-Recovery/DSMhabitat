@@ -5,8 +5,7 @@ library(lubridate)
 library(DSMhabitat)
 
 watersheds <- DSMhabitat::watershed_metadata$watershed[-32]
-year_range_1 <- 1980:2000
-year_range_2 <- 1980:1999
+
 #' Generate SIT Model Compatible Array
 #' @description transforms to array data structure for SIT model input
 #' @name create_Sit_array
@@ -33,7 +32,7 @@ get_flow <- function(watershed, years = c(1980, 1999)) {
                             lubridate::year(date) <= years[2]), 2)
 }
 
-get_rear_hab_all <- function(watersheds, species, life_stage, years = year_range_2) {
+get_rear_hab_all <- function(watersheds, species, life_stage, years = 1980:1999) {
   total_obs <- 12 * length(years)
   most <- map_df(watersheds, function(watershed) {
     flows <- get_flow(watershed, range(years))
@@ -77,13 +76,12 @@ get_rear_hab_all <- function(watersheds, species, life_stage, years = year_range
     left_join(select(DSMhabitat::watershed_metadata, order, watershed)) %>%
     arrange(order) %>%
     select(-watershed, -order) %>%
-    replace(., is.na(.), 0) %>%
     create_SIT_array()
   
   return(hab)
 }
 
-get_spawn_hab_all <- function(watersheds, species, years = 1979:1999) {
+get_spawn_hab_all <- function(watersheds, species, years = 1979:2000) {
   total_obs <- 12 * length(years)
   most <- map_df(watersheds, function(watershed) {
     flows <- get_flow(watershed, years=range(years))
@@ -128,14 +126,13 @@ get_spawn_hab_all <- function(watersheds, species, years = 1979:1999) {
     left_join(select(DSMhabitat::watershed_metadata, watershed, order)) %>%
     arrange(order) %>%
     select(-watershed, -order) %>%
-    replace(., is.na(.), 0) %>%
     create_SIT_array()
   
   
   return(hab)
 }
 
-get_floodplain_hab_all <- function(watersheds, species, years = year_range_2) {
+get_floodplain_hab_all <- function(watersheds, species, years = 1980:1999) {
   total_obs <- 12 * length(years)
   most <- map_df(watersheds, function(watershed) {
     flows <- get_flow(watershed, range(years))
@@ -182,7 +179,6 @@ get_floodplain_hab_all <- function(watersheds, species, years = year_range_2) {
     left_join(select(DSMhabitat::watershed_metadata, watershed, order)) %>%
     arrange(order) %>%
     select(-watershed, -order) %>%
-    replace(., is.na(.), 0) %>%
     create_SIT_array()
   
   
@@ -196,32 +192,36 @@ spawning_watersheds <- DSMhabitat::watershed_metadata %>%
          spawn) %>%
   pull(watershed)
 
-fr_spawn <- get_spawn_hab_all(spawning_watersheds, 'fr', 1979:2000)
+fr_spawn <- get_spawn_hab_all(spawning_watersheds, 'fr')
 dimnames(fr_spawn) <- list(watersheds, month.abb, 1979:2000)
+fr_spawn[which(is.na(fr_spawn))] <- 0
 usethis::use_data(fr_spawn, overwrite = TRUE)
 
 st_spawn <- get_spawn_hab_all(spawning_watersheds, 'st')
-dimnames(st_spawn) <- list(watersheds, month.abb, 1979:1999)
+dimnames(st_spawn) <- list(watersheds, month.abb, 1979:2000)
+st_spawn[which(is.na(st_spawn))] <- fr_spawn[which(is.na(st_spawn))]
 usethis::use_data(st_spawn, overwrite = TRUE)
 
-sr_spawn <- get_spawn_hab_all(spawning_watersheds, 'sr', years = 1979:2000)
-# several watershed that do not have spring run populations but SIT wants to enable colonization
-# NOTE: here i create new fr and st habs that include year 2000 in order to fill in for the sr
-fr_spawn_filler <- get_spawn_hab_all(spawning_watersheds, 'fr', year = 1979:2000)
-st_spawn_filler <- get_spawn_hab_all(spawning_watersheds, 'st', year = 1979:2000)
-
-sr_spawn[15, , ] <- st_spawn_filler[15, , ] # Thomes Creek
-sr_spawn[25, , ] <- fr_spawn_filler[25, , ] # Calaveras River
-sr_spawn[26, , ] <- fr_spawn_filler[26, , ] # Cosumnes River
-sr_spawn[28, , ] <- fr_spawn_filler[28, , ] # Merced River
-sr_spawn[is.na(sr_spawn)] <- 0
+sr_spawn <- get_spawn_hab_all(spawning_watersheds, 'sr')
+# Old stuff 
+# # several watershed that do not have spring run populations but SIT wants to enable colonization
+# # NOTE: here i create new fr and st habs that include year 2000 in order to fill in for the sr
+# fr_spawn_filler <- get_spawn_hab_all(spawning_watersheds, 'fr', year = 1979:2000)
+# st_spawn_filler <- get_spawn_hab_all(spawning_watersheds, 'st', year = 1979:2000)
+# 
+# sr_spawn[15, , ] <- st_spawn_filler[15, , ] # Thomes Creek
+# sr_spawn[25, , ] <- fr_spawn_filler[25, , ] # Calaveras River
+# sr_spawn[26, , ] <- fr_spawn_filler[26, , ] # Cosumnes River
+# sr_spawn[28, , ] <- fr_spawn_filler[28, , ] # Merced River
 dimnames(sr_spawn) <- list(watersheds, month.abb, 1979:2000)
+# Any location without sr we give the fall run amount of habitat for colonization 
+sr_spawn[which(is.na(sr_spawn))] <- fr_spawn[which(is.na(sr_spawn))]
 usethis::use_data(sr_spawn, overwrite = TRUE)
 
 # Winter Run 
-# only in sacramento and battle creek
+# only in Sacramento and battle creek
 # spawn just in Upper Sac
-wr_spawn <- DSMhabitat::fr_spawn # Set default values to fall run to allow for straying
+wr_spawn <- fr_spawn # Set default values to fall run to allow for straying
 up_sac_flows <- get_flow('Upper Sacramento River', years = c(1979, 2000))
 months <- rep(1:12, 22)
 up_sac_hab <- map2_dbl(months, up_sac_flows, function(month, flow) {
@@ -231,16 +231,15 @@ up_sac_hab <- map2_dbl(months, up_sac_flows, function(month, flow) {
 })
 
 battle_flows <- get_flow('Battle Creek', years = c(1979, 2000))
-months <- rep(1:12, 22)
-battle_hab <- map2_dbl(months, battle_flows, function(month, flow) {
+battle_hab <- map_dbl(battle_flows, function(flow) {
   DSMhabitat::set_spawning_habitat('Battle Creek',
                                    species = 'wr',
-                                   flow = flow, month = month)
+                                   flow = flow)
 })
 
 wr_spawn[1,,] <- up_sac_hab
 wr_spawn[3,,] <- battle_hab
-wr_spawn[is.na(wr_spawn)] <- 0
+wr_spawn[which(is.na(wr_spawn))] <- 0
 dimnames(wr_spawn) <- list(watersheds, month.abb, 1979:2000)
 usethis::use_data(wr_spawn, overwrite = TRUE)
 
@@ -248,7 +247,7 @@ usethis::use_data(wr_spawn, overwrite = TRUE)
 # Late Fall Run 
 # only in sacramento clear creek and battle creek
 # spawn just in Upper Sac
-lfr_spawn <- DSMhabitat::fr_spawn # Set default values to fall run to allow for straying
+lfr_spawn <- fr_spawn # Set default values to fall run to allow for straying
 up_sac_flows <- get_flow('Upper Sacramento River', years = c(1979, 2000))
 months <- rep(1:12, 22)
 up_sac_hab <- map2_dbl(months, up_sac_flows, function(month, flow) {
@@ -258,26 +257,23 @@ up_sac_hab <- map2_dbl(months, up_sac_flows, function(month, flow) {
 })
 
 battle_flows <- get_flow('Battle Creek', years = c(1979, 2000))
-months <- rep(1:12, 22)
-battle_hab <- map2_dbl(months, battle_flows, function(month, flow) {
+battle_hab <- map_dbl(battle_flows, function(flow) {
   DSMhabitat::set_spawning_habitat('Battle Creek',
                                    species = 'lfr',
-                                   flow = flow, month = month)
+                                   flow = flow)
 })
 
 clear_flows <- get_flow('Clear Creek', years = c(1979, 2000))
-months <- rep(1:12, 22)
-clear_hab <- map2_dbl(months, battle_flows, function(month, flow) {
+clear_hab <- map_dbl(battle_flows, function(flow) {
   DSMhabitat::set_spawning_habitat('Clear Creek',
                                    species = 'lfr',
-                                   flow = flow, month = month)
+                                   flow = flow)
 })
-
-lfr_spawn[1,,] <- up_sac_hab
-lfr_spawn[3,,] <- battle_hab
-lfr_spawn[7,,] <- clear_hab
-lfr_spawn[is.na(lfr_spawn)] <- 0
 dimnames(lfr_spawn) <- list(watersheds, month.abb, 1979:2000)
+lfr_spawn["Upper Sacramento River", , ] <- up_sac_hab
+lfr_spawn["Battle Creek", , ] <- battle_hab
+lfr_spawn["Clear Creek", , ] <- clear_hab
+lfr_spawn[which(is.na(lfr_spawn))] <- 0
 usethis::use_data(lfr_spawn, overwrite = TRUE)
 
 # rearing--------------------
@@ -288,36 +284,40 @@ watersheds_in_order <- DSMhabitat::watershed_metadata %>%
   pull(watershed)
 
 #fry------
-fr_fry <- get_rear_hab_all(watersheds_in_order, 'fr', 'fry', year_range_1)
-dimnames(fr_fry) <- list(watersheds, month.abb, year_range_1)
+fr_fry <- get_rear_hab_all(watersheds_in_order, 'fr', 'fry', 1980:2000)
+dimnames(fr_fry) <- list(watersheds, month.abb, 1980:2000)
+fr_fry[which(is.na(fr_fry))] <- 0
 usethis::use_data(fr_fry, overwrite = TRUE)
 
 st_fry <- get_rear_hab_all(watersheds_in_order, 'st', 'fry')
-dimnames(st_fry) <- list(watersheds, month.abb, year_range_2)
+dimnames(st_fry) <- list(watersheds, month.abb, 1980:1999)
+st_fry[which(is.na(st_fry))] <- fr_fry[which(is.na(st_fry))]
 usethis::use_data(st_fry, overwrite = TRUE)
 
-sr_fry <- get_rear_hab_all(watersheds_in_order, 'sr', 'fry', years = year_range_1)
+sr_fry <- get_rear_hab_all(watersheds_in_order, 'sr', 'fry', years = 1980:2000)
+# Old stuff
 # several watershed that do not have spring run populations but SIT wants to enable colonization
-fr_fry_filler <- get_rear_hab_all(watersheds_in_order, 'fr', 'fry', years = year_range_1)
-st_fry_filler <- get_rear_hab_all(watersheds_in_order, 'st', 'fry', years = year_range_1)
+# fr_fry_filler <- get_rear_hab_all(watersheds_in_order, 'fr', 'fry', years = 1980:2000)
+# st_fry_filler <- get_rear_hab_all(watersheds_in_order, 'st', 'fry', years = 1980:2000)
+# 
+# sr_fry[15, , ] <- st_fry_filler[15, , ] # Thomes Creek
+# sr_fry[25, , ] <- fr_fry_filler[25, , ] # Calaveras River
+# sr_fry[26, , ] <- fr_fry_filler[26, , ] # Cosumnes River
+# sr_fry[28, , ] <- fr_fry_filler[28, , ] # Merced River
 
-sr_fry[15, , ] <- st_fry_filler[15, , ] # Thomes Creek
-sr_fry[25, , ] <- fr_fry_filler[25, , ] # Calaveras River
-sr_fry[26, , ] <- fr_fry_filler[26, , ] # Cosumnes River
-sr_fry[28, , ] <- fr_fry_filler[28, , ] # Merced River
-
-dimnames(sr_fry) <- list(watersheds, month.abb, year_range_1)
+dimnames(sr_fry) <- list(watersheds, month.abb, 1980:2000)
+sr_fry[which(is.na(sr_fry))] <- fr_fry[which(is.na(sr_fry))]
 usethis::use_data(sr_fry, overwrite = TRUE)
 
 # winter run 
 # fry and juv
-wr_fry <- DSMhabitat::fr_fry # Set default values to fall run to allow for straying
-wr_fry[1, , ] <- DSMhabitat::set_instream_habitat('Upper Sacramento River',
+wr_fry <- fr_fry # Set default values to fall run to allow for straying
+wr_fry["Upper Sacramento River", , ] <- DSMhabitat::set_instream_habitat('Upper Sacramento River',
                                                   species = 'wr',
                                                   life_stage = 'fry',
                                                   flow = get_flow('Upper Sacramento River',
                                                                   years = c(1980, 2000)))
-wr_fry[16, , ] <- DSMhabitat::set_instream_habitat('Upper-mid Sacramento River',
+wr_fry['Upper-mid Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Upper-mid Sacramento River',
                                                    species = 'wr',
                                                    life_stage = 'fry',
                                                    flow = get_flow('Upper-mid Sacramento River',
@@ -335,35 +335,33 @@ low_mid_sac_hab <- map2_dbl(low_mid_sac_flow1, low_mid_sac_flow2, function(flow,
 })
 
 
-wr_fry[21, , ] <- low_mid_sac_hab
+wr_fry['Lower-mid Sacramento River', , ] <- low_mid_sac_hab
 
-wr_fry[24, , ] <- DSMhabitat::set_instream_habitat('Lower Sacramento River',
+wr_fry['Lower Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Lower Sacramento River',
                                                    species = 'wr',
                                                    life_stage = 'fry',
                                                    flow = get_flow('Lower Sacramento River',
                                                                    years = c(1980, 2000)))
 
 
-wr_fry[3, , ] <- DSMhabitat::set_instream_habitat('Battle Creek',
+wr_fry['Battle Creek', , ] <- DSMhabitat::set_instream_habitat('Battle Creek',
                                                   species = 'wr',
                                                   life_stage = 'fry',
                                                   flow = get_flow('Battle Creek',
                                                                   years = c(1980, 2000)))
 
 
-wr_fry[is.na(wr_fry)] <- 0
-
-dimnames(wr_fry) <- list(watersheds, month.abb, year_range_1)
+wr_fry[which(is.na(wr_fry))] <- 0
 usethis::use_data(wr_fry, overwrite = TRUE)
 
 # Late fall run fry 
-lfr_fry <- DSMhabitat::fr_fry # Set default values to fall run to allow for straying
-lfr_fry[1, , ] <- DSMhabitat::set_instream_habitat('Upper Sacramento River',
+lfr_fry <- fr_fry # Set default values to fall run to allow for straying
+lfr_fry['Upper Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Upper Sacramento River',
                                                   species = 'lfr',
                                                   life_stage = 'fry',
                                                   flow = get_flow('Upper Sacramento River',
                                                                   years = c(1980, 2000)))
-lfr_fry[16, , ] <- DSMhabitat::set_instream_habitat('Upper-mid Sacramento River',
+lfr_fry['Upper-mid Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Upper-mid Sacramento River',
                                                    species = 'lfr',
                                                    life_stage = 'fry',
                                                    flow = get_flow('Upper-mid Sacramento River',
@@ -379,59 +377,63 @@ low_mid_sac_hab <- map2_dbl(low_mid_sac_flow1, low_mid_sac_flow2, function(flow,
                                    life_stage = 'fry',
                                    flow = flow, flow2 = flow2)
 })
-lfr_fry[21, , ] <- low_mid_sac_hab
+lfr_fry['Lower-mid Sacramento River', , ] <- low_mid_sac_hab
 
-lfr_fry[24, , ] <- DSMhabitat::set_instream_habitat('Lower Sacramento River',
+lfr_fry['Lower Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Lower Sacramento River',
                                                    species = 'lfr',
                                                    life_stage = 'fry',
                                                    flow = get_flow('Lower Sacramento River',
                                                                    years = c(1980, 2000)))
 
-lfr_fry[3, , ] <- DSMhabitat::set_instream_habitat('Battle Creek',
+lfr_fry['Battle Creek', , ] <- DSMhabitat::set_instream_habitat('Battle Creek',
                                                   species = 'lfr',
                                                   life_stage = 'fry',
                                                   flow = get_flow('Battle Creek',
                                                                   years = c(1980, 2000)))
-lfr_fry[7, , ] <- DSMhabitat::set_instream_habitat('Clear Creek',
+lfr_fry['Clear Creek', , ] <- DSMhabitat::set_instream_habitat('Clear Creek',
                                                    species = 'lfr',
                                                    life_stage = 'fry',
                                                    flow = get_flow('Clear Creek',
                                                                    years = c(1980, 2000)))
-lfr_fry[is.na(lfr_fry)] <- 0
+lfr_fry[which(is.na(lfr_fry))] <- 0
 
-dimnames(lfr_fry) <- list(watersheds, month.abb, year_range_1)
+dimnames(lfr_fry) <- list(watersheds, month.abb, 1980:2000)
 usethis::use_data(lfr_fry, overwrite = TRUE)
 
 #juvenile------
-fr_juv <- get_rear_hab_all(watersheds_in_order, 'fr', 'juv', year_range_1)
-dimnames(fr_juv) <- list(watersheds, month.abb, year_range_1)
+fr_juv <- get_rear_hab_all(watersheds_in_order, 'fr', 'juv', 1980:2000)
+dimnames(fr_juv) <- list(watersheds, month.abb, 1980:2000)
+fr_juv[which(is.na(fr_juv))] <- 0
 usethis::use_data(fr_juv, overwrite = TRUE)
 
 st_juv <- get_rear_hab_all(watersheds_in_order, 'st', 'juv')
-dimnames(st_juv) <- list(watersheds, month.abb, year_range_2)
+dimnames(st_juv) <- list(watersheds, month.abb, 1980:1999)
+st_juv[which(is.na(st_juv))] <- fr_juv[which(is.na(st_juv))]
 usethis::use_data(st_juv, overwrite = TRUE)
 
-sr_juv <- get_rear_hab_all(watersheds_in_order, 'sr', 'juv', years = year_range_1)
+sr_juv <- get_rear_hab_all(watersheds_in_order, 'sr', 'juv', years = 1980:2000)
+# old stuff
 # several watershed that do not have spring run populations but SIT wants to enable colonization
-fr_juv_filler <- get_rear_hab_all(watersheds_in_order, 'fr', 'juv', years = year_range_1)
-st_juv_filler <- get_rear_hab_all(watersheds_in_order, 'st', 'juv', years = year_range_1)
+# fr_juv_filler <- get_rear_hab_all(watersheds_in_order, 'fr', 'juv', years = 1980:2000)
+# st_juv_filler <- get_rear_hab_all(watersheds_in_order, 'st', 'juv', years = 1980:2000)
+# 
+# sr_juv[15, , ] <- st_juv_filler[15, , ] # Thomes Creek
+# sr_juv[25, , ] <- fr_juv_filler[25, , ] # Calaveras River
+# sr_juv[26, , ] <- fr_juv_filler[26, , ] # Cosumnes River
+# sr_juv[28, , ] <- fr_juv_filler[28, , ] # Merced River
 
-sr_juv[15, , ] <- st_juv_filler[15, , ] # Thomes Creek
-sr_juv[25, , ] <- fr_juv_filler[25, , ] # Calaveras River
-sr_juv[26, , ] <- fr_juv_filler[26, , ] # Cosumnes River
-sr_juv[28, , ] <- fr_juv_filler[28, , ] # Merced River
-
-dimnames(sr_juv) <- list(watersheds, month.abb, year_range_1)
+dimnames(sr_juv) <- list(watersheds, month.abb, 1980:2000)
+sr_juv[which(is.na(sr_juv))] <- fr_juv[which(is.na(sr_juv))]
 usethis::use_data(sr_juv, overwrite = TRUE)
 
 # winter run
-wr_juv <- DSMhabitat::fr_juv # Set default values to fall run to allow for straying
-wr_juv[1, , ] <- DSMhabitat::set_instream_habitat('Upper Sacramento River',
+wr_juv <- fr_juv # Set default values to fall run to allow for straying
+wr_juv['Upper Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Upper Sacramento River',
                                                   species = 'wr',
                                                   life_stage = 'juv',
                                                   flow = get_flow('Upper Sacramento River',
                                                                   years = c(1980, 2000)))
-wr_juv[16, , ] <- DSMhabitat::set_instream_habitat('Upper-mid Sacramento River',
+wr_juv['Upper-mid Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Upper-mid Sacramento River',
                                                    species = 'wr',
                                                    life_stage = 'juv',
                                                    flow = get_flow('Upper-mid Sacramento River',
@@ -449,31 +451,31 @@ low_mid_sac_hab <- map2_dbl(low_mid_sac_flow1, low_mid_sac_flow2, function(flow,
 })
 
 
-wr_juv[21, , ] <- low_mid_sac_hab
+wr_juv['Lower-mid Sacramento River', , ] <- low_mid_sac_hab
 
-wr_juv[24, , ] <- DSMhabitat::set_instream_habitat('Lower Sacramento River',
+wr_juv['Lower Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Lower Sacramento River',
                                                  species = 'wr',
                                                  life_stage = 'juv',
                                                  flow = get_flow('Lower Sacramento River',
                                                                  years = c(1980, 2000)))
 
-wr_juv[3, , ] <- DSMhabitat::set_instream_habitat('Battle Creek',
+wr_juv['Battle Creek', , ] <- DSMhabitat::set_instream_habitat('Battle Creek',
                                                 species = 'wr',
                                                 life_stage = 'juv',
                                                 flow = get_flow('Battle Creek',
                                                                 years = c(1980, 2000)))
 
-dimnames(wr_juv) <- list(watersheds, month.abb, year_range_1)
+dimnames(wr_juv) <- list(watersheds, month.abb, 1980:2000)
 usethis::use_data(wr_juv, overwrite = TRUE)
 
 # Late fall Run juvenile 
-lfr_juv <- DSMhabitat::fr_fry # Set default values to fall run to allow for straying
-lfr_juv[1, , ] <- DSMhabitat::set_instream_habitat('Upper Sacramento River',
+lfr_juv <- fr_fry # Set default values to fall run to allow for straying
+lfr_juv['Upper Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Upper Sacramento River',
                                                   species = 'lfr',
                                                   life_stage = 'juv',
                                                   flow = get_flow('Upper Sacramento River',
                                                                   years = c(1980, 2000)))
-lfr_juv[16, , ] <- DSMhabitat::set_instream_habitat('Upper-mid Sacramento River',
+lfr_juv['Upper-mid Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Upper-mid Sacramento River',
                                                    species = 'lfr',
                                                    life_stage = 'juv',
                                                    flow = get_flow('Upper-mid Sacramento River',
@@ -491,26 +493,26 @@ low_mid_sac_hab <- map2_dbl(low_mid_sac_flow1, low_mid_sac_flow2, function(flow,
 })
 
 
-lfr_juv[21, , ] <- low_mid_sac_hab
+lfr_juv['Lower-mid Sacramento River', , ] <- low_mid_sac_hab
 
-lfr_juv[24, , ] <- DSMhabitat::set_instream_habitat('Lower Sacramento River',
+lfr_juv['Lower Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Lower Sacramento River',
                                                    species = 'lfr',
                                                    life_stage = 'juv',
                                                    flow = get_flow('Lower Sacramento River',
                                                                    years = c(1980, 2000)))
 
-lfr_juv[3, , ] <- DSMhabitat::set_instream_habitat('Battle Creek',
+lfr_juv['Battle Creek', , ] <- DSMhabitat::set_instream_habitat('Battle Creek',
                                                   species = 'lfr',
                                                   life_stage = 'juv',
                                                   flow = get_flow('Battle Creek',
                                                                   years = c(1980, 2000)))
-lfr_juv[7, , ] <- DSMhabitat::set_instream_habitat('Clear Creek',
+lfr_juv['Clear Creek', , ] <- DSMhabitat::set_instream_habitat('Clear Creek',
                                                    species = 'lfr',
                                                    life_stage = 'juv',
                                                    flow = get_flow('Clear Creek',
                                                                    years = c(1980, 2000)))
 
-dimnames(lfr_juv) <- list(watersheds, month.abb, year_range_1)
+dimnames(lfr_juv) <- list(watersheds, month.abb, 1980:2000)
 usethis::use_data(lfr_juv, overwrite = TRUE)
 
 # floodplain------------------------
@@ -521,34 +523,38 @@ watersheds_fp <- DSMhabitat::watershed_metadata %>%
                              'Upper Mid Sac Region'))) %>%
   pull(watershed)
 
-fr_fp <- get_floodplain_hab_all(watersheds_fp, 'fr', year_range_1)
-dimnames(fr_fp) <- list(watersheds, month.abb, year_range_1)
+fr_fp <- get_floodplain_hab_all(watersheds_fp, 'fr', 1980:2000)
+dimnames(fr_fp) <- list(watersheds, month.abb, 1980:2000)
+fr_fp[which(is.na(fr_fp))] <- 0
 usethis::use_data(fr_fp, overwrite = TRUE)
 
 st_fp <- get_floodplain_hab_all(watersheds_fp, 'st')
-dimnames(st_fp) <- list(watersheds, month.abb, year_range_2)
+dimnames(st_fp) <- list(watersheds, month.abb, 1980:1999)
+st_fp[which(is.na(st_fp))] <- fr_fp[which(is.na(st_fp))]
 usethis::use_data(st_fp, overwrite = TRUE)
 
-sr_fp <- get_floodplain_hab_all(watersheds_fp, 'sr', years = year_range_1)
+sr_fp <- get_floodplain_hab_all(watersheds_fp, 'sr', years = 1980:2000)
+# Old stuff
 # several watershed that do not have spring run populations but SIT wants to enable colonization
-fr_fp_filler <- get_floodplain_hab_all(watersheds_fp, 'fr', years = year_range_1)
-st_fp_filler <- get_floodplain_hab_all(watersheds_fp, 'st', years = year_range_1)
-
-sr_fp[15, , ] <- st_fp_filler[15, , ] # Thomes Creek
-sr_fp[25, , ] <- fr_fp_filler[25, , ] # Calaveras River
-sr_fp[26, , ] <- fr_fp_filler[26, , ] # Cosumnes River
-sr_fp[28, , ] <- fr_fp_filler[28, , ] # Merced River
-dimnames(sr_fp) <- list(watersheds, month.abb, year_range_1)
+# fr_fp_filler <- get_floodplain_hab_all(watersheds_fp, 'fr', years = 1980:2000)
+# st_fp_filler <- get_floodplain_hab_all(watersheds_fp, 'st', years = 1980:2000)
+# 
+# sr_fp[15, , ] <- st_fp_filler[15, , ] # Thomes Creek
+# sr_fp[25, , ] <- fr_fp_filler[25, , ] # Calaveras River
+# sr_fp[26, , ] <- fr_fp_filler[26, , ] # Cosumnes River
+# sr_fp[28, , ] <- fr_fp_filler[28, , ] # Merced River
+dimnames(sr_fp) <- list(watersheds, month.abb, 1980:2000)
+sr_fp[which(is.na(sr_fp))] <- fr_fp[which(is.na(sr_fp))]
 usethis::use_data(sr_fp, overwrite = TRUE)
 
-wr_fp <- DSMhabitat::fr_fp # Set default values to fall run to allow for straying
-wr_fp[1,,] <- DSMhabitat::set_floodplain_habitat('Upper Sacramento River', 'wr',
+wr_fp <- fr_fp # Set default values to fall run to allow for straying
+wr_fp['Upper Sacramento River', , ] <- DSMhabitat::set_floodplain_habitat('Upper Sacramento River', 'wr',
                                                  get_flow('Upper Sacramento River',
                                                           years = c(1980, 2000)))
-wr_fp[16,,] <- DSMhabitat::set_floodplain_habitat('Upper-mid Sacramento River', 'wr',
+wr_fp['Upper-mid Sacramento River', , ] <- DSMhabitat::set_floodplain_habitat('Upper-mid Sacramento River', 'wr',
                                                   get_flow('Upper-mid Sacramento River',
                                                            years = c(1980, 2000)))
-wr_fp[24,,] <- DSMhabitat::set_floodplain_habitat('Lower Sacramento River', 'wr',
+wr_fp['Lower Sacramento River', , ] <- DSMhabitat::set_floodplain_habitat('Lower Sacramento River', 'wr',
                                                   get_flow('Lower Sacramento River',
                                                            years = c(1980, 2000)))
 
@@ -558,19 +564,19 @@ low_mid_sac_flows2 <- get_flow("Lower-mid Sacramento River2", years = c(1980, 20
 low_mid_sac_fp <- DSMhabitat::set_floodplain_habitat('Lower-mid Sacramento River', 'wr',
                                                      low_mid_sac_flows1, flow2 = low_mid_sac_flows2)
 
-wr_fp[21,,] <- low_mid_sac_fp
-dimnames(wr_fp) <- list(watersheds, month.abb, year_range_1)
+wr_fp['Lower-mid Sacramento River',,] <- low_mid_sac_fp
+dimnames(wr_fp) <- list(watersheds, month.abb, 1980:2000)
 usethis::use_data(wr_fp, overwrite = TRUE)
 
 # Late fall run floodplain 
-lfr_fp <- DSMhabitat::fr_fp # Set default values to fall run to allow for straying
-lfr_fp[1,,] <- DSMhabitat::set_floodplain_habitat('Upper Sacramento River', 'lfr',
+lfr_fp <- fr_fp # Set default values to fall run to allow for straying
+lfr_fp['Upper Sacramento River',,] <- DSMhabitat::set_floodplain_habitat('Upper Sacramento River', 'lfr',
                                                  get_flow('Upper Sacramento River',
                                                           years = c(1980, 2000)))
-lfr_fp[16,,] <- DSMhabitat::set_floodplain_habitat('Upper-mid Sacramento River', 'lfr',
+lfr_fp['Upper-mid Sacramento River',,] <- DSMhabitat::set_floodplain_habitat('Upper-mid Sacramento River', 'lfr',
                                                   get_flow('Upper-mid Sacramento River',
                                                            years = c(1980, 2000)))
-lfr_fp[24,,] <- DSMhabitat::set_floodplain_habitat('Lower Sacramento River', 'lfr',
+lfr_fp['Lower Sacramento River',,] <- DSMhabitat::set_floodplain_habitat('Lower Sacramento River', 'lfr',
                                                   get_flow('Lower Sacramento River',
                                                            years = c(1980, 2000)))
 
@@ -580,11 +586,11 @@ low_mid_sac_flows2 <- get_flow("Lower-mid Sacramento River2", years = c(1980, 20
 low_mid_sac_fp <- DSMhabitat::set_floodplain_habitat('Lower-mid Sacramento River', 'lfr',
                                                      low_mid_sac_flows1, flow2 = low_mid_sac_flows2)
 
-lfr_fp[21,,] <- low_mid_sac_fp
-dimnames(lfr_fp) <- list(watersheds, month.abb, year_range_1)
+lfr_fp['Lower-mid Sacramento River',,] <- low_mid_sac_fp
+dimnames(lfr_fp) <- list(watersheds, month.abb, 1980:2000)
 usethis::use_data(lfr_fp, overwrite = TRUE)
-# bypass in stream ----------------
 
+# bypass in stream ----------------
 bpf <- DSMflow::bypass_flows %>%
   filter(between(year(date), 1980, 2000))
 
@@ -633,7 +639,7 @@ for (i in 1:31) {
   weeks_flooded[i,,] <- matrix(flooded_weeks, ncol = 12)
 }
 
-dimnames(weeks_flooded) <- list(watersheds, month.abb, year_range_1)
+dimnames(weeks_flooded) <- list(watersheds, month.abb, 1980:2000)
 
 usethis::use_data(weeks_flooded, overwrite = TRUE)
 
@@ -643,7 +649,7 @@ delta_rearing_habitat_filtered <- delta_rearing_habitat %>%
   filter(year(date) < 2001)
 delta_habitat[ , , 1] <- matrix(delta_rearing_habitat_filtered$`North Delta`, ncol = 21)
 delta_habitat[ , , 2] <- matrix(delta_rearing_habitat_filtered$`South Delta`, ncol = 21)
-dimnames(delta_habitat) <- list(month.abb, year_range_1, c("North Delta", "South Delta"))
+dimnames(delta_habitat) <- list(month.abb, 1980:2000, c("North Delta", "South Delta"))
 usethis::use_data(delta_habitat, overwrite = TRUE)
 
 tisdale_bypass_watershed <- c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 
