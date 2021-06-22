@@ -2,7 +2,7 @@ library(tidyverse)
 library(readxl)
 library(glue)
 
-# TODO check that metadata sheet is up to date
+# TODO make sure to merge updates to deer creek model and cow creek lengths
 metadata <- read_excel('data-raw/watershed/CVPIA_FloodplainAreas.xlsx', sheet = 'MetaData',
                        col_types = c('text', 'text', 'text', 'text',
                                      rep('numeric', 22), 'text', 'numeric', 'text'), na = 'na')
@@ -174,7 +174,7 @@ print_model_details <- function(ws, species) {
     high_grad <- round(watershed_doc_vars$FR_high_gradient_length_mi, 1)
     modeled_length <- round(watershed_doc_vars$FR_length_modeled_mi, 1)
   }
-  # TODO once late fall run is added to spreadsheet replace fr values with lfr
+  
   if (species == 'lfr') {
     rearing_length <- round(watershed_doc_vars$LFR_rearing_length_mi, 1)
     channel_area_modeled <- watershed_doc_vars$LFR_channel_area_of_length_modeled_acres
