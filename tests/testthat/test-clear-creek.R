@@ -181,3 +181,14 @@ test_that('LFR instream Clear Creek works', {
     set_spawning_habitat('Clear Creek', 'lfr', spawn_flow), spawn_m2)
 })
 
+test_that('LFR floodplain Clear Creek works', {
+  first_flood_index <-  which(DSMhabitat::clear_creek_floodplain$LFR_floodplain_acres > 0)[1]
+  
+  flow <- DSMhabitat::clear_creek_floodplain$flow_cfs[first_flood_index]
+  floodplain <- subset(DSMhabitat::clear_creek_floodplain,flow_cfs == flow)$LFR_floodplain_acres
+  
+  expect_equal(
+    square_meters_to_acres(set_floodplain_habitat('Clear Creek', 'lfr', flow)),
+    floodplain,
+    tolerance = .01)
+})
