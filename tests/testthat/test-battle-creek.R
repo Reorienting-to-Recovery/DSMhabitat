@@ -220,15 +220,15 @@ test_that('LFR instream Battle Creek works', {
 # late fall run  -----
 
 test_that('LFR floodplain Battle Creek works', {
+  first_flood_index <-  which(DSMhabitat::battle_creek_floodplain$LFR_floodplain_acres > 0)[1]
   
-  index <- which(!is.na(DSMhabitat::battle_creek_floodplain$LFR_floodplain_acres))[1]
-  
-  fp_value <- DSMhabitat::battle_creek_floodplain$LFR_floodplain_acres[index]
-  
-  flow_at_fp_value <- DSMhabitat::battle_creek_floodplain$flow_cfs[index]
+  flow <- DSMhabitat::battle_creek_floodplain$flow_cfs[first_flood_index]
+  floodplain <- subset(DSMhabitat::battle_creek_floodplain,flow_cfs == flow)$LFR_floodplain_acres
   
   expect_equal(
-    set_floodplain_habitat('Battle Creek', 'lfr', flow_at_fp_value), fp_value)
+    square_meters_to_acres(set_floodplain_habitat('Battle Creek', 'lfr', flow)),
+    floodplain,
+    tolerance = .01)
 })
 
 
