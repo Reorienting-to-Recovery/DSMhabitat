@@ -4,6 +4,10 @@ author: "[Sadie Gill](mailto:sgill@flowwest.com), [Mark Tompkins](mailto:mtompki
 date: "July 2020"
 output: html_document
 ---
+
+
+
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, out.width = '100%')
 knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
@@ -15,24 +19,143 @@ library(DSMhabitat)
 ```{r}
 source('data-raw/watershed/floodplain_utils.R')
 ```
-## Future Data Improvements
-Update with new Flowwest 2019 data. 
 
-## Instream Spawning and Rearing Habitat
-**Data Source:** [Calculated with a relationship between flow and mean weighted usable area from watersheds in the region with modeled habitat](http://cvpia-habitat-docs-markdown.s3-website-us-west-2.amazonaws.com/watershed/Regional_Approximation.html){target="_blank"}
+```{r}
+# the rearing lenghts need to scaled, based on the model length and the actual rearing
+# the sr spawning needs to be approximated using the regional method
 
-```{r, include=FALSE}
-source('data-raw/watershed/regional_approximation/description_regional_approx.R')
+hec_ras_modeling_extend <- 12 # miles
+deer_habitat_lens <- read_xlsx("data-raw/watershed/CVPIA_FloodplainAreas.xlsx") %>% 
+  filter(watershed == "Deer Creek")
+
+raw_data <- read_csv("data-raw/watershed/deer/data/existing-suitability-deer-creek-2021-03-24.csv")
+
+sr_scale <- (47.92-12)/12
+st_scale <- (47.92-12)/12
+
+# get all data in appropriate names
+deer_creek_habitat <- raw_data %>% 
+  filter(species %in% c("fall", "late-fall", "spring", "steelhead"), 
+         life_stage %in% c("adult", "juvenile", "spawning")) %>%
+  mutate(suitable_acres = ifelse(suitable_acres < 0, NA_real_, suitable_acres)) %>% 
+  transmute(
+    flow_cfs = flow, 
+    sqm = acres_to_square_meters(suitable_acres), 
+    suitable_acres,
+    species = case_when(
+      species == "fall" ~ "fr", 
+      species == "spring" ~ "sr", 
+      species == "late-fall" ~ "lfr", 
+      species == "steelhead" ~ "st", # double check
+      TRUE ~ NA_character_
+    ),
+    life_stage = case_when(
+      life_stage == "adult" ~ "adult", 
+      life_stage == "juvenile" ~ "juv", 
+      life_stage == "spawning" ~ "spawn"
+    ), 
+    habitat_type, 
+    watershed = "Deer Creek"
+  )
+
+# instream
+# we need to scale sr_juv and st_juv only
+# sr_spawn needs to be regional approximated
+deer_creek_instream <-
+  deer_creek_habitat %>% 
+  filter(habitat_type == "instream") %>% 
+  transmute(
+    flow_cfs, 
+    col_to_spread = sprintf("%s_%s_hsi", toupper(species), life_stage), 
+    sqm, 
+    watershed
+  ) %>% 
+    spread(col_to_spread, sqm) %>% 
+  transmute(
+    flow_cfs, 
+    FR_spawn_hsi, 
+    FR_juv_hsi,
+    LFR_spawn_hsi, 
+    LFR_juv_hsi,
+    SR_juv_hsi = (SR_juv_hsi + (sr_scale*SR_juv_hsi)*.1),
+    ST_juv_hsi = (ST_juv_hsi + (st_scale*ST_juv_hsi)*.1),
+    watershed
+  )
+
+usethis::use_data(deer_creek_instream, overwrite = TRUE)
+
+# floodplain
+deer_creek_floodplain <- 
+  deer_creek_habitat %>% 
+  filter(habitat_type == "floodplain", life_stage == "juv") %>% 
+  transmute(
+    flow_cfs, 
+    col_to_spread = sprintf("%s_floodplain_acres", toupper(species)), 
+    suitable_acres,
+    watershed
+  ) %>% 
+  spread(col_to_spread, suitable_acres) %>% 
+  relocate(watershed, .after = ST_floodplain_acres)
+
+# remove cols with all NA values
+deer_creek_floodplain <- 
+  deer_creek_floodplain[, colSums(is.na(deer_creek_floodplain)) != nrow(deer_creek_floodplain)]
+
+usethis::use_data(deer_creek_floodplain, overwrite = TRUE)
 ```
 
-`r print_regional_approx('Deer Creek')`
+## Instream Spawning and Rearing Habitat
+**Data Source:** [Calcuated using a flow to area relationship modeled using HEC-RAS (FlowWest 2021)](#){target="_blank"}
 
-```{r, include=FALSE}
-source('data-raw/watershed/floodplain_utils.R')
+### Spawning HSI 
+
+The following plot shows suitable habitat in square meters for Fall Run, Spring Run and 
+Late-Fall Run Chinook.
+
+```{r}
+deer_creek_instream %>% 
+  select(flow_cfs, FR_spawn_hsi, LFR_spawn_hsi, LFR_spawn_hsi) %>% 
+  gather(species, suitable_habitat, -flow_cfs) %>% 
+  mutate(
+    species = case_when(
+      species == "FR_spawn_hsi" ~ "Fall Run Chinook",
+      species == "LFR_spawn_hsi" ~ "Late-Fall Run Chinook",
+      species == "SR_spawn_hsi" ~ "Spring Run Chinook",
+      TRUE ~ NA_character_
+    )
+  ) %>% 
+  ggplot(aes(flow_cfs, suitable_habitat/4046.86, color = species)) + 
+  geom_line() + 
+  labs(x = 'Flow (cfs)', y = 'Suitable Habitat (acres)', color = NULL) + 
+  theme_minimal() + 
+  scale_color_brewer(palette = 'Dark2') +
+  theme(legend.justification = c(1, 0), legend.position = c(.97, .7))
+```
+
+### Rearing HSI 
+
+```{r}
+deer_creek_instream %>% 
+  select(flow_cfs, FR_juv_hsi, LFR_juv_hsi, ST_juv_hsi) %>% 
+  gather(species, suitable_habitat, -flow_cfs) %>% 
+  mutate(
+    species = case_when(
+      species == "FR_juv_hsi" ~ "Fall Run Chinook",
+      species == "LFR_juv_hsi" ~ "Late-Fall Run Chinook",
+      species == "ST_juv_hsi" ~ "Spring Run Chinook",
+      TRUE ~ NA_character_
+    )
+  ) %>% 
+  ggplot(aes(flow_cfs, suitable_habitat/4046.86, color = species)) + 
+  geom_line() + 
+  labs(x = 'Flow (cfs)', y = "Suitable Habitat (acres)", color = NULL) + 
+  theme_minimal() + 
+  scale_color_brewer(palette = 'Dark2') +
+  theme(legend.justification = c(1, 0), legend.position = c(.97, .7))
 ```
 
 ## Floodplain Rearing Habitat 
-**Data Source:** [Deer Creek Watershed Conservancy (DCWC) 1D HEC-RAS model](https://s3-us-west-2.amazonaws.com/cvpiahabitat-r-package/cvpia-sit-model-inputs/DRAFT+Deer+Creek+Hydraulic+Models+Tech+Memo+6-08-07.pdf){target="_blank"}
+**Data Source:** [Calcuated using a flow to area relationship modeled using HEC-RAS (FlowWest 2021)](#){target="_blank"}
 
 ### Fall Run
 `r print_model_details('Deer Creek', 'fr')`
@@ -41,18 +164,9 @@ source('data-raw/watershed/floodplain_utils.R')
 `r print_model_details('Deer Creek', 'sr')`
 
 ## Floodplain Data    
-The areas represent total inundated area in acres.    
+The areas represent total inundated area in acres.
+
 ```{r}
-deer_fp <- read_excel('data-raw/watershed/CVPIA_FloodplainAreas.xlsx', sheet = 'DeerCreek') %>%
-  mutate(watershed = 'Deer Creek')
-
-threshold_flow <- deer_fp %>% 
-  filter(modeled_floodplain_area_acres == 0) %>% 
-  summarise(max_flow = max(flow_cfs)) %>% 
-  pull(max_flow)
-
-deer_creek_floodplain <- scale_fp_flow_area_partial_model(ws = 'Deer Creek', df = filter(deer_fp, flow_cfs >= threshold_flow))
-
 knitr::kable(align = 'c', head(deer_creek_floodplain, 5), 
              caption = "Header Descriptions: flow_cfs = flow in cubic feet per second,
              FR_floodplain_acres = Fall Run Chinook floodplain acres, SR_floodplain_acres 
