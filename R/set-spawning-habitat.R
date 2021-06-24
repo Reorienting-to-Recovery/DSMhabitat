@@ -70,6 +70,8 @@ set_spawning_habitat <- function(watershed, species, flow, ...) {
       return(NA)
     }
   }
+  
+  quantification_mode <- subset(watershed_methods, watershed_name == watershed)$spawning
 
   if (watershed == 'Upper Sacramento River') {
     return(set_upper_sac_spawn_habitat(species, flow, ...))
@@ -78,6 +80,7 @@ set_spawning_habitat <- function(watershed, species, flow, ...) {
   if (DSMhabitat::watershed_metadata$use_mid_sac_spawn_proxy[DSMhabitat::watershed_metadata$watershed == watershed]) {
     w <- "Upper Mid Sac Region"
     s <- "fr"
+    quantification_mode <- "wua"
   } else {
     w <- watershed
     s <- species
@@ -87,16 +90,21 @@ set_spawning_habitat <- function(watershed, species, flow, ...) {
   watershed_rda_name <- paste(watershed_name, "instream", sep = "_")
   df <- as.data.frame(do.call(`::`, list(pkg = "DSMhabitat", name = watershed_rda_name)))
 
-  wua_selector <- get_wua_selector(names(df), s, "spawn")
-  df_na_rm <- df[!is.na(df[, wua_selector]), ]
+  hab_column <- get_habitat_selector(names(df), s, "spawn", mode = quantification_mode)
+  df_na_rm <- df[!is.na(df[, hab_column]), ]
   flows <- df_na_rm[ , "flow_cfs"]
-  wuas <- df_na_rm[ , wua_selector]
-  wua_func <- approxfun(flows, wuas , rule = 2)
+  habs <- df_na_rm[ , hab_column]
+  hab_func <- approxfun(flows, habs , rule = 2)
 
 
-  wua <- wua_func(flow)
-  habitat_area <- wua_to_area(wua = wua, watershed = watershed,
-                              life_stage = "spawning", species_name = species)
+  if (quantification_mode == "wua") {
+    wua <- hab_func(flow)
+    habitat_area <- wua_to_area(wua = wua, watershed = watershed,
+                                life_stage = "spawning", species_name = species)
+    
+  } else if (quantification_mode == "hsi") {
+    habitat_area <- hab_func(flows)
+  }
 
   return(habitat_area)
 
