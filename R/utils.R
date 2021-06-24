@@ -22,7 +22,7 @@ wua_to_area <- function(wua, watershed_name,  life_stage, species_name) {
   ((stream_length/1000) * wua)/10.7639
 }
 
-#' Get WUA Selector
+#' Get Habitat Selector
 #' @description Habitat Modeling Column Lookup
 #' @details Habitat modeling column lookup by species and lifestage. If desired
 #' combination of species and lifestage is not present in modeling data table for a watershed,
@@ -30,8 +30,9 @@ wua_to_area <- function(wua, watershed_name,  life_stage, species_name) {
 #' @param species_wuas vector of column names within modeling data table for the targeted watershed
 #' @param species target species: "fr" for fall run, "lfr" for late fall run, "sr" for spring run, and "st" for steelhead
 #' @param life_stage "spawn", fry", "juv", or "adult"
+#' @param mode one of "wua" or "hsi"
 #' @return column name of desired habitat relationship
-get_wua_selector <- function(species_wuas, species, life_stage, mode = "wua") {
+get_habitat_selector <- function(species_wuas, species, life_stage, mode = "wua") {
 
   species_lifestage <- paste(toupper(species), life_stage, sep = "_")
 
