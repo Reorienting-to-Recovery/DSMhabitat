@@ -109,7 +109,7 @@ usethis::use_data(deer_creek_floodplain, overwrite = TRUE)
 ```
 
 ## Instream Spawning and Rearing Habitat
-**Data Source:** [Calcuated using a flow to area relationship modeled using HEC-RAS (FlowWest 2021)](#){target="_blank"}
+**Data Source:** [Calcuated using a flow to area relationship modeled using HEC-RAS (FlowWest 2021)](https://cvpiahabitat-r-package.s3.us-west-2.amazonaws.com/cvpia-sit-model-inputs/DeerCreek_2Dmodel_FlowWest_Final.pdf){target="_blank"}
 
 ### Spawning HSI 
 
@@ -160,13 +160,7 @@ deer_creek_instream %>%
 ```
 
 ## Floodplain Rearing Habitat 
-**Data Source:** [Calcuated using a flow to area relationship modeled using HEC-RAS (FlowWest 2021)](#){target="_blank"}
-
-### Fall Run
-`r print_model_details('Deer Creek', 'fr')`
-
-### Spring Run and Steelhead
-`r print_model_details('Deer Creek', 'sr')`
+**Data Source:** [Calcuated using a flow to area relationship modeled using HEC-RAS (FlowWest 2021)](https://cvpiahabitat-r-package.s3.us-west-2.amazonaws.com/cvpia-sit-model-inputs/DeerCreek_2Dmodel_FlowWest_Final.pdf){target="_blank"}
 
 ## Floodplain Data    
 The areas represent total inundated area in acres.
