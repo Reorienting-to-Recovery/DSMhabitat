@@ -21,3 +21,10 @@ modeling_exist %>% glimpse
 watershed_metadata <- read_csv('data-raw/watershed_metadata.csv')
 usethis::use_data(watershed_metadata, overwrite = TRUE)
 View(watershed_metadata)
+
+# habitat quant types
+watershed_methods <- read_csv("data-raw/watershed/habitat_quantification_types.csv")
+usethis::use_data(watershed_methods, overwrite = TRUE)
+
+
+
