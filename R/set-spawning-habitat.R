@@ -76,11 +76,17 @@ set_spawning_habitat <- function(watershed, species, flow, ...) {
   if (watershed == 'Upper Sacramento River') {
     return(set_upper_sac_spawn_habitat(species, flow, ...))
   }
-
+  
+  # TDOO --- needs improvement!!
   if (DSMhabitat::watershed_metadata$use_mid_sac_spawn_proxy[DSMhabitat::watershed_metadata$watershed == watershed]) {
-    w <- "Upper Mid Sac Region"
-    s <- "fr"
-    quantification_mode <- "wua"
+    if (watershed == "Deer Creek" & species != "sr") {
+      w <- watershed
+      s <- species  
+    } else {
+      w <- "Upper Mid Sac Region"
+      s <- "fr"
+      quantification_mode <- "wua"
+    }
   } else {
     w <- watershed
     s <- species
@@ -103,7 +109,7 @@ set_spawning_habitat <- function(watershed, species, flow, ...) {
                                 life_stage = "spawning", species_name = species)
     
   } else if (quantification_mode == "hsi") {
-    habitat_area <- hab_func(flows)
+    habitat_area <- hab_func(flow)
   }
 
   return(habitat_area)
