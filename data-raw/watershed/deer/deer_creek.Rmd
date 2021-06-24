@@ -23,14 +23,15 @@ source('data-raw/watershed/floodplain_utils.R')
 # the rearing lenghts need to scaled, based on the model length and the actual rearing
 # the sr spawning needs to be approximated using the regional method
 
-hec_ras_modeling_extend <- 12 # miles
 deer_habitat_lens <- read_xlsx("data-raw/watershed/CVPIA_FloodplainAreas.xlsx") %>% 
   filter(watershed == "Deer Creek")
 
 raw_data <- read_csv("data-raw/watershed/deer/data/existing-suitability-deer-creek-2021-03-24.csv")
 
-sr_scale <- (47.92-12)/12
-st_scale <- (47.92-12)/12
+hec_ras_modeling_extend <- 12 # miles
+habitat_extent <- 47.92 
+sr_scale <- (habitat_extent-hec_ras_modeling_extend)/hec_ras_modeling_extend
+st_scale <- (habitat_extent-hec_ras_modeling_extend)/hec_ras_modeling_extend
 
 # get all data in appropriate names
 deer_creek_habitat <- raw_data %>% 
@@ -94,11 +95,15 @@ deer_creek_floodplain <-
     watershed
   ) %>% 
   spread(col_to_spread, suitable_acres) %>% 
+  transmute(
+    flow_cfs, 
+    FR_floodplain_acres, 
+    LFR_floodplain_acres, 
+    SR_floodplain_acres = (SR_floodplain_acres + (sr_scale*SR_floodplain_acres)*.1),
+    ST_floodplain_acres = (ST_floodplain_acres + (st_scale*ST_floodplain_acres)*.1),
+    watershed
+  ) %>% 
   relocate(watershed, .after = ST_floodplain_acres)
-
-# remove cols with all NA values
-deer_creek_floodplain <- 
-  deer_creek_floodplain[, colSums(is.na(deer_creek_floodplain)) != nrow(deer_creek_floodplain)]
 
 usethis::use_data(deer_creek_floodplain, overwrite = TRUE)
 ```
