@@ -113,18 +113,18 @@ usethis::use_data(deer_creek_floodplain, overwrite = TRUE)
 
 ### Spawning HSI 
 
-The following plot shows suitable habitat in square meters for Fall Run, Spring Run and 
-Late-Fall Run Chinook.
+The following plot shows suitable habitat in square meters for Fall Run and 
+Late-Fall Run Chinook. Spring Run spawning was calculated using the a regional 
+approximation approach, more information on this [here](#).
 
 ```{r}
 deer_creek_instream %>% 
-  select(flow_cfs, FR_spawn_hsi, LFR_spawn_hsi, LFR_spawn_hsi) %>% 
+  select(flow_cfs, FR_spawn_hsi, LFR_spawn_hsi) %>% 
   gather(species, suitable_habitat, -flow_cfs) %>% 
   mutate(
     species = case_when(
       species == "FR_spawn_hsi" ~ "Fall Run Chinook",
       species == "LFR_spawn_hsi" ~ "Late-Fall Run Chinook",
-      species == "SR_spawn_hsi" ~ "Spring Run Chinook",
       TRUE ~ NA_character_
     )
   ) %>% 
@@ -140,13 +140,14 @@ deer_creek_instream %>%
 
 ```{r}
 deer_creek_instream %>% 
-  select(flow_cfs, FR_juv_hsi, LFR_juv_hsi, ST_juv_hsi) %>% 
+  select(flow_cfs, FR_juv_hsi, LFR_juv_hsi, ST_juv_hsi, SR_juv_hsi) %>% 
   gather(species, suitable_habitat, -flow_cfs) %>% 
   mutate(
     species = case_when(
       species == "FR_juv_hsi" ~ "Fall Run Chinook",
       species == "LFR_juv_hsi" ~ "Late-Fall Run Chinook",
-      species == "ST_juv_hsi" ~ "Spring Run Chinook",
+      species == "SR_juv_hsi" ~ "Spring Run Chinook",
+      species == "ST_juv_hsi" ~ "Steelhead",
       TRUE ~ NA_character_
     )
   ) %>% 
@@ -177,8 +178,6 @@ knitr::kable(align = 'c', head(deer_creek_floodplain, 5),
              = Spring Run Chinook floodplain acres, ST_floodplain_acres = 
              Steelhead floodplain acres, 
              watershed = section of stream modeled for CVPIA SDM")
-
-usethis::use_data(deer_creek_floodplain, overwrite = TRUE)
 ```
 
 *... with `r nrow(deer_creek_floodplain) - 5` more rows*
@@ -187,7 +186,7 @@ usethis::use_data(deer_creek_floodplain, overwrite = TRUE)
 ```{r}
 deer_creek_floodplain %>% 
   select(FR_floodplain_acres, SR_floodplain_acres, watershed, flow_cfs) %>%
-  rename(`Fall Run Chinook` = FR_floodplain_acres, `Spring Run Chinook and Steelhead` = SR_floodplain_acres) %>% 
+  rename(`Fall and Late-Fall Run Chinook` = FR_floodplain_acres, `Spring Run Chinook and Steelhead` = SR_floodplain_acres) %>% 
   gather(Species, acres, -flow_cfs, -watershed) %>% 
   ggplot(aes(flow_cfs, acres, color = Species)) +
   geom_line() +
