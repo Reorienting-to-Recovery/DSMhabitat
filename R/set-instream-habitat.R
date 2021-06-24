@@ -73,6 +73,8 @@ set_instream_habitat <- function(watershed, species, life_stage, flow, ...) {
       return(NA)
     }
   }
+  
+  quantification_mode <- subset(watershed_methods, watershed_name == "Deer Creek")$instream
 
   if (watershed %in% c('Upper Sacramento River', 'Upper-mid Sacramento River',
                        'Lower-mid Sacramento River', 'Lower Sacramento River')) {
@@ -90,15 +92,21 @@ set_instream_habitat <- function(watershed, species, life_stage, flow, ...) {
   watershed_rda_name <- paste(watershed_name, "instream", sep = "_")
   df <- as.data.frame(do.call(`::`, list(pkg = "DSMhabitat", name = watershed_rda_name)))
 
-  wua_selector <- get_wua_selector(names(df), species, life_stage)
+  wua_selector <- get_wua_selector(names(df), species, life_stage, mode = quantification_mode)
   df_na_rm <- df[!is.na(df[, wua_selector]), ]
   flows <- df_na_rm[, "flow_cfs"]
   wuas <- df_na_rm[ , wua_selector]
   wua_func <- approxfun(flows, wuas , rule = 2)
 
-  wua <- wua_func(flow)
-  habitat_area <- wua_to_area(wua = wua, watershed = watershed,
-                              life_stage = "rearing", species_name = species)
+  
+  if (quantification_mode == "wua") {
+    wua <- wua_func(flow)
+    habitat_area <- wua_to_area(wua = wua, watershed = watershed,
+                                life_stage = "rearing", species_name = species)
+  } else {
+    habitat_area <- wua_func(flow)
+  }
+  
   return(habitat_area)
 }
 
