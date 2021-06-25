@@ -1,7 +1,7 @@
 ---
 title: "Deer Creek"
 author: "[Sadie Gill](mailto:sgill@flowwest.com), [Mark Tompkins](mailto:mtompkins@flowwest.com)" 
-date: "July 2020"
+date: "June 2021"
 output: html_document
 ---
 
@@ -20,7 +20,7 @@ source('data-raw/watershed/floodplain_utils.R')
 ```
 
 ```{r}
-# the rearing lenghts need to scaled, based on the model length and the actual rearing
+# the rearing lengths need to scaled, based on the model length and the actual rearing
 # the sr spawning needs to be approximated using the regional method
 
 deer_habitat_lens <- read_xlsx("data-raw/watershed/CVPIA_FloodplainAreas.xlsx") %>% 
@@ -57,7 +57,18 @@ deer_creek_habitat <- raw_data %>%
     habitat_type, 
     watershed = "Deer Creek"
   )
+```
 
+## Instream Spawning and Rearing Habitat
+**Data Source:** [FlowWest 2021](https://cvpiahabitat-r-package.s3.us-west-2.amazonaws.com/cvpia-sit-model-inputs/DeerCreek_2Dmodel_FlowWest_Final.pdf){target="_blank"}
+
+A flow to suitable area relationship was modeled using 2-dimensional hydraulic model called HEC-RAS for the instream spawning habitat of Fall Run Chinook Salmon, Late-Fall Run Chinook Salmon and the instream rearing habitat of Fall Run Chinook Salmon, Late-Fall Run Chinook Salmon, Spring Run Chinook Salmon, and Steelhead.
+
+Spring Run Chinook spawning habitat was [calculated with a relationship between flow and mean weighted usable area from watersheds in the region with modeled habitat](http://cvpia-habitat-docs-markdown.s3-website-us-west-2.amazonaws.com/watershed/Regional_Approximation.html){target="_blank"}
+
+# TODO what about steelhead spawning?
+
+```{r}
 # instream
 # we need to scale sr_juv and st_juv only
 # sr_spawn needs to be regional approximated
@@ -66,25 +77,82 @@ deer_creek_instream <-
   filter(habitat_type == "instream") %>% 
   transmute(
     flow_cfs, 
-    col_to_spread = sprintf("%s_%s_hsi", toupper(species), life_stage), 
+    col_to_spread = sprintf("%s_%s_sqm", toupper(species), life_stage), 
     sqm, 
     watershed
   ) %>% 
     spread(col_to_spread, sqm) %>% 
   transmute(
     flow_cfs, 
-    FR_spawn_hsi, 
-    FR_juv_hsi,
-    LFR_spawn_hsi, 
-    LFR_juv_hsi,
-    SR_juv_hsi = (SR_juv_hsi + (sr_scale*SR_juv_hsi)*.1),
-    ST_juv_hsi = (ST_juv_hsi + (st_scale*ST_juv_hsi)*.1),
+    FR_spawn_sqm, 
+    FR_juv_sqm,
+    LFR_spawn_sqm, 
+    LFR_juv_sqm,
+    SR_juv_sqm = (SR_juv_sqm + (sr_scale*SR_juv_sqm)*.1),
+    ST_juv_sqm = (ST_juv_sqm + (st_scale*ST_juv_sqm)*.1),
     watershed
   )
 
-usethis::use_data(deer_creek_instream, overwrite = TRUE)
+knitr::kable(align = 'c', head(deer_creek_instream, 5), 
+             caption = "Header Descriptions: flow_cfs = flow in cubic feet per second,
+             FR_spawn_sqm = Fall Run Chinook Spawning Area (square meters),
+             FR_juv_sqm = Fall Run Chinook Juvenile Area (square meters), 
+             LFR_spawn_sqm = Late-Fall Run Chinook Spawning Area (square meters), 
+             LFR_juv_sqm = Late-Fall Run Chinook Juvenile Area (square meters), 
+             SR_juv_sqm = Spring Run Chinook Juvenile Area (square meters),
+             ST_juv_sqm = Steelhead Juvenile Area (square meters),
+             watershed = section of stream modeled for CVPIA SDM")
 
-# floodplain
+usethis::use_data(deer_creek_instream, overwrite = TRUE)
+```
+*... with `r nrow(deer_creek_instream) - 5` more rows*
+
+
+### Spawning Habitat Area 
+The following plot shows the suitable spawning habitat in square meters for Fall Run and 
+Late-Fall Run Chinook. 
+```{r}
+deer_creek_instream %>% 
+  select(flow_cfs, `Fall and Late-Fall Run Chinook` = FR_spawn_sqm) %>% 
+  gather(species, acres, -flow_cfs) %>% 
+  ggplot(aes(flow_cfs,acres/4046.86, color = species)) + 
+  geom_line() + 
+  labs(x = 'Flow (cfs)', y = 'Suitable Habitat (acres)', color = NULL) + 
+  theme_minimal() + 
+  scale_color_brewer(palette = 'Dark2') +
+  theme(legend.justification = c(1, 0), legend.position = c(.97, .7))
+```
+
+### Rearing Habitat Area 
+The following plot shows the suitable rearing habitat in square meters for Fall Run Chinook, 
+Late-Fall Run Chinook, Spring Run Chinook and Steelhead. 
+```{r}
+deer_creek_instream %>% 
+  select(flow_cfs, `Fall and Late-Fall Run Chinook` = FR_juv_sqm, 
+         `Spring Run Chinook and Steelhead` = SR_juv_sqm) %>% 
+  gather(species, acres, -flow_cfs) %>% 
+  ggplot(aes(flow_cfs, acres/4046.86, color = species)) + 
+  geom_line() + 
+  labs(x = 'Flow (cfs)', y = "Suitable Habitat (acres)", color = NULL) + 
+  theme_minimal() + 
+  scale_color_brewer(palette = 'Dark2') +
+  theme(legend.justification = c(1, 0), legend.position = c(.97, .7))
+```
+
+## Floodplain Rearing Habitat 
+
+**Data Source:** [Calcuated using a flow to area relationship modeled using HEC-RAS (FlowWest 2021)](https://cvpiahabitat-r-package.s3.us-west-2.amazonaws.com/cvpia-sit-model-inputs/DeerCreek_2Dmodel_FlowWest_Final.pdf){target="_blank"}
+
+# TODO update documentation details
+`r print_model_details('Deer Creek', 'fr')`
+<!-- `r print_model_details('Deer Creek', 'lfr')` -->
+<!-- `r print_model_details('Deer Creek', 'sr')` -->
+<!-- `r print_model_details('Deer Creek', 'st')` -->
+
+## Floodplain Data    
+The areas represent total suitable rearing area in acres.
+
+```{r}
 deer_creek_floodplain <- 
   deer_creek_habitat %>% 
   filter(habitat_type == "floodplain", life_stage == "juv") %>% 
@@ -105,73 +173,14 @@ deer_creek_floodplain <-
   ) %>% 
   relocate(watershed, .after = ST_floodplain_acres)
 
-usethis::use_data(deer_creek_floodplain, overwrite = TRUE)
-```
-
-## Instream Spawning and Rearing Habitat
-**Data Source:** [Calcuated using a flow to area relationship modeled using HEC-RAS (FlowWest 2021)](https://cvpiahabitat-r-package.s3.us-west-2.amazonaws.com/cvpia-sit-model-inputs/DeerCreek_2Dmodel_FlowWest_Final.pdf){target="_blank"}
-
-### Spawning HSI 
-
-The following plot shows suitable habitat in square meters for Fall Run and 
-Late-Fall Run Chinook. Spring Run spawning was calculated using the a regional 
-approximation approach, more information on this [here](#).
-
-```{r}
-deer_creek_instream %>% 
-  select(flow_cfs, FR_spawn_hsi, LFR_spawn_hsi) %>% 
-  gather(species, suitable_habitat, -flow_cfs) %>% 
-  mutate(
-    species = case_when(
-      species == "FR_spawn_hsi" ~ "Fall Run Chinook",
-      species == "LFR_spawn_hsi" ~ "Late-Fall Run Chinook",
-      TRUE ~ NA_character_
-    )
-  ) %>% 
-  ggplot(aes(flow_cfs, suitable_habitat/4046.86, color = species)) + 
-  geom_line() + 
-  labs(x = 'Flow (cfs)', y = 'Suitable Habitat (acres)', color = NULL) + 
-  theme_minimal() + 
-  scale_color_brewer(palette = 'Dark2') +
-  theme(legend.justification = c(1, 0), legend.position = c(.97, .7))
-```
-
-### Rearing HSI 
-
-```{r}
-deer_creek_instream %>% 
-  select(flow_cfs, FR_juv_hsi, LFR_juv_hsi, ST_juv_hsi, SR_juv_hsi) %>% 
-  gather(species, suitable_habitat, -flow_cfs) %>% 
-  mutate(
-    species = case_when(
-      species == "FR_juv_hsi" ~ "Fall Run Chinook",
-      species == "LFR_juv_hsi" ~ "Late-Fall Run Chinook",
-      species == "SR_juv_hsi" ~ "Spring Run Chinook",
-      species == "ST_juv_hsi" ~ "Steelhead",
-      TRUE ~ NA_character_
-    )
-  ) %>% 
-  ggplot(aes(flow_cfs, suitable_habitat/4046.86, color = species)) + 
-  geom_line() + 
-  labs(x = 'Flow (cfs)', y = "Suitable Habitat (acres)", color = NULL) + 
-  theme_minimal() + 
-  scale_color_brewer(palette = 'Dark2') +
-  theme(legend.justification = c(1, 0), legend.position = c(.97, .7))
-```
-
-## Floodplain Rearing Habitat 
-**Data Source:** [Calcuated using a flow to area relationship modeled using HEC-RAS (FlowWest 2021)](https://cvpiahabitat-r-package.s3.us-west-2.amazonaws.com/cvpia-sit-model-inputs/DeerCreek_2Dmodel_FlowWest_Final.pdf){target="_blank"}
-
-## Floodplain Data    
-The areas represent total inundated area in acres.
-
-```{r}
 knitr::kable(align = 'c', head(deer_creek_floodplain, 5), 
              caption = "Header Descriptions: flow_cfs = flow in cubic feet per second,
              FR_floodplain_acres = Fall Run Chinook floodplain acres, SR_floodplain_acres 
              = Spring Run Chinook floodplain acres, ST_floodplain_acres = 
              Steelhead floodplain acres, 
              watershed = section of stream modeled for CVPIA SDM")
+
+usethis::use_data(deer_creek_floodplain, overwrite = TRUE)
 ```
 
 *... with `r nrow(deer_creek_floodplain) - 5` more rows*
@@ -179,13 +188,13 @@ knitr::kable(align = 'c', head(deer_creek_floodplain, 5),
 ## Floodplain Plot
 ```{r}
 deer_creek_floodplain %>% 
-  select(FR_floodplain_acres, SR_floodplain_acres, watershed, flow_cfs) %>%
-  rename(`Fall and Late-Fall Run Chinook` = FR_floodplain_acres, `Spring Run Chinook and Steelhead` = SR_floodplain_acres) %>% 
-  gather(Species, acres, -flow_cfs, -watershed) %>% 
-  ggplot(aes(flow_cfs, acres, color = Species)) +
+  select(`Fall and Late-Fall Run Chinook` = FR_floodplain_acres, 
+         `Spring Run Chinook and Steelhead` = SR_floodplain_acres, flow_cfs) %>%
+  gather(species, acres, -flow_cfs) %>% 
+  ggplot(aes(flow_cfs, acres, color = species)) +
   geom_line() +
   theme_minimal() +
   scale_color_brewer(palette = 'Dark2') +
-  labs(x = 'Flow (cfs)', y = 'Total Inundated Acres') +
+  labs(x = 'Flow (cfs)', y = 'Total Suitable Area (acres)') +
   theme(legend.justification = c(1,0), legend.position = c(1,.1))
 ```
