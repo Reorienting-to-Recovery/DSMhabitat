@@ -60,25 +60,25 @@
 #'   \item Mokelumne River*
 #' }
 set_spawning_habitat <- function(watershed, species, flow, ...) {
-
-  if (!DSMhabitat::watershed_metadata$spawn[DSMhabitat::watershed_metadata$watershed == watershed]) {
+  
+  species_present <- all(subset(DSMhabitat::watershed_species_present, 
+                                watershed_name == watershed,
+                                c(species, 'spawn'), drop = TRUE))
+  
+  if (!species_present) {
     return(NA)
   }
-
-  if (species == 'sr') {
-    if (!DSMhabitat::watershed_metadata$sr[DSMhabitat::watershed_metadata$watershed == watershed]) {
-      return(NA)
-    }
-  }
   
-  quantification_mode <- subset(watershed_methods, watershed_name == watershed)$spawning
+  quantification_mode <- subset(DSMhabitat::watershed_methods, 
+                                watershed_name == watershed, 
+                                spawning, drop = TRUE)
 
   if (watershed == 'Upper Sacramento River') {
     return(set_upper_sac_spawn_habitat(species, flow, ...))
   }
   
   # TDOO --- needs improvement!!
-  if (DSMhabitat::watershed_metadata$use_mid_sac_spawn_proxy[DSMhabitat::watershed_metadata$watershed == watershed]) {
+  if (DSMhabitat::watershed_species_present$use_mid_sac_spawn_proxy[DSMhabitat::watershed_species_present$watershed_name == watershed]) {
     if (watershed == "Deer Creek" & species != "sr") {
       w <- watershed
       s <- species  

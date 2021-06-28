@@ -67,37 +67,39 @@
 #' set_instream_habitat('Elder Creek', 'fr', 'juv', 300) # no habitat modeling exists, composite used
 #' @export
 set_instream_habitat <- function(watershed, species, life_stage, flow, ...) {
-
-  if (species == 'sr') {
-    if (!DSMhabitat::watershed_metadata$sr[DSMhabitat::watershed_metadata$watershed == watershed]) {
-      return(NA)
-    }
+  
+  species_present <- subset(DSMhabitat::watershed_species_present, watershed_name == watershed,
+                            species, drop = TRUE)
+  
+  if (!species_present) {
+    return(NA)
   }
   
-  quantification_mode <- subset(watershed_methods, watershed_name == watershed)$instream
-
+  quantification_mode <- subset(DSMhabitat::watershed_methods, 
+                                watershed_name == watershed, instream, drop = TRUE)
+  
   if (watershed %in% c('Upper Sacramento River', 'Upper-mid Sacramento River',
                        'Lower-mid Sacramento River', 'Lower Sacramento River')) {
     return(set_sac_habitat(watershed, flow, ...))
   }
-
-  if (DSMhabitat::watershed_metadata$use_mid_sac_rear_proxy[DSMhabitat::watershed_metadata$watershed == watershed]) {
-    w <- "Upper Mid Sac Region"
+  
+  if (DSMhabitat::watershed_species_present$use_mid_sac_rear_proxy[DSMhabitat::watershed_species_present$watershed_name == watershed]) {
+    watershed_name <- "Upper Mid Sac Region"
     species <- "fr"
   } else {
-    w <- watershed
+    watershed_name <- watershed
   }
-
-  watershed_name <- tolower(gsub(pattern = "-| ", replacement = "_", x = w))
+  
+  watershed_name <- tolower(gsub(pattern = "-| ", replacement = "_", x = watershed_name))
   watershed_rda_name <- paste(watershed_name, "instream", sep = "_")
   df <- as.data.frame(do.call(`::`, list(pkg = "DSMhabitat", name = watershed_rda_name)))
-
+  
   hab_column <- get_habitat_selector(names(df), species, life_stage, mode = quantification_mode)
   df_na_rm <- df[!is.na(df[, hab_column]), ]
   flows <- df_na_rm[, "flow_cfs"]
   habs <- df_na_rm[ , hab_column]
   hab_func <- approxfun(flows, habs , rule = 2)
-
+  
   
   if (quantification_mode == "wua") {
     wua <- hab_func(flow)
@@ -111,13 +113,13 @@ set_instream_habitat <- function(watershed, species, life_stage, flow, ...) {
 }
 
 set_sac_habitat <- function(watershed, flow, flow2 = NULL) {
-
+  
   watershed_name <- tolower(gsub(pattern = "-| ", replacement = "_", x = watershed))
   watershed_rda_name <- paste(watershed_name, "instream", sep = "_")
   df <- do.call(`::`, list(pkg = "DSMhabitat", name = watershed_rda_name))
-
+  
   rear_approx <- approxfun(df$flow_cfs, df$rearing_sq_meters, rule = 2)
-
+  
   if (watershed == 'Lower-mid Sacramento River') {
     if (is.null(flow2)) {
       warning('For CVPIA purposes: Lower-mid Sacramento River requires two flow values, one above and below Fremont Weir. Running with one flow value...')
@@ -128,7 +130,7 @@ set_sac_habitat <- function(watershed, flow, flow2 = NULL) {
   } else {
     return(rear_approx(flow))
   }
-
+  
 }
 
 

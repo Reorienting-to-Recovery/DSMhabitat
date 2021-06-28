@@ -28,9 +28,10 @@
 #' @export
 set_floodplain_habitat <- function(watershed, species, flow, flow2 = NULL) {
 
-  if (species == 'sr' &
-      is.na(DSMhabitat::modeling_exist[DSMhabitat::modeling_exist$Watershed == watershed, 'SR_floodplain'])) {
-    warning("no spring run in this watershed")
+  species_present <- subset(DSMhabitat::watershed_species_present, watershed_name == watershed,
+                            species, drop = TRUE)
+  
+  if (!species_present) {
     return(NA)
   }
 
