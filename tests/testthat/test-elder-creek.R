@@ -32,3 +32,15 @@ test_that('FR floodplain Elder Creek works', {
     floodplain,
     tolerance = .01)
 })
+
+test_that('No WR, SR, or LFR on Elder Creek', {
+  expect_true(is.na(set_instream_habitat('Elder Creek', 'wr', 200)))
+  expect_true(is.na(set_instream_habitat('Elder Creek', 'sr', 200)))
+  expect_true(is.na(set_instream_habitat('Elder Creek', 'lfr', 200)))
+  expect_true(is.na(set_spawning_habitat('Elder Creek', 'wr', 100)))
+  expect_true(is.na(set_spawning_habitat('Elder Creek', 'sr', 100)))
+  expect_true(is.na(set_spawning_habitat('Elder Creek', 'lfr', 100)))
+  expect_true(is.na(set_floodplain_habitat('Elder Creek', 'wr', 2000)))
+  expect_true(is.na(set_floodplain_habitat('Elder Creek', 'sr', 2000)))
+  expect_true(is.na(set_floodplain_habitat('Elder Creek', 'lfr', 2000)))
+})

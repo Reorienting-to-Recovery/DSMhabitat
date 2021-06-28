@@ -135,3 +135,12 @@ test_that('ST adult Tuolumne River works', {
     set_instream_habitat('Tuolumne River', 'st', 'adult', adult_flow), adultx)
 
 })
+
+test_that('No WR or LFR on Tuolumne River', {
+  expect_true(is.na(set_instream_habitat('Tuolumne River', 'wr', 200)))
+  expect_true(is.na(set_instream_habitat('Tuolumne River', 'lfr', 200)))
+  expect_true(is.na(set_spawning_habitat('Tuolumne River', 'wr', 100)))
+  expect_true(is.na(set_spawning_habitat('Tuolumne River', 'lfr', 100)))
+  expect_true(is.na(set_floodplain_habitat('Tuolumne River', 'wr', 2000)))
+  expect_true(is.na(set_floodplain_habitat('Tuolumne River', 'lfr', 2000)))
+})

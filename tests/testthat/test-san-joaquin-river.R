@@ -114,3 +114,16 @@ test_that('FR rearing San Joaquin River works', {
   expect_equal(
     set_instream_habitat('San Joaquin River', 'fr', 'juv', juv_flow), juvx)
 })
+
+test_that('No WR, SR, or LFR on San Joaquin River', {
+  expect_true(is.na(set_instream_habitat('San Joaquin River', 'wr', 200)))
+  expect_true(is.na(set_instream_habitat('San Joaquin River', 'sr', 200)))
+  expect_true(is.na(set_instream_habitat('San Joaquin River', 'lfr', 200)))
+  expect_true(is.na(set_spawning_habitat('San Joaquin River', 'fr', 100)))
+  expect_true(is.na(set_spawning_habitat('San Joaquin River', 'wr', 100)))
+  expect_true(is.na(set_spawning_habitat('San Joaquin River', 'sr', 100)))
+  expect_true(is.na(set_spawning_habitat('San Joaquin River', 'lfr', 100)))
+  expect_true(is.na(set_floodplain_habitat('San Joaquin River', 'wr', 2000)))
+  expect_true(is.na(set_floodplain_habitat('San Joaquin River', 'sr', 2000)))
+  expect_true(is.na(set_floodplain_habitat('San Joaquin River', 'lfr', 2000)))
+})
