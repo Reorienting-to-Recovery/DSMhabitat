@@ -1,0 +1,77 @@
+---
+title: "Theoretical Max Habitat Areas"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Theoretical Max Habitat Areas}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE, message=FALSE}
+library(DSMscenario)
+library(tidyverse)
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  message=FALSE 
+)
+```
+
+## Total Wetted Area Estimation
+
+We used 1 meter resolution 4 band (R, G, B, N) imagery from the National Agriculture Imagery Program [(NAIP)](fsa.usda.gov/programs-and-services/aerial-photography/imagery-programs/naip-imagery/) to conduct  a Normalized Difference Water Index [(NDWI)](https://en.wikipedia.org/wiki/Normalized_difference_water_index) based analysis to identify total wetted area for the 31 tributaries included in the SIT chinook life cycle models. The analysis was performed using the [Google Earth Engine IDE](https://code.earthengine.google.com/).
+
+We used all the available NAIP imagery for the years 2009-2016 and for each image calculated the NDWI as:
+$${NDWI}=\frac{(Xgreen - Xnir)}{(Xgreen + Xnir)}$$
+
+We then reduced the multidimensional array of NDWI rasters by selecting the maximum NDWI at each pixel. We created a buffer of the fall run rearing extents with an estimated channel width to clip the max NDWI raster. A binary filter was applied to the clipped raster for NDWI values greater than a threshold to classify each pixel as water or not water. These
+water pixels were multiplied by the pixel area and then all summed to estimate the total wetted area of the stream.
+
+The total wetted area values for each watershed were recorded in this file:  `data-raw/earth_engine_total_channel_area_estimates.csv`
+
+The extents were mapped through expert outreach can be viewed on [this interactive map](https://cvpia-osc.github.io/DSMhabitat/articles/habitat-extents-map.html) and are available for download [here](https://github.com/CVPIA-OSC/DSMhabitat/tree/main/data-raw/rearing_spatial_data/salmonid_habitat_extents)
+
+
+### Example analysis JavaScript code below:
+
+```{javascript eval=F}
+var naip: Imagecollection "NAIP: National Agriculture Imagery Program"
+var habExt = ee.FeatureCollection('users/fall_run_hab_extent');
+
+// Lower-mid Sacramento River 
+var lowerMidSacRiver = ee.Feature(habExt.filterMetadata('River', 'equals', 'Lower-mid Sacramento River').first());
+
+// define buffer
+var lowerMidSacRiverBuffer= lowerMidSacRiver.buffer(70);
+
+// 2009-2016 NAIP imagery covering Lower Sacramento River
+var lowerMidSac = naip
+  .filterBounds(lowerMidSacRiver.geometry())
+  .filterDate('2009-01-01','2016-12-31');
+
+// calculate ndwi for each image
+var ndwi = lowerMidSac.map(function(img) {
+    return img.normalizedDifference(['G', 'N']).rename('ndwi');
+});
+
+var maxNDWI = ndwi
+  .reduce(ee.Reducer.max());
+
+var mask = maxNDWI.mask(maxNDWI.gt(.7));
+
+// simple water classifier
+var water = maxNDWI
+  .gt(.7)
+  .multiply(ee.Image.pixelArea())
+  .rename('waterAreaSqMeters')
+  .reduceRegion({
+    reducer: ee.Reducer.sum(), 
+    geometry: lowerMidSacRiverBuffer.geometry(), 
+    scale: 1,
+    maxPixels: 1e9
+  });
+  
+print('total water area in square meters:', water);
+```
+
