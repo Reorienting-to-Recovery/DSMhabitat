@@ -22,8 +22,13 @@ watershed_species_present <- read_csv('data-raw/watershed_species_present.csv')
 usethis::use_data(watershed_species_present, overwrite = TRUE)
 
 # habitat quant types
-watershed_methods <- read_csv("data-raw/watershed/habitat_quantification_types.csv")
+watershed_methods <- read_csv("data-raw/habitat_quantification_types.csv")
 usethis::use_data(watershed_methods, overwrite = TRUE)
 
+# floodplain modeling metadata
+floodplain_modeling_metadata <- read_csv("data-raw/floodplain_modeling_metadata.csv")
+usethis::use_data(floodplain_modeling_metadata, overwrite = TRUE)
 
-
+# low gradient rearing extent lengths for scaling habitat
+low_gradient_lengths <- read_csv("data-raw/low_gradient_lengths.csv")
+usethis::use_data(low_gradient_lengths, overwrite = TRUE)
