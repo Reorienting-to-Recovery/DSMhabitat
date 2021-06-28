@@ -18,9 +18,8 @@ modeling_exist %>% glimpse
 #   select(watershed = Watershed, order = Order, spawn, fr, sr, st, use_mid_sac_spawn_proxy, use_mid_sac_rear_proxy) %>%
 #   write_csv("data-raw/watershed_metadata.csv")
 
-watershed_metadata <- read_csv('data-raw/watershed_metadata.csv')
-usethis::use_data(watershed_metadata, overwrite = TRUE)
-View(watershed_metadata)
+watershed_species_present <- read_csv('data-raw/watershed_species_present.csv')
+usethis::use_data(watershed_species_present, overwrite = TRUE)
 
 # habitat quant types
 watershed_methods <- read_csv("data-raw/watershed/habitat_quantification_types.csv")
