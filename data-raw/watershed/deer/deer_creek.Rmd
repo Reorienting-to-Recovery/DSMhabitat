@@ -28,10 +28,9 @@ deer_habitat_lens <- read_xlsx("data-raw/watershed/CVPIA_FloodplainAreas.xlsx") 
 
 raw_data <- read_csv("data-raw/watershed/deer/data/existing-suitability-deer-creek-2021-03-24.csv")
 
-hec_ras_modeling_extend <- 12 # miles
-habitat_extent <- 47.92 
-sr_scale <- (habitat_extent-hec_ras_modeling_extend)/hec_ras_modeling_extend
-st_scale <- (habitat_extent-hec_ras_modeling_extend)/hec_ras_modeling_extend
+sr_scale <- (as.numeric(deer_habitat_lens$SR_rearing_length_mi) - deer_habitat_lens$FR_length_modeled_mi) / deer_habitat_lens$FR_length_modeled_mi
+
+st_scale <- (as.numeric(deer_habitat_lens$ST_rearing_length_mi) - deer_habitat_lens$FR_length_modeled_mi) / deer_habitat_lens$FR_length_modeled_mi
 
 # get all data in appropriate names
 deer_creek_habitat <- raw_data %>% 
@@ -64,9 +63,9 @@ deer_creek_habitat <- raw_data %>%
 
 A flow to suitable area relationship was modeled using 2-dimensional hydraulic model called HEC-RAS for the instream spawning habitat of Fall Run Chinook Salmon, Late-Fall Run Chinook Salmon and the instream rearing habitat of Fall Run Chinook Salmon, Late-Fall Run Chinook Salmon, Spring Run Chinook Salmon, and Steelhead.
 
-Spring Run Chinook spawning habitat was [calculated with a relationship between flow and mean weighted usable area from watersheds in the region with modeled habitat](http://cvpia-habitat-docs-markdown.s3-website-us-west-2.amazonaws.com/watershed/Regional_Approximation.html){target="_blank"}
+Spring Run Chinook and Steelhead spawning habitat were [calculated with a relationship between flow and mean weighted usable area from watersheds in the region with modeled habitat](http://cvpia-habitat-docs-markdown.s3-website-us-west-2.amazonaws.com/watershed/Regional_Approximation.html){target="_blank"}
 
-# TODO what about steelhead spawning?
+<!-- # TODO find where regional approx for spring run and steelhead need to be modified -->
 
 ```{r}
 # instream
@@ -88,8 +87,8 @@ deer_creek_instream <-
     FR_juv_sqm,
     LFR_spawn_sqm, 
     LFR_juv_sqm,
-    SR_juv_sqm = (SR_juv_sqm + (sr_scale*SR_juv_sqm)*.1),
-    ST_juv_sqm = (ST_juv_sqm + (st_scale*ST_juv_sqm)*.1),
+    SR_juv_sqm = (SR_juv_sqm + ((sr_scale*SR_juv_sqm)*.1)),
+    ST_juv_sqm = (ST_juv_sqm + ((st_scale*ST_juv_sqm)*.1)),
     watershed
   )
 
@@ -144,6 +143,7 @@ deer_creek_instream %>%
 **Data Source:** [Calcuated using a flow to area relationship modeled using HEC-RAS (FlowWest 2021)](https://cvpiahabitat-r-package.s3.us-west-2.amazonaws.com/cvpia-sit-model-inputs/DeerCreek_2Dmodel_FlowWest_Final.pdf){target="_blank"}
 
 # TODO update documentation details
+fall run and late-fall run
 `r print_model_details('Deer Creek', 'fr')`
 <!-- `r print_model_details('Deer Creek', 'lfr')` -->
 <!-- `r print_model_details('Deer Creek', 'sr')` -->
