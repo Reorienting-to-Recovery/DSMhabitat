@@ -1,5 +1,5 @@
 ---
-title: "Theoretical Max Habitat Areas"
+title: "Remotely Sensed Wetted Channel Areas"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Theoretical Max Habitat Areas}
@@ -28,7 +28,7 @@ $${NDWI}=\frac{(Xgreen - Xnir)}{(Xgreen + Xnir)}$$
 We then reduced the multidimensional array of NDWI rasters by selecting the maximum NDWI at each pixel. We created a buffer of the fall run rearing extents with an estimated channel width to clip the max NDWI raster. A binary filter was applied to the clipped raster for NDWI values greater than a threshold to classify each pixel as water or not water. These
 water pixels were multiplied by the pixel area and then all summed to estimate the total wetted area of the stream.
 
-The total wetted area values for each watershed were recorded in this file:  `data-raw/earth_engine_total_channel_area_estimates.csv`
+The total wetted area values for each watershed were recorded in `data-raw/earth_engine_total_channel_area_estimates.csv` and are stored in `DSMhabitat::fr_wetted_channel_area`
 
 The extents were mapped through expert outreach can be viewed on [this interactive map](https://cvpia-osc.github.io/DSMhabitat/articles/habitat-extents-map.html) and are available for download [here](https://github.com/CVPIA-OSC/DSMhabitat/tree/main/data-raw/rearing_spatial_data/salmonid_habitat_extents)
 
@@ -75,3 +75,12 @@ var water = maxNDWI
 print('total water area in square meters:', water);
 ```
 
+```{r, echo=FALSE,message=FALSE,warning=FALSE,error=FALSE}
+# earth engine estimated wetted channel areas for fall run extent
+fr_wetted_channel_area <- select(DSMhabitat::watershed_methods, watershed = watershed_name) %>% 
+  left_join(
+    read_csv('data-raw/earth_engine/earth_engine_total_channel_area_estimates.csv')
+  ) %>% 
+  filter(watershed != "Upper Mid Sac Region")
+usethis::use_data(fr_wetted_channel_area, overwrite = TRUE)
+```
