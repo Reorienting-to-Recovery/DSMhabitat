@@ -83,3 +83,14 @@ test_that('ST instream Cow Creek works', {
     set_spawning_habitat('Cow Creek', 'st', spawn_flow), spawnx)
 })
 
+test_that('No WR, SR, or LFR on Cow Creek', {
+  expect_true(is.na(set_instream_habitat('Cow Creek', 'wr', 200)))
+  expect_true(is.na(set_instream_habitat('Cow Creek', 'sr', 200)))
+  expect_true(is.na(set_instream_habitat('Cow Creek', 'lfr', 200)))
+  expect_true(is.na(set_spawning_habitat('Cow Creek', 'wr', 100)))
+  expect_true(is.na(set_spawning_habitat('Cow Creek', 'sr', 100)))
+  expect_true(is.na(set_spawning_habitat('Cow Creek', 'lfr', 100)))
+  expect_true(is.na(set_floodplain_habitat('Cow Creek', 'wr', 2000)))
+  expect_true(is.na(set_floodplain_habitat('Cow Creek', 'sr', 2000)))
+  expect_true(is.na(set_floodplain_habitat('Cow Creek', 'lfr', 2000)))
+})

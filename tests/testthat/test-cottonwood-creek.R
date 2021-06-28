@@ -92,3 +92,11 @@ test_that('FR floodplain Cottonwood Creek works', {
     tolerance = .01)
 })
 
+test_that('No WR or LFR on Cottonwood Creek', {
+  expect_true(is.na(set_instream_habitat('Cottonwood Creek', 'wr', 200)))
+  expect_true(is.na(set_instream_habitat('Cottonwood Creek', 'lfr', 200)))
+  expect_true(is.na(set_spawning_habitat('Cottonwood Creek', 'wr', 100)))
+  expect_true(is.na(set_spawning_habitat('Cottonwood Creek', 'lfr', 100)))
+  expect_true(is.na(set_floodplain_habitat('Cottonwood Creek', 'wr', 2000)))
+  expect_true(is.na(set_floodplain_habitat('Cottonwood Creek', 'lfr', 2000)))
+})

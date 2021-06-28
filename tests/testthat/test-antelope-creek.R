@@ -56,6 +56,7 @@ test_that('FR instream Antelope Creek works', {
     set_spawning_habitat('Antelope Creek', 'fr', spawn_flow), spawnx)
 })
 
+
 test_that('SR instream Antelope Creek works', {
 
   fry_not_na_index <- which(!is.na(DSMhabitat::upper_mid_sac_region_instream$FR_fry_wua))[1]
@@ -112,4 +113,13 @@ test_that('SR floodplain Antelope Creek works', {
     square_meters_to_acres(set_floodplain_habitat('Antelope Creek', 'sr', flow)),
     floodplain,
     tolerance = .01)
+})
+
+test_that('No WR or LFR on Antelope Creek', {
+  expect_true(is.na(set_instream_habitat('Antelope Creek', 'wr', 200)))
+  expect_true(is.na(set_instream_habitat('Antelope Creek', 'lfr', 200)))
+  expect_true(is.na(set_spawning_habitat('Antelope Creek', 'wr', 100)))
+  expect_true(is.na(set_spawning_habitat('Antelope Creek', 'lfr', 100)))
+  expect_true(is.na(set_floodplain_habitat('Antelope Creek', 'wr', 2000)))
+  expect_true(is.na(set_floodplain_habitat('Antelope Creek', 'lfr', 2000)))
 })

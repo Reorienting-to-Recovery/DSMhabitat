@@ -231,7 +231,3 @@ test_that('LFR floodplain Battle Creek works', {
     tolerance = .01)
 })
 
-
-
-
-
