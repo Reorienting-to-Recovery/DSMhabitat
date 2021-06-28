@@ -4,7 +4,9 @@ library(purrr)
 library(lubridate)
 library(DSMhabitat)
 
-watersheds <- DSMhabitat::watershed_metadata$watershed[-32]
+watersheds <- DSMhabitat::watershed_species_present$watershed_name[-32]
+watersheds_order <- DSMhabitat::watershed_species_present %>% 
+  select(order, watershed = watershed_name)
 
 #' Generate SIT Model Compatible Array
 #' @description transforms to array data structure for SIT model input
@@ -73,7 +75,7 @@ get_rear_hab_all <- function(watersheds, species, life_stage, years = 1980:1999)
     mutate(date = lubridate::ymd(paste(year, month, 1, '-'))) %>%
     select(date, watershed, habitat) %>%
     spread(date, habitat) %>%
-    left_join(select(DSMhabitat::watershed_metadata, order, watershed)) %>%
+    left_join() %>%
     arrange(order) %>%
     select(-watershed, -order) %>%
     create_SIT_array()
@@ -123,7 +125,7 @@ get_spawn_hab_all <- function(watersheds, species, years = 1979:2000) {
     mutate(date = lubridate::ymd(paste(year, month, 1, '-'))) %>%
     select(date, watershed, habitat) %>%
     spread(date, habitat) %>%
-    left_join(select(DSMhabitat::watershed_metadata, watershed, order)) %>%
+    left_join(watersheds_order) %>%
     arrange(order) %>%
     select(-watershed, -order) %>%
     create_SIT_array()
@@ -182,7 +184,7 @@ get_floodplain_hab_all <- function(watersheds, species, years = 1980:1999) {
     mutate(date = lubridate::ymd(paste(year, month, 1, '-'))) %>%
     select(date, watershed, habitat) %>%
     spread(date, habitat) %>%
-    left_join(select(DSMhabitat::watershed_metadata, watershed, order)) %>%
+    left_join(watersheds_order) %>%
     arrange(order) %>%
     select(-watershed, -order) %>%
     create_SIT_array()
@@ -193,10 +195,10 @@ get_floodplain_hab_all <- function(watersheds, species, years = 1980:1999) {
 }
 
 # spawning---------------------
-spawning_watersheds <- DSMhabitat::watershed_metadata %>%
-  filter(!(watershed %in% c("Upper Sacramento River", "Upper Mid Sac Region")),
+spawning_watersheds <- DSMhabitat::watershed_species_present %>%
+  filter(!(watershed_name %in% c("Upper Sacramento River", "Upper Mid Sac Region")),
          spawn) %>%
-  pull(watershed)
+  pull(watershed_name)
 
 fr_spawn <- get_spawn_hab_all(spawning_watersheds, 'fr')
 dimnames(fr_spawn) <- list(watersheds, month.abb, 1979:2000)
@@ -283,11 +285,11 @@ lfr_spawn[which(is.na(lfr_spawn))] <- 0
 usethis::use_data(lfr_spawn, overwrite = TRUE)
 
 # rearing--------------------
-watersheds_in_order <- DSMhabitat::watershed_metadata %>%
-  filter(!(watershed  %in% c('Sutter Bypass',
+watersheds_in_order <- DSMhabitat::watershed_species_present %>%
+  filter(!(watershed_name  %in% c('Sutter Bypass',
                              'Lower-mid Sacramento River', 'Yolo Bypass', 
                              'Upper Mid Sac Region'))) %>%
-  pull(watershed)
+  pull(watershed_name)
 
 #fry------
 fr_fry <- get_rear_hab_all(watersheds_in_order, 'fr', 'fry', 1980:2000)
@@ -522,15 +524,15 @@ dimnames(lfr_juv) <- list(watersheds, month.abb, 1980:2000)
 usethis::use_data(lfr_juv, overwrite = TRUE)
 
 # floodplain------------------------
-watersheds_fp <- DSMhabitat::watershed_metadata %>%
-  filter(!(watershed  %in% c('Sutter Bypass','Yolo Bypass',
+watersheds_fp <- DSMhabitat::watershed_species_present %>%
+  filter(!(watershed_name  %in% c('Sutter Bypass','Yolo Bypass',
                              'Upper Sacramento River',
                              'Upper-mid Sacramento River', 
                              'Lower-mid Sacramento River', 
                              'Lower Sacramento River',
                              'Upper Mid Sac Region', 
                              'Deer Creek'))) %>%
-  pull(watershed)
+  pull(watershed_name)
 
 fr_fp <- get_floodplain_hab_all(watersheds_fp, 'fr', 1980:2000)
 dimnames(fr_fp) <- list(watersheds, month.abb, 1980:2000)
@@ -639,7 +641,6 @@ usethis::use_data(yolo_habitat, overwrite = TRUE)
 
 # weeks flooded -----
 weeks_flooded <- array(2, dim = c(31, 12, 21))
-watersheds <- DSMhabitat::watershed_metadata$watershed[-32]
 
 for (i in 1:31) {
   if (i %in% c(17, 21, 22)) next
