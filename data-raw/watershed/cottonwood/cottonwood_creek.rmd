@@ -120,11 +120,7 @@ source('data-raw/watershed/floodplain_utils.R')
 ## Floodplain Data   
 The areas represent total inundated area in acres.    
 ```{r}
-wetted_area_acres <- DSMhabitat::fr_wetted_channel_area %>% 
-  filter(watershed == "Cottonwood Creek") %>% 
-  pull(channel_area_of_FR_rearing_extent)
-
-# TODO check with mark using gard estimate
+# Using 49 acres wetted channel area that mark gard developed because google earth channel area is 250 too big
 df <- read_excel('data-raw/mark_gard_data/Floodplainarea.xlsx', 
                             sheet = "Cottonwood", skip = 2, 
                             col_names = c('trash', 'flow_cfs', 'modeled_floodplain_area_acres', 
@@ -132,7 +128,6 @@ df <- read_excel('data-raw/mark_gard_data/Floodplainarea.xlsx',
   select(flow_cfs,modeled_floodplain_area_acres)
 
 cottonwood_creek_floodplain <- scale_fp_flow_area_partial_model(ws = "Cottonwood Creek", df)
-
 
 knitr::kable(align = 'c', head(cottonwood_creek_floodplain, 5), 
              caption = "Header Descriptions: flow_cfs = flow in cubic feet per second,
