@@ -36,11 +36,22 @@ source('data-raw/watershed/floodplain_utils.R')
 ## Floodplain Data    
 The areas represent total inundated area in acres.    
 ```{r}
-elder_fp <- read_excel('data-raw/watershed/CVPIA_FloodplainAreas.xlsx', sheet = 'ElderCreek') %>%
-  mutate(watershed = 'Elder Creek') %>% 
-  filter(flow_cfs >= 90)
+wetted_area_acres <- DSMhabitat::fr_wetted_channel_area %>% 
+  filter(watershed == "Elder Creek") %>% 
+  pull(channel_area_of_FR_rearing_extent)
 
-elder_creek_floodplain <- scale_fp_flow_area_partial_model(ws = 'Elder Creek', df = elder_fp) 
+# TODO check with mark using gard estimate
+df <- read_excel('data-raw/mark_gard_data/Floodplainarea.xlsx', 
+                            sheet = "Elder", skip = 2, 
+                            col_names = c('trash', 'flow_cfs', 'trash2', 
+                                          'total_area_acres', 'trash3', 
+                                          'trash4', 'trash5')) %>% 
+  transmute(flow_cfs,
+         modeled_floodplain_area_acres = 
+              pmax(total_area_acres - wetted_area_acres, 0))
+
+elder_creek_floodplain <- scale_fp_flow_area_partial_model(ws = "Elder Creek", df)
+
 
 knitr::kable(align = 'c', head(elder_creek_floodplain, 5), 
              caption = "Header Descriptions: flow_cfs = flow in cubic feet per second,
