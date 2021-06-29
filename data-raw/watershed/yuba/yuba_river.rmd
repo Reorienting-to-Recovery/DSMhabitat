@@ -77,7 +77,7 @@ rearing <- eng_dag_approx %>%
          FR_fry_wua, ST_fry_wua, FR_juv_wua, ST_juv_wua)
 
 rear_len <- DSMhabitat::watershed_lengths %>% 
-  filter(watershed == 'Yuba River', lifestage == 'rearing') %>% 
+  filter(watershed == 'Yuba River', lifestage == 'rearing', species == 'fr') %>% 
   pull(miles)
 
 adult_trout <- read_excel('data-raw/mark_gard_data/IFIMWUA.xlsx', 
@@ -157,20 +157,18 @@ source('data-raw/watershed/floodplain_utils.R')
 ## Floodplain Data
 The areas represent total inundated area in acres.    
 ```{r}
-yuba_fp <- read_excel('data-raw/watershed/CVPIA_FloodplainAreas.xlsx',
-                                    sheet = 'YubaRiver') %>%
+yuba_fp <- read_excel('data-raw/mark_gard_data/Floodplainarea.xlsx',
+                      sheet = 'Yuba', skip = 2,
+                      col_names = c('flow_cfs', 'FR_floodplain_acres')) %>%
   mutate(watershed = 'Yuba River',
-         SR_floodplain_acres = modeled_floodplain_area_acres,
-         ST_floodplain_acres = modeled_floodplain_area_acres) %>%
+         SR_floodplain_acres = FR_floodplain_acres,
+         ST_floodplain_acres = FR_floodplain_acres) %>%
   select(flow_cfs,
-         FR_floodplain_acres = modeled_floodplain_area_acres,
+         FR_floodplain_acres,
          SR_floodplain_acres, ST_floodplain_acres,
          watershed)
 
-threshold <- yuba_fp %>% 
-  filter(FR_floodplain_acres == 0) %>% 
-  summarise(max = max(flow_cfs)) %>% 
-  pull(max)
+threshold <- yuba_fp$flow_cfs[min(which(yuba_fp$FR_floodplain_acres > 0) - 1)]
 
 yuba_river_floodplain <- yuba_fp %>% 
   filter(flow_cfs >= threshold)
