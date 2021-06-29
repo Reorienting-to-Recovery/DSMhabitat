@@ -40,17 +40,18 @@ source('data-raw/watershed/floodplain_utils.R')
 ## Floodplain Data    
 The areas represent total inundated area in acres.    
 ```{r}
-bigc_fp <- read_excel('data-raw/watershed/CVPIA_FloodplainAreas.xlsx', sheet = 'BigChicoCreek') %>%
-  mutate(watershed = 'Big Chico Creek')
+wetted_area_acres <- DSMhabitat::fr_wetted_channel_area %>% 
+  filter(watershed == "Big Chico Creek") %>% 
+  pull(channel_area_of_FR_rearing_extent)
 
-threshold_flow <- bigc_fp %>% 
-  filter(modeled_floodplain_area_acres == 0) %>% 
-  summarise(max_flow = max(flow_cfs)) %>% 
-  pull(max_flow)
+df <- read_excel('data-raw/mark_gard_data/Floodplainarea.xlsx', 
+                            sheet = "BigChico", skip = 2, 
+                            col_names = c('trash', 'flow_cfs', 'trash2', 
+                                          'total_area_acres', 'trash3', 'trash4')) %>% 
+  transmute(flow_cfs,  
+            modeled_floodplain_area_acres = pmax(total_area_acres - wetted_area_acres, 0))
 
-big_chico_creek_floodplain <- 
-  scale_fp_flow_area_partial_model(ws = 'Big Chico Creek', 
-                                   df = filter(bigc_fp, flow_cfs >= threshold_flow))
+big_chico_creek_floodplain <- scale_fp_flow_area_partial_model(ws = "Big Chico Creek", df)
 
 knitr::kable(align = 'c', head(big_chico_creek_floodplain, 5), 
              caption = "Header Descriptions: flow_cfs = flow in cubic feet per second,
