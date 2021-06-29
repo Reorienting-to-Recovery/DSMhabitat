@@ -183,7 +183,7 @@ print_model_details <- function(ws, species) {
   
   rearing_length <- round(rearing_extents[, species][[1]], 1)
   low_grad <- round(subset(DSMhabitat::low_gradient_lengths, watershed_name == ws,                           species, drop = TRUE), 1)
-  high_grad <- rearing_length - low_grad
+  high_grad <- round(rearing_length - low_grad, 1)
   modeled_length <- round(watershed_doc_vars$modeled_length_mi, 1)
   
   watershed_method <- watershed_doc_vars$method
