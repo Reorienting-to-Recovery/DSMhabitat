@@ -22,15 +22,19 @@ source('data-raw/watershed/floodplain_utils.R')
 ```{r}
 # the rearing lengths need to scaled, based on the model length and the actual rearing
 # the sr spawning needs to be approximated using the regional method
+rearing_extents <- DSMhabitat::watershed_lengths %>% 
+  filter(watershed == "Deer Creek", lifestage == "rearing") %>% 
+  select(species, miles) %>% 
+  spread(species, miles)
 
-deer_habitat_lens <- read_xlsx("data-raw/watershed/CVPIA_FloodplainAreas.xlsx") %>% 
-  filter(watershed == "Deer Creek")
+# TODO need to update rearing extent after the clip, delete the overwrite then
+rearing_extents$fr <- 11.76
 
 raw_data <- read_csv("data-raw/watershed/deer/data/existing-suitability-deer-creek-2021-03-24.csv")
 
-sr_scale <- (as.numeric(deer_habitat_lens$SR_rearing_length_mi) - deer_habitat_lens$FR_length_modeled_mi) / deer_habitat_lens$FR_length_modeled_mi
+sr_scale <- (rearing_extents$sr - rearing_extents$fr) / rearing_extents$fr
 
-st_scale <- (as.numeric(deer_habitat_lens$ST_rearing_length_mi) - deer_habitat_lens$FR_length_modeled_mi) / deer_habitat_lens$FR_length_modeled_mi
+st_scale <- (rearing_extents$st - rearing_extents$fr) / rearing_extents$fr
 
 # get all data in appropriate names
 deer_creek_habitat <- raw_data %>% 
@@ -61,7 +65,16 @@ deer_creek_habitat <- raw_data %>%
 ## Instream Spawning and Rearing Habitat
 **Data Source:** [FlowWest 2021](https://cvpiahabitat-r-package.s3.us-west-2.amazonaws.com/cvpia-sit-model-inputs/DeerCreek_2Dmodel_FlowWest_Final.pdf){target="_blank"}
 
-A flow to suitable area relationship was modeled using 2-dimensional hydraulic model called HEC-RAS for the instream spawning habitat of Fall Run Chinook Salmon, Late-Fall Run Chinook Salmon and the instream rearing habitat of Fall Run Chinook Salmon, Late-Fall Run Chinook Salmon, Spring Run Chinook Salmon, and Steelhead.
+A flow to suitable area relationship was modeled using depth and velocity suitability ranges applied to HEC-RAS 2-dimensional hydraulic model output for the instream spawning habitat of Fall Run Chinook Salmon, Late-Fall Run Chinook Salmon and the instream rearing habitat of Fall Run Chinook Salmon, Late-Fall Run Chinook Salmon, Spring Run Chinook Salmon, and Steelhead.
+
+Suitable habitat for each species grid cells with both depth and velocity 
+
+| **Species** | **Lifestage** | **Location** | **Suitable Depth Range (feet)** | **Suitable Velocity Range (feet)** | **Source** |
+  | --- | --- | --- | --- | --- | --- |
+  | Fall Run Chinook, Late-Fall Run Chinook | Adult Spawning | Instream | 0.41 - 6.69 | 0.09 - 6.30 | Gard 2019 (Chspawn tab - Clear fallcolumn) |
+  | Fall Run Chinook, Late-Fall Run Chinook | Juvenile Rearing | Instream | 0.41 - 5.31 | 0.00 - 3.07 | Gard 2019 (Chjuv tab - Clear fallcolumn) |
+  | Spring Run Chinook, Steelhead | Juvenile Rearing | Instream | 0.21 - 5.59 | 0.00 - 5.54 | Gard 2019 (Chjuv tab - Clear spring column) |
+  | Fall Run Chinook, Late-Fall Run Chinook, Spring Run Chinook, Steelhead | Juvenile Rearing | Floodplain | 0.50 - 5.20 | 0.00 - 4.00 | Cbec 2019 |
 
 Spring Run Chinook and Steelhead spawning habitat were [calculated with a relationship between flow and mean weighted usable area from watersheds in the region with modeled habitat](http://cvpia-habitat-docs-markdown.s3-website-us-west-2.amazonaws.com/watershed/Regional_Approximation.html){target="_blank"}
 
