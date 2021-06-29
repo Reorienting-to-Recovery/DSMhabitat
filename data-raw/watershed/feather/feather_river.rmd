@@ -116,15 +116,19 @@ source('data-raw/watershed/floodplain_utils.R')
 ## Floodplain Data
 The areas represent total inundated area in acres.    
 ```{r}
-feather_river_floodplain <- read_excel('data-raw/watershed/CVPIA_FloodplainAreas.xlsx',
-                                       sheet = 'FeatherRiver') %>%
-  mutate(watershed = 'Feather River',
-         SR_floodplain_acres = modeled_floodplain_area_acres,
-         ST_floodplain_acres = modeled_floodplain_area_acres) %>%
-  select(flow_cfs,
-         FR_floodplain_acres = modeled_floodplain_area_acres,
-         SR_floodplain_acres, ST_floodplain_acres,
-         watershed)
+wetted_area_acres <- DSMhabitat::fr_wetted_channel_area %>% 
+  filter(watershed == "Feather River") %>% 
+  pull(channel_area_of_FR_rearing_extent)
+
+df <- read_excel('data-raw/mark_gard_data/Floodplainarea.xlsx', 
+                            sheet = "Feather", skip = 2, 
+                            col_names = c('trash', 'flow_cfs', 'trash2', 
+                                          'total_area_acres', 'trash3')) %>% 
+  transmute(flow_cfs,
+         modeled_floodplain_area_acres = 
+              pmax(total_area_acres - wetted_area_acres, 0))
+
+feather_river_floodplain <- scale_fp_flow_area_partial_model(ws = "Feather River", df)
 
 knitr::kable(align = 'c', head(feather_river_floodplain, 5), 
              caption = "Header Descriptions: flow_cfs = flow in cubic feet per second,

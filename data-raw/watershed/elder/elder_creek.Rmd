@@ -40,7 +40,6 @@ wetted_area_acres <- DSMhabitat::fr_wetted_channel_area %>%
   filter(watershed == "Elder Creek") %>% 
   pull(channel_area_of_FR_rearing_extent)
 
-# TODO check with mark using gard estimate
 df <- read_excel('data-raw/mark_gard_data/Floodplainarea.xlsx', 
                             sheet = "Elder", skip = 2, 
                             col_names = c('trash', 'flow_cfs', 'trash2', 
