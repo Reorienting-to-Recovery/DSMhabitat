@@ -66,7 +66,7 @@ A flow to suitable area relationship was modeled using 2-dimensional hydraulic m
 Spring Run Chinook and Steelhead spawning habitat were [calculated with a relationship between flow and mean weighted usable area from watersheds in the region with modeled habitat](http://cvpia-habitat-docs-markdown.s3-website-us-west-2.amazonaws.com/watershed/Regional_Approximation.html){target="_blank"}
 
 <!-- # TODO find where regional approx for spring run and steelhead need to be modified -->
-
+### Spawning and Rearing Data 
 ```{r}
 # instream
 # we need to scale sr_juv and st_juv only
