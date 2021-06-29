@@ -30,5 +30,9 @@ floodplain_modeling_metadata <- read_csv("data-raw/floodplain_modeling_metadata.
 usethis::use_data(floodplain_modeling_metadata, overwrite = TRUE)
 
 # low gradient rearing extent lengths for scaling habitat
-low_gradient_lengths <- read_csv("data-raw/low_gradient_lengths.csv")
+low_gradient_lengths <- read_csv("data-raw/low_gradient_lengths.csv") %>% 
+  rename(fr = FR_low_gradient_length_mi, 
+         sr = SR_low_gradient_length_mi, 
+         st = ST_low_gradient_length_mi, 
+         lfr = LFR_low_gradient_length_mi)
 usethis::use_data(low_gradient_lengths, overwrite = TRUE)
