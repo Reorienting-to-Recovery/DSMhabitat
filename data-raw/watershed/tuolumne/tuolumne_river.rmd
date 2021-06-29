@@ -94,20 +94,18 @@ The entire mapped rearing extent of 54.33 miles was modeled by TID and MID using
 ## Floodplain Data    
 The areas represent total inundated area in acres.    
 ```{r}
-tuolumne_fp <- read_excel('data-raw/watershed/CVPIA_FloodplainAreas.xlsx', 
-                                        sheet = 'TuolumneRiver') %>%
+tuolumne_fp <- read_excel('data-raw/mark_gard_data/Floodplainarea.xlsx', 
+                                        sheet = 'Tuolumne', skip = 2,
+                            col_names = c('flow_cfs', 'FR_floodplain_acres')) %>%
   mutate(watershed = 'Tuolumne River',
-         SR_floodplain_acres = modeled_floodplain_area_acres,
-         ST_floodplain_acres = modeled_floodplain_area_acres) %>%
+         SR_floodplain_acres = FR_floodplain_acres,
+         ST_floodplain_acres = FR_floodplain_acres) %>%
   select(flow_cfs,
-         FR_floodplain_acres = modeled_floodplain_area_acres,
+         FR_floodplain_acres,
          SR_floodplain_acres, ST_floodplain_acres,
          watershed)
 
-threshold <- tuolumne_fp %>% 
-  filter(FR_floodplain_acres == 0) %>% 
-  summarise(max = max(flow_cfs)) %>% 
-  pull(max)
+threshold <- tuolumne_fp$flow_cfs[min(which(tuolumne_fp$FR_floodplain_acres > 0) - 1)]
 
 tuolumne_river_floodplain <- tuolumne_fp %>% 
   filter(flow_cfs >= threshold)
