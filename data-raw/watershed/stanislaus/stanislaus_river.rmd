@@ -146,13 +146,13 @@ source('data-raw/watershed/floodplain_utils.R')
 ## Floodplain Data
 The areas represent total inundated area in acres.    
 ```{r}
-stanislaus_fp <- read_excel('data-raw/watershed/CVPIA_FloodplainAreas.xlsx',
-                                          sheet = 'StanislausRiver') %>%
+stanislaus_fp <- read_excel('data-raw/mark_gard_data/Floodplainarea.xlsx',
+                                          sheet = 'Stanislaus', skip = 2,
+                            col_names = c('flow_cfs', 'FR_floodplain_acres')) %>%
   mutate(watershed = 'Stanislaus River',
-         SR_floodplain_acres = modeled_floodplain_area_acres,
-         ST_floodplain_acres = modeled_floodplain_area_acres) %>%
-  select(flow_cfs,
-         FR_floodplain_acres = modeled_floodplain_area_acres,
+         SR_floodplain_acres = FR_floodplain_acres,
+         ST_floodplain_acres = FR_floodplain_acres) %>%
+  select(flow_cfs, FR_floodplain_acres,
          SR_floodplain_acres, ST_floodplain_acres,
          watershed)
 
@@ -160,6 +160,8 @@ threshold <- stanislaus_fp %>%
   filter(FR_floodplain_acres == 0) %>% 
   pull(flow_cfs) %>% 
   max()
+
+threshold <- stanislaus_fp$flow_cfs[min(which(stanislaus_fp$FR_floodplain_acres > 0) - 1)]
 
 stanislaus_river_floodplain <- stanislaus_fp %>% 
   filter(flow_cfs >= threshold)
