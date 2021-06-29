@@ -2,11 +2,6 @@ library(tidyverse)
 library(readxl)
 library(glue)
 
-# TODO make sure to merge updates to deer creek model and cow creek lengths
-metadata <- read_excel('data-raw/watershed/CVPIA_FloodplainAreas.xlsx', sheet = 'MetaData',
-                       col_types = c('text', 'text', 'text', 'text',
-                                     rep('numeric', 22), 'text', 'numeric', 'text'), na = 'na')
-
 # function for partially modeled watersheds---------------------------------
 # ws = watershed
 # df = flow to area relationship dataframe for watershed
