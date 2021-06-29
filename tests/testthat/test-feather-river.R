@@ -105,8 +105,8 @@ test_that('ST and SR rearing are same as FR', {
 })
 
 test_that('No WR or LFR on Feather River', {
-  expect_true(is.na(set_instream_habitat('Feather River', 'wr', 200)))
-  expect_true(is.na(set_instream_habitat('Feather River', 'lfr', 200)))
+  expect_true(is.na(set_instream_habitat('Feather River', 'wr', 'fry', 200)))
+  expect_true(is.na(set_instream_habitat('Feather River', 'lfr', 'fry', 200)))
   expect_true(is.na(set_spawning_habitat('Feather River', 'wr', 100)))
   expect_true(is.na(set_spawning_habitat('Feather River', 'lfr', 100)))
   expect_true(is.na(set_floodplain_habitat('Feather River', 'wr', 2000)))

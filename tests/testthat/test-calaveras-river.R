@@ -91,9 +91,9 @@ test_that('FR instream Calaveras River works', {
 })
 
 test_that('No WR, SR, or LFR on Calaveras River', {
-  expect_true(is.na(set_instream_habitat('Calaveras River', 'wr', 200)))
-  expect_true(is.na(set_instream_habitat('Calaveras River', 'sr', 200)))
-  expect_true(is.na(set_instream_habitat('Calaveras River', 'lfr', 200)))
+  expect_true(is.na(set_instream_habitat('Calaveras River', 'wr', 'fry', 200)))
+  expect_true(is.na(set_instream_habitat('Calaveras River', 'sr', 'fry', 200)))
+  expect_true(is.na(set_instream_habitat('Calaveras River', 'lfr', 'fry', 200)))
   expect_true(is.na(set_spawning_habitat('Calaveras River', 'wr', 100)))
   expect_true(is.na(set_spawning_habitat('Calaveras River', 'sr', 100)))
   expect_true(is.na(set_spawning_habitat('Calaveras River', 'lfr', 100)))

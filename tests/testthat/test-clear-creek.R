@@ -194,7 +194,7 @@ test_that('LFR floodplain Clear Creek works', {
 })
 
 test_that('No WR on Clear Creek', {
-  expect_true(is.na(set_instream_habitat('Clear Creek', 'wr', 200)))
+  expect_true(is.na(set_instream_habitat('Clear Creek', 'wr', 'fry', 200)))
   expect_true(is.na(set_spawning_habitat('Clear Creek', 'wr', 100)))
   expect_true(is.na(set_floodplain_habitat('Clear Creek', 'wr', 2000)))
 })

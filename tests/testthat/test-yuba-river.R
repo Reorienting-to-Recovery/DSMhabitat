@@ -150,8 +150,8 @@ test_that('ST adult Yuba River works', {
 })
 
 test_that('No WR or LFR on Yuba River', {
-  expect_true(is.na(set_instream_habitat('Yuba River', 'wr', 200)))
-  expect_true(is.na(set_instream_habitat('Yuba River', 'lfr', 200)))
+  expect_true(is.na(set_instream_habitat('Yuba River', 'wr', 'fry', 200)))
+  expect_true(is.na(set_instream_habitat('Yuba River', 'lfr', 'fry', 200)))
   expect_true(is.na(set_spawning_habitat('Yuba River', 'wr', 100)))
   expect_true(is.na(set_spawning_habitat('Yuba River', 'lfr', 100)))
   expect_true(is.na(set_floodplain_habitat('Yuba River', 'wr', 2000)))

@@ -101,9 +101,9 @@ test_that('FR floodplain Bear River works', {
 })
 
 test_that('No WR, SR, or LFR on Bear River', {
-  expect_true(is.na(set_instream_habitat('Bear River', 'wr', 200)))
-  expect_true(is.na(set_instream_habitat('Bear River', 'sr', 200)))
-  expect_true(is.na(set_instream_habitat('Bear River', 'lfr', 200)))
+  expect_true(is.na(set_instream_habitat('Bear River', 'wr', 'fry', 200)))
+  expect_true(is.na(set_instream_habitat('Bear River', 'sr', 'fry', 200)))
+  expect_true(is.na(set_instream_habitat('Bear River', 'lfr', 'fry', 200)))
   expect_true(is.na(set_spawning_habitat('Bear River', 'wr', 100)))
   expect_true(is.na(set_spawning_habitat('Bear River', 'sr', 100)))
   expect_true(is.na(set_spawning_habitat('Bear River', 'lfr', 100)))

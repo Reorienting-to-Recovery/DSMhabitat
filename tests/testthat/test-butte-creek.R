@@ -113,8 +113,8 @@ test_that('ST floodplain Butte Creek works', {
     tolerance = .01)
 })
 test_that('No WR or LFR on Butte Creek', {
-  expect_true(is.na(set_instream_habitat('Butte Creek', 'wr', 200)))
-  expect_true(is.na(set_instream_habitat('Butte Creek', 'lfr', 200)))
+  expect_true(is.na(set_instream_habitat('Butte Creek', 'wr', 'fry', 200)))
+  expect_true(is.na(set_instream_habitat('Butte Creek', 'lfr', 'fry', 200)))
   expect_true(is.na(set_spawning_habitat('Butte Creek', 'wr', 100)))
   expect_true(is.na(set_spawning_habitat('Butte Creek', 'lfr', 100)))
   expect_true(is.na(set_floodplain_habitat('Butte Creek', 'wr', 2000)))

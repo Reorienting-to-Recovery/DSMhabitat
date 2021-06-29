@@ -116,8 +116,8 @@ test_that('SR floodplain Antelope Creek works', {
 })
 
 test_that('No WR or LFR on Antelope Creek', {
-  expect_true(is.na(set_instream_habitat('Antelope Creek', 'wr', 200)))
-  expect_true(is.na(set_instream_habitat('Antelope Creek', 'lfr', 200)))
+  expect_true(is.na(set_instream_habitat('Antelope Creek', 'wr', 'fry', 200)))
+  expect_true(is.na(set_instream_habitat('Antelope Creek', 'lfr', 'fry', 200)))
   expect_true(is.na(set_spawning_habitat('Antelope Creek', 'wr', 100)))
   expect_true(is.na(set_spawning_habitat('Antelope Creek', 'lfr', 100)))
   expect_true(is.na(set_floodplain_habitat('Antelope Creek', 'wr', 2000)))

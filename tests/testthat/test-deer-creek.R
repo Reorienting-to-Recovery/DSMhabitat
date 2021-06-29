@@ -67,8 +67,8 @@ test_that("set floodplain works at deer creek", {
 })
 
 test_that('No WR or LFR on Deer Creek', {
-  expect_true(is.na(set_instream_habitat('Deer Creek', 'wr', 200)))
-  expect_true(is.na(set_instream_habitat('Deer Creek', 'lfr', 200)))
+  expect_true(is.na(set_instream_habitat('Deer Creek', 'wr', 'fry', 200)))
+  expect_true(is.na(set_instream_habitat('Deer Creek', 'lfr', 'fry', 200)))
   expect_true(is.na(set_spawning_habitat('Deer Creek', 'wr', 100)))
   expect_true(is.na(set_spawning_habitat('Deer Creek', 'lfr', 100)))
   expect_true(is.na(set_floodplain_habitat('Deer Creek', 'wr', 2000)))
