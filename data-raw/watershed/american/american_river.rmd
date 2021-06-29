@@ -130,22 +130,18 @@ source('data-raw/watershed/floodplain_utils.R')
 ## Floodplain Data    
 The areas represent total inundated area in acres.    
 ```{r, echo=FALSE}
-american_river <- read_excel('data-raw/watershed/CVPIA_FloodplainAreas.xlsx',
-                                        sheet = 'AmericanRiver') 
+wetted_area_acres <- DSMhabitat::fr_wetted_channel_area %>% 
+  filter(watershed == "American River") %>% 
+  pull(channel_area_of_FR_rearing_extent)
 
-threshold_flow <- american_river %>% 
-  filter(modeled_floodplain_area_acres == 0) %>% 
-  summarise(max_flow = max(flow_cfs)) %>% 
-  pull(max_flow)  
-  
-american_river_floodplain <- american_river %>% 
-  mutate(watershed = 'American River',
-         ST_floodplain_acres = modeled_floodplain_area_acres) %>%
-  select(flow_cfs,
-         FR_floodplain_acres = modeled_floodplain_area_acres,
-         ST_floodplain_acres,
-         watershed) %>% 
-  filter(flow_cfs >= threshold_flow)
+df <- read_excel('data-raw/mark_gard_data/Floodplainarea.xlsx', 
+                            sheet = "American", skip = 2, 
+                            col_names = c('trash', 'flow_cfs', 'trash2', 
+                                          'total_area_acres', 'trash3')) %>% 
+  transmute(flow_cfs,  
+            modeled_floodplain_area_acres = pmax(total_area_acres - wetted_area_acres, 0))
+
+american_river_floodplain <- scale_fp_flow_area_partial_model(ws = 'American River', df)
 
 knitr::kable(align = 'c', head(american_river_floodplain, 5), 
              caption = "Header Descriptions: flow_cfs = flow in cubic feet per second,
