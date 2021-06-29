@@ -100,16 +100,34 @@ source('data-raw/watershed/floodplain_utils.R')
 ## Floodplain Data
 The areas represent total inundated area in acres.    
 ```{r}
-san_joaquin_river_floodplain <- read_excel('data-raw/watershed/CVPIA_FloodplainAreas.xlsx',
-                                           sheet = 'SanJoaquinRiver') %>%
-  mutate(watershed = 'San Joaquin River',
-         SR_floodplain_acres = modeled_floodplain_area_acres,
-         ST_floodplain_acres = modeled_floodplain_area_acres) %>%
-  select(flow_cfs,
-         FR_floodplain_acres = modeled_floodplain_area_acres,
-         SR_floodplain_acres, ST_floodplain_acres,
-         watershed) %>% 
-  filter(flow_cfs > 20)
+# TODO delete CVPIA_Floodplain table once confirmed with mark we don't need anymore
+# san_joaquin_river_floodplain <- read_excel('data-raw/watershed/CVPIA_FloodplainAreas.xlsx',
+#                                            sheet = 'SanJoaquinRiver') %>%
+#   mutate(watershed = 'San Joaquin River',
+#          SR_floodplain_acres = modeled_floodplain_area_acres,
+#          ST_floodplain_acres = modeled_floodplain_area_acres) %>%
+#   select(flow_cfs,
+#          FR_floodplain_acres = modeled_floodplain_area_acres,
+#          SR_floodplain_acres, ST_floodplain_acres,
+#          watershed) %>% 
+#   filter(flow_cfs > 20)
+# TODO why are these values different?
+wetted_area_acres <- DSMhabitat::fr_wetted_channel_area %>% 
+  filter(watershed == "San Joaquin River") %>% 
+  pull(channel_area_of_FR_rearing_extent)
+
+san_joaquin_river_floodplain <- read_excel('data-raw/mark_gard_data/Floodplainarea.xlsx', 
+                            sheet = "San Joaquin", skip = 2, 
+                            col_names = c('trash', 'flow_cfs', 'trash2', 
+                                          'total_area_acres', 'trash3')) %>% 
+  transmute(flow_cfs, 
+            total_area_acres = ifelse(is.na(total_area_acres), 0, 
+                                      total_area_acres),
+            FR_floodplain_acres = pmax(total_area_acres - wetted_area_acres, 0),
+            SR_floodplain_acres = FR_floodplain_acres,
+            ST_floodplain_acres = FR_floodplain_acres,
+            watershed = "San Joaquin River") %>% 
+  select(-total_area_acres)
 
 knitr::kable(align = 'c', head(san_joaquin_river_floodplain, 5), 
              caption = "Header Descriptions: flow_cfs = flow in cubic feet per second,
