@@ -100,7 +100,6 @@ source('data-raw/watershed/floodplain_utils.R')
 ## Floodplain Data
 The areas represent total inundated area in acres.    
 ```{r}
-# TODO delete CVPIA_Floodplain table once confirmed with mark we don't need anymore
 wetted_area_acres <- DSMhabitat::fr_wetted_channel_area %>% 
   filter(watershed == "San Joaquin River") %>% 
   pull(channel_area_of_FR_rearing_extent)
