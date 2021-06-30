@@ -101,20 +101,18 @@ source('data-raw/watershed/floodplain_utils.R')
 The areas represent total inundated area in acres.    
 ```{r}
 # TODO delete CVPIA_Floodplain table once confirmed with mark we don't need anymore
-# san_joaquin_river_floodplain <- read_excel('data-raw/watershed/CVPIA_FloodplainAreas.xlsx',
-#                                            sheet = 'SanJoaquinRiver') %>%
-#   mutate(watershed = 'San Joaquin River',
-#          SR_floodplain_acres = modeled_floodplain_area_acres,
-#          ST_floodplain_acres = modeled_floodplain_area_acres) %>%
-#   select(flow_cfs,
-#          FR_floodplain_acres = modeled_floodplain_area_acres,
-#          SR_floodplain_acres, ST_floodplain_acres,
-#          watershed) %>% 
-#   filter(flow_cfs > 20)
-# TODO why are these values different?
 wetted_area_acres <- DSMhabitat::fr_wetted_channel_area %>% 
   filter(watershed == "San Joaquin River") %>% 
   pull(channel_area_of_FR_rearing_extent)
+
+# CVPFED RAS model from Merced River confluence to the Delta (total of 79 RM)
+# Use scaled down areas for 45 mile river reach
+rearing_extent <- DSMhabitat::watershed_lengths %>% 
+  filter(lifestage == "rearing", watershed == "San Joaquin River", 
+         species == "fr") %>% 
+  pull(miles)
+
+scaling_factor <- rearing_extent/79
 
 san_joaquin_river_floodplain <- read_excel('data-raw/mark_gard_data/Floodplainarea.xlsx', 
                             sheet = "San Joaquin", skip = 2, 
@@ -122,8 +120,8 @@ san_joaquin_river_floodplain <- read_excel('data-raw/mark_gard_data/Floodplainar
                                           'total_area_acres', 'trash3')) %>% 
   transmute(flow_cfs, 
             total_area_acres = ifelse(is.na(total_area_acres), 0, 
-                                      total_area_acres),
-            FR_floodplain_acres = pmax(total_area_acres - wetted_area_acres, 0),
+                                      total_area_acres) * scaling_factor,
+            FR_floodplain_acres = (pmax(total_area_acres - wetted_area_acres, 0)),
             SR_floodplain_acres = FR_floodplain_acres,
             ST_floodplain_acres = FR_floodplain_acres,
             watershed = "San Joaquin River") %>% 
