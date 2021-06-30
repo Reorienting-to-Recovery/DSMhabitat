@@ -12,6 +12,7 @@ options(usethis.quiet = TRUE)
 library(tidyverse)
 library(readxl)
 library(DSMhabitat)
+library(scales)
 ```
 ## Future Data Improvements
 None planned. 
@@ -30,26 +31,32 @@ cotton_spawn <- read_excel('data-raw/mark_gard_data/IFIMWUA.xlsx',
   mutate(FR_spawn_wua = Spawning/mi/5.28) %>% 
   select(flow_cfs = Flow, FR_spawn_wua)
 
-tot_len <- 31.25
-  
-cotton_reach_1 <- read_excel('data-raw/watershed/cottonwood/data/cottonwood_combined.xlsx', 
-                             range = "G4:K17") %>% 
-  mutate(mi = 8.99)
-cotton_reach_2 <- read_excel('data-raw/watershed/cottonwood/data/cottonwood_combined.xlsx', 
-                             range = "G21:K34") %>%
-  mutate(mi = 13.42)
-cotton_reach_3 <- read_excel('data-raw/watershed/cottonwood/data/cottonwood_combined.xlsx', 
-                             range = "G38:K47") %>%
-  mutate(mi = 8.84)
+lens <- read_excel('data-raw/watershed/cottonwood/data/cottonwood_combined.xlsx', 
+                   sheet = "reach_lengths") %>% 
+  spread(reach, miles)
 
-new_cottonwood_creek_instream <- bind_rows(cotton_reach_1, cotton_reach_2, cotton_reach_3) %>% 
-   gather(lifestage, sqft_per_mile, -Flow, -mi) %>% 
-   group_by(Flow, lifestage) %>% 
-   summarise(wua = sum(sqft_per_mile * mi/tot_len)/5.28) %>% 
-   spread(lifestage, wua) %>% 
-   ungroup() %>% 
+total_length <- lens$`Cottonwood Creek Downstream of South Fork` + lens$`Cottonwood Creek Upstream of South Fork`
+
+downstream_south_fork <- read_excel('data-raw/watershed/cottonwood/data/cottonwood_combined.xlsx', 
+                                    sheet = "downstream_of_south_fork") %>% 
+  mutate(miles = lens$`Cottonwood Creek Downstream of South Fork`)
+
+upstream_south_fork <- read_excel('data-raw/watershed/cottonwood/data/cottonwood_combined.xlsx', 
+                                    sheet = "upstream_of_south_fork") %>% 
+  mutate(miles = lens$`Cottonwood Creek Upstream of South Fork`)
+
+new_cottonwood_creek_instream <- bind_rows(downstream_south_fork, upstream_south_fork) %>% 
+  gather(species_lifestage, wua, -Flow, -miles) %>% 
+  mutate(reach_proportion = miles/total_length,
+         scaled_wua = wua * reach_proportion) %>% 
+  group_by(Flow, species_lifestage) %>% 
+  summarise(wua = sum(scaled_wua)) %>% 
+  ungroup() %>% 
+  mutate(wua = wua/total_length/5.28) %>% 
+  spread(species_lifestage, wua) %>% 
+  arrange(Flow) %>% 
    rename(flow_cfs = Flow, FR_fry_wua = `FR fry`, 
-          FR_juv_wua = `FR Juv`, ST_fry_wua = 'ST fry', ST_juv_wua = 'ST juv') %>% 
+          FR_juv_wua = `FR Juv`, ST_fry_wua = `ST fry`, ST_juv_wua = `ST juv`) %>% 
    mutate(watershed = 'Cottonwood Creek')
 
 cottonwood_creek_instream <- cotton_spawn %>% 
