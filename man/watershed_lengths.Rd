@@ -17,7 +17,7 @@ dataframe with 57 rows and 7 variables
 }
 }
 \source{
-FlowWest, add url to shp file when mapping is complete
+\href{https://cvpiahabitat-r-package.s3.us-west-2.amazonaws.com/salmonid_habitat_extents.zip}{Salmonid Extents}
 }
 \usage{
 watershed_lengths
@@ -26,7 +26,7 @@ watershed_lengths
 A dataset containing the length of rearing and spawning extent within each CVPIA watershed for different species.
 }
 \details{
-Information comes from expert outreach undertaken in 2017.
+Information comes from expert outreach undertaken in 2017. Updated in 2021 to include late fall run extents from expert outreach.
 }
 \examples{
 watershed_lengths
