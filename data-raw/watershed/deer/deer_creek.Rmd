@@ -27,9 +27,6 @@ rearing_extents <- DSMhabitat::watershed_lengths %>%
   select(species, miles) %>% 
   spread(species, miles)
 
-# TODO need to update rearing extent after the clip, delete the overwrite then
-rearing_extents$fr <- 11.76
-
 raw_data <- read_csv("data-raw/watershed/deer/data/existing-suitability-deer-creek-2021-03-24.csv")
 
 sr_scale <- (rearing_extents$sr - rearing_extents$fr) / rearing_extents$fr
