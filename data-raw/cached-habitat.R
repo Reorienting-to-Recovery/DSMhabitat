@@ -708,3 +708,4 @@ usethis::use_data(delta_contact_points, overwrite = TRUE)
 
 delta_prop_high_predation <- c("North Delta" = 1, "South Delta" = 1)
 usethis::use_data(delta_prop_high_predation, overwrite = TRUE)
+
