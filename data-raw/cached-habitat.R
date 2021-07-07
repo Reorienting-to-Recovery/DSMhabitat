@@ -206,11 +206,12 @@ fr_spawn[which(is.na(fr_spawn))] <- 0
 usethis::use_data(fr_spawn, overwrite = TRUE)
 
 st_spawn <- get_spawn_hab_all(spawning_watersheds, 'st')
+st_spawn[which(is.na(st_spawn))] <- 0
 dimnames(st_spawn) <- list(watersheds, month.abb, 1979:2000)
-st_spawn[which(is.na(st_spawn))] <- fr_spawn[which(is.na(st_spawn))]
 usethis::use_data(st_spawn, overwrite = TRUE)
 
 sr_spawn <- get_spawn_hab_all(spawning_watersheds, 'sr')
+sr_spawn[which(is.na(sr_spawn))] <- 0
 # Old stuff 
 # # several watershed that do not have spring run populations but SIT wants to enable colonization
 # # NOTE: here i create new fr and st habs that include year 2000 in order to fill in for the sr
@@ -222,14 +223,12 @@ sr_spawn <- get_spawn_hab_all(spawning_watersheds, 'sr')
 # sr_spawn[26, , ] <- fr_spawn_filler[26, , ] # Cosumnes River
 # sr_spawn[28, , ] <- fr_spawn_filler[28, , ] # Merced River
 dimnames(sr_spawn) <- list(watersheds, month.abb, 1979:2000)
-# Any location without sr we give the fall run amount of habitat for colonization 
-sr_spawn[which(is.na(sr_spawn))] <- fr_spawn[which(is.na(sr_spawn))]
 usethis::use_data(sr_spawn, overwrite = TRUE)
 
 # Winter Run 
 # only in Sacramento and battle creek
 # spawn just in Upper Sac
-wr_spawn <- fr_spawn # Set default values to fall run to allow for straying
+wr_spawn <- array(0, dim = c(31, 12, 22), dimnames = list(watersheds, month.abb, 1979:2000)) 
 up_sac_flows <- get_flow('Upper Sacramento River', years = c(1979, 2000))
 months <- rep(1:12, 22)
 up_sac_hab <- map2_dbl(months, up_sac_flows, function(month, flow) {
@@ -247,15 +246,13 @@ battle_hab <- map_dbl(battle_flows, function(flow) {
 
 wr_spawn["Upper Sacramento River",,] <- up_sac_hab
 wr_spawn["Battle Creek",,] <- battle_hab
-wr_spawn[which(is.na(wr_spawn))] <- 0
-dimnames(wr_spawn) <- list(watersheds, month.abb, 1979:2000)
 usethis::use_data(wr_spawn, overwrite = TRUE)
 
 
 # Late Fall Run 
 # only in sacramento clear creek and battle creek
 # spawn just in Upper Sac
-lfr_spawn <- fr_spawn # Set default values to fall run to allow for straying
+lfr_spawn <- array(0, dim = c(31, 12, 22), dimnames = list(watersheds, month.abb, 1979:2000))  
 up_sac_flows <- get_flow('Upper Sacramento River', years = c(1979, 2000))
 months <- rep(1:12, 22)
 up_sac_hab <- map2_dbl(months, up_sac_flows, function(month, flow) {
@@ -277,11 +274,9 @@ clear_hab <- map_dbl(battle_flows, function(flow) {
                                    species = 'lfr',
                                    flow = flow)
 })
-dimnames(lfr_spawn) <- list(watersheds, month.abb, 1979:2000)
 lfr_spawn["Upper Sacramento River", , ] <- up_sac_hab
 lfr_spawn["Battle Creek", , ] <- battle_hab
 lfr_spawn["Clear Creek", , ] <- clear_hab
-lfr_spawn[which(is.na(lfr_spawn))] <- 0
 usethis::use_data(lfr_spawn, overwrite = TRUE)
 
 # rearing--------------------
