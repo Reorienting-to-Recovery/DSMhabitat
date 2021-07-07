@@ -18,12 +18,6 @@ Estimated percentages of rearing pools in certain watersheds were provided by [M
 
 ### Watersheds With Estimated Percent Pools 
 ```{r}
-lengths <- read_excel('data-raw/watershed/CVPIA_FloodplainAreas.xlsx',
-                      sheet = 'MetaData',
-                      col_types = c('text', 'text', 'text', 'text', rep('numeric', 17),
-                                    'text', 'numeric', 'text'),
-                      na = 'na')
-
 pools_perc <- read_csv('data-raw/watershed/pools/data/pools.csv', col_types = 'cnc') %>%
   select(-FW_QAQC)
 
@@ -33,24 +27,31 @@ mean_pools_perc <- filter(pools_perc, watershed != 'Feather River') %>%
 knitr::kable(align = 'c', pools_perc)
 
 wss <- data.frame(order = 1:31, 
-                  watershed = c("Upper Sacramento River", "Antelope Creek", "Battle Creek", 
-                                "Bear Creek", "Big Chico Creek", "Butte Creek", "Clear Creek", 
-                                "Cottonwood Creek", "Cow Creek", "Deer Creek", "Elder Creek", 
-                                "Mill Creek", "Paynes Creek", "Stony Creek", "Thomes Creek", 
-                                "Upper-mid Sacramento River", "Sutter Bypass", "Bear River", 
-                                "Feather River", "Yuba River", "Lower-mid Sacramento River", 
-                                "Yolo Bypass", "American River", "Lower Sacramento River", "Calaveras River", 
-                                "Cosumnes River", "Mokelumne River", "Merced River", "Stanislaus River", 
-                                "Tuolumne River", "San Joaquin River"))
+                  watershed = c("Upper Sacramento River", "Antelope Creek", 
+                                "Battle Creek", "Bear Creek", "Big Chico Creek", 
+                                "Butte Creek", "Clear Creek", "Cottonwood Creek", 
+                                "Cow Creek", "Deer Creek", "Elder Creek", "Mill Creek", 
+                                "Paynes Creek", "Stony Creek", "Thomes Creek", 
+                                "Upper-mid Sacramento River", "Sutter Bypass", 
+                                "Bear River", "Feather River", "Yuba River", 
+                                "Lower-mid Sacramento River", "Yolo Bypass", 
+                                "American River", "Lower Sacramento River", 
+                                "Calaveras River", "Cosumnes River", "Mokelumne River", 
+                                "Merced River", "Stanislaus River", "Tuolumne River", 
+                                "San Joaquin River"))
 
 # put combinded values of upper sac + upper mid sac in upper sac
 # upper sac + upper mid sac 6174 acres, from mark gard
 pools_upper_sac <- 6174 * 7.2/100 * 4046.86
 
-pools <- lengths %>%
-  mutate(SR_prop_length = SR_rearing_length_mi / FR_rearing_length_mi,
-         ST_prop_length = ST_rearing_length_mi / FR_rearing_length_mi,
-         FR_channel_area = FR_channel_area_of_length_modeled_acres,
+pools <- DSMhabitat::watershed_lengths %>% 
+  filter(order > 0, lifestage == "rearing") %>% 
+  select(watershed, species, miles) %>% 
+  spread(species, miles) %>% 
+  left_join(DSMhabitat::fr_wetted_channel_area) %>% 
+  mutate(SR_prop_length = sr / fr,
+         ST_prop_length = st / fr,
+         FR_channel_area = channel_area_of_FR_rearing_extent,
          SR_channel_area = FR_channel_area * SR_prop_length,
          ST_channel_area = FR_channel_area * ST_prop_length) %>%
   select(watershed, FR_channel_area, SR_channel_area, ST_channel_area) %>%

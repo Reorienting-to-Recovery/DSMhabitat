@@ -112,7 +112,7 @@ CVPIA Sacramento Rearing Segments:
 * Lower-mid Sacramento River - Wilkins Slough to American (57.96 mi) falls within Section 2 and Section 3 of NOAA NMFS modeling
 * Lower Sacramento River - American to Freeport (13.70 mi) falls within Section 3 of NOAA NMFS modeling
 
-### Rearing WUA    
+### Rearing Habitat Area    
 The juvenile instream high quality rearing habitat for Winter Run Chinook Salmon in the Sacramento River is used as a surrogate for the other present Chinook runs. Units are in square meters.    
 ```{r}
 sac_instream <- read_csv(file = 'data/sacramento_instream.csv',

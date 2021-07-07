@@ -12,6 +12,7 @@ options(usethis.quiet = TRUE)
 library(tidyverse)
 library(readxl)
 library(DSMhabitat)
+library(scales)
 ```
 ## Future Data Improvements
 None planned. 
@@ -19,40 +20,78 @@ None planned.
 ## Instream Spawning and Rearing Habitat
 **Data Source:** [CDFW 1979](https://s3-us-west-2.amazonaws.com/cvpiahabitat-r-package/cvpia-sit-model-inputs/CDFW1979_CottonwoodSpawningIFIM.PDF){target="_blank"} (pgs 11-15) and [UFWS 2013](https://cvpiahabitat-r-package.s3-us-west-2.amazonaws.com/cvpia-sit-model-inputs/CVPIA_Annual_Progress_Report_Fiscal_Year_2013.pdf){target="_blank"} (pgs 46-47)
 
-The instream spawning area for Fall Run Chinook Salmon in Cottonwood Creek is based on data from a collaborative study in 1979 by the U.S. Army Corps of Engineers and the California Department of Fish and Wildlife. The federal instream flow method was used to measure the rearing habitat at three reaches, that together span a 10.76 mile stretch of Cottonwood Creek. Spawning habitat data were provided on pages 11-15 of the CDFW 1979 report. Instream rearing habitat for Fall Run Chinook Salmon and Steelhead are based on the UFWS 2013 study that included 26 habitat transects on lower Cottonwood Creek. The habitat data from this study are on pages 46 and 47 of the USFWS 2014 report. The instream spawning and rearing habitat data were provided to us by [Mark Gard](mailto:Mark.Gard@Wildlife.ca.gov) from the California Department of Fish and Wildlife in a [spreadsheet](https://cvpiahabitat-r-package.s3-us-west-2.amazonaws.com/IFIMWUA.xlsx). Mark Gard instructed us to use A2:B8 for spawning, and A10:C40 for rearing of the 'Cottonwood' tab within the 'IFIMWUA.xlsx' file. 
+The instream spawning area for Fall Run Chinook Salmon in Cottonwood Creek is based on data from a collaborative study in 1979 by the U.S. Army Corps of Engineers and the California Department of Fish and Wildlife. The federal instream flow method was used to measure the rearing habitat at three reaches, that together span a 22.4 mile stretch of Cottonwood Creek. Spawning habitat data were provided on pages 11-15 (Table 1 and Table 5) of the CDFW 1979 report. Instream rearing habitat for Fall Run Chinook Salmon and Steelhead are based on the UFWS 2013 study that included 26 habitat transects on lower Cottonwood Creek. The habitat data from this study are on pages 46 and 47 of the USFWS 2014 report. The instream spawning and rearing habitat data were provided to us by [Mark Gard](mailto:Mark.Gard@Wildlife.ca.gov) from the California Department of Fish and Wildlife.
 
-### Combine Spawning and Rearing Data    
+### Spawning and Rearing Data    
 The instream spawning and rearing habitat data described above for Fall Run Chinook Salmon (FR) is combined for use in the Decision Support Model (DSM) in the following format. Units are in square feet per 1000 feet.
 ```{r}
-mi <- 10.76
-cotton_spawn <- read_excel('data-raw/mark_gard_data/IFIMWUA.xlsx', 
-                            range = "A2:B8", sheet = 'Cottonwood') %>% 
-  mutate(FR_spawn_wua = Spawning/mi/5.28) %>% 
-  select(flow_cfs = Flow, FR_spawn_wua)
+lens <- read_excel('data-raw/watershed/cottonwood/data/cottonwood_combined.xlsx', 
+                   sheet = "reach_lengths") %>% 
+  spread(reach, miles)
 
-tot_len <- 31.25
-  
-cotton_reach_1 <- read_excel('data-raw/watershed/cottonwood/data/cottonwood_combined.xlsx', 
-                             range = "G4:K17") %>% 
-  mutate(mi = 8.99)
-cotton_reach_2 <- read_excel('data-raw/watershed/cottonwood/data/cottonwood_combined.xlsx', 
-                             range = "G21:K34") %>%
-  mutate(mi = 13.42)
-cotton_reach_3 <- read_excel('data-raw/watershed/cottonwood/data/cottonwood_combined.xlsx', 
-                             range = "G38:K47") %>%
-  mutate(mi = 8.84)
+total_length <- lens$`Cottonwood Creek Downstream of South Fork` + lens$`Cottonwood Creek Upstream of South Fork`
 
-new_cottonwood_creek_instream <- bind_rows(cotton_reach_1, cotton_reach_2, cotton_reach_3) %>% 
-   gather(lifestage, sqft_per_mile, -Flow, -mi) %>% 
-   group_by(Flow, lifestage) %>% 
-   summarise(wua = sum(sqft_per_mile * mi/tot_len)/5.28) %>% 
-   spread(lifestage, wua) %>% 
-   ungroup() %>% 
+# spawning
+cottonwood_raw <- read_excel('data-raw/watershed/cottonwood/data/cottonwood_combined.xlsx', sheet = "spawning_both_reaches") 
+
+spawn_reach_1 <- cottonwood_raw %>% 
+  filter(reach == 1)
+
+spawn_reach_3 <- cottonwood_raw %>% 
+  filter(reach == 3)
+
+flows <- unique(cottonwood_raw$Flow)
+
+cotton_spawn_values_reach_1 <- tibble(
+  flow = flows,
+  Spawning = approx(spawn_reach_1$Flow, spawn_reach_1$Spawning, 
+                    xout = flows, rule = 2)$y,
+  miles = lens$`Cottonwood Creek Downstream of South Fork`
+)
+
+cotton_spawn_values_reach_3 <- tibble(
+  flow = flows,
+  Spawning = approx(spawn_reach_3$Flow, spawn_reach_3$Spawning, 
+                      xout = flows, rule = 2)$y,
+  miles = lens$`Cottonwood Creek Upstream of South Fork`
+)
+
+cottonwood_spawning <- cotton_spawn_values_reach_1 %>%
+  bind_rows(cotton_spawn_values_reach_3) %>%
+  gather(species_lifestage, wua, -flow, -miles) %>%
+  mutate(reach_proportion = miles/total_length,
+         scaled_wua = wua * reach_proportion) %>%
+  group_by(flow, species_lifestage) %>%
+  summarise(wua = sum(scaled_wua)) %>%
+  ungroup() %>%
+  mutate(FR_spawn_wua = wua/total_length/5.28) %>%
+  select(flow_cfs = flow, FR_spawn_wua)
+
+
+# Rearing
+downstream_south_fork <- read_excel('data-raw/watershed/cottonwood/data/cottonwood_combined.xlsx', 
+                                    sheet = "downstream_of_south_fork") %>% 
+  mutate(miles = lens$`Cottonwood Creek Downstream of South Fork`)
+
+upstream_south_fork <- read_excel('data-raw/watershed/cottonwood/data/cottonwood_combined.xlsx', 
+                                    sheet = "upstream_of_south_fork") %>% 
+  mutate(miles = lens$`Cottonwood Creek Upstream of South Fork`)
+
+new_cottonwood_creek_instream <- bind_rows(downstream_south_fork, upstream_south_fork) %>% 
+  gather(species_lifestage, wua, -Flow, -miles) %>% 
+  mutate(reach_proportion = miles/total_length,
+         scaled_wua = wua * reach_proportion) %>% 
+  group_by(Flow, species_lifestage) %>% 
+  summarise(wua = sum(scaled_wua)) %>% 
+  ungroup() %>% 
+  mutate(wua = wua/total_length/5.28) %>% 
+  spread(species_lifestage, wua) %>% 
+  arrange(Flow) %>% 
    rename(flow_cfs = Flow, FR_fry_wua = `FR fry`, 
-          FR_juv_wua = `FR Juv`, ST_fry_wua = 'ST fry', ST_juv_wua = 'ST juv') %>% 
+          FR_juv_wua = `FR Juv`, ST_fry_wua = `ST fry`, ST_juv_wua = `ST juv`) %>% 
    mutate(watershed = 'Cottonwood Creek')
 
-cottonwood_creek_instream <- cotton_spawn %>% 
+cottonwood_creek_instream <- cottonwood_spawning %>% 
   full_join(new_cottonwood_creek_instream) %>%
   arrange(flow_cfs) %>%
   mutate(watershed = 'Cottonwood Creek')
@@ -120,18 +159,14 @@ source('data-raw/watershed/floodplain_utils.R')
 ## Floodplain Data   
 The areas represent total inundated area in acres.    
 ```{r}
-cotton_fp <- read_excel('data-raw/watershed/CVPIA_FloodplainAreas.xlsx', 
-                        sheet = 'CottonwoodCreek') %>%
-  mutate(watershed = 'Cottonwood Creek')
+# Using 49 acres wetted channel area that mark gard developed because google earth channel area is 250 too big
+df <- read_excel('data-raw/mark_gard_data/Floodplainarea.xlsx', 
+                            sheet = "Cottonwood", skip = 2, 
+                            col_names = c('trash', 'flow_cfs', 'modeled_floodplain_area_acres', 
+                                          'total_area_acres', 'trash3')) %>% 
+  select(flow_cfs,modeled_floodplain_area_acres)
 
-threshold_flow <- cotton_fp %>% 
-  filter(modeled_floodplain_area_acres == 0) %>% 
-  summarise(max_flow = max(flow_cfs)) %>% 
-  pull(max_flow)
-
-cottonwood_creek_floodplain <- 
-  scale_fp_flow_area_partial_model(ws = 'Cottonwood Creek', 
-                                   df = filter(cotton_fp, flow_cfs >= threshold_flow))
+cottonwood_creek_floodplain <- scale_fp_flow_area_partial_model(ws = "Cottonwood Creek", df)
 
 knitr::kable(align = 'c', head(cottonwood_creek_floodplain, 5), 
              caption = "Header Descriptions: flow_cfs = flow in cubic feet per second,

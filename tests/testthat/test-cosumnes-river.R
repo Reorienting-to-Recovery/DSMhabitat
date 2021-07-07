@@ -115,3 +115,15 @@ test_that('ST = FR Cosumnes River works', {
     set_instream_habitat('Cosumnes River', 'st', 'juv', 1000))
 
 })
+
+test_that('No WR, SR, or LFR on Cosumnes River', {
+  expect_true(is.na(set_instream_habitat('Cosumnes River', 'wr', 'fry', 200)))
+  expect_true(is.na(set_instream_habitat('Cosumnes River', 'sr', 'fry', 200)))
+  expect_true(is.na(set_instream_habitat('Cosumnes River', 'lfr', 'fry', 200)))
+  expect_true(is.na(set_spawning_habitat('Cosumnes River', 'wr', 100)))
+  expect_true(is.na(set_spawning_habitat('Cosumnes River', 'sr', 100)))
+  expect_true(is.na(set_spawning_habitat('Cosumnes River', 'lfr', 100)))
+  expect_true(is.na(set_floodplain_habitat('Cosumnes River', 'wr', 2000)))
+  expect_true(is.na(set_floodplain_habitat('Cosumnes River', 'sr', 2000)))
+  expect_true(is.na(set_floodplain_habitat('Cosumnes River', 'lfr', 2000)))
+})

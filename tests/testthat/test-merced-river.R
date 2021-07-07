@@ -132,3 +132,14 @@ test_that('ST adult Merced River works', {
 
 })
 
+test_that('No WR, SR, or LFR on Merced River', {
+  expect_true(is.na(set_instream_habitat('Merced River', 'wr', 'fry', 200)))
+  expect_true(is.na(set_instream_habitat('Merced River', 'sr', 'fry', 200)))
+  expect_true(is.na(set_instream_habitat('Merced River', 'lfr', 'fry', 200)))
+  expect_true(is.na(set_spawning_habitat('Merced River', 'wr', 100)))
+  expect_true(is.na(set_spawning_habitat('Merced River', 'sr', 100)))
+  expect_true(is.na(set_spawning_habitat('Merced River', 'lfr', 100)))
+  expect_true(is.na(set_floodplain_habitat('Merced River', 'wr', 2000)))
+  expect_true(is.na(set_floodplain_habitat('Merced River', 'sr', 2000)))
+  expect_true(is.na(set_floodplain_habitat('Merced River', 'lfr', 2000)))
+})

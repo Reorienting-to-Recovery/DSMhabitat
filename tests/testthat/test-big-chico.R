@@ -32,3 +32,12 @@ test_that('FR floodplain Big Chico Creek works', {
     floodplain,
     tolerance = .01)
 })
+
+test_that('No WR or LFR on Big Chico Creek', {
+  expect_true(is.na(set_instream_habitat('Big Chico Creek', 'wr', 'fry', 200)))
+  expect_true(is.na(set_instream_habitat('Big Chico Creek', 'lfr', 'fry', 200)))
+  expect_true(is.na(set_spawning_habitat('Big Chico Creek', 'wr', 100)))
+  expect_true(is.na(set_spawning_habitat('Big Chico Creek', 'lfr', 100)))
+  expect_true(is.na(set_floodplain_habitat('Big Chico Creek', 'wr', 2000)))
+  expect_true(is.na(set_floodplain_habitat('Big Chico Creek', 'lfr', 2000)))
+})

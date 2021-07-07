@@ -11,7 +11,8 @@ remotes::install_github("CVPIA-OSC/DSMhabitat")
 ```
 
 #### Usage
-This package provides flow related datasets to the [`chinookDSM `](https://flowwest.github.io/cvpiaModels/) package.
+This package provides flow related datasets to the [`fallRunDSM,`](https://github.com/CVPIA-OSC/fallRunDSM)
+[`springRunDSM,`](https://github.com/CVPIA-OSC/springRunDSM) [`winterRunDSM,`](https://github.com/CVPIA-OSC/winterRunDSM) and [`latefallRunDSM`](https://github.com/CVPIA-OSC/latefallRunDSM) packages.
 
 ``` r
 # datasets within the package
@@ -34,5 +35,9 @@ This CALSIM II run was used as the basis of comparison for other potential opera
   
 [More information on CALSIM II](https://water.ca.gov/Library/Modeling-and-Analysis/Central-Valley-models-and-tools/CalSim-2)    
 [CALSIM II Schematic](https://s3-us-west-2.amazonaws.com/cvpiaflow-r-package/BST_CALSIMII_schematic_040110.jpg)  
+
+### Dependencies
+The `DSMhabitat` package provides data for several other packages within the [CVPIA Open Science Collaborative](https://github.com/CVPIA-OSC). These relationships are visualized in the dependency graph below. 
+<img src="man/figures/dependencyChain.svg" width="100%"/>
 
 <div style="margin-top: 40px;">Data Assembled and Maintained by <a href = "http://www.flowwest.com/" target = "_blank"> <img src="man/figures/TransLogoTreb.png" width="150px"/></div>

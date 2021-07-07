@@ -1,0 +1,34 @@
+watershed,method,model_name,modeled_length_mi,scaling_watershed,dec_jun_mean_flow_scaling,issues
+American River,full_model,Central Valley Floodplain Evaluation and Delineation (CVFED) HEC-RAS hydraulic model,22.81,NA,NA,NA
+Antelope Creek,scaled_dc,NA,0,Deer Creek,0.46703705457927,NA
+Battle Creek,scaled_dc,NA,0,Deer Creek,1.47266423327788,NA
+Bear Creek,scaled_dc,NA,0,Deer Creek,0.253897950259157,NA
+Bear River,part_model,Central Valley Floodplain Evaluation and Delineation (CVFED) HEC-RAS hydraulic model,16.4,NA,NA,used scaled channel area
+Big Chico Creek,part_model,Central Valley Floodplain Evaluation and Delineation (CVFED) HEC-RAS hydraulic model,8.74,NA,NA,used scaled channel area
+Butte Creek,part_model,Central Valley Floodplain Evaluation and Delineation (CVFED) HEC-RAS hydraulic model,17.14,NA,NA,NA
+Calaveras River,scaled_tr,NA,0,Tuolumne River,0.200495605964777,NA
+Clear Creek,scaled_cc,NA,0,Cottonwood Creek,0.209236963160552,NA
+Cosumnes River,scaled_tr,NA,0,Tuolumne River,0.502672036475406,haven't added 718.9 acres in CRP
+Cottonwood Creek,part_model,USFWS / FEMA 1D HEC-RAS hydraulic model,22.36,NA,NA,NA
+Cow Creek,scaled_dc,NA,0,Deer Creek,2.15622071138887,NA
+Deer Creek,part_model,Deer Creek Watershed Conservancy (DCWC) 2D HEC-RAS model,11.76,NA,NA,NA
+Elder Creek,part_model,Central Valley Floodplain Evaluation and Delineation (CVFED) HEC-RAS hydraulic model,5.4,NA,NA,NA
+Feather River,full_model,Central Valley Floodplain Evaluation and Delineation (CVFED) HEC-RAS hydraulic model,64.982597,NA,NA,NA
+Merced River,part_model,Central Valley Floodplain Evaluation and Delineation (CVFED) HEC-RAS hydraulic model,25.5,NA,NA,NA
+Mill Creek,scaled_dc,NA,0,Deer Creek,0.98176684693218,NA
+Mokelumne River,scaled_tr,NA,0,Tuolumne River,0.502672036475406,NA
+Paynes Creek,scaled_dc,NA,0,Deer Creek,0.222466270002636,NA
+San Joaquin River,full_model,Central Valley Floodplain Evaluation and Delineation (CVFED) HEC-RAS hydraulic model,45.680331,NA,NA,NA
+Stanislaus River,full_model,SRH-2D hyraulic model developed by NewFields (now FlowWest www.flowwest.com),60.312704,NA,NA,"no ""total modeled"" areas"
+Stony Creek,scaled_cc,NA,0,Cottonwood Creek,0.587259940488615,NA
+Thomes Creek,scaled_cc,NA,0,Cottonwood Creek,0.367821471467649,NA
+Tuolumne River,full_model,TUFLOW hydraulic model with 1D channel and 2D overbank components,54.331139,NA,NA,"no ""total modeled"" areas"
+Yuba River,full_model,"SRH-2D hydraulic model developed by Dr. Greg Pasternack at the University of California, Davis",23.072031,NA,NA,"no ""total modeled"" areas"
+Upper Sacramento River,full_model,Central Valley Floodplain Evaluation and Delineation (CVFED) HEC-RAS hydraulic model refined for use in the NOAA-NMFS Winter Run Chinook Salmon life cycle model,NA,NA,NA,NA
+Upper-mid Sacramento River,full_model,Central Valley Floodplain Evaluation and Delineation (CVFED) HEC-RAS hydraulic model refined for use in the NOAA-NMFS Winter Run Chinook Salmon life cycle model,NA,NA,NA,NA
+Lower-mid Sacramento River,full_model,Central Valley Floodplain Evaluation and Delineation (CVFED) HEC-RAS hydraulic model refined for use in the NOAA-NMFS Winter Run Chinook Salmon life cycle model,NA,NA,NA,NA
+Lower Sacramento River,full_model,Central Valley Floodplain Evaluation and Delineation (CVFED) HEC-RAS hydraulic model refined for use in the NOAA-NMFS Winter Run Chinook Salmon life cycle model,NA,NA,NA,NA
+North Delta,full_model,Delta Simulation Model II (DSM2) one-dimensional hydrodynamic model refined for use in the NOAA-NMFS Winter Run Chinook Salmon life cycle model,NA,NA,NA,NA
+South Delta,full_model,Delta Simulation Model II (DSM2) one-dimensional hydrodynamic model refined for use in the NOAA-NMFS Winter Run Chinook Salmon life cycle model,NA,NA,NA,NA
+Sutter Bypass,full_model,Central Valley Floodplain Evaluation and Delineation (CVFED) HEC-RAS hydraulic model refined for use in the NOAA-NMFS Winter Run Chinook Salmon life cycle model,NA,NA,NA,NA
+Yolo Bypass,full_model,Central Valley Floodplain Evaluation and Delineation (CVFED) HEC-RAS hydraulic model refined for use in the NOAA-NMFS Winter Run Chinook Salmon life cycle model,NA,NA,NA,NA

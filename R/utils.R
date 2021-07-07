@@ -22,7 +22,7 @@ wua_to_area <- function(wua, watershed_name,  life_stage, species_name) {
   ((stream_length/1000) * wua)/10.7639
 }
 
-#' Get WUA Selector
+#' Get Habitat Selector
 #' @description Habitat Modeling Column Lookup
 #' @details Habitat modeling column lookup by species and lifestage. If desired
 #' combination of species and lifestage is not present in modeling data table for a watershed,
@@ -30,40 +30,74 @@ wua_to_area <- function(wua, watershed_name,  life_stage, species_name) {
 #' @param species_wuas vector of column names within modeling data table for the targeted watershed
 #' @param species target species: "fr" for fall run, "lfr" for late fall run, "sr" for spring run, and "st" for steelhead
 #' @param life_stage "spawn", fry", "juv", or "adult"
+#' @param mode one of "wua" or "hsi"
 #' @return column name of desired habitat relationship
-get_wua_selector <- function(species_wuas, species, life_stage) {
+get_habitat_selector <- function(species_wuas, species, life_stage, mode = "wua") {
 
   species_lifestage <- paste(toupper(species), life_stage, sep = "_")
 
-  combos <- switch(species_lifestage,
-                   WR_spawn = c("WR_spawn_wua", "FR_spawn_wua", "SR_spawn_wua", 
-                                "ST_spawn_wua"),
-                   SR_spawn = c("SR_spawn_wua", "FR_spawn_wua", "ST_spawn_wua"),
-                   FR_spawn = c("FR_spawn_wua", "SR_spawn_wua", "ST_spawn_wua"),
-                   LFR_spawn = c("LFR_spawn_wua", "FR_spawn_wua", "SR_spawn_wua", 
-                                 "ST_spawn_wua"),
-                   ST_spawn = c("ST_spawn_wua", "SR_spawn_wua", "FR_spawn_wua"),
-                   WR_juv = c("WR_juv_wua", "SR_juv_wua", "FR_juv_wua", "WR_fry_wua",
-                              "SR_fry_wua", "FR_fry_wua", "ST_juv_wua", "ST_fry_wua"),
-                   WR_fry = c("WR_fry_wua", "SR_fry_wua",  "FR_fry_wua", "WR_juv_wua", 
-                              "SR_juv_wua", "FR_juv_wua", "ST_fry_wua", "ST_juv_wua"),
-                   SR_juv = c("SR_juv_wua", "FR_juv_wua", "SR_fry_wua",
-                              "FR_fry_wua", "ST_juv_wua", "ST_fry_wua"),
-                   SR_fry = c("SR_fry_wua", "FR_fry_wua", "SR_juv_wua",
-                              "FR_juv_wua", "ST_fry_wua", "ST_juv_wua"),
-                   FR_juv = c("FR_juv_wua", "SR_juv_wua", "FR_fry_wua",
-                              "SR_fry_wua", "ST_juv_wua", "ST_fry_wua"),
-                   FR_fry = c("FR_fry_wua", "FR_juv_wua", "SR_fry_wua",
-                              "ST_fry_wua", "SR_juv_wua", "ST_juv_wua"),
-                   LFR_juv = c("LFR_juv_wua", "FR_juv_wua", "SR_juv_wua", 
-                               "FR_fry_wua", "SR_fry_wua", "ST_juv_wua", "ST_fry_wua"),
-                   LFR_fry = c("LFR_fry_wua", "FR_fry_wua", "FR_juv_wua", 
-                               "SR_fry_wua", "ST_fry_wua", "SR_juv_wua", "ST_juv_wua"),
-                   ST_adult = c("ST_adult_wua"),
-                   ST_juv = c("ST_juv_wua", "ST_fry_wua", "SR_juv_wua",
-                              "SR_fry_wua", "FR_juv_wua", "FR_fry_wua"),
-                   ST_fry = c("ST_fry_wua", "ST_juv_wua", "SR_fry_wua",
-                              "SR_juv_wua", "FR_fry_wua", "FR_juv_wua"))
+  if (mode == "wua") {
+    combos <- switch(species_lifestage,
+                     WR_spawn = c("WR_spawn_wua", "FR_spawn_wua", "SR_spawn_wua", 
+                                  "ST_spawn_wua"),
+                     SR_spawn = c("SR_spawn_wua", "FR_spawn_wua", "ST_spawn_wua"),
+                     FR_spawn = c("FR_spawn_wua", "SR_spawn_wua", "ST_spawn_wua"),
+                     LFR_spawn = c("LFR_spawn_wua", "FR_spawn_wua", "SR_spawn_wua", 
+                                   "ST_spawn_wua"),
+                     ST_spawn = c("ST_spawn_wua", "SR_spawn_wua", "FR_spawn_wua"),
+                     WR_juv = c("WR_juv_wua", "SR_juv_wua", "FR_juv_wua", "WR_fry_wua",
+                                "SR_fry_wua", "FR_fry_wua", "ST_juv_wua", "ST_fry_wua"),
+                     WR_fry = c("WR_fry_wua", "SR_fry_wua",  "FR_fry_wua", "WR_juv_wua", 
+                                "SR_juv_wua", "FR_juv_wua", "ST_fry_wua", "ST_juv_wua"),
+                     SR_juv = c("SR_juv_wua", "FR_juv_wua", "SR_fry_wua",
+                                "FR_fry_wua", "ST_juv_wua", "ST_fry_wua"),
+                     SR_fry = c("SR_fry_wua", "FR_fry_wua", "SR_juv_wua",
+                                "FR_juv_wua", "ST_fry_wua", "ST_juv_wua"),
+                     FR_juv = c("FR_juv_wua", "SR_juv_wua", "FR_fry_wua",
+                                "SR_fry_wua", "ST_juv_wua", "ST_fry_wua"),
+                     FR_fry = c("FR_fry_wua", "FR_juv_wua", "SR_fry_wua",
+                                "ST_fry_wua", "SR_juv_wua", "ST_juv_wua"),
+                     LFR_juv = c("LFR_juv_wua", "FR_juv_wua", "SR_juv_wua", 
+                                 "FR_fry_wua", "SR_fry_wua", "ST_juv_wua", "ST_fry_wua"),
+                     LFR_fry = c("LFR_fry_wua", "FR_fry_wua", "FR_juv_wua", 
+                                 "SR_fry_wua", "ST_fry_wua", "SR_juv_wua", "ST_juv_wua"),
+                     ST_adult = c("ST_adult_wua"),
+                     ST_juv = c("ST_juv_wua", "ST_fry_wua", "SR_juv_wua",
+                                "SR_fry_wua", "FR_juv_wua", "FR_fry_wua"),
+                     ST_fry = c("ST_fry_wua", "ST_juv_wua", "SR_fry_wua",
+                                "SR_juv_wua", "FR_fry_wua", "FR_juv_wua"))
+  } else if (mode == "hsi") {
+    combos <- switch(species_lifestage,
+                     WR_spawn = c("WR_spawn_sqm", "FR_spawn_sqm", "SR_spawn_sqm", 
+                                  "ST_spawn_sqm"),
+                     SR_spawn = c("SR_spawn_sqm", "FR_spawn_sqm", "ST_spawn_sqm"),
+                     FR_spawn = c("FR_spawn_sqm", "SR_spawn_sqm", "ST_spawn_sqm"),
+                     LFR_spawn = c("LFR_spawn_sqm", "FR_spawn_sqm", "SR_spawn_sqm", 
+                                   "ST_spawn_sqm"),
+                     ST_spawn = c("ST_spawn_sqm", "SR_spawn_sqm", "FR_spawn_sqm"),
+                     WR_juv = c("WR_juv_sqm", "SR_juv_sqm", "FR_juv_sqm", "WR_fry_sqm",
+                                "SR_fry_sqm", "FR_fry_sqm", "ST_juv_sqm", "ST_fry_sqm"),
+                     WR_fry = c("WR_fry_sqm", "SR_fry_sqm",  "FR_fry_sqm", "WR_juv_sqm", 
+                                "SR_juv_sqm", "FR_juv_sqm", "ST_fry_sqm", "ST_juv_sqm"),
+                     SR_juv = c("SR_juv_sqm", "FR_juv_sqm", "SR_fry_sqm",
+                                "FR_fry_sqm", "ST_juv_sqm", "ST_fry_sqm"),
+                     SR_fry = c("SR_fry_sqm", "FR_fry_sqm", "SR_juv_sqm",
+                                "FR_juv_sqm", "ST_fry_sqm", "ST_juv_sqm"),
+                     FR_juv = c("FR_juv_sqm", "SR_juv_sqm", "FR_fry_sqm",
+                                "SR_fry_sqm", "ST_juv_sqm", "ST_fry_sqm"),
+                     FR_fry = c("FR_fry_sqm", "FR_juv_sqm", "SR_fry_sqm",
+                                "ST_fry_sqm", "SR_juv_sqm", "ST_juv_sqm"),
+                     LFR_juv = c("LFR_juv_sqm", "FR_juv_sqm", "SR_juv_sqm", 
+                                 "FR_fry_sqm", "SR_fry_sqm", "ST_juv_sqm", "ST_fry_sqm"),
+                     LFR_fry = c("LFR_fry_sqm", "FR_fry_sqm", "FR_juv_sqm", 
+                                 "SR_fry_sqm", "ST_fry_sqm", "SR_juv_sqm", "ST_juv_sqm"),
+                     ST_adult = c("ST_adult_sqm"),
+                     ST_juv = c("ST_juv_sqm", "ST_fry_sqm", "SR_juv_sqm",
+                                "SR_fry_sqm", "FR_juv_sqm", "FR_fry_sqm"),
+                     ST_fry = c("ST_fry_sqm", "ST_juv_sqm", "SR_fry_sqm",
+                                "SR_juv_sqm", "FR_fry_sqm", "FR_juv_sqm"))
+  }
+  
 
   return(combos[which(combos %in% species_wuas)[[1]]])
 

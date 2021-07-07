@@ -96,3 +96,11 @@ test_that('ST and SR rearing is same as FR', {
     set_instream_habitat('Mokelumne River', 'st', 'juv', 1000))
 })
 
+test_that('No WR or LFR on Mokelumne River', {
+  expect_true(is.na(set_instream_habitat('Mokelumne River', 'wr', 'fry', 200)))
+  expect_true(is.na(set_instream_habitat('Mokelumne River', 'lfr', 'fry', 200)))
+  expect_true(is.na(set_spawning_habitat('Mokelumne River', 'wr', 100)))
+  expect_true(is.na(set_spawning_habitat('Mokelumne River', 'lfr', 100)))
+  expect_true(is.na(set_floodplain_habitat('Mokelumne River', 'wr', 2000)))
+  expect_true(is.na(set_floodplain_habitat('Mokelumne River', 'lfr', 2000)))
+})

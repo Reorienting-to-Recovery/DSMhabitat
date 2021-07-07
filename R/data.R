@@ -496,9 +496,9 @@ NULL
 #' @examples
 #' watershed_lengths
 #'
-#' @details Information comes from expert outreach undertaken in 2017.
+#' @details Information comes from expert outreach undertaken in 2017. Updated in 2021 to include late fall run extents from expert outreach.
 #'
-#' @source FlowWest, add url to shp file when mapping is complete
+#' @source \href{https://cvpiahabitat-r-package.s3.us-west-2.amazonaws.com/salmonid_habitat_extents.zip}{Salmonid Extents}
 'watershed_lengths'
 
 #' Habitat Modeling Status
@@ -639,14 +639,19 @@ NULL
 #'
 #' @details
 #' Only 5 of the watersheds have wua relationships:
-#' **Adult Trout**
-#' 1. Battle Creek
-#' 2. Butte Creek
+#' 
+#' \strong{Adult Trout}
+#' \enumerate{
+#'    \item Battle Creek
+#'    \item Butte Creek
+#' }
 #'
-#' **Steelhead**
-#' 3. Merced River
-#' 4. Tuolumne River
-#' 5. Yuba River
+#' \strong{Steelhead}
+#' \enumerate{
+#'    \item Merced River
+#'    \item Tuolumne River
+#'    \item Yuba River
+#' }
 #'
 #' These watershed's habitat values vary by month.
 #'

@@ -108,3 +108,12 @@ test_that('SR and ST is same as FR Stanislaus River', {
     set_instream_habitat('Stanislaus River', 'st', 'juv', 250))
 
 })
+
+test_that('No WR or LFR on Stanislaus River', {
+  expect_true(is.na(set_instream_habitat('Stanislaus River', 'wr', 'fry', 200)))
+  expect_true(is.na(set_instream_habitat('Stanislaus River', 'lfr', 'fry', 200)))
+  expect_true(is.na(set_spawning_habitat('Stanislaus River', 'wr', 100)))
+  expect_true(is.na(set_spawning_habitat('Stanislaus River', 'lfr', 100)))
+  expect_true(is.na(set_floodplain_habitat('Stanislaus River', 'wr', 2000)))
+  expect_true(is.na(set_floodplain_habitat('Stanislaus River', 'lfr', 2000)))
+})
