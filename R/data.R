@@ -677,7 +677,7 @@ NULL
 #' @format
 #' \itemize{
 #' \item Steelhead: 3 dimensional array [31 watersheds, 12 months, 21 years]
-#' \item Fall Run, Spring Run and Winter Run: 3 dimensional array [31 watersheds, 12 months, 22 years]
+#' \item Fall Run, Late Fall Run, Spring Run and Winter Run: 3 dimensional array [31 watersheds, 12 months, 22 years]
 #' }
 #' @details
 #' Values created using the function \code{\link[=set_spawning_habitat]{set_spawning_habitat}}
@@ -703,6 +703,10 @@ NULL
 #' @format NULL
 "st_spawn"
 
+#' @rdname spawn
+#' @format NULL
+"lfr_spawn"
+
 #' Juvenile Inchannel Habitat
 #' @description The 1980-1999 juvenile suitable inchannel rearing habitat area in square meters for  
 #' Steelhead and 1980-2000 juvenile suitable inchannel rearing habitat area in square meters
@@ -710,7 +714,7 @@ NULL
 #' @format
 #' \itemize{
 #' \item Steelhead: 3 dimensional array [31 watersheds, 12 months, 20 years]
-#' \item Fall Run, Spring Run and Winter Run: 3 dimensional array [31 watersheds, 12 months, 21 years]
+#' \item Fall Run, Late Fall Run, Spring Run and Winter Run: 3 dimensional array [31 watersheds, 12 months, 21 years]
 #' }
 #' @details 
 #' Values created using the function \code{\link[=set_instream_habitat]{set_instream_habitat}}
@@ -724,7 +728,7 @@ NULL
 #' @format
 #' \itemize{
 #' \item Steelhead: 3 dimensional array [31 watersheds, 12 months, 20 years]
-#' \item Fall Run, Spring Run and Winter Run: 3 dimensional array [31 watersheds, 12 months, 21 years]
+#' \item Fall Run, Late Fall Run, Spring Run and Winter Run: 3 dimensional array [31 watersheds, 12 months, 21 years]
 #' }
 #' @details 
 #' Values created using the function \code{\link[=set_instream_habitat]{set_instream_habitat}}
@@ -764,6 +768,14 @@ NULL
 #' @format NULL
 "st_juv"
 
+#' @rdname fry
+#' @format NULL
+"lfr_fry"
+
+#' @rdname juvenile
+#' @format NULL
+"lfr_juv"
+
 
 #' Floodplain Habitat
 #' @description The 1980-1999 total floodplain rearing habitat area in square meters for 
@@ -772,7 +784,7 @@ NULL
 #' @format
 #' \itemize{
 #' \item Steelhead: 3 dimensional array [31 watersheds, 12 months, 20 years]
-#' \item Fall Run, Spring Run and Winter Run: 3 dimensional array [31 watersheds, 12 months, 21 years]
+#' \item Fall Run, Late Fall Run, Spring Run and Winter Run: 3 dimensional array [31 watersheds, 12 months, 21 years]
 #' }
 #' @details 
 #' Values created using the function \code{\link[=set_floodplain_habitat]{set_floodplain_habitat}}
@@ -798,6 +810,9 @@ NULL
 #' @format NULL
 "st_fp"
 
+#' @rdname floodplain
+#' @format NULL
+"lfr_fp"
 
 
 #' Bypass Habitat Area

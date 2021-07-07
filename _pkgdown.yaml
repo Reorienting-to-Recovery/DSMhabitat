@@ -48,18 +48,22 @@ reference:
   - sr_fry
   - st_fry
   - wr_fry
+  - lfr_fry
   - fr_juv
   - sr_juv
   - st_juv
   - wr_juv
+  - lfr_juv
   - fr_spawn
   - sr_spawn
   - st_spawn
   - wr_spawn
+  - lfr_spawn
   - fr_fp
   - sr_fp
   - st_fp 
   - wr_fp
+  - lfr_fp
   - weeks_flooded
   - delta_habitat
   - sutter_habitat
