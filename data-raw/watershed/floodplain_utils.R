@@ -115,7 +115,13 @@ scale_fp_flow_area <- function(ws) {
   
   if (species_present$lfr) {
     # latefall floodplain area
-    scaled_area_per_mile_LFR <- (proxy_data$LFR_floodplain_acres / proxy_watershed_metadata$modeled_length_mi) *
+    lfr_proxy <- if ("LFR_floodplain_acres" %in% colnames(proxy_data)) {
+      proxy_data$LFR_floodplain_acres
+    } else {
+      proxy_data$FR_floodplain_acres 
+    }
+    
+    scaled_area_per_mile_LFR <- (lfr_proxy / proxy_watershed_metadata$modeled_length_mi) *
       watershed_metadata$dec_jun_mean_flow_scaling
     
     fp_area_LFR <-(scaled_area_per_mile_LFR * low_gradient$lfr) +
@@ -125,8 +131,14 @@ scale_fp_flow_area <- function(ws) {
   }
   
   if (species_present$wr) {
-    # steelhead floodplain area
-    scaled_area_per_mile_WR <- (proxy_data$WR_floodplain_acres / proxy_watershed_metadata$modeled_length_mi) *
+    # winter run floodplain area
+   wr_proxy <- if ("WR_floodplain_acres" %in% colnames(proxy_data)) {
+     proxy_data$WR_floodplain_acres
+   } else {
+     proxy_data$FR_floodplain_acres 
+   }
+   
+    scaled_area_per_mile_WR <- (wr_proxy / proxy_watershed_metadata$modeled_length_mi) *
       watershed_metadata$dec_jun_mean_flow_scaling
     
     fp_area_WR <-(scaled_area_per_mile_WR * low_gradient$wr) +
@@ -137,7 +149,17 @@ scale_fp_flow_area <- function(ws) {
   
   if (species_present$sr) {
     # spring run floodplain area
-    scaled_area_per_mile_SR <- (proxy_data$SR_floodplain_acres / proxy_watershed_metadata$modeled_length_mi) *
+    sr_proxy <- if ("SR_floodplain_acres" %in% colnames(proxy_data)) {
+      proxy_data$SR_floodplain_acres
+    } else {
+      if ("ST_floodplain_acres" %in% colnames(proxy_data)) {
+        proxy_data$ST_floodplain_acres 
+      } else {
+        proxy_data$FR_floodplain_acres 
+      }
+    }
+    
+    scaled_area_per_mile_SR <- (sr_proxy / proxy_watershed_metadata$modeled_length_mi) *
       watershed_metadata$dec_jun_mean_flow_scaling
     
     fp_area_SR <-(scaled_area_per_mile_SR * low_gradient$sr) +
@@ -148,7 +170,17 @@ scale_fp_flow_area <- function(ws) {
   
   if (species_present$st) {
     # steelhead floodplain area
-    scaled_area_per_mile_ST <- (proxy_data$ST_floodplain_acres / proxy_watershed_metadata$modeled_length_mi) *
+    st_proxy <- if ("ST_floodplain_acres" %in% colnames(proxy_data)) {
+      proxy_data$ST_floodplain_acres
+    } else {
+      if ("SR_floodplain_acres" %in% colnames(proxy_data)) {
+        proxy_data$SR_floodplain_acres 
+      } else {
+        proxy_data$FR_floodplain_acres 
+      }
+    }
+    
+    scaled_area_per_mile_ST <- (st_proxy / proxy_watershed_metadata$modeled_length_mi) *
       watershed_metadata$dec_jun_mean_flow_scaling
     
     fp_area_ST <-(scaled_area_per_mile_ST * low_gradient$st) +
