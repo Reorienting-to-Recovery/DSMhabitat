@@ -11,7 +11,7 @@ Clear Creek,scaled_cc,NA,0,Cottonwood Creek,0.209236963160552,NA
 Cosumnes River,scaled_tr,NA,0,Tuolumne River,0.502672036475406,haven't added 718.9 acres in CRP
 Cottonwood Creek,part_model,USFWS / FEMA 1D HEC-RAS hydraulic model,22.36,NA,NA,NA
 Cow Creek,scaled_dc,NA,0,Deer Creek,2.15622071138887,NA
-Deer Creek,part_model,Deer Creek Watershed Conservancy (DCWC) 2D HEC-RAS model,11.76,NA,NA,NA
+Deer Creek,full_model,Lower Deer Creek Flood and Ecosystem Improvement Project HEC-RAS Hydrodynamic model,12.2,NA,NA,full model only for fall run
 Elder Creek,part_model,Central Valley Floodplain Evaluation and Delineation (CVFED) HEC-RAS hydraulic model,5.4,NA,NA,NA
 Feather River,full_model,Central Valley Floodplain Evaluation and Delineation (CVFED) HEC-RAS hydraulic model,64.982597,NA,NA,NA
 Merced River,part_model,Central Valley Floodplain Evaluation and Delineation (CVFED) HEC-RAS hydraulic model,25.5,NA,NA,NA
