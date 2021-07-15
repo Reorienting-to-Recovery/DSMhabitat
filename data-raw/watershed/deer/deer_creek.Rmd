@@ -71,14 +71,24 @@ A flow to suitable area relationship was modeled using depth and velocity suitab
 
 Suitable habitat for each species grid cells with both depth and velocity 
 
-| **Species** | **Lifestage** | **Location** | **Suitable Depth Range (feet)** | **Suitable Velocity Range (feet)** | **Source** |
+| **Species** | **Lifestage** | **Location** | **Suitable Depth Range (feet)** | **Suitable Velocity Range (feet)** | 
   | --- | --- | --- | --- | --- | --- |
-  | Fall Run Chinook, Late-Fall Run Chinook | Adult Spawning | Instream | 0.41 - 6.69 | 0.09 - 6.30 | Gard 2019 (Chspawn tab - Clear fallcolumn) |
-  | Fall Run Chinook, Late-Fall Run Chinook | Juvenile Rearing | Instream | 0.41 - 5.31 | 0.00 - 3.07 | Gard 2019 (Chjuv tab - Clear fallcolumn) |
-  | Spring Run Chinook, Steelhead | Juvenile Rearing | Instream | 0.21 - 5.59 | 0.00 - 5.54 | Gard 2019 (Chjuv tab - Clear spring column) |
-  | Fall Run Chinook, Late-Fall Run Chinook, Spring Run Chinook, Steelhead | Juvenile Rearing | Floodplain | 0.50 - 5.20 | 0.00 - 4.00 | Cbec 2019 |
-  | Fall Run Chinook, Late-Fall Run Chinook, Spring Run Chinook | Fry | Instream | 0.05 - 3.45 | 0 - 1.82 | Gard 2019 (ChFry tab - BattleCreek column) |
-  | Steelhead | Fry | Instream | 0.09 - 4 | 0.09 - 3.6 | Gard 2019 (StFry tab - ClearCreek column) |
+  | Fall Run Chinook, Late-Fall Run Chinook | Adult Spawning | Instream | 0.41 - 6.69 | 0.09 - 6.30 | 
+  | Fall Run Chinook, Late-Fall Run Chinook | Juvenile Rearing | Instream | 0.41 - 5.31 | 0.00 - 3.07 |
+  | Spring Run Chinook, Steelhead | Juvenile Rearing | Instream | 0.21 - 5.59 | 0.00 - 5.54 | 
+  | Fall Run Chinook, Late-Fall Run Chinook, Spring Run Chinook, Steelhead | Juvenile Rearing | Floodplain | 0.50 - 5.20 | 0.00 - 4.00 | 
+  | Fall Run Chinook, Late-Fall Run Chinook, Spring Run Chinook | Fry | Instream | 0.05 - 3.45 | 0 - 1.82 | 
+  | Steelhead | Fry | Instream | 0.09 - 4 | 0.09 - 3.6 | 
+  
+Suitable ranges for Deer Creek were obtained using the following proxies:
+
+* Fall Run & Late-Fall Run Spawning - Clear Creek Fall Run (Gard 2019)
+* All Species Juvenile Instream Rearing - Clear Creek Fall Run (Gard 2019)
+* All Species Juvenile Floodplain Rearing - CBEC 2019
+* Fall, Spring & Late-Fall Fry Rearing - Battle Creek Fall Run (Gard 2019)
+* Steelhead Fry Rearing - Battle Creek Steelhead (Gard 2019)
+
+Gard (2019) proxy data can be found [here](https://cvpia-documents.s3.us-west-1.amazonaws.com/HSC.xlsx)
 
 Spring Run Chinook and Steelhead spawning habitat were [calculated with a relationship between flow and mean weighted usable area from watersheds in the region with modeled habitat](http://cvpia-habitat-docs-markdown.s3-website-us-west-2.amazonaws.com/watershed/Regional_Approximation.html){target="_blank"}
 
@@ -112,7 +122,29 @@ deer_creek_instream <-
     watershed
   )
 
-knitr::kable(align = 'c', head(deer_creek_instream, 5), 
+spawn_table <- deer_creek_instream %>% select(contains("spawn"))
+rearing_table <- deer_creek_instream %>% select(contains(c("juv","fry")))
+```
+
+**Fry and Juvenile Rearing**
+
+```{r}
+knitr::kable(align = 'c', head(rearing_table, 5), 
+             caption = "Header Descriptions: flow_cfs = flow in cubic feet per second,
+             FR_juv_sqm = Fall Run Chinook Juvenile Area (square meters), 
+             LFR_juv_sqm = Late-Fall Run Chinook Spawning Area (square meters), 
+             SR_juv_sqm = Spring Run Chinook Juvenile Area (square meters),
+             ST_juv_sqm = Steelhead Juvenile Area (square meters),
+             FR_fry_sqm = Fall Run Chinook Juvenile Area (square meters), 
+             LFR_fry_sqm = Late-Fall Run Chinook Spawning Area (square meters), 
+             SR_fry_sqm = Spring Run Chinook Juvenile Area (square meters),
+             ST_fry_sqm = Steelhead Juvenile Area (square meters)")
+```
+*... with `r nrow(deer_creek_instream) - 5` more rows*
+
+**Spawning**
+```{r}
+knitr::kable(align = 'c', head(spawn_table, 5), 
              caption = "Header Descriptions: flow_cfs = flow in cubic feet per second,
              FR_spawn_sqm = Fall Run Chinook Spawning Area (square meters),
              FR_juv_sqm = Fall Run Chinook Juvenile Area (square meters), 
@@ -143,23 +175,7 @@ deer_creek_instream %>%
   theme(legend.justification = c(1, 0), legend.position = c(.97, .7))
 ```
 
-### Rearing Habitat Area 
-The following plot shows the suitable rearing habitat in acres for Fall Run Chinook, 
-Late-Fall Run Chinook, Spring Run Chinook and Steelhead. 
-```{r}
-deer_creek_instream %>% 
-  select(flow_cfs, `Fall and Late-Fall Run Chinook` = FR_juv_sqm, 
-         `Spring Run Chinook and Steelhead` = SR_juv_sqm) %>% 
-  gather(species, sqm, -flow_cfs) %>% 
-  ggplot(aes(flow_cfs, sqm/4046.86, color = species)) + 
-  geom_line() + 
-  labs(x = 'Flow (cfs)', y = "Suitable Habitat (acres)", color = NULL) + 
-  theme_minimal() + 
-  scale_color_brewer(palette = 'Dark2') +
-  theme(legend.justification = c(1, 0), legend.position = c(.97, .7))
-```
-
-### Fry Habitat Area
+### Fry Rearing Habitat Area
 
 The following plot shows the suitable fry habitat in acres for Fall Run Chinook,
 Late-Fall Run Chinook, Spring Run Chinook and Steelhead.
@@ -177,6 +193,23 @@ deer_creek_instream %>%
   scale_color_brewer(palette = 'Dark2') +
   theme(legend.justification = c(1, 0), legend.position = c(.97, .7))
 
+```
+
+
+### Juvenile Rearing Habitat Area 
+The following plot shows the suitable rearing habitat in acres for Fall Run Chinook, 
+Late-Fall Run Chinook, Spring Run Chinook and Steelhead. 
+```{r}
+deer_creek_instream %>% 
+  select(flow_cfs, `Fall and Late-Fall Run Chinook` = FR_juv_sqm, 
+         `Spring Run Chinook and Steelhead` = SR_juv_sqm) %>% 
+  gather(species, sqm, -flow_cfs) %>% 
+  ggplot(aes(flow_cfs, sqm/4046.86, color = species)) + 
+  geom_line() + 
+  labs(x = 'Flow (cfs)', y = "Suitable Habitat (acres)", color = NULL) + 
+  theme_minimal() + 
+  scale_color_brewer(palette = 'Dark2') +
+  theme(legend.justification = c(1, 0), legend.position = c(.97, .7))
 ```
 
 
