@@ -64,12 +64,22 @@ deer_creek_habitat <- raw_data %>%
   )
 ```
 
-## Instream Spawning, Rearing and Fry Habitat
+## Instream Spawning and Rearing Habitat
 **Data Source:** [FlowWest 2021](https://cvpiahabitat-r-package.s3.us-west-2.amazonaws.com/cvpia-sit-model-inputs/DeerCreek_2Dmodel_FlowWest_Final.pdf){target="_blank"}
 
-A flow to suitable area relationship was modeled using depth and velocity suitability ranges applied to HEC-RAS 2-dimensional hydraulic model output for the instream spawning habitat of Fall Run Chinook Salmon, Late-Fall Run Chinook Salmon and the instream rearing habitat of Fall Run Chinook Salmon, Late-Fall Run Chinook Salmon, Spring Run Chinook Salmon, and Steelhead, as well as fry habitat for Fall Run Chinook Salmon, Late-Fall Run Chinook Salmon, Spring Run Chinook Salmon, and Steelhead.
+A flow to suitable area relationship was modeled using depth and velocity suitability ranges applied to HEC-RAS 2-dimensional hydraulic model output for the instream spawning habitat of Fall Run Chinook Salmon, Late-Fall Run Chinook Salmon and the instream rearing habitat of Fall Run Chinook Salmon, Late-Fall Run Chinook Salmon, Spring Run Chinook Salmon, and Steelhead, as well as fry habitat for Fall Run Chinook Salmon, Late-Fall Run Chinook Salmon, Spring Run Chinook Salmon, and Steelhead. Spring Run Chinook and Steelhead spawning habitat were [calculated with a relationship between flow and mean weighted usable area from watersheds in the region with modeled habitat](http://cvpia-habitat-docs-markdown.s3-website-us-west-2.amazonaws.com/watershed/Regional_Approximation.html){target="_blank"}.
 
-Suitable habitat for each species grid cells with both depth and velocity 
+Suitable ranges for Deer Creek were defined using the following sources:
+
+* Fall Run & Late-Fall Run Spawning - Clear Creek Fall Run Suitability Criteria (Gard 2019)
+* All Species Juvenile Instream Rearing - Clear Creek Fall Run Suitability Criteria (Gard 2019)
+* All Species Juvenile Floodplain Rearing - CBEC 2019
+* Fall, Spring & Late-Fall Fry Rearing - Battle Creek Fall Run Suitability Criteria (Gard 2019)
+* Steelhead Fry Rearing - Battle Creek Steelhead Suitability Criteria (Gard 2019)
+
+Data from Gard 2019 can be downloaded [here](https://cvpia-documents.s3.us-west-1.amazonaws.com/HSC.xlsx).
+
+The depth and velocity ranges for species and life-stage combinations are listed in the following table. 
 
 | **Species** | **Lifestage** | **Location** | **Suitable Depth Range (feet)** | **Suitable Velocity Range (feet)** | 
   | --- | --- | --- | --- | --- | --- |
@@ -80,19 +90,6 @@ Suitable habitat for each species grid cells with both depth and velocity
   | Fall Run Chinook, Late-Fall Run Chinook, Spring Run Chinook | Fry | Instream | 0.05 - 3.45 | 0 - 1.82 | 
   | Steelhead | Fry | Instream | 0.09 - 4 | 0.09 - 3.6 | 
   
-Suitable ranges for Deer Creek were obtained using the following proxies:
-
-* Fall Run & Late-Fall Run Spawning - Clear Creek Fall Run (Gard 2019)
-* All Species Juvenile Instream Rearing - Clear Creek Fall Run (Gard 2019)
-* All Species Juvenile Floodplain Rearing - CBEC 2019
-* Fall, Spring & Late-Fall Fry Rearing - Battle Creek Fall Run (Gard 2019)
-* Steelhead Fry Rearing - Battle Creek Steelhead (Gard 2019)
-
-Gard (2019) proxy data can be found [here](https://cvpia-documents.s3.us-west-1.amazonaws.com/HSC.xlsx)
-
-Spring Run Chinook and Steelhead spawning habitat were [calculated with a relationship between flow and mean weighted usable area from watersheds in the region with modeled habitat](http://cvpia-habitat-docs-markdown.s3-website-us-west-2.amazonaws.com/watershed/Regional_Approximation.html){target="_blank"}
-
-### Spawning and Rearing Data 
 ```{r}
 # instream
 # we need to scale sr_juv and st_juv only
@@ -122,13 +119,25 @@ deer_creek_instream <-
     watershed
   )
 
-spawn_table <- deer_creek_instream %>% select(contains("spawn"))
-rearing_table <- deer_creek_instream %>% select(contains(c("juv","fry")))
+usethis::use_data(deer_creek_instream, overwrite = TRUE)
 ```
 
-**Fry and Juvenile Rearing**
+### Spawning Data
+```{r}
+spawn_table <- deer_creek_instream %>% select(flow_cfs, contains("spawn"))
+knitr::kable(align = 'c', head(spawn_table, 5), 
+             caption = "Header Descriptions: flow_cfs = flow in cubic feet per second,
+             FR_spawn_sqm = Fall Run Chinook Spawning Area (square meters),
+             LFR_spawn_sqm = Late-Fall Run Chinook Spawning Area (square meters), 
+             watershed = section of stream modeled for CVPIA SDM")
+```
+*... with `r nrow(deer_creek_instream) - 5` more rows*
+
+
+### Rearing Data
 
 ```{r}
+rearing_table <- deer_creek_instream %>% select(flow_cfs, contains(c("juv","fry")))
 knitr::kable(align = 'c', head(rearing_table, 5), 
              caption = "Header Descriptions: flow_cfs = flow in cubic feet per second,
              FR_juv_sqm = Fall Run Chinook Juvenile Area (square meters), 
@@ -142,21 +151,6 @@ knitr::kable(align = 'c', head(rearing_table, 5),
 ```
 *... with `r nrow(deer_creek_instream) - 5` more rows*
 
-**Spawning**
-```{r}
-knitr::kable(align = 'c', head(spawn_table, 5), 
-             caption = "Header Descriptions: flow_cfs = flow in cubic feet per second,
-             FR_spawn_sqm = Fall Run Chinook Spawning Area (square meters),
-             FR_juv_sqm = Fall Run Chinook Juvenile Area (square meters), 
-             LFR_spawn_sqm = Late-Fall Run Chinook Spawning Area (square meters), 
-             LFR_juv_sqm = Late-Fall Run Chinook Juvenile Area (square meters), 
-             SR_juv_sqm = Spring Run Chinook Juvenile Area (square meters),
-             ST_juv_sqm = Steelhead Juvenile Area (square meters),
-             watershed = section of stream modeled for CVPIA SDM")
-
-usethis::use_data(deer_creek_instream, overwrite = TRUE)
-```
-*... with `r nrow(deer_creek_instream) - 5` more rows*
 
 
 ### Spawning Habitat Area 
