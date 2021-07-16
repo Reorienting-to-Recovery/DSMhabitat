@@ -14,7 +14,8 @@ scale_fp_flow_area_partial_model <- function(ws, df) {
   species_present <- filter(DSMhabitat::watershed_species_present, 
                             watershed_name == ws)
   
-  rearing_extents <- filter(DSMhabitat::watershed_lengths, watershed == ws, lifestage == "rearing") %>% 
+  rearing_extents <- filter(DSMhabitat::watershed_lengths, watershed == ws, 
+                            lifestage == "rearing") %>% 
     select(watershed, species, miles) %>% 
     spread(species, miles)
 
@@ -24,8 +25,8 @@ scale_fp_flow_area_partial_model <- function(ws, df) {
 
   # fall run floodplain area
   #.1 is downscaling for high gradient
-  fp_area_FR <- (fp_area_per_mile_modeled * low_gradient$fr) +
-    (fp_area_per_mile_modeled * (rearing_extents$fr - low_gradient$fr) * 0.1)
+  fp_area_FR <- round((fp_area_per_mile_modeled * low_gradient$fr) +
+    (fp_area_per_mile_modeled * (rearing_extents$fr - low_gradient$fr) * 0.1), 2)
 
   threshold_flow <- df$flow_cfs[max(which(df$modeled_floodplain_area_acres == 0))]
   
