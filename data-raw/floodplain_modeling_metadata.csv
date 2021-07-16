@@ -16,7 +16,7 @@ Elder Creek,part_model,Central Valley Floodplain Evaluation and Delineation (CVF
 Feather River,full_model,Central Valley Floodplain Evaluation and Delineation (CVFED) HEC-RAS hydraulic model,64.982597,NA,NA,NA
 Merced River,part_model,Central Valley Floodplain Evaluation and Delineation (CVFED) HEC-RAS hydraulic model,25.5,NA,NA,NA
 Mill Creek,scaled_dc,NA,0,Deer Creek,0.98176684693218,NA
-Mokelumne River,scaled_tr,NA,0,Tuolumne River,0.502672036475406,NA
+Mokelumne River,part_model,NA,0,Tuolumne River,0.502672036475406,NA
 Paynes Creek,scaled_dc,NA,0,Deer Creek,0.222466270002636,NA
 San Joaquin River,full_model,Central Valley Floodplain Evaluation and Delineation (CVFED) HEC-RAS hydraulic model,45.680331,NA,NA,NA
 Stanislaus River,full_model,SRH-2D hyraulic model developed by NewFields (now FlowWest www.flowwest.com),60.312704,NA,NA,"no ""total modeled"" areas"
