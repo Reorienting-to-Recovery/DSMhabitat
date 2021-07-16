@@ -138,7 +138,16 @@ get_floodplain_hab_all <- function(watersheds, species, years = 1980:1999) {
   total_obs <- 12 * length(years)
   most <- map_df(watersheds, function(watershed) {
     flows <- get_flow(watershed, range(years))
-    habitat <- DSMhabitat::apply_suitability(DSMhabitat::set_floodplain_habitat(watershed, species, flows))
+    habitat <- DSMhabitat::set_floodplain_habitat(watershed, species, flows)
+    
+    modeling_in_suitable_area <- c("Antelope Creek", "Battle Creek", "Bear Creek", 
+                                   "Cow Creek", "Mill Creek", "Paynes Creek", 
+                                   "Deer Creek",'Upper Sacramento River',
+                                   'Upper-mid Sacramento River','Lower Sacramento River')
+    
+    if (!(watershed %in% modeling_in_suitable_area)) {
+      habitat <- DSMhabitat::apply_suitability(habitat)
+    }
     
     tibble(
       year = rep(years, each = 12),
@@ -147,36 +156,19 @@ get_floodplain_hab_all <- function(watersheds, species, years = 1980:1999) {
       hab_sq_m = habitat)
   })
   
-  # deal with sac, already in square meters
-  # upper sac
-  up_sac_flow <- get_flow('Upper Sacramento River', range(years))
-  up_mid_sac_flow <- get_flow('Upper-mid Sacramento River', range(years))
-  low_sac_flow <- get_flow('Lower Sacramento River', range(years))
-  
-  up_sac_fp <- DSMhabitat::set_floodplain_habitat('Upper Sacramento River', species, up_sac_flow)
-  up_mid_sac_fp <- DSMhabitat::set_floodplain_habitat('Upper-mid Sacramento River', species, up_mid_sac_flow)
-  low_sac_fp <- DSMhabitat::set_floodplain_habitat('Lower Sacramento River', species, low_sac_flow)
-  
   # lower-mid sacramento
   low_mid_sac_flows1 <- get_flow("Lower-mid Sacramento River1", range(years))
   low_mid_sac_flows2 <- get_flow("Lower-mid Sacramento River2", range(years))
   low_mid_sac_fp <- DSMhabitat::set_floodplain_habitat('Lower-mid Sacramento River', species,
                                                        low_mid_sac_flows1, flow2 = low_mid_sac_flows2)
   
-  # deer creek 
-  deer_creek_flows <- get_flow("Deer Creek", range(years)) 
-  deer_creek_fp <- DSMhabitat::set_floodplain_habitat("Deer Creek", species, deer_creek_flows)
+  low_mid_sac <- tibble(
+    year = rep(years, each = 12),
+    month = rep(1:12, length(years)),
+    watershed = 'Lower-mid Sacramento River',
+    hab_sq_m = low_mid_sac_fp)
   
-  num_watersheds <- 5
-  sac_and_deer <- tibble(
-    year = rep(rep(years, each = 12), times = num_watersheds),
-    month = rep(1:12, length(years) * num_watersheds),
-    watershed = rep(c('Upper Sacramento River', 'Upper-mid Sacramento River',
-                      'Lower-mid Sacramento River', 'Lower Sacramento River', 
-                      'Deer Creek'), each = 12 * length(years)),
-    hab_sq_m = c(up_sac_fp, up_mid_sac_fp, low_mid_sac_fp, low_sac_fp, deer_creek_fp))
-  
-  hab <- bind_rows(most, sac_and_deer) %>%
+  hab <- bind_rows(most, low_mid_sac) %>%
     spread(watershed, hab_sq_m) %>%
     bind_cols(tibble(`Sutter Bypass` = rep(NA, total_obs),
                      `Yolo Bypass` = rep(NA, total_obs))) %>%
@@ -521,12 +513,8 @@ usethis::use_data(lfr_juv, overwrite = TRUE)
 # floodplain------------------------
 watersheds_fp <- DSMhabitat::watershed_species_present %>%
   filter(!(watershed_name  %in% c('Sutter Bypass','Yolo Bypass',
-                             'Upper Sacramento River',
-                             'Upper-mid Sacramento River', 
                              'Lower-mid Sacramento River', 
-                             'Lower Sacramento River',
-                             'Upper Mid Sac Region', 
-                             'Deer Creek'))) %>%
+                             'Upper Mid Sac Region'))) %>%
   pull(watershed_name)
 
 fr_fp <- get_floodplain_hab_all(watersheds_fp, 'fr', 1980:2000)

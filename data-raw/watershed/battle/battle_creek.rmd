@@ -252,13 +252,16 @@ source('data-raw/watershed/floodplain_utils.R')
 ```
 
 ## Floodplain Rearing Habitat
-**Data Source**: [Scaled from a Deer Creek flow to floodplain area relationship generated with a 1D HEC-RAS hydraulic model](https://s3-us-west-2.amazonaws.com/cvpiahabitat-r-package/cvpia-sit-model-inputs/DRAFT+Deer+Creek+Hydraulic+Models+Tech+Memo+6-08-07.pdf){target="_blank"}
+**Data Source**: Scaled from a Deer Creek flow to floodplain area relationship generated with a [2D HEC-RAS hydraulic model](https://cvpiahabitat-r-package.s3.us-west-2.amazonaws.com/cvpia-sit-model-inputs/DeerCreek_2Dmodel_FlowWest_Final.pdf){target="_blank"}. See [Deer Creek HSI modeling documentation](http://cvpia-habitat-docs-markdown.s3-website-us-west-2.amazonaws.com/watershed/deer_creek.html) for more details.
 
 ### Fall Run
 `r print_model_details('Battle Creek', 'fr')`
 
 ### Late Fall Run
 `r print_model_details('Battle Creek', 'lfr')`
+
+### Winter Run
+`r print_model_details('Battle Creek', 'wr')`
 
 ### Spring Run and Steelhead 
 `r print_model_details('Battle Creek', 'sr')`
@@ -267,7 +270,6 @@ source('data-raw/watershed/floodplain_utils.R')
 The areas represent total inundated area in acres.
 ```{r}
 battle_creek_floodplain <- scale_fp_flow_area('Battle Creek') %>% 
-  mutate(WR_floodplain_acres = 0) %>% 
   select(flow_cfs, FR_floodplain_acres, SR_floodplain_acres, WR_floodplain_acres, 
          ST_floodplain_acres, LFR_floodplain_acres, watershed)
 
@@ -288,9 +290,10 @@ usethis::use_data(battle_creek_floodplain, overwrite = TRUE)
 ## Floodplain Plot
 ```{r}
 battle_creek_floodplain %>% 
-  select(flow_cfs, FR_floodplain_acres, ST_floodplain_acres, LFR_floodplain_acres, watershed) %>%
+  select(flow_cfs, FR_floodplain_acres, WR_floodplain_acres, ST_floodplain_acres, LFR_floodplain_acres, watershed) %>%
   rename(`Fall Run Chinook` = FR_floodplain_acres, 
          `Steelhead and Spring Run Chinook` = ST_floodplain_acres,
+         `Winter Run Chinook` = WR_floodplain_acres,
          `Late Fall Run Chinook` = LFR_floodplain_acres) %>% 
   gather(Species, acres, -flow_cfs, -watershed) %>% 
   ggplot(aes(flow_cfs, acres, color = Species)) +

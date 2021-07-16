@@ -1,32 +1,32 @@
-watershed_name,FR_low_gradient_length_mi,SR_low_gradient_length_mi,ST_low_gradient_length_mi,LFR_low_gradient_length_mi
-Upper Sacramento River,NA,NA,NA,NA
-Antelope Creek,10.48,10.48,10.48,NA
-Battle Creek,5.87,5.87,5.87,5.87
-Bear Creek,4.32,NA,4.32,NA
-Big Chico Creek,15.05,15.05,15.05,NA
-Butte Creek,17.14,17.14,17.14,NA
-Clear Creek,8,8,8,8
-Cottonwood Creek,22.36,22.36,22.36,NA
-Cow Creek,8.59,NA,8.59,NA
-Deer Creek,11.76,11.76,11.76,NA
-Elder Creek,7.100791,NA,7.100791,NA
-Mill Creek,7.5,7.5,7.5,NA
-Paynes Creek,2.04,NA,2.04,NA
-Stony Creek,26.120973,NA,26.120973,NA
-Thomes Creek,37.474084,37.474084,37.474084,NA
-Upper-mid Sacramento River,NA,NA,NA,NA
-Sutter Bypass,NA,NA,NA,NA
-Bear River,32.05,NA,32.05,NA
-Feather River,64.982597,64.982597,64.982597,NA
-Yuba River,23.072031,23.072031,23.072031,NA
-Lower-mid Sacramento River,NA,NA,NA,NA
-Yolo Bypass,NA,NA,NA,NA
-American River,22.81,NA,22.81,NA
-Lower Sacramento River,NA,NA,NA,NA
-Calaveras River,18.483331,NA,18.483331,NA
-Cosumnes River,41.338818,NA,41.338818,NA
-Mokelumne River,58.397587,58.397587,58.397587,NA
-Merced River,34.6,NA,34.6,NA
-Stanislaus River,60.312704,60.312704,60.312704,NA
-Tuolumne River,54.331139,54.331139,54.331139,NA
-San Joaquin River,45.680331,45.680331,45.680331,NA
+watershed_name,FR_low_gradient_length_mi,SR_low_gradient_length_mi,ST_low_gradient_length_mi,LFR_low_gradient_length_mi,WR_low_gradient_length_mi
+Upper Sacramento River,NA,NA,NA,NA,NA
+Antelope Creek,10.48,10.48,10.48,NA,NA
+Battle Creek,5.87,5.87,5.87,5.87,5.87
+Bear Creek,4.32,NA,4.32,NA,NA
+Big Chico Creek,15.05,15.05,15.05,NA,NA
+Butte Creek,17.14,17.14,17.14,NA,NA
+Clear Creek,8,8,8,8,NA
+Cottonwood Creek,22.36,22.36,22.36,NA,NA
+Cow Creek,8.59,NA,8.59,NA,NA
+Deer Creek,12.2,12.2,12.2,NA,NA
+Elder Creek,7.100791,NA,7.100791,NA,NA
+Mill Creek,7.5,7.5,7.5,NA,NA
+Paynes Creek,2.04,NA,2.04,NA,NA
+Stony Creek,26.120973,NA,26.120973,NA,NA
+Thomes Creek,37.474084,37.474084,37.474084,NA,NA
+Upper-mid Sacramento River,NA,NA,NA,NA,NA
+Sutter Bypass,NA,NA,NA,NA,NA
+Bear River,32.05,NA,32.05,NA,NA
+Feather River,64.982597,64.982597,64.982597,NA,NA
+Yuba River,23.072031,23.072031,23.072031,NA,NA
+Lower-mid Sacramento River,NA,NA,NA,NA,NA
+Yolo Bypass,NA,NA,NA,NA,NA
+American River,22.81,NA,22.81,NA,NA
+Lower Sacramento River,NA,NA,NA,NA,NA
+Calaveras River,18.483331,NA,18.483331,NA,NA
+Cosumnes River,41.338818,NA,41.338818,NA,NA
+Mokelumne River,58.397587,58.397587,58.397587,NA,NA
+Merced River,34.6,NA,34.6,NA,NA
+Stanislaus River,60.312704,60.312704,60.312704,NA,NA
+Tuolumne River,54.331139,54.331139,54.331139,NA,NA
+San Joaquin River,45.680331,45.680331,45.680331,NA,NA

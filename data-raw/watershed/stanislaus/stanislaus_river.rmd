@@ -150,6 +150,7 @@ stanislaus_fp <- read_excel('data-raw/mark_gard_data/Floodplainarea.xlsx',
                                           sheet = 'Stanislaus', skip = 2,
                             col_names = c('flow_cfs', 'FR_floodplain_acres')) %>%
   mutate(watershed = 'Stanislaus River',
+         FR_floodplain_acres = round(FR_floodplain_acres, 2),
          SR_floodplain_acres = FR_floodplain_acres,
          ST_floodplain_acres = FR_floodplain_acres) %>%
   select(flow_cfs, FR_floodplain_acres,

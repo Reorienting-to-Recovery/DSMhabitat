@@ -164,7 +164,7 @@ df <- read_excel('data-raw/mark_gard_data/Floodplainarea.xlsx',
                             sheet = "Cottonwood", skip = 2, 
                             col_names = c('trash', 'flow_cfs', 'modeled_floodplain_area_acres', 
                                           'total_area_acres', 'trash3')) %>% 
-  select(flow_cfs,modeled_floodplain_area_acres)
+  select(flow_cfs, modeled_floodplain_area_acres)
 
 cottonwood_creek_floodplain <- scale_fp_flow_area_partial_model(ws = "Cottonwood Creek", df)
 

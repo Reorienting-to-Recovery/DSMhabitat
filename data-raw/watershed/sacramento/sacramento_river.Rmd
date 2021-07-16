@@ -351,7 +351,7 @@ knitr::kable(align = 'c', head(combined_floodplain_rearing, 5))
 *... with `r nrow(combined_floodplain_rearing) - 5` more rows*
 
 #### Lower Sacramento River Floodplain Rearing Data            
-The Lower Sacramento River floodplain data are shown below in a seperate table because floodplain is activated at a higher threshold (27500 cfs) than the other Sacramento sections. The areas represent highly suitable rearing area in square meters.
+The Lower Sacramento River floodplain data are shown below in a separate table because floodplain is activated at a higher threshold (27500 cfs) than the other Sacramento sections. The areas represent highly suitable rearing area in square meters.
 ```{r}
 knitr::kable(head(select(lower_sacramento_river_floodplain, `Flow (cfs)` = flow_cfs, `Lower Sacramento River` = floodplain_sq_meters), 5),
              align = 'c')

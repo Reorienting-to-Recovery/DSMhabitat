@@ -14,7 +14,8 @@ scale_fp_flow_area_partial_model <- function(ws, df) {
   species_present <- filter(DSMhabitat::watershed_species_present, 
                             watershed_name == ws)
   
-  rearing_extents <- filter(DSMhabitat::watershed_lengths, watershed == ws, lifestage == "rearing") %>% 
+  rearing_extents <- filter(DSMhabitat::watershed_lengths, watershed == ws, 
+                            lifestage == "rearing") %>% 
     select(watershed, species, miles) %>% 
     spread(species, miles)
 
@@ -24,8 +25,8 @@ scale_fp_flow_area_partial_model <- function(ws, df) {
 
   # fall run floodplain area
   #.1 is downscaling for high gradient
-  fp_area_FR <- (fp_area_per_mile_modeled * low_gradient$fr) +
-    (fp_area_per_mile_modeled * (rearing_extents$fr - low_gradient$fr) * 0.1)
+  fp_area_FR <- round((fp_area_per_mile_modeled * low_gradient$fr) +
+    (fp_area_per_mile_modeled * (rearing_extents$fr - low_gradient$fr) * 0.1), 2)
 
   threshold_flow <- df$flow_cfs[max(which(df$modeled_floodplain_area_acres == 0))]
   
@@ -36,32 +37,32 @@ scale_fp_flow_area_partial_model <- function(ws, df) {
 
   # late fall run floodplain area
   if (species_present$lfr) {
-    fp_area_LFR <- (fp_area_per_mile_modeled * low_gradient$lfr) +
-      (fp_area_per_mile_modeled * (rearing_extents$lfr - low_gradient$lfr) * 0.1)
+    fp_area_LFR <- round((fp_area_per_mile_modeled * low_gradient$lfr) +
+      (fp_area_per_mile_modeled * (rearing_extents$lfr - low_gradient$lfr) * 0.1), 2)
     
     result <- bind_cols(result, LFR_floodplain_acres = fp_area_LFR)
   }
 
   # winter run floodplain area
   if (species_present$wr) {
-    fp_area_WR <- (fp_area_per_mile_modeled * low_gradient$wr) +
-      (fp_area_per_mile_modeled * (rearing_extents$wr - low_gradient$wr) * 0.1)
+    fp_area_WR <- round((fp_area_per_mile_modeled * low_gradient$wr) +
+      (fp_area_per_mile_modeled * (rearing_extents$wr - low_gradient$wr) * 0.1), 2)
     
     result <- bind_cols(result, WR_floodplain_acres = fp_area_WR)
   }
   
   # spring run floodplain area
   if (species_present$sr) {
-    fp_area_SR <- (fp_area_per_mile_modeled * low_gradient$sr) +
-      (fp_area_per_mile_modeled * (rearing_extents$sr - low_gradient$sr) * 0.1)
+    fp_area_SR <- round((fp_area_per_mile_modeled * low_gradient$sr) +
+      (fp_area_per_mile_modeled * (rearing_extents$sr - low_gradient$sr) * 0.1), 2)
 
     result <- bind_cols(result, SR_floodplain_acres = fp_area_SR)
   }
   
   # steel head floodplain area
   if (species_present$st) {
-    fp_area_ST <- (fp_area_per_mile_modeled * low_gradient$st) +
-      (fp_area_per_mile_modeled * (rearing_extents$st - low_gradient$st) * 0.1)
+    fp_area_ST <- round((fp_area_per_mile_modeled * low_gradient$st) +
+      (fp_area_per_mile_modeled * (rearing_extents$st - low_gradient$st) * 0.1), 2)
     
     result <- bind_cols(result, ST_floodplain_acres = fp_area_ST)
   }
@@ -97,7 +98,7 @@ scale_fp_flow_area <- function(ws) {
                        "Cottonwood Creek" = DSMhabitat::cottonwood_creek_floodplain)
   
   # scale flow
-  scaled_flow <- proxy_data$flow_cfs * watershed_metadata$dec_jun_mean_flow_scaling
+  scaled_flow <- round(proxy_data$flow_cfs * watershed_metadata$dec_jun_mean_flow_scaling)
   
   # fall run area
   # divide floodplain area by watershed length of proxy watershed to get area/mile, scale to hydrology
@@ -105,8 +106,8 @@ scale_fp_flow_area <- function(ws) {
     watershed_metadata$dec_jun_mean_flow_scaling
   
   # apportion area by high gradient/low gradient, .1 is downscaling for high gradient
-  fp_area_FR <- (scaled_area_per_mile_FR * low_gradient$fr) +
-    (scaled_area_per_mile_FR * (rearing_extents$fr - low_gradient$fr) * 0.1)
+  fp_area_FR <- round((scaled_area_per_mile_FR * low_gradient$fr) +
+    (scaled_area_per_mile_FR * (rearing_extents$fr - low_gradient$fr) * 0.1), 2)
   
   result <- data.frame(
     flow_cfs = scaled_flow,
@@ -115,44 +116,76 @@ scale_fp_flow_area <- function(ws) {
   
   if (species_present$lfr) {
     # latefall floodplain area
-    scaled_area_per_mile_LFR <- (proxy_data$LFR_floodplain_acres / proxy_watershed_metadata$modeled_length_mi) *
+    lfr_proxy <- if ("LFR_floodplain_acres" %in% colnames(proxy_data)) {
+      proxy_data$LFR_floodplain_acres
+    } else {
+      proxy_data$FR_floodplain_acres 
+    }
+    
+    scaled_area_per_mile_LFR <- (lfr_proxy / proxy_watershed_metadata$modeled_length_mi) *
       watershed_metadata$dec_jun_mean_flow_scaling
     
-    fp_area_LFR <-(scaled_area_per_mile_LFR * low_gradient$lfr) +
-      (scaled_area_per_mile_LFR * (rearing_extents$lfr - low_gradient$lfr) * 0.1)
+    fp_area_LFR <-round((scaled_area_per_mile_LFR * low_gradient$lfr) +
+      (scaled_area_per_mile_LFR * (rearing_extents$lfr - low_gradient$lfr) * 0.1), 2)
     
     result <- bind_cols(result, LFR_floodplain_acres = fp_area_LFR)
   }
   
   if (species_present$wr) {
-    # steelhead floodplain area
-    scaled_area_per_mile_WR <- (proxy_data$WR_floodplain_acres / proxy_watershed_metadata$modeled_length_mi) *
+    # winter run floodplain area
+   wr_proxy <- if ("WR_floodplain_acres" %in% colnames(proxy_data)) {
+     proxy_data$WR_floodplain_acres
+   } else {
+     proxy_data$FR_floodplain_acres 
+   }
+   
+    scaled_area_per_mile_WR <- (wr_proxy / proxy_watershed_metadata$modeled_length_mi) *
       watershed_metadata$dec_jun_mean_flow_scaling
     
-    fp_area_WR <-(scaled_area_per_mile_WR * low_gradient$wr) +
-      (scaled_area_per_mile_WR * (rearing_extents$wr - low_gradient$wr) * 0.1)
+    fp_area_WR <-round((scaled_area_per_mile_WR * low_gradient$wr) +
+      (scaled_area_per_mile_WR * (rearing_extents$wr - low_gradient$wr) * 0.1), 2)
     
     result <- bind_cols(result, WR_floodplain_acres = fp_area_WR)
   }
   
   if (species_present$sr) {
     # spring run floodplain area
-    scaled_area_per_mile_SR <- (proxy_data$SR_floodplain_acres / proxy_watershed_metadata$modeled_length_mi) *
+    sr_proxy <- if ("SR_floodplain_acres" %in% colnames(proxy_data)) {
+      proxy_data$SR_floodplain_acres
+    } else {
+      if ("ST_floodplain_acres" %in% colnames(proxy_data)) {
+        proxy_data$ST_floodplain_acres 
+      } else {
+        proxy_data$FR_floodplain_acres 
+      }
+    }
+    
+    scaled_area_per_mile_SR <- (sr_proxy / proxy_watershed_metadata$modeled_length_mi) *
       watershed_metadata$dec_jun_mean_flow_scaling
     
-    fp_area_SR <-(scaled_area_per_mile_SR * low_gradient$sr) +
-      (scaled_area_per_mile_SR * (rearing_extents$sr - low_gradient$sr) * 0.1)
+    fp_area_SR <- round((scaled_area_per_mile_SR * low_gradient$sr) +
+      (scaled_area_per_mile_SR * (rearing_extents$sr - low_gradient$sr) * 0.1), 2)
     
     result <- bind_cols(result, SR_floodplain_acres = fp_area_SR)
   }
   
   if (species_present$st) {
     # steelhead floodplain area
-    scaled_area_per_mile_ST <- (proxy_data$ST_floodplain_acres / proxy_watershed_metadata$modeled_length_mi) *
+    st_proxy <- if ("ST_floodplain_acres" %in% colnames(proxy_data)) {
+      proxy_data$ST_floodplain_acres
+    } else {
+      if ("SR_floodplain_acres" %in% colnames(proxy_data)) {
+        proxy_data$SR_floodplain_acres 
+      } else {
+        proxy_data$FR_floodplain_acres 
+      }
+    }
+    
+    scaled_area_per_mile_ST <- (st_proxy / proxy_watershed_metadata$modeled_length_mi) *
       watershed_metadata$dec_jun_mean_flow_scaling
     
-    fp_area_ST <-(scaled_area_per_mile_ST * low_gradient$st) +
-      (scaled_area_per_mile_ST * (rearing_extents$st - low_gradient$st) * 0.1)
+    fp_area_ST <- round((scaled_area_per_mile_ST * low_gradient$st) +
+      (scaled_area_per_mile_ST * (rearing_extents$st - low_gradient$st) * 0.1), 2)
     
     result <- bind_cols(result, ST_floodplain_acres = fp_area_ST)
   }
