@@ -284,8 +284,8 @@ dimnames(fr_fry) <- list(watersheds, month.abb, 1980:2000)
 fr_fry[which(is.na(fr_fry))] <- 0
 usethis::use_data(fr_fry, overwrite = TRUE)
 
-st_fry <- get_rear_hab_all(watersheds_in_order, 'st', 'fry')
-dimnames(st_fry) <- list(watersheds, month.abb, 1980:1999)
+st_fry <- get_rear_hab_all(watersheds_in_order, 'st', 'fry', 1980:2000)
+dimnames(st_fry) <- list(watersheds, month.abb, 1980:2000)
 st_fry[which(is.na(st_fry))] <- fr_fry[which(is.na(st_fry))]
 usethis::use_data(st_fry, overwrite = TRUE)
 
@@ -401,8 +401,8 @@ dimnames(fr_juv) <- list(watersheds, month.abb, 1980:2000)
 fr_juv[which(is.na(fr_juv))] <- 0
 usethis::use_data(fr_juv, overwrite = TRUE)
 
-st_juv <- get_rear_hab_all(watersheds_in_order, 'st', 'juv')
-dimnames(st_juv) <- list(watersheds, month.abb, 1980:1999)
+st_juv <- get_rear_hab_all(watersheds_in_order, 'st', 'juv', 1980:2000)
+dimnames(st_juv) <- list(watersheds, month.abb, 1980:2000)
 st_juv[which(is.na(st_juv))] <- fr_juv[which(is.na(st_juv))]
 usethis::use_data(st_juv, overwrite = TRUE)
 
