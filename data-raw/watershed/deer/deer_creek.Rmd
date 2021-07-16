@@ -249,7 +249,19 @@ deer_creek_floodplain <-
     ST_floodplain_acres = (ST_floodplain_acres + (st_scale*ST_floodplain_acres)*.1),
     watershed
   ) %>% 
-  relocate(watershed, .after = ST_floodplain_acres)
+  relocate(watershed, .after = ST_floodplain_acres) %>% 
+  filter(flow_cfs >= 1000) %>% 
+  bind_rows(
+    tibble(
+      flow_cfs = 900,
+      FR_floodplain_acres = 0,
+      LFR_floodplain_acres = 0,
+      SR_floodplain_acres = 0,
+      ST_floodplain_acres = 0,
+      watershed = "Deer Creek"
+    )
+  ) %>% 
+  arrange(flow_cfs)
 
 knitr::kable(align = 'c', head(deer_creek_floodplain, 5), 
              caption = "Header Descriptions: flow_cfs = flow in cubic feet per second,
