@@ -29,13 +29,12 @@ source('data-raw/watershed/floodplain_utils.R')
 
 ## Floodplain Rearing Habitat
 
-**Data Source:** [Scaled from a Deer Creek flow to floodplain area relationship generated with a 1D HEC-RAS hydraulic model](https://s3-us-west-2.amazonaws.com/cvpiahabitat-r-package/cvpia-sit-model-inputs/DRAFT+Deer+Creek+Hydraulic+Models+Tech+Memo+6-08-07.pdf)
+**Data Source:** Scaled from a Deer Creek flow to floodplain area relationship generated with a [2D HEC-RAS hydraulic model](https://cvpiahabitat-r-package.s3.us-west-2.amazonaws.com/cvpia-sit-model-inputs/DeerCreek_2Dmodel_FlowWest_Final.pdf){target="_blank"}. See [Deer Creek HSI modeling documentation](http://cvpia-habitat-docs-markdown.s3-website-us-west-2.amazonaws.com/watershed/deer_creek.html) for more details.
 
 `r print_model_details('Bear Creek', 'fr')`
 
 ## Floodplain Data
 ```{r}
-# TODO Ask mark about the difference in outcome from his sheet
 bear_creek_floodplain <- scale_fp_flow_area('Bear Creek')
 
 knitr::kable(align = 'c', head(bear_creek_floodplain, 5), caption = "Header Descriptions: flow_cfs = flow in cubic feet per second, FR_floodplain_acres = Fall Run Chinook floodplain acres, ST_floodplain_acres = Steelhead floodplain acres, watershed = section of stream modeled for CVPIA SDM")

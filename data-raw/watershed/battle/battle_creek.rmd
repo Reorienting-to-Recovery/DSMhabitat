@@ -20,7 +20,7 @@ None planned.
 
 The instream spawning and rearing habitat for Fall Run Chinook Salmon, Spring Run Chinook Salmon, and Steelhead in Battle Creek are based on data from Thomas R. Payne & Associates' 1995 instream flow evaluations. The Winter Run in Battle Creek are based on the 1998 instream flow evaluations. The flow evaluations were conducted for the California Department of Fish and Wildlife. They uncovered relationships between flow and both suitable spawning habitat and suitable rearing habitat from seven study reaches in Battle Creek. For both species, the weighted usable area (WUA) data were consolidated from all mainstem reaches. 
 
-### Combine Spawning and Rearing Data
+### Spawning and Rearing Data
 The instream spawning and rearing habitat data described above for Fall Run Chinook Salmon (FR), Spring Run Chinook Salmon (SR), and Steelhead (ST) are combined for use in the Decision Support Model (DSM) in the following format. Units are in square feet per 1000 feet. 
 
 ```{r}
@@ -252,13 +252,16 @@ source('data-raw/watershed/floodplain_utils.R')
 ```
 
 ## Floodplain Rearing Habitat
-**Data Source**: [Scaled from a Deer Creek flow to floodplain area relationship generated with a 1D HEC-RAS hydraulic model](https://s3-us-west-2.amazonaws.com/cvpiahabitat-r-package/cvpia-sit-model-inputs/DRAFT+Deer+Creek+Hydraulic+Models+Tech+Memo+6-08-07.pdf){target="_blank"}
+**Data Source**: Scaled from a Deer Creek flow to floodplain area relationship generated with a [2D HEC-RAS hydraulic model](https://cvpiahabitat-r-package.s3.us-west-2.amazonaws.com/cvpia-sit-model-inputs/DeerCreek_2Dmodel_FlowWest_Final.pdf){target="_blank"}. See [Deer Creek HSI modeling documentation](http://cvpia-habitat-docs-markdown.s3-website-us-west-2.amazonaws.com/watershed/deer_creek.html) for more details.
 
 ### Fall Run
 `r print_model_details('Battle Creek', 'fr')`
 
 ### Late Fall Run
 `r print_model_details('Battle Creek', 'lfr')`
+
+### Winter Run
+`r print_model_details('Battle Creek', 'wr')`
 
 ### Spring Run and Steelhead 
 `r print_model_details('Battle Creek', 'sr')`
@@ -267,7 +270,6 @@ source('data-raw/watershed/floodplain_utils.R')
 The areas represent total inundated area in acres.
 ```{r}
 battle_creek_floodplain <- scale_fp_flow_area('Battle Creek') %>% 
-  mutate(WR_floodplain_acres = 0) %>% 
   select(flow_cfs, FR_floodplain_acres, SR_floodplain_acres, WR_floodplain_acres, 
          ST_floodplain_acres, LFR_floodplain_acres, watershed)
 
@@ -288,9 +290,10 @@ usethis::use_data(battle_creek_floodplain, overwrite = TRUE)
 ## Floodplain Plot
 ```{r}
 battle_creek_floodplain %>% 
-  select(flow_cfs, FR_floodplain_acres, ST_floodplain_acres, LFR_floodplain_acres, watershed) %>%
+  select(flow_cfs, FR_floodplain_acres, WR_floodplain_acres, ST_floodplain_acres, LFR_floodplain_acres, watershed) %>%
   rename(`Fall Run Chinook` = FR_floodplain_acres, 
          `Steelhead and Spring Run Chinook` = ST_floodplain_acres,
+         `Winter Run Chinook` = WR_floodplain_acres,
          `Late Fall Run Chinook` = LFR_floodplain_acres) %>% 
   gather(Species, acres, -flow_cfs, -watershed) %>% 
   ggplot(aes(flow_cfs, acres, color = Species)) +

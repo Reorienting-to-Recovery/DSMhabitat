@@ -24,7 +24,7 @@ reference:
   - square_meters_to_acres
   - acres_to_square_meters
   - get_weeks_flooded
-  - get_wua_selector
+  - get_habitat_selector
   
 - title: Habitat Datasets
   desc: Flow to area rearing and spawning modeled relationships
@@ -48,18 +48,22 @@ reference:
   - sr_fry
   - st_fry
   - wr_fry
+  - lfr_fry
   - fr_juv
   - sr_juv
   - st_juv
   - wr_juv
+  - lfr_juv
   - fr_spawn
   - sr_spawn
   - st_spawn
   - wr_spawn
+  - lfr_spawn
   - fr_fp
   - sr_fp
   - st_fp 
   - wr_fp
+  - lfr_fp
   - weeks_flooded
   - delta_habitat
   - sutter_habitat
@@ -89,6 +93,8 @@ navbar:
         href: articles/floodplain-modeling.html
       - text: 'Map of Spawning and Rearing Habitat'
         href: articles/habitat-extents-map.html
+      - text: 'Remotely Sensed Wetted Channel Areas'
+        href: articles/total-wetted-area.html
   - text: 'News'
     href: news/index.html
 

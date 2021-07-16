@@ -35,8 +35,8 @@ moke_spawn_len <- DSMhabitat::watershed_lengths %>%
 # 'LMR_habitat__s_v2mw_to_MT.xlsx'
 # spawning: 'Spawning WUA' tab A4:C8 
 spawning_moke <- read_excel('data-raw/watershed/mokelumne/data/LMR_habitat__s_v2mw_to_MT.xlsx', 
-                       sheet = 'Spawning WUA', range = 'A4:C8', 
-                       col_names = c('flow_cfs', 'FR_spawn_sqft', 'ST_spawn_sqft')) %>% 
+                            sheet = 'Spawning WUA', range = 'A4:C8', 
+                            col_names = c('flow_cfs', 'FR_spawn_sqft', 'ST_spawn_sqft')) %>% 
   mutate(FR_spawn_wua = FR_spawn_sqft/(moke_spawn_len / 1000), #sqft_per_1000ft
          ST_spawn_wua = ST_spawn_sqft/(moke_spawn_len / 1000)) %>% 
   select(flow_cfs, FR_spawn_wua, ST_spawn_wua)
@@ -155,7 +155,7 @@ mokelumne_river_instream %>%
 
 ## Floodplain Rearing Habitat
 
-**Data Source:** [CVPIA Annual Progress Report Fiscal Year 2019](https://cvpiahabitat-r-package.s3-us-west-2.amazonaws.com/CVPIA+Annual+Progress+Report+Fiscal+Year+2019.pdf){target="_blank"}
+**Data Source:** [CVPIA Annual Progress Report Fiscal Year 2019](https://cvpiahabitat-r-package.s3.us-west-2.amazonaws.com/cvpia-sit-model-inputs/CVPIA+Annual+Progress+Report+Fiscal+Year+2019.pdf){target="_blank"}
 
 The flow : floodplain area relationship for the Mokelumne River is based on high resolution (4 square foot cell size) two-dimensional hydraulic modeling completed by EBMUD in 2017 (Technical Memorandum in preparation by Robyn Bilski at EBMUD). The Mokelumne model was broken into seven reaches (Figure 14) based on the availability of stage-discharge relationships. The extent of this modeling is from River Mile 62.8 to River Mile 64. All area inundated flows less than or equal to 400 cfs were considered as instream.  The inundated area per length value from this modeled reach was extrapolated to the entire rearing reach in the Mokelumne River, from Camanche Dam downstream to the point of tidal influence. This flow : floodplain area relationship was used for all salmon and steelhead runs in the Mokelumne River. The following table contains the flow : floodplain area relationships used in the Decision Support Model (DSM). 
 
@@ -164,13 +164,14 @@ The flow : floodplain area relationship for the Mokelumne River is based on high
 # 400 cfs = 0 acres 
 
 mokelumne_river_floodplain <- read_excel('data-raw/watershed/mokelumne/data/LMR_habitat__s_v2mw_to_MT.xlsx', 
-                      sheet = 'Floodplain (new flows)', range = 'C21:D26',
-                      col_names = c('flow_cfs', 'FR_floodplain_acres')) %>% 
- bind_rows(tibble(flow_cfs = 400, FR_floodplain_acres = 0)) %>% 
- arrange(flow_cfs) %>% 
- mutate(SR_floodplain_acres = FR_floodplain_acres,
-        ST_floodplain_acres = FR_floodplain_acres,
-        watershed = "Mokelumne River")
+                                         sheet = 'Floodplain (new flows)', range = 'C21:D26',
+                                         col_names = c('flow_cfs', 'FR_floodplain_acres')) %>% 
+  bind_rows(tibble(flow_cfs = 400, FR_floodplain_acres = 0)) %>% 
+  arrange(flow_cfs) %>% 
+  mutate(FR_floodplain_acres = round(FR_floodplain_acres, 2),
+         SR_floodplain_acres = FR_floodplain_acres,
+         ST_floodplain_acres = FR_floodplain_acres,
+         watershed = "Mokelumne River")
 
 knitr::kable(align = 'c', head(mokelumne_river_floodplain, 5), 
              caption = "Header Descriptions: flow_cfs = flow in cubic feet per second,

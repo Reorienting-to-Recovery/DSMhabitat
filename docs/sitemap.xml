@@ -34,10 +34,10 @@
     <loc>https://CVPIA-OSC.github.io/DSMhabitat//reference/fry.html</loc>
   </url>
   <url>
-    <loc>https://CVPIA-OSC.github.io/DSMhabitat//reference/get_weeks_flooded.html</loc>
+    <loc>https://CVPIA-OSC.github.io/DSMhabitat//reference/get_habitat_selector.html</loc>
   </url>
   <url>
-    <loc>https://CVPIA-OSC.github.io/DSMhabitat//reference/get_wua_selector.html</loc>
+    <loc>https://CVPIA-OSC.github.io/DSMhabitat//reference/get_weeks_flooded.html</loc>
   </url>
   <url>
     <loc>https://CVPIA-OSC.github.io/DSMhabitat//reference/habitat_data.html</loc>
@@ -98,5 +98,8 @@
   </url>
   <url>
     <loc>https://CVPIA-OSC.github.io/DSMhabitat//articles/habitat-extents-map.html</loc>
+  </url>
+  <url>
+    <loc>https://CVPIA-OSC.github.io/DSMhabitat//articles/total-wetted-area.html</loc>
   </url>
 </urlset>

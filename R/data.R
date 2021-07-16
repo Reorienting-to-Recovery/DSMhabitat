@@ -496,9 +496,9 @@ NULL
 #' @examples
 #' watershed_lengths
 #'
-#' @details Information comes from expert outreach undertaken in 2017.
+#' @details Information comes from expert outreach undertaken in 2017. Updated in 2021 to include late fall run extents from expert outreach.
 #'
-#' @source FlowWest, add url to shp file when mapping is complete
+#' @source \href{https://cvpiahabitat-r-package.s3.us-west-2.amazonaws.com/salmonid_habitat_extents.zip}{Salmonid Extents}
 'watershed_lengths'
 
 #' Habitat Modeling Status
@@ -639,14 +639,19 @@ NULL
 #'
 #' @details
 #' Only 5 of the watersheds have wua relationships:
-#' **Adult Trout**
-#' 1. Battle Creek
-#' 2. Butte Creek
+#' 
+#' \strong{Adult Trout}
+#' \enumerate{
+#'    \item Battle Creek
+#'    \item Butte Creek
+#' }
 #'
-#' **Steelhead**
-#' 3. Merced River
-#' 4. Tuolumne River
-#' 5. Yuba River
+#' \strong{Steelhead}
+#' \enumerate{
+#'    \item Merced River
+#'    \item Tuolumne River
+#'    \item Yuba River
+#' }
 #'
 #' These watershed's habitat values vary by month.
 #'
@@ -672,7 +677,7 @@ NULL
 #' @format
 #' \itemize{
 #' \item Steelhead: 3 dimensional array [31 watersheds, 12 months, 21 years]
-#' \item Fall Run, Spring Run and Winter Run: 3 dimensional array [31 watersheds, 12 months, 22 years]
+#' \item Fall Run, Late Fall Run, Spring Run and Winter Run: 3 dimensional array [31 watersheds, 12 months, 22 years]
 #' }
 #' @details
 #' Values created using the function \code{\link[=set_spawning_habitat]{set_spawning_habitat}}
@@ -698,6 +703,10 @@ NULL
 #' @format NULL
 "st_spawn"
 
+#' @rdname spawn
+#' @format NULL
+"lfr_spawn"
+
 #' Juvenile Inchannel Habitat
 #' @description The 1980-1999 juvenile suitable inchannel rearing habitat area in square meters for  
 #' Steelhead and 1980-2000 juvenile suitable inchannel rearing habitat area in square meters
@@ -705,7 +714,7 @@ NULL
 #' @format
 #' \itemize{
 #' \item Steelhead: 3 dimensional array [31 watersheds, 12 months, 20 years]
-#' \item Fall Run, Spring Run and Winter Run: 3 dimensional array [31 watersheds, 12 months, 21 years]
+#' \item Fall Run, Late Fall Run, Spring Run and Winter Run: 3 dimensional array [31 watersheds, 12 months, 21 years]
 #' }
 #' @details 
 #' Values created using the function \code{\link[=set_instream_habitat]{set_instream_habitat}}
@@ -719,7 +728,7 @@ NULL
 #' @format
 #' \itemize{
 #' \item Steelhead: 3 dimensional array [31 watersheds, 12 months, 20 years]
-#' \item Fall Run, Spring Run and Winter Run: 3 dimensional array [31 watersheds, 12 months, 21 years]
+#' \item Fall Run, Late Fall Run, Spring Run and Winter Run: 3 dimensional array [31 watersheds, 12 months, 21 years]
 #' }
 #' @details 
 #' Values created using the function \code{\link[=set_instream_habitat]{set_instream_habitat}}
@@ -759,6 +768,14 @@ NULL
 #' @format NULL
 "st_juv"
 
+#' @rdname fry
+#' @format NULL
+"lfr_fry"
+
+#' @rdname juvenile
+#' @format NULL
+"lfr_juv"
+
 
 #' Floodplain Habitat
 #' @description The 1980-1999 total floodplain rearing habitat area in square meters for 
@@ -767,7 +784,7 @@ NULL
 #' @format
 #' \itemize{
 #' \item Steelhead: 3 dimensional array [31 watersheds, 12 months, 20 years]
-#' \item Fall Run, Spring Run and Winter Run: 3 dimensional array [31 watersheds, 12 months, 21 years]
+#' \item Fall Run, Late Fall Run, Spring Run and Winter Run: 3 dimensional array [31 watersheds, 12 months, 21 years]
 #' }
 #' @details 
 #' Values created using the function \code{\link[=set_floodplain_habitat]{set_floodplain_habitat}}
@@ -793,6 +810,9 @@ NULL
 #' @format NULL
 "st_fp"
 
+#' @rdname floodplain
+#' @format NULL
+"lfr_fp"
 
 
 #' Bypass Habitat Area

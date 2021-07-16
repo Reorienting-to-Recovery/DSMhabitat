@@ -21,14 +21,19 @@ A dataset containing adult rearing habitat quanities in square meters
 }
 \details{
 Only 5 of the watersheds have wua relationships:
-**Adult Trout**
-1. Battle Creek
-2. Butte Creek
 
-**Steelhead**
-3. Merced River
-4. Tuolumne River
-5. Yuba River
+\strong{Adult Trout}
+\enumerate{
+   \item Battle Creek
+   \item Butte Creek
+}
+
+\strong{Steelhead}
+\enumerate{
+   \item Merced River
+   \item Tuolumne River
+   \item Yuba River
+}
 
 These watershed's habitat values vary by month.
 

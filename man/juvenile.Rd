@@ -6,11 +6,12 @@
 \alias{wr_juv}
 \alias{sr_juv}
 \alias{st_juv}
+\alias{lfr_juv}
 \title{Juvenile Inchannel Habitat}
 \format{
 \itemize{
 \item Steelhead: 3 dimensional array [31 watersheds, 12 months, 20 years]
-\item Fall Run, Spring Run and Winter Run: 3 dimensional array [31 watersheds, 12 months, 21 years]
+\item Fall Run, Late Fall Run, Spring Run and Winter Run: 3 dimensional array [31 watersheds, 12 months, 21 years]
 }
 }
 \usage{
@@ -21,6 +22,8 @@ wr_juv
 sr_juv
 
 st_juv
+
+lfr_juv
 }
 \description{
 The 1980-1999 juvenile suitable inchannel rearing habitat area in square meters for  

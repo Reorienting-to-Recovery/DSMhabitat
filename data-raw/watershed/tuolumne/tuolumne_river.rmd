@@ -21,7 +21,7 @@ Instream habitat suitability relationships provided for the Voluntary Agreement 
 
 The instream spawning and rearing habitat for Fall Run Chinook Salmon and Steelhead in the Tuolumne River are based on data from a California Department of Fish and Game site-specific study. These data consist of 10 sites spread over 9.2 miles of the dominant spawning reach of the Lower Tuolumne River. They were reviewed by Stillwater Sciences for use in their 2014 Flo2D model. The weighted usable area (WUA) results for Salmon and Steelhead are provided in tables H-1 and H-2 on pages 108-109 of the Final Lower Tuolumne Instream Flow Study Report. The instream spawning and rearing habitat data were provided to us by [Mark Gard](mailto:Mark.Gard@Wildlife.ca.gov) from the California Department of Fish and Wildlife in a [spreadsheet](https://cvpiahabitat-r-package.s3-us-west-2.amazonaws.com/IFIMWUA.xlsx). Mark Gard instructed us to use cells A2:H32 in the 'Tuolumne' tab within the spreadsheet.
 
-### Combine Spawning and Rearing Data 
+### Spawning and Rearing Data 
 The instream spawning and rearing habitat data described above for Fall Run Chinook Salmon (FR) and Steelhead (ST) are combined for use in the Decision Support Model (DSM) in the following format. Units are in square feet per 1000 feet.    
 ```{r}
 tuolumne_river_instream <- read_excel('data-raw/mark_gard_data/IFIMWUA.xlsx',
@@ -94,20 +94,19 @@ The entire mapped rearing extent of 54.33 miles was modeled by TID and MID using
 ## Floodplain Data    
 The areas represent total inundated area in acres.    
 ```{r}
-tuolumne_fp <- read_excel('data-raw/watershed/CVPIA_FloodplainAreas.xlsx', 
-                                        sheet = 'TuolumneRiver') %>%
+tuolumne_fp <- read_excel('data-raw/mark_gard_data/Floodplainarea.xlsx', 
+                                        sheet = 'Tuolumne', skip = 2,
+                            col_names = c('flow_cfs', 'FR_floodplain_acres')) %>%
   mutate(watershed = 'Tuolumne River',
-         SR_floodplain_acres = modeled_floodplain_area_acres,
-         ST_floodplain_acres = modeled_floodplain_area_acres) %>%
+         FR_floodplain_acres = round(FR_floodplain_acres, 2),
+         SR_floodplain_acres = FR_floodplain_acres,
+         ST_floodplain_acres = FR_floodplain_acres) %>%
   select(flow_cfs,
-         FR_floodplain_acres = modeled_floodplain_area_acres,
+         FR_floodplain_acres,
          SR_floodplain_acres, ST_floodplain_acres,
          watershed)
 
-threshold <- tuolumne_fp %>% 
-  filter(FR_floodplain_acres == 0) %>% 
-  summarise(max = max(flow_cfs)) %>% 
-  pull(max)
+threshold <- tuolumne_fp$flow_cfs[min(which(tuolumne_fp$FR_floodplain_acres > 0) - 1)]
 
 tuolumne_river_floodplain <- tuolumne_fp %>% 
   filter(flow_cfs >= threshold)

@@ -95,3 +95,15 @@ test_that('ST floodplain American River works', {
     floodplain,
     tolerance = .01)
 })
+
+test_that('No WR, SR, or LFR on American River', {
+  expect_true(is.na(set_instream_habitat('American River', 'wr', 'fry', 200)))
+  expect_true(is.na(set_instream_habitat('American River', 'sr', 'fry', 200)))
+  expect_true(is.na(set_instream_habitat('American River', 'lfr', 'fry', 200)))
+  expect_true(is.na(set_spawning_habitat('American River', 'wr', 100)))
+  expect_true(is.na(set_spawning_habitat('American River', 'sr', 100)))
+  expect_true(is.na(set_spawning_habitat('American River', 'lfr', 100)))
+  expect_true(is.na(set_floodplain_habitat('American River', 'wr', 2000)))
+  expect_true(is.na(set_floodplain_habitat('American River', 'sr', 2000)))
+  expect_true(is.na(set_floodplain_habitat('American River', 'lfr', 2000)))
+})
