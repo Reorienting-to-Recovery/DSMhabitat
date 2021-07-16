@@ -26,10 +26,10 @@ test_that('set rearing at Deer Creek works', {
   
   flow_test_val <- 7000
   
-  fr_juv_result <- deer_creek_instream[deer_creek_instream$flow_cfs == flow_test_val,]$FR_juv_hsi
-  lfr_juv_result <- deer_creek_instream[deer_creek_instream$flow_cfs == flow_test_val,]$LFR_juv_hsi
-  sr_juv_result <- deer_creek_instream[deer_creek_instream$flow_cfs == flow_test_val,]$SR_juv_hsi
-  st_juv_result <- deer_creek_instream[deer_creek_instream$flow_cfs == flow_test_val,]$ST_juv_hsi
+  fr_juv_result <- deer_creek_instream[deer_creek_instream$flow_cfs == flow_test_val,]$FR_juv_sqm
+  lfr_juv_result <- NA
+  sr_juv_result <- deer_creek_instream[deer_creek_instream$flow_cfs == flow_test_val,]$SR_juv_sqm
+  st_juv_result <- deer_creek_instream[deer_creek_instream$flow_cfs == flow_test_val,]$ST_juv_sqm
   
   expect_equal(set_instream_habitat('Deer Creek', 'fr', 'juv', flow_test_val), fr_juv_result)
   expect_equal(set_instream_habitat('Deer Creek', 'lfr', 'juv', flow_test_val), lfr_juv_result)
@@ -42,8 +42,8 @@ test_that('set rearing at Deer Creek works', {
 test_that("set spawning works at deer creek", {
   flow_test_val <- 7000
   
-  fr_spawn_result <- deer_creek_instream[deer_creek_instream$flow_cfs == flow_test_val,]$FR_spawn_hsi
-  lfr_spawn_result <- deer_creek_instream[deer_creek_instream$flow_cfs == flow_test_val,]$LFR_spawn_hsi
+  fr_spawn_result <- deer_creek_instream[deer_creek_instream$flow_cfs == flow_test_val,]$FR_spawn_sqm
+  lfr_spawn_result <- NA
   
   expect_equal(set_spawning_habitat('Deer Creek', 'fr', flow_test_val), fr_spawn_result)
   expect_equal(set_spawning_habitat('Deer Creek', 'lfr', flow_test_val), lfr_spawn_result)
@@ -56,12 +56,12 @@ test_that("set floodplain works at deer creek", {
   flow_test_val <- 7000
   
   fr_fp_result <- deer_creek_floodplain[deer_creek_floodplain$flow_cfs == flow_test_val,]$FR_floodplain_acres
-  lfr_fp_result <- deer_creek_floodplain[deer_creek_floodplain$flow_cfs == flow_test_val,]$LFR_floodplain_acres
+  lfr_fp_result <- NA
   sr_fp_result <- deer_creek_floodplain[deer_creek_floodplain$flow_cfs == flow_test_val,]$SR_floodplain_acres
   st_fp_result <- deer_creek_floodplain[deer_creek_floodplain$flow_cfs == flow_test_val,]$ST_floodplain_acres
   
   expect_equal(set_floodplain_habitat('Deer Creek', 'fr', flow_test_val), acres_to_square_meters(fr_fp_result))
-  expect_equal(set_floodplain_habitat('Deer Creek', 'lfr', flow_test_val), acres_to_square_meters(lfr_fp_result))
+  expect_equal(set_floodplain_habitat('Deer Creek', 'lfr', flow_test_val), lfr_fp_result)
   expect_equal(set_floodplain_habitat('Deer Creek', 'sr', flow_test_val), acres_to_square_meters(sr_fp_result))
   expect_equal(set_floodplain_habitat('Deer Creek', 'st', flow_test_val), acres_to_square_meters(st_fp_result))
 })
