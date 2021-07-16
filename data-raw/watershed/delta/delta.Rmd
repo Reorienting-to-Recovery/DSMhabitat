@@ -13,6 +13,7 @@ library(tidyverse)
 library(readxl)
 library(scales)
 library(lubridate)
+library(readxl)
 ```
 
 ## Modeling Details
@@ -30,13 +31,16 @@ High quality habitat defined by:
 ## North and South Deltas Rearing Habitat
 
 ```{r}
-south_yolo <- read_excel('data-raw/correigh_greene_data/delta habitat By Region.xlsx', sheet = 3, skip = 1) %>%
+south_yolo <- read_excel('data-raw/correigh_greene_data/delta habitat By Region.xlsx', 
+                         sheet = 3, skip = 1) %>%
   select(...1, south_yolo = ppp)
 
-north_delta <- read_excel('data-raw/correigh_greene_data/delta habitat By Region.xlsx', sheet = 4, skip = 1)  %>%
+north_delta <- read_excel('data-raw/correigh_greene_data/delta habitat By Region.xlsx', 
+                          sheet = 4, skip = 1)  %>%
   select(...1, north_delta = ppp)
 
-south_delta <- read_excel('data-raw/correigh_greene_data/delta habitat By Region.xlsx', sheet = 5, skip = 1) %>%
+south_delta <- read_excel('data-raw/correigh_greene_data/delta habitat By Region.xlsx', 
+                          sheet = 5, skip = 1) %>%
   select(...1, south_delta = ppp)
 
 north_delta_habitat <- north_delta %>%
@@ -84,10 +88,10 @@ sd_hab <- south_delta_habitat %>%
 delta_rearing_habitat <- left_join(nd_hab, sd_hab)
 usethis::use_data(delta_rearing_habitat, overwrite = TRUE)
 
-knitr::kable(align = 'c', head(delta_habitat, 5))
+knitr::kable(align = 'c', head(delta_rearing_habitat, 5))
 ```
 
-*... with `r nrow(delta_habitat) - 5` more rows*
+*... with `r nrow(delta_rearing_habitat) - 5` more rows*
 
 ## North and South Deltas Rearing Habitat Plot
 
