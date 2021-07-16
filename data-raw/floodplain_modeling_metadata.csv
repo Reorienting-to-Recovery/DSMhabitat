@@ -8,7 +8,7 @@ Big Chico Creek,part_model,Central Valley Floodplain Evaluation and Delineation 
 Butte Creek,part_model,Central Valley Floodplain Evaluation and Delineation (CVFED) HEC-RAS hydraulic model,17.14,NA,NA,NA
 Calaveras River,scaled_tr,NA,0,Tuolumne River,0.200495605964777,NA
 Clear Creek,scaled_cc,NA,0,Cottonwood Creek,0.209236963160552,NA
-Cosumnes River,scaled_tr,NA,0,Tuolumne River,0.502672036475406,haven't added 718.9 acres in CRP
+Cosumnes River,full_model,NA,0,Tuolumne River,0.502672036475406,haven't added 718.9 acres in CRP
 Cottonwood Creek,part_model,USFWS / FEMA 1D HEC-RAS hydraulic model,22.36,NA,NA,NA
 Cow Creek,scaled_dc,NA,0,Deer Creek,2.15622071138887,NA
 Deer Creek,full_model,Lower Deer Creek Flood and Ecosystem Improvement Project HEC-RAS Hydrodynamic model,12.2,NA,NA,full model only for fall run
