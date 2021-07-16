@@ -160,13 +160,11 @@ The areas represent total inundated area in acres.
 yuba_fp <- read_excel('data-raw/mark_gard_data/Floodplainarea.xlsx',
                       sheet = 'Yuba', skip = 2,
                       col_names = c('flow_cfs', 'FR_floodplain_acres')) %>%
-  mutate(watershed = 'Yuba River',
+  transmute(flow_cfs,
+         FR_floodplain_acres = round(FR_floodplain_acres, 2),
          SR_floodplain_acres = FR_floodplain_acres,
-         ST_floodplain_acres = FR_floodplain_acres) %>%
-  select(flow_cfs,
-         FR_floodplain_acres,
-         SR_floodplain_acres, ST_floodplain_acres,
-         watershed)
+         ST_floodplain_acres = FR_floodplain_acres,
+         watershed = 'Yuba River')
 
 threshold <- yuba_fp$flow_cfs[min(which(yuba_fp$FR_floodplain_acres > 0) - 1)]
 
