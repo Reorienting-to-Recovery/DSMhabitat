@@ -53,6 +53,9 @@
     <li>
       <a href="../articles/habitat-extents-map.html">Map of Spawning and Rearing Habitat</a>
     </li>
+    <li>
+      <a href="../articles/total-wetted-area.html">Remotely Sensed Wetted Channel Areas</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -89,13 +92,14 @@
 
     
     
-<div id="total-wetted-area-estimation" class="section level2">
+<p>This document describes our methodology to estimate inchannel wetted area. We used these values to estimate floodplain area by subtracting our inchannel wetted area estimate from modeled total wetted area provided by Mark Gard.</p>
+<div id="inchannel-wetted-area-estimation" class="section level2">
 <h2 class="hasAnchor">
-<a href="#total-wetted-area-estimation" class="anchor"></a>Total Wetted Area Estimation</h2>
+<a href="#inchannel-wetted-area-estimation" class="anchor"></a>Inchannel Wetted Area Estimation</h2>
 <p>We used 1 meter resolution 4 band (R, G, B, N) imagery from the National Agriculture Imagery Program <a href="fsa.usda.gov/programs-and-services/aerial-photography/imagery-programs/naip-imagery/">(NAIP)</a> to conduct a Normalized Difference Water Index <a href="https://en.wikipedia.org/wiki/Normalized_difference_water_index">(NDWI)</a> based analysis to identify total wetted area for the 31 tributaries included in the SIT chinook life cycle models. The analysis was performed using the <a href="https://code.earthengine.google.com/">Google Earth Engine IDE</a>.</p>
 <p>We used all the available NAIP imagery for the years 2009-2016 and for each image calculated the NDWI as: <span class="math display">\[{NDWI}=\frac{(Xgreen - Xnir)}{(Xgreen + Xnir)}\]</span></p>
-<p>We then reduced the multidimensional array of NDWI rasters by selecting the maximum NDWI at each pixel. We created a buffer of the fall run rearing extents with an estimated channel width to clip the max NDWI raster. A binary filter was applied to the clipped raster for NDWI values greater than a threshold to classify each pixel as water or not water. These water pixels were multiplied by the pixel area and then all summed to estimate the total wetted area of the stream.</p>
-<p>The total wetted area values for each watershed were recorded in <code>data-raw/earth_engine_total_channel_area_estimates.csv</code> and are stored in <code>DSMhabitat::fr_wetted_channel_area</code></p>
+<p>We then reduced the multidimensional array of NDWI rasters by selecting the maximum NDWI at each pixel. We created a buffer of the fall run rearing extents with an estimated channel width to clip the max NDWI raster. A binary filter was applied to the clipped raster for NDWI values greater than a threshold to classify each pixel as water or not water. These water pixels were multiplied by the pixel area and then all summed to estimate the inchannel wetted area of the stream.</p>
+<p>The inchannel wetted area values for each watershed were recorded in <code>data-raw/earth_engine_total_channel_area_estimates.csv</code> and are stored in <code>DSMhabitat::fr_wetted_channel_area</code></p>
 <p>The extents were mapped through expert outreach can be viewed on <a href="https://cvpia-osc.github.io/DSMhabitat/articles/habitat-extents-map.html">this interactive map</a> and are available for download <a href="https://github.com/CVPIA-OSC/DSMhabitat/tree/main/data-raw/rearing_spatial_data/salmonid_habitat_extents">here</a></p>
 <div id="example-analysis-javascript-code-below" class="section level3">
 <h3 class="hasAnchor">
@@ -136,7 +140,7 @@
 <span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    <span class="dt">maxPixels</span><span class="op">:</span> <span class="fl">1e9</span></span>
 <span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
 <span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">'total water area in square meters:'</span><span class="op">,</span> water)<span class="op">;</span></span></code></pre></div>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">'inchannel water area in square meters:'</span><span class="op">,</span> water)<span class="op">;</span></span></code></pre></div>
 </div>
 </div>
   </div>
