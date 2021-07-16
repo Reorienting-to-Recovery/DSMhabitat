@@ -120,11 +120,12 @@ san_joaquin_river_floodplain <- read_excel('data-raw/mark_gard_data/Floodplainar
   transmute(flow_cfs, 
             total_area_acres = ifelse(is.na(total_area_acres), 0, 
                                       total_area_acres) * scaling_factor,
-            FR_floodplain_acres = (pmax(total_area_acres - wetted_area_acres, 0)),
+            FR_floodplain_acres = round((pmax(total_area_acres - wetted_area_acres, 0)), 2),
             SR_floodplain_acres = FR_floodplain_acres,
             ST_floodplain_acres = FR_floodplain_acres,
             watershed = "San Joaquin River") %>% 
-  select(-total_area_acres)
+  select(-total_area_acres) %>% 
+  filter(flow_cfs > 100)
 
 knitr::kable(align = 'c', head(san_joaquin_river_floodplain, 5), 
              caption = "Header Descriptions: flow_cfs = flow in cubic feet per second,
