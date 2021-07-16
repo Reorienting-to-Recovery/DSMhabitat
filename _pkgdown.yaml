@@ -24,7 +24,7 @@ reference:
   - square_meters_to_acres
   - acres_to_square_meters
   - get_weeks_flooded
-  - get_wua_selector
+  - get_habitat_selector
   
 - title: Habitat Datasets
   desc: Flow to area rearing and spawning modeled relationships
