@@ -28,7 +28,7 @@ source('data-raw/watershed/floodplain_utils.R')
 ```
 
 ## Floodplain Rearing Habitat 
-**Data Source:** [Scaled USFWS / FEMA 1D HEC-RAS hydraulic model](https://s3-us-west-2.amazonaws.com/cvpiahabitat-r-package/cvpia-sit-model-inputs/CVPIA+Annual+Progress+Report+Fiscal+Year+2017.pdf){target="_blank"}
+**Data Source:** Scaled from a Cottonwood Creek flow to floodplain area relationship generated with a [USFWS / FEMA 1D HEC-RAS hydraulic model](https://s3-us-west-2.amazonaws.com/cvpiahabitat-r-package/cvpia-sit-model-inputs/CVPIA+Annual+Progress+Report+Fiscal+Year+2017.pdf){target="_blank"}. See [Cottonwood Creek modeling documentation](http://cvpia-habitat-docs-markdown.s3-website-us-west-2.amazonaws.com/watershed/cottonwood_creek.html) for more details.
 
 ### Fall Run
 `r print_model_details('Thomes Creek', 'fr')`
@@ -56,8 +56,7 @@ usethis::use_data(thomes_creek_floodplain, overwrite = TRUE)
 ## Floodplain Plot
 ```{r}
 thomes_creek_floodplain %>% 
-  select(FR_floodplain_acres, SR_floodplain_acres, watershed, flow_cfs) %>%
-  rename(`Fall Run Chinook` = FR_floodplain_acres, `Spring Run Chinook and Steelhead` = SR_floodplain_acres) %>% 
+  rename(`Fall Run Chinook` = FR_floodplain_acres, `Steelhead` = ST_floodplain_acres) %>% 
   gather(Species, acres, -flow_cfs, -watershed) %>% 
   ggplot(aes(flow_cfs, acres, color = Species)) +
   geom_line() +
