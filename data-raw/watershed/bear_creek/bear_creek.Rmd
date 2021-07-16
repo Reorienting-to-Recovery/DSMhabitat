@@ -29,7 +29,7 @@ source('data-raw/watershed/floodplain_utils.R')
 
 ## Floodplain Rearing Habitat
 
-**Data Source:** [Scaled from a Deer Creek flow to floodplain area relationship generated with a 1D HEC-RAS hydraulic model](https://s3-us-west-2.amazonaws.com/cvpiahabitat-r-package/cvpia-sit-model-inputs/DRAFT+Deer+Creek+Hydraulic+Models+Tech+Memo+6-08-07.pdf)
+**Data Source:** Scaled from a Deer Creek flow to floodplain area relationship generated with a [2D HEC-RAS hydraulic model](https://cvpiahabitat-r-package.s3.us-west-2.amazonaws.com/cvpia-sit-model-inputs/DeerCreek_2Dmodel_FlowWest_Final.pdf){target="_blank"}. See [Deer Creek HSI modeling documentation](http://cvpia-habitat-docs-markdown.s3-website-us-west-2.amazonaws.com/watershed/deer_creek.html) for more details.
 
 `r print_model_details('Bear Creek', 'fr')`
 
