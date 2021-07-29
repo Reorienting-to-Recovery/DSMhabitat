@@ -18,7 +18,7 @@ None planned.
 
 ## Instream Spawning and Rearing Habiat
 
-**Data Source:** [FWS 2003](https://www.fws.gov/lodi/instream-flow/Documents/Butte%20Creek%20Spring-run%20chinook%20salmon%20spawning%208-29-2003.pdf){target="_blank"} (77-78) and [FERC relicensing of DeSabla](https://s3-us-west-2.amazonaws.com/cvpiahabitat-r-package/cvpia-sit-model-inputs/DeSabla2008ButteIFIM.pdf){target="_blank"} (APPENDIX E6.3.2.6-J1) 
+**Data Source:** [FWS 2003](s3://cvpiahabitat-r-package/Butte_Creek_Spring-run_chinook_salmon_spawning_8-29-2003.pdf){target="_blank"} (77-78) and [FERC relicensing of DeSabla](https://s3-us-west-2.amazonaws.com/cvpiahabitat-r-package/cvpia-sit-model-inputs/DeSabla2008ButteIFIM.pdf){target="_blank"} (APPENDIX E6.3.2.6-J1) 
 
 Instream spawning and rearing habitat in Butte Creek is based on data from the FWS instream 2003 study and the FERC relicensing of DeSabla 2008 study. Spawning habitat data are from the FWS study (p. 77-78). For Spring Run only, spawning data were generated using a RIVER2D 2-dimensional hydraulic and habitat model. The spawning data were compiled in a spreadsheet and scaled by reach length. The rearing data come from DeSabla 2008 in the lower butte section of the appendix (APPENDIX E6.3.2.6-J1). Instream rearing habitat data were provided in a [spreadsheet](https://cvpiahabitat-r-package.s3-us-west-2.amazonaws.com/IFIMWUA.xlsx). Mark Gard instructed us to use cells A71:C101 for the Fall Run Chinook rearing data.  Units are in square feet per 1000 feet.
 
@@ -41,10 +41,12 @@ wua_sr_2 <- approxfun(reach_2$flow_cfs, reach_2$SR_spawn_WUA, rule = 2)
 reach_mi <- c(6.5, 9)
 total_mi <- sum(reach_mi)
 
+# Origional data in WUA sqft to convert to WUA sqft/1000ft divide by total reach length and then by 5.28 
+# 1 mi/ 5.28 = .189394 miles which = 1000 ft 
 sr_spawn <- tibble(
   flow_cfs = sr_flow, 
-  SR_spawn_wua = (wua_sr_1(flow_cfs) * reach_mi[1] / total_mi) + 
-    (wua_sr_2(flow_cfs) * reach_mi[2] / total_mi)
+  SR_spawn_wua = ((wua_sr_1(flow_cfs) * reach_mi[1] / total_mi) + 
+    (wua_sr_2(flow_cfs) * reach_mi[2] / total_mi)) / total_mi / 5.28
 )
 
 # Steelhead spawning Data 
