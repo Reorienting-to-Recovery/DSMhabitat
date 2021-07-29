@@ -125,8 +125,8 @@ butte_creek_instream %>%
     geom_line(aes(y = ST_spawn_wua,color = '#7570b3')) +
     labs(x = 'Flow (cfs)', y = 'WUA (sqft/1000ft)', color = 'Species') +
     theme_minimal() +
-    scale_color_manual(labels = c('Fall and Spring Run','Steelhead'), 
-                       values = c('#d95f02','#7570b3')) +
+    scale_color_manual(labels = c('Steelhead', 'Fall and Spring Run'), 
+                       values = c('#7570b3', '#d95f02')) +
     theme(legend.justification = c(1, 0), 
           legend.position = c(.9, .75))
    
