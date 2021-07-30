@@ -142,7 +142,7 @@ get_weeks_flooded <- function(ws, flow_cfs) {
 
   flow_thresholds <- DSMhabitat::weeks_inundated[DSMhabitat::weeks_inundated$watershed == ws, 'flow_threshold']
   if (length(flow_thresholds) == 0) {
-    return(2)
+    return(0)
   }
 
   # select closest number of weeks inundated given flow without going over

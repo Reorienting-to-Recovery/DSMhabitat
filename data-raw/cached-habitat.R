@@ -635,6 +635,9 @@ for (i in 1:31) {
 
 flooded <- DSMhabitat::fr_fp > 0
 weeks_flooded <- pmax(flooded*2, weeks_flooded)
+
+not_flooded <- DSMhabitat::fr_fp == 0
+weeks_flooded[not_flooded] <- 0
 dimnames(weeks_flooded) <- list(watersheds, month.abb, 1980:2000)
 
 usethis::use_data(weeks_flooded, overwrite = TRUE)
