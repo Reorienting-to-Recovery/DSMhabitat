@@ -21,17 +21,17 @@ test_that("modeling of species coverage hasn't changed - Butte", {
   expect_equal(modeling$ST_adult, FALSE)
 })
 
-test_that('FR rearing Butte Creek works', {
+test_that('SR rearing Butte Creek works', {
 
-  fry_not_na_index <- which(!is.na(DSMhabitat::butte_creek_instream$FR_fry_wua))[1]
-  juv_not_na_index <- which(!is.na(DSMhabitat::butte_creek_instream$FR_juv_wua))[1]
+  fry_not_na_index <- which(!is.na(DSMhabitat::butte_creek_instream$SR_fry_wua))[1]
+  juv_not_na_index <- which(!is.na(DSMhabitat::butte_creek_instream$SR_juv_wua))[1]
 
-  fry_wua <- DSMhabitat::butte_creek_instream$FR_fry_wua[fry_not_na_index]
-  juv_wua <- DSMhabitat::butte_creek_instream$FR_juv_wua[juv_not_na_index]
+  fry_wua <- DSMhabitat::butte_creek_instream$SR_fry_wua[fry_not_na_index]
+  juv_wua <- DSMhabitat::butte_creek_instream$SR_juv_wua[juv_not_na_index]
 
   rearing_stream_length <- subset(DSMhabitat::watershed_lengths,
                                   watershed == 'Butte Creek' & lifestage == 'rearing'
-                                  & species == 'fr')$feet
+                                  & species == 'sr')$feet
 
   fryx <- (((rearing_stream_length/1000) * fry_wua)/10.7639)
   juvx <- (((rearing_stream_length/1000) * juv_wua)/10.7639)
@@ -40,9 +40,9 @@ test_that('FR rearing Butte Creek works', {
   juv_flow <- DSMhabitat::butte_creek_instream$flow_cfs[juv_not_na_index]
 
   expect_equal(
-    set_instream_habitat('Butte Creek', 'fr', 'fry', fry_flow), fryx)
+    set_instream_habitat('Butte Creek', 'sr', 'fry', fry_flow), fryx)
   expect_equal(
-    set_instream_habitat('Butte Creek', 'fr', 'juv', juv_flow), juvx)
+    set_instream_habitat('Butte Creek', 'sr', 'juv', juv_flow), juvx)
 })
 
 test_that('SR spawning Butte Creek works', {
@@ -120,3 +120,4 @@ test_that('No WR or LFR on Butte Creek', {
   expect_true(is.na(set_floodplain_habitat('Butte Creek', 'wr', 2000)))
   expect_true(is.na(set_floodplain_habitat('Butte Creek', 'lfr', 2000)))
 })
+
