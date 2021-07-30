@@ -624,7 +624,7 @@ usethis::use_data(yolo_habitat, overwrite = TRUE)
 
 
 # weeks flooded -----
-weeks_flooded <- array(2, dim = c(31, 12, 21))
+weeks_flooded <- array(0, dim = c(31, 12, 21))
 
 for (i in 1:31) {
   if (i %in% c(17, 21, 22)) next
@@ -633,6 +633,8 @@ for (i in 1:31) {
   weeks_flooded[i,,] <- matrix(flooded_weeks, ncol = 12)
 }
 
+flooded <- DSMhabitat::fr_fp > 0
+weeks_flooded <- pmax(flooded*2, weeks_flooded)
 dimnames(weeks_flooded) <- list(watersheds, month.abb, 1980:2000)
 
 usethis::use_data(weeks_flooded, overwrite = TRUE)
