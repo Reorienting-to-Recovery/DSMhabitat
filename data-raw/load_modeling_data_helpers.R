@@ -37,3 +37,8 @@ low_gradient_lengths <- read_csv("data-raw/low_gradient_lengths.csv") %>%
          lfr = LFR_low_gradient_length_mi,
          wr = WR_low_gradient_length_mi)
 usethis::use_data(low_gradient_lengths, overwrite = TRUE)
+
+# watershed regions
+watershed_regions <- read_csv('data-raw/watershed_by_regions.csv') %>% 
+  rename(watershed = Watershed, region = Region)
+usethis::use_data(watershed_regions, overwrite = TRUE)
