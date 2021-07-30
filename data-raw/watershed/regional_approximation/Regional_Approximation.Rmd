@@ -52,22 +52,22 @@ The instream spawning and rearing habitat data described above for Fall Run Chin
 
 ```{r, include = FALSE}
 # Find where modeling exists in upper_mid_sac_region(see ~DSMhabitat/data-raw/modeling_exists )
-DSMhabitat::modeling_exist %>%
-  group_by(Region) %>%
-  summarise(n())
+# DSMhabitat::modeling_exist %>%
+#   group_by(Region) %>%
+#   summarise(n())
 
 # create cache for Upper-mid Sacramento River --------
 watersheds_with_modeling <- dplyr::pull(dplyr::filter(DSMhabitat::modeling_exist,
-                            Region == 'Upper-mid Sacramento River',
+                            # Region == 'Upper-mid Sacramento River',
                             FR_fry, Watershed != 'Cottonwood Creek',
                             Watershed != 'Upper-mid Sacramento River'), Watershed)
 
 watersheds_without_modeling <- dplyr::pull(dplyr::filter(DSMhabitat::modeling_exist,
-                               Region == 'Upper-mid Sacramento River',
+                               # Region == 'Upper-mid Sacramento River',
                                !FR_juv), Watershed)
 
 watersheds_with_spawn <- dplyr::pull(dplyr::filter(DSMhabitat::modeling_exist,
-                         Region == 'Upper-mid Sacramento River',
+                         # Region == 'Upper-mid Sacramento River',
                          FR_spawn, Watershed != 'Cottonwood Creek',
                          Watershed != 'Upper-mid Sacramento River'), Watershed)
 
