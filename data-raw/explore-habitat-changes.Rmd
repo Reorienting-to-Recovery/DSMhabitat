@@ -88,7 +88,65 @@ rear_scales <- tibble(watershed = factor(c(DSMscenario::watershed_labels[c(1, 6,
                       scales = fall_run_scales[14:34])
 
 ```
+## Spawning Habitat 
+```{r}
+new <- DSMhabitat::fr_spawn %>% DSMhabitat::square_meters_to_acres()
+old <- cvpiaData::fr_spawn %>% DSMhabitat::square_meters_to_acres()
+spawn <- expand_grid(
+  watershed = factor(DSMscenario::watershed_labels, 
+                     levels = DSMscenario::watershed_labels),
+  month = 1:12,
+  year = 1979:2000) %>% 
+  left_join(spawn_scales) %>%
+  arrange(year, month, watershed) %>% 
+  mutate(
+    old = as.vector(old),
+    new = as.vector(new),
+    scaled = old * scales)
+spawn %>% 
+  transmute(watershed, date = ymd(paste(year, month, 1)), old, new, scaled) %>% 
+  filter(!(watershed %in% c('Sutter Bypass', 'Yolo Bypass'))) %>% 
+  gather(version, acres, -watershed, -date)  %>% 
+  ggplot(aes(date, acres, color = version)) +
+  geom_line() +
+  facet_wrap(~watershed, scales = 'free_y')
+```
 
+**Summary Table**: All habitat measures are in acres and rounded to the nearest acre. 
+```{r}
+change <- spawn %>% group_by(watershed) %>%
+  summarise(mean_old_habitat = round(mean(old)),
+            mean_new_habitat = round(mean(new)),
+            change_in_mean_habitat = round(mean_new_habitat - mean_old_habitat), 
+            percent_change = round(change_in_mean_habitat/mean_old_habitat * 100),
+            percent_change_in_mean_habitat = paste(percent_change, "%")
+            ) %>%
+  filter(change_in_mean_habitat != 0) %>%
+  select(-percent_change)
+
+DT::datatable(change, option=list(columnDefs=list(list(targets=3:5, class="dt-right"))))
+```
+
+#### Explanation of Habitat Changes:
+* **Bear River**: Data Updated: Original data used was from `IFIMWUA.xlsx`. Data was updated to `'data-raw/watershed/bear_river/data/updated_bear_river_instream.csv'` also provided by Mark Gard. 
+* **Butte Creek**: Data Updated: Original data used was from `IFIMWUA.xlsx`. Data was updated to `"data-raw/watershed/data/butte_creek_spring_run_spawning_wua.csv'"` & `"data-raw/watershed/data/butte_creek_steelhead_spawning_wua.csv'"` (Went to the origional report and got additional information)
+* **Cottonwood Creek**: QA/QCd original data and redid scaling/wua conversion because initial estimate was too high
+* **Cow Creek**: Increased Salmonid habitat extent to include north cow creek
+* **Deer Creek**: New HSI derived habitat data
+* **Calaveras River** Data Updated: Original data used was from `IFIMWUA.xlsx`. Data was updated to `"data-raw/watershed/calaveras/data/calaveras.csv"`
+* **Cosumnes River**: Based on combination of Calaveras and Mokelume Rivers (Change in Calaveras caused change in Cosumnes) 
+* **Merced River**: Original habitat data was only using already aggregated data from `IFIMWUA.xlsx` (`A18:E48`) but this original data did not have consistent flows across all 3 reaches. Updated data reads in each reach separately and uses an approx function to find habitat for each flow at each reach and then combines all reaches at corresponding flows. 
+* **Stanislaus River**: Original habitat data was only using already aggregated data from `IFIMWUA.xlsx` (`I4:N60`) which was not scaled by reach length. We updated the data to scale in each reach depending on length by reading in each reach separately, scale habitat in each reach according to reach length, and then adding all reaches together. 
+* Regional Approx Spawn Changed because Clear was changed to a set value for all flows, changes to Cottonwood and Butte also altered regional approx slightly 
+  * **Elder Creek** 
+  * **Mill Creek** 
+  * **Paynes Creek** 
+  * **Stony Creek** 
+  * **Thomes Creek** 
+  * **Big Chico Creek**
+  * **Antelope Creek** 
+  * **Bear Creek**
+  
 ## Fry Habitat 
 ```{r}
 new <- DSMhabitat::fr_fry %>% DSMhabitat::square_meters_to_acres()
@@ -191,65 +249,6 @@ DT::datatable(change, option=list(columnDefs=list(list(targets=3:5, class="dt-ri
 * **Cosumnes River**: Based on combination of Calaveras and Mokelume Rivers (Change in Calaveras caused change in Cosumnes) 
 * **Stanislaus River**: Original habitat data was only using already aggregated data from `IFIMWUA.xlsx` (`I4:N60`) which was not scaled by reach length. We updated the data to scale in each reach depending on length by reading in each reach separately, scale habitat in each reach according to reach length, and then adding all reaches together. 
 * **San Joaquin River**: Based on combination of Merced, Stanislaus, and Toulumne Rivers (Change in Stanislaus caused change in San Joaquin)
-
-## Spawning Habitat 
-```{r}
-new <- DSMhabitat::fr_spawn %>% DSMhabitat::square_meters_to_acres()
-old <- cvpiaData::fr_spawn %>% DSMhabitat::square_meters_to_acres()
-spawn <- expand_grid(
-  watershed = factor(DSMscenario::watershed_labels, 
-                     levels = DSMscenario::watershed_labels),
-  month = 1:12,
-  year = 1979:2000) %>% 
-  left_join(spawn_scales) %>%
-  arrange(year, month, watershed) %>% 
-  mutate(
-    old = as.vector(old),
-    new = as.vector(new),
-    scaled = old * scales)
-spawn %>% 
-  transmute(watershed, date = ymd(paste(year, month, 1)), old, new, scaled) %>% 
-  filter(!(watershed %in% c('Sutter Bypass', 'Yolo Bypass'))) %>% 
-  gather(version, acres, -watershed, -date)  %>% 
-  ggplot(aes(date, acres, color = version)) +
-  geom_line() +
-  facet_wrap(~watershed, scales = 'free_y')
-```
-
-**Summary Table**: All habitat measures are in acres and rounded to the nearest acre. 
-```{r}
-change <- spawn %>% group_by(watershed) %>%
-  summarise(mean_old_habitat = round(mean(old)),
-            mean_new_habitat = round(mean(new)),
-            change_in_mean_habitat = round(mean_new_habitat - mean_old_habitat), 
-            percent_change = round(change_in_mean_habitat/mean_old_habitat * 100),
-            percent_change_in_mean_habitat = paste(percent_change, "%")
-            ) %>%
-  filter(change_in_mean_habitat != 0) %>%
-  select(-percent_change)
-
-DT::datatable(change, option=list(columnDefs=list(list(targets=3:5, class="dt-right"))))
-```
-
-#### Explanation of Habitat Changes:
-* **Bear River**: Data Updated: Original data used was from `IFIMWUA.xlsx`. Data was updated to `'data-raw/watershed/bear_river/data/updated_bear_river_instream.csv'` also provided by Mark Gard. 
-* **Butte Creek**: Data Updated: Original data used was from `IFIMWUA.xlsx`. Data was updated to `"data-raw/watershed/data/butte_creek_spring_run_spawning_wua.csv'"` & `"data-raw/watershed/data/butte_creek_steelhead_spawning_wua.csv'"` (Went to the origional report and got additional information)
-* **Cottonwood Creek**: QA/QCd original data and redid scaling/wua conversion because initial estimate was too high
-* **Cow Creek**: Increased Salmonid habitat extent to include north cow creek
-* **Deer Creek**: New HSI derived habitat data
-* **Calaveras River** Data Updated: Original data used was from `IFIMWUA.xlsx`. Data was updated to `"data-raw/watershed/calaveras/data/calaveras.csv"`
-* **Cosumnes River**: Based on combination of Calaveras and Mokelume Rivers (Change in Calaveras caused change in Cosumnes) 
-* **Merced River**: Original habitat data was only using already aggregated data from `IFIMWUA.xlsx` (`A18:E48`) but this original data did not have consistent flows across all 3 reaches. Updated data reads in each reach separately and uses an approx function to find habitat for each flow at each reach and then combines all reaches at corresponding flows. 
-* **Stanislaus River**: Original habitat data was only using already aggregated data from `IFIMWUA.xlsx` (`I4:N60`) which was not scaled by reach length. We updated the data to scale in each reach depending on length by reading in each reach separately, scale habitat in each reach according to reach length, and then adding all reaches together. 
-* Regional Approx Spawn Changed (Inputs to regional approx changed (Butte, Cottonwood))
-  * **Elder Creek** 
-  * **Mill Creek** 
-  * **Paynes Creek** 
-  * **Stony Creek** 
-  * **Thomes Creek** 
-  * **Big Chico Creek**
-  * **Antelope Creek** 
-  * **Bear Creek**
 
 ## Floodplain Habitat 
 ```{r}
