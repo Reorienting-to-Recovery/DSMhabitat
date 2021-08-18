@@ -4,7 +4,7 @@ library(purrr)
 library(lubridate)
 library(DSMhabitat)
 
-watersheds <- DSMhabitat::watershed_species_present$watershed_name[-32]
+watersheds <- DSMscenario::watershed_labels
 watersheds_order <- DSMhabitat::watershed_species_present %>% 
   select(order, watershed = watershed_name)
 
@@ -204,17 +204,14 @@ usethis::use_data(st_spawn, overwrite = TRUE)
 
 sr_spawn <- get_spawn_hab_all(spawning_watersheds, 'sr')
 sr_spawn[which(is.na(sr_spawn))] <- 0
-# Old stuff 
-# # several watershed that do not have spring run populations but SIT wants to enable colonization
-# # NOTE: here i create new fr and st habs that include year 2000 in order to fill in for the sr
-# fr_spawn_filler <- get_spawn_hab_all(spawning_watersheds, 'fr', year = 1979:2000)
-# st_spawn_filler <- get_spawn_hab_all(spawning_watersheds, 'st', year = 1979:2000)
-# 
-# sr_spawn[15, , ] <- st_spawn_filler[15, , ] # Thomes Creek
-# sr_spawn[25, , ] <- fr_spawn_filler[25, , ] # Calaveras River
-# sr_spawn[26, , ] <- fr_spawn_filler[26, , ] # Cosumnes River
-# sr_spawn[28, , ] <- fr_spawn_filler[28, , ] # Merced River
 dimnames(sr_spawn) <- list(watersheds, month.abb, 1979:2000)
+
+# several watershed that do not have spring run populations but SIT wants to enable colonization
+sr_spawn["Thomes Creek", , ] <- st_spawn["Thomes Creek", , ] 
+sr_spawn["Calaveras River", , ] <- fr_spawn["Calaveras River", , ] 
+sr_spawn["Cosumnes River", , ] <- fr_spawn["Cosumnes River", , ] 
+sr_spawn["Merced River", , ] <- fr_spawn["Merced River", , ] 
+
 usethis::use_data(sr_spawn, overwrite = TRUE)
 
 # Winter Run 
@@ -290,16 +287,6 @@ st_fry[which(is.na(st_fry))] <- fr_fry[which(is.na(st_fry))]
 usethis::use_data(st_fry, overwrite = TRUE)
 
 sr_fry <- get_rear_hab_all(watersheds_in_order, 'sr', 'fry', years = 1980:2000)
-# Old stuff
-# several watershed that do not have spring run populations but SIT wants to enable colonization
-# fr_fry_filler <- get_rear_hab_all(watersheds_in_order, 'fr', 'fry', years = 1980:2000)
-# st_fry_filler <- get_rear_hab_all(watersheds_in_order, 'st', 'fry', years = 1980:2000)
-# 
-# sr_fry[15, , ] <- st_fry_filler[15, , ] # Thomes Creek
-# sr_fry[25, , ] <- fr_fry_filler[25, , ] # Calaveras River
-# sr_fry[26, , ] <- fr_fry_filler[26, , ] # Cosumnes River
-# sr_fry[28, , ] <- fr_fry_filler[28, , ] # Merced River
-
 dimnames(sr_fry) <- list(watersheds, month.abb, 1980:2000)
 sr_fry[which(is.na(sr_fry))] <- fr_fry[which(is.na(sr_fry))]
 usethis::use_data(sr_fry, overwrite = TRUE)
@@ -407,16 +394,6 @@ st_juv[which(is.na(st_juv))] <- fr_juv[which(is.na(st_juv))]
 usethis::use_data(st_juv, overwrite = TRUE)
 
 sr_juv <- get_rear_hab_all(watersheds_in_order, 'sr', 'juv', years = 1980:2000)
-# old stuff
-# several watershed that do not have spring run populations but SIT wants to enable colonization
-# fr_juv_filler <- get_rear_hab_all(watersheds_in_order, 'fr', 'juv', years = 1980:2000)
-# st_juv_filler <- get_rear_hab_all(watersheds_in_order, 'st', 'juv', years = 1980:2000)
-# 
-# sr_juv[15, , ] <- st_juv_filler[15, , ] # Thomes Creek
-# sr_juv[25, , ] <- fr_juv_filler[25, , ] # Calaveras River
-# sr_juv[26, , ] <- fr_juv_filler[26, , ] # Cosumnes River
-# sr_juv[28, , ] <- fr_juv_filler[28, , ] # Merced River
-
 dimnames(sr_juv) <- list(watersheds, month.abb, 1980:2000)
 sr_juv[which(is.na(sr_juv))] <- fr_juv[which(is.na(sr_juv))]
 usethis::use_data(sr_juv, overwrite = TRUE)
@@ -529,15 +506,6 @@ usethis::use_data(st_fp, overwrite = TRUE)
 
 # TODO fix this warning!
 sr_fp <- get_floodplain_hab_all(watersheds_fp, 'sr', years = 1980:2000)
-# Old stuff
-# several watershed that do not have spring run populations but SIT wants to enable colonization
-# fr_fp_filler <- get_floodplain_hab_all(watersheds_fp, 'fr', years = 1980:2000)
-# st_fp_filler <- get_floodplain_hab_all(watersheds_fp, 'st', years = 1980:2000)
-# 
-# sr_fp[15, , ] <- st_fp_filler[15, , ] # Thomes Creek
-# sr_fp[25, , ] <- fr_fp_filler[25, , ] # Calaveras River
-# sr_fp[26, , ] <- fr_fp_filler[26, , ] # Cosumnes River
-# sr_fp[28, , ] <- fr_fp_filler[28, , ] # Merced River
 dimnames(sr_fp) <- list(watersheds, month.abb, 1980:2000)
 sr_fp[which(is.na(sr_fp))] <- fr_fp[which(is.na(sr_fp))]
 usethis::use_data(sr_fp, overwrite = TRUE)
