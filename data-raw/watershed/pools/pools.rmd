@@ -64,7 +64,7 @@ pools <- DSMhabitat::watershed_lengths %>%
            watershed == 'Upper Sacramento River' ~ pools_upper_sac,
            TRUE ~ ST_channel_area * percent_pools/100 * 4046.86)) %>%
   select(watershed, SR_pools_sq_meters, ST_pools_sq_meters) %>%
-  left_join(wss) %>%
+  right_join(wss) %>%
   arrange(order) %>% 
   filter(!is.na(order)) %>% 
   select(-order)
