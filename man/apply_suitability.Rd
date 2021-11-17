@@ -22,6 +22,21 @@ This function applys a suitability factor to the total area in order to estimate
 available at a given flow.
 }
 \details{
-Do not apply a suitability factory to the floodplain areas of the
-Sacramento Reaches, the Sutter and Yolo Bypasses, and the North and South Deltas.
+Do not apply a suitability factory to the following floodplain areas: 
+\itemize{
+  \item Antelope Creek
+  \item Battle Creek
+  \item Bear Creek 
+  \item Cow Creek 
+  \item Deer Creek
+  \item Mill Creek 
+  \item Paynes Creek 
+  \item The Sacramento Reaches 
+  \item Sutter Bypass 
+  \item Yolo Bypass
+  \item North Delta 
+  \item South Delta 
+}
+
+Modeling for these watersheds is already in suitable area.
 }
