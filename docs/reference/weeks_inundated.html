@@ -176,79 +176,80 @@ between number of days inundated and the mean monthly flow.</p>
 <p>All other watersheds are assumed to have a two week inundation.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>weeks_inundated</span>
-</div><div class='output co'>#&gt;            watershed weeks_inundated flow_threshold
-#&gt; 1         Yuba River               0              0
-#&gt; 2         Yuba River               1             NA
-#&gt; 3         Yuba River               2             NA
-#&gt; 4         Yuba River               3             NA
-#&gt; 5         Yuba River               4            800
-#&gt; 6    Big Chico Creek               0              0
-#&gt; 7    Big Chico Creek               1             NA
-#&gt; 8    Big Chico Creek               2            265
-#&gt; 9    Big Chico Creek               3             NA
-#&gt; 10   Big Chico Creek               4            900
-#&gt; 11       Butte Creek               0              0
-#&gt; 12       Butte Creek               1             NA
-#&gt; 13       Butte Creek               2            310
-#&gt; 14       Butte Creek               3             NA
-#&gt; 15       Butte Creek               4            500
-#&gt; 16  Cottonwood Creek               0              0
-#&gt; 17  Cottonwood Creek               1             NA
-#&gt; 18  Cottonwood Creek               2             NA
-#&gt; 19  Cottonwood Creek               3             NA
-#&gt; 20  Cottonwood Creek               4            400
-#&gt; 21        Deer Creek               0              0
-#&gt; 22        Deer Creek               1             NA
-#&gt; 23        Deer Creek               2            370
-#&gt; 24        Deer Creek               3             NA
-#&gt; 25        Deer Creek               4            750
-#&gt; 26       Elder Creek               0              0
-#&gt; 27       Elder Creek               1             NA
-#&gt; 28       Elder Creek               2            130
-#&gt; 29       Elder Creek               3             NA
-#&gt; 30       Elder Creek               4            250
-#&gt; 31        Bear River               0              0
-#&gt; 32        Bear River               1             NA
-#&gt; 33        Bear River               2            760
-#&gt; 34        Bear River               3             NA
-#&gt; 35        Bear River               4           1000
-#&gt; 36     Feather River               0              0
-#&gt; 37     Feather River               1             NA
-#&gt; 38     Feather River               2             NA
-#&gt; 39     Feather River               3             NA
-#&gt; 40     Feather River               4           4000
-#&gt; 41    American River               0              0
-#&gt; 42    American River               1             NA
-#&gt; 43    American River               2             NA
-#&gt; 44    American River               3             NA
-#&gt; 45    American River               4           4200
-#&gt; 46   Calaveras River               0              0
-#&gt; 47   Calaveras River               1             NA
-#&gt; 48   Calaveras River               2             NA
-#&gt; 49   Calaveras River               3            210
-#&gt; 50   Calaveras River               4             NA
-#&gt; 51      Merced River               0              0
-#&gt; 52      Merced River               1             NA
-#&gt; 53      Merced River               2             NA
-#&gt; 54      Merced River               3             NA
-#&gt; 55      Merced River               4            500
-#&gt; 56  Stanislaus River               0              0
-#&gt; 57  Stanislaus River               1             NA
-#&gt; 58  Stanislaus River               2             NA
-#&gt; 59  Stanislaus River               3             NA
-#&gt; 60  Stanislaus River               4            500
-#&gt; 61    Tuolumne River               0              0
-#&gt; 62    Tuolumne River               1             NA
-#&gt; 63    Tuolumne River               2             NA
-#&gt; 64    Tuolumne River               3             NA
-#&gt; 65    Tuolumne River               4           1000
-#&gt; 66 San Joaquin River               0              0
-#&gt; 67 San Joaquin River               1             NA
-#&gt; 68 San Joaquin River               2             NA
-#&gt; 69 San Joaquin River               3             NA
-#&gt; 70 San Joaquin River               4           1520</div><div class='input'>
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='va'>weeks_inundated</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            watershed weeks_inundated flow_threshold</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1         Yuba River               0              0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2         Yuba River               1             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 3         Yuba River               2             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 4         Yuba River               3             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 5         Yuba River               4            800</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 6    Big Chico Creek               0              0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 7    Big Chico Creek               1             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 8    Big Chico Creek               2            265</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 9    Big Chico Creek               3             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 10   Big Chico Creek               4            900</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 11       Butte Creek               0              0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 12       Butte Creek               1             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 13       Butte Creek               2            310</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 14       Butte Creek               3             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 15       Butte Creek               4            500</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 16  Cottonwood Creek               0              0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 17  Cottonwood Creek               1             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 18  Cottonwood Creek               2             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 19  Cottonwood Creek               3             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 20  Cottonwood Creek               4            400</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 21        Deer Creek               0              0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 22        Deer Creek               1             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 23        Deer Creek               2            370</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 24        Deer Creek               3             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 25        Deer Creek               4            750</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 26       Elder Creek               0              0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 27       Elder Creek               1             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 28       Elder Creek               2            130</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 29       Elder Creek               3             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 30       Elder Creek               4            250</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 31        Bear River               0              0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 32        Bear River               1             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 33        Bear River               2            760</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 34        Bear River               3             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 35        Bear River               4           1000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 36     Feather River               0              0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 37     Feather River               1             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 38     Feather River               2             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 39     Feather River               3             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 40     Feather River               4           4000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 41    American River               0              0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 42    American River               1             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 43    American River               2             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 44    American River               3             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 45    American River               4           4200</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 46   Calaveras River               0              0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 47   Calaveras River               1             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 48   Calaveras River               2             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 49   Calaveras River               3            210</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 50   Calaveras River               4             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 51      Merced River               0              0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 52      Merced River               1             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 53      Merced River               2             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 54      Merced River               3             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 55      Merced River               4            500</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 56  Stanislaus River               0              0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 57  Stanislaus River               1             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 58  Stanislaus River               2             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 59  Stanislaus River               3             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 60  Stanislaus River               4            500</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 61    Tuolumne River               0              0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 62    Tuolumne River               1             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 63    Tuolumne River               2             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 64    Tuolumne River               3             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 65    Tuolumne River               4           1000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 66 San Joaquin River               0              0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 67 San Joaquin River               1             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 68 San Joaquin River               2             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 69 San Joaquin River               3             NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 70 San Joaquin River               4           1520</span>
+<span class='r-in'></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

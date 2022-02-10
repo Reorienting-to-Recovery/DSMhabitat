@@ -23,6 +23,8 @@ The map below displays spawning and rearing habitat for Fall Run Chinook salmon,
 
 Click on the square in the top right of the map to add or hide layers showing the habitat for different species and life stages. Hover above a line on the map to see the name of the river and the name of the expert who provided habitat boundaries. 
 
+[Download Habitat Shapefile](https://cvpiahabitat-r-package.s3.us-west-2.amazonaws.com/salmonid_habitat_extents.zip)
+
 ```{r, echo = FALSE, warning = FALSE, message = FALSE, results='asis'}
 library(leaflet)
 library(rgdal)
