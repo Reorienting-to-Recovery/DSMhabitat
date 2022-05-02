@@ -11,7 +11,7 @@ remotes::install_github("CVPIA-OSC/DSMhabitat")
 ```
 
 #### Usage
-This package provides flow related datasets to the [`fallRunDSM,`](https://github.com/CVPIA-OSC/fallRunDSM)
+This package provides habitat related datasets to the [`fallRunDSM,`](https://github.com/CVPIA-OSC/fallRunDSM)
 [`springRunDSM,`](https://github.com/CVPIA-OSC/springRunDSM) [`winterRunDSM,`](https://github.com/CVPIA-OSC/winterRunDSM) and [`latefallRunDSM`](https://github.com/CVPIA-OSC/latefallRunDSM) packages.
 
 ``` r
@@ -20,21 +20,11 @@ data(package = 'DSMhabitat')
 ```
 
 #### About the Models
-Output from the CALSIM II operational model is used to generate hydrologic inputs for the CVPIA Decision Support Model (DSM). CALSIM II is the model used to simulate California State Water Project (SWP) / Central Valley Project (CVP) operations. CALSIM II was developed in the Water Resource Integrated Modeling System (WRIMS model engine or WRIMS), a generalized water resources modeling system for evaluating operational alternatives of large, complex river basins. 
+This data package includes flow to suitable habitat area relationships for salmonid (Fall Run, Spring Run, Winter Run, Late Fall Run, and steelhead - pending) spawning, instream rearing, and floodplain rearing habitat.
 
-The 2017 DSM uses the existing conditions simulation from the [2009 CalSim-II Draft SWP Delivery Reliability Studies 2009](http://baydeltaoffice.water.ca.gov/modeling/hydrology/CalSim/Downloads/CalSimDownloads/CalSim-IIStudies/SWPReliability2009/index.cfm). The CALSIM II run is a Reclamation product used to replicate current operations for comparison with proposed adjustments under an ongoing Endangered Species Act consultation with the National Marine Fisheries Service.  
+Where available, results from Instream Flow Incremental Methodology (IFIM) studies were used to generate instream spawning and rearing flow to suitable area relationships. For watersheds without IFIM (or comparable) studies, suitable instream areas were scaled from nearby, geomorphically similar watersheds.
 
-A current NMFS Biological Opinion concluded that, as proposed, CVP and SWP operations were likely to jeopardize the continued existence of four federally- listed anadromous fish species:   
-  - Sacramento River winter-run Chinook salmon  
-  - Central Valley spring-run Chinook salmon  
-  - California Central Valley steelhead  
-  - Southern distinct population segment of the North American green sturgeon   
-
-This CALSIM II run was used as the basis of comparison for other potential operations that could offset impacts to listed species.
-
-  
-[More information on CALSIM II](https://water.ca.gov/Library/Modeling-and-Analysis/Central-Valley-models-and-tools/CalSim-2)    
-[CALSIM II Schematic](https://s3-us-west-2.amazonaws.com/cvpiaflow-r-package/BST_CALSIMII_schematic_040110.jpg)  
+Similarly, where available, results from floodplain hydraulic modeling studies were used to generate floodplain flow to suitable area relationships. Where no modeling studies were available, suitable floodplain area were scaled from nearby, geomorphically similar watersheds. Specific methods and supporting documents for instream and floodplain habitat inputs in every watershed are provided on the reference tab.
 
 ### Dependencies
 The `DSMhabitat` package provides data for several other packages within the [CVPIA Open Science Collaborative](https://github.com/CVPIA-OSC). These relationships are visualized in the dependency graph below. 

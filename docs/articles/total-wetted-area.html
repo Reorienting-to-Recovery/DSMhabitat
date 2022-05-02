@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DSMhabitat</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0</span>
       </span>
     </div>
 
@@ -41,7 +43,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -64,7 +66,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/CVPIA-OSC/DSMhabitat">
+  <a href="https://github.com/CVPIA-OSC/DSMhabitat" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -79,7 +81,7 @@
 
       
 
-      </header><script src="total-wetted-area_files/header-attrs-2.11/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Remotely Sensed Wetted Channel Areas</h1>
@@ -92,18 +94,38 @@
 
     
     
-<p>This document describes our methodology to estimate inchannel wetted area. We used these values to estimate floodplain area by subtracting our inchannel wetted area estimate from modeled total wetted area provided by Mark Gard.</p>
-<div id="inchannel-wetted-area-estimation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#inchannel-wetted-area-estimation" class="anchor"></a>Inchannel Wetted Area Estimation</h2>
-<p>We used 1 meter resolution 4 band (R, G, B, N) imagery from the National Agriculture Imagery Program <a href="fsa.usda.gov/programs-and-services/aerial-photography/imagery-programs/naip-imagery/">(NAIP)</a> to conduct a Normalized Difference Water Index <a href="https://en.wikipedia.org/wiki/Normalized_difference_water_index">(NDWI)</a> based analysis to identify total wetted area for the 31 tributaries included in the SIT chinook life cycle models. The analysis was performed using the <a href="https://code.earthengine.google.com/">Google Earth Engine IDE</a>.</p>
-<p>We used all the available NAIP imagery for the years 2009-2016 and for each image calculated the NDWI as: <span class="math display">\[{NDWI}=\frac{(Xgreen - Xnir)}{(Xgreen + Xnir)}\]</span></p>
-<p>We then reduced the multidimensional array of NDWI rasters by selecting the maximum NDWI at each pixel. We created a buffer of the fall run rearing extents with an estimated channel width to clip the max NDWI raster. A binary filter was applied to the clipped raster for NDWI values greater than a threshold to classify each pixel as water or not water. These water pixels were multiplied by the pixel area and then all summed to estimate the inchannel wetted area of the stream.</p>
-<p>The inchannel wetted area values for each watershed were recorded in <code>data-raw/earth_engine_total_channel_area_estimates.csv</code> and are stored in <code>DSMhabitat::fr_wetted_channel_area</code></p>
-<p>The extents were mapped through expert outreach can be viewed on <a href="https://cvpia-osc.github.io/DSMhabitat/articles/habitat-extents-map.html">this interactive map</a> and are available for download <a href="https://github.com/CVPIA-OSC/DSMhabitat/tree/main/data-raw/rearing_spatial_data/salmonid_habitat_extents">here</a></p>
-<div id="example-analysis-javascript-code-below" class="section level3">
-<h3 class="hasAnchor">
-<a href="#example-analysis-javascript-code-below" class="anchor"></a>Example analysis JavaScript code below:</h3>
+<p>This document describes our methodology to estimate inchannel wetted
+area. We used these values to estimate floodplain area by subtracting
+our inchannel wetted area estimate from modeled total wetted area
+provided by Mark Gard.</p>
+<div class="section level2">
+<h2 id="inchannel-wetted-area-estimation">Inchannel Wetted Area Estimation<a class="anchor" aria-label="anchor" href="#inchannel-wetted-area-estimation"></a>
+</h2>
+<p>We used 1 meter resolution 4 band (R, G, B, N) imagery from the
+National Agriculture Imagery Program <a href="fsa.usda.gov/programs-and-services/aerial-photography/imagery-programs/naip-imagery/">(NAIP)</a>
+to conduct a Normalized Difference Water Index <a href="https://en.wikipedia.org/wiki/Normalized_difference_water_index" class="external-link">(NDWI)</a>
+based analysis to identify total wetted area for the 31 tributaries
+included in the SIT chinook life cycle models. The analysis was
+performed using the <a href="https://code.earthengine.google.com/" class="external-link">Google Earth Engine
+IDE</a>.</p>
+<p>We used all the available NAIP imagery for the years 2009-2016 and
+for each image calculated the NDWI as: <span class="math display">\[{NDWI}=\frac{(Xgreen - Xnir)}{(Xgreen +
+Xnir)}\]</span></p>
+<p>We then reduced the multidimensional array of NDWI rasters by
+selecting the maximum NDWI at each pixel. We created a buffer of the
+fall run rearing extents with an estimated channel width to clip the max
+NDWI raster. A binary filter was applied to the clipped raster for NDWI
+values greater than a threshold to classify each pixel as water or not
+water. These water pixels were multiplied by the pixel area and then all
+summed to estimate the inchannel wetted area of the stream.</p>
+<p>The inchannel wetted area values for each watershed were recorded in
+<code>data-raw/earth_engine_total_channel_area_estimates.csv</code> and
+are stored in <code>DSMhabitat::fr_wetted_channel_area</code></p>
+<p>The extents were mapped through expert outreach can be viewed on <a href="https://cvpia-osc.github.io/DSMhabitat/articles/habitat-extents-map.html" class="external-link">this
+interactive map</a> and are available for download <a href="https://github.com/CVPIA-OSC/DSMhabitat/tree/main/data-raw/rearing_spatial_data/salmonid_habitat_extents" class="external-link">here</a></p>
+<div class="section level3">
+<h3 id="example-analysis-javascript-code-below">Example analysis JavaScript code below:<a class="anchor" aria-label="anchor" href="#example-analysis-javascript-code-below"></a>
+</h3>
 <div class="sourceCode" id="cb1"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> naip<span class="op">:</span> Imagecollection <span class="st">"NAIP: National Agriculture Imagery Program"</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> habExt <span class="op">=</span> ee<span class="op">.</span><span class="fu">FeatureCollection</span>(<span class="st">'users/fall_run_hab_extent'</span>)<span class="op">;</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -156,11 +178,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Sadie Gill, Emanuel Rodriguez, Mark Tompkins.</p>
+  <p></p>
+<p>Developed by Sadie Gill, Emanuel Rodriguez, Mark Tompkins.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer>
@@ -168,6 +192,8 @@
 
   
 
+
+  
 
   </body>
 </html>
