@@ -62,7 +62,7 @@ leaflet() %>%
                    color = '#e66101', opacity = 1, weight = 3) %>%
       addPolylines(data = spr, group = 'Spring Run Rearing', label = make_label(spr),
                    color = '#5e3c99', opacity = .8, weight = 3) %>% 
-      addPolylines(data = sps, group = 'Spring Run Spawning', label = make_label(spr),
+      addPolylines(data = sps, group = 'Spring Run Spawning', label = make_label(sps),
                    color = '#e66101', opacity = 1, weight = 3) %>% 
       addPolylines(data = fr, group = 'Fall Run Rearing', label = make_label(fr),
                    color = '#5e3c99', opacity = .8, weight = 3) %>% 
