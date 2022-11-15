@@ -26,18 +26,18 @@ create_SIT_array <- function(input) {
 }
 
 # functions ---------
-get_flow <- function(watershed, years = c(1980, 1999)) {
+get_flow <- function(watershed, calsim_version, years = c(1980, 1999)) {
   
   # get the flow values at the dates
-  dplyr::pull(dplyr::filter(dplyr::select(DSMflow::flows_cfs, date, watershed),
+  dplyr::pull(dplyr::filter(dplyr::select(DSMflow::flows_cfs[[calsim_verison]], date, watershed),
                             lubridate::year(date) >= years[1],
                             lubridate::year(date) <= years[2]), 2)
 }
 
-get_rear_hab_all <- function(watersheds, species, life_stage, years = 1980:1999) {
+get_rear_hab_all <- function(watersheds, species, life_stage, calsim_version, years = 1980:1999) {
   total_obs <- 12 * length(years)
   most <- map_df(watersheds, function(watershed) {
-    flows <- get_flow(watershed, range(years))
+    flows <- get_flow(watershed, calsim_version, range(years))
     habitat <- DSMhabitat::set_instream_habitat(watershed,
                                                 species = species,
                                                 life_stage = life_stage,
@@ -51,8 +51,8 @@ get_rear_hab_all <- function(watersheds, species, life_stage, years = 1980:1999)
   
   # deal with sacramento special cases
   # lower-mid sac
-  low_mid_sac_flow1 <- get_flow('Lower-mid Sacramento River1', range(years))
-  low_mid_sac_flow2 <- get_flow('Lower-mid Sacramento River2', range(years))
+  low_mid_sac_flow1 <- get_flow('Lower-mid Sacramento River1', calsim_version, range(years))
+  low_mid_sac_flow2 <- get_flow('Lower-mid Sacramento River2', calsim_version, range(years))
   
   low_mid_sac_hab <- map2_dbl(low_mid_sac_flow1, low_mid_sac_flow2, function(flow, flow2) {
     DSMhabitat::set_instream_habitat('Lower-mid Sacramento River',
@@ -68,7 +68,7 @@ get_rear_hab_all <- function(watersheds, species, life_stage, years = 1980:1999)
     hab_sq_m = low_mid_sac_hab)
   
   hab <- bind_rows(most, low_mid_sac) %>%
-    spread(watershed, hab_sq_m) %>%
+    spread(watershed, hab_sq_m) %>% 
     bind_cols(tibble(`Sutter Bypass` = rep(0, total_obs),
                      `Yolo Bypass` = rep(0, total_obs))) %>%
     gather(watershed, habitat, -year, -month) %>%
@@ -83,10 +83,10 @@ get_rear_hab_all <- function(watersheds, species, life_stage, years = 1980:1999)
   return(hab)
 }
 
-get_spawn_hab_all <- function(watersheds, species, years = 1979:2000) {
+get_spawn_hab_all <- function(watersheds, species, calsim_version, years = 1979:2000) {
   total_obs <- 12 * length(years)
   most <- map_df(watersheds, function(watershed) {
-    flows <- get_flow(watershed, years=range(years))
+    flows <- get_flow(watershed, calsim_version, years=range(years))
     habitat <- DSMhabitat::set_spawning_habitat(watershed,
                                                 species = species,
                                                 flow = flows)
@@ -99,7 +99,7 @@ get_spawn_hab_all <- function(watersheds, species, years = 1979:2000) {
   
   # deal with sacramento special cases
   # upper sac
-  up_sac_flows <- get_flow('Upper Sacramento River', years=range(years))
+  up_sac_flows <- get_flow('Upper Sacramento River', calsim_version, years=range(years))
   months <- rep(1:12, length(years))
   up_sac_hab <- map2_dbl(months, up_sac_flows, function(month, flow) {
     DSMhabitat::set_spawning_habitat('Upper Sacramento River',
@@ -134,10 +134,10 @@ get_spawn_hab_all <- function(watersheds, species, years = 1979:2000) {
   return(hab)
 }
 
-get_floodplain_hab_all <- function(watersheds, species, years = 1980:1999) {
+get_floodplain_hab_all <- function(watersheds, species, calsim_version, years = 1980:1999) {
   total_obs <- 12 * length(years)
   most <- map_df(watersheds, function(watershed) {
-    flows <- get_flow(watershed, range(years))
+    flows <- get_flow(watershed, calsim_version, range(years))
     habitat <- DSMhabitat::set_floodplain_habitat(watershed, species, flows)
     
     modeling_in_suitable_area <- c("Antelope Creek", "Battle Creek", "Bear Creek", 
@@ -157,8 +157,8 @@ get_floodplain_hab_all <- function(watersheds, species, years = 1980:1999) {
   })
   
   # lower-mid sacramento
-  low_mid_sac_flows1 <- get_flow("Lower-mid Sacramento River1", range(years))
-  low_mid_sac_flows2 <- get_flow("Lower-mid Sacramento River2", range(years))
+  low_mid_sac_flows1 <- get_flow("Lower-mid Sacramento River1", calsim_version, range(years))
+  low_mid_sac_flows2 <- get_flow("Lower-mid Sacramento River2", calsim_version, range(years))
   low_mid_sac_fp <- DSMhabitat::set_floodplain_habitat('Lower-mid Sacramento River', species,
                                                        low_mid_sac_flows1, flow2 = low_mid_sac_flows2)
   
