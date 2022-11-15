@@ -29,7 +29,7 @@ create_SIT_array <- function(input) {
 get_flow <- function(watershed, calsim_version, years = c(1980, 1999)) {
   
   # get the flow values at the dates
-  dplyr::pull(dplyr::filter(dplyr::select(DSMflow::flows_cfs[[calsim_verison]], date, watershed),
+  dplyr::pull(dplyr::filter(dplyr::select(DSMflow::flows_cfs[[calsim_version]], date, watershed),
                             lubridate::year(date) >= years[1],
                             lubridate::year(date) <= years[2]), 2)
 }
@@ -198,7 +198,7 @@ dimnames(fr_spawn_2008_2009) <- list(watersheds, month.abb, 1979:2000)
 fr_spawn_2008_2009[which(is.na(fr_spawn_2008_2009))] <- 0
 
 # fr spawn 2018 2019 
-fr_spawn_2018_2019 <- get_spawn_hab_all(spawning_watersheds, 'fr', "biop_2018_2019")
+fr_spawn_2018_2019 <- get_spawn_hab_all(spawning_watersheds, 'fr', "biop_itp_2018_2019")
 dimnames(fr_spawn_2018_2019) <- list(watersheds, month.abb, 1979:2000)
 fr_spawn_2018_2019[which(is.na(fr_spawn_2018_2019))] <- 0
 
@@ -209,12 +209,12 @@ fr_spawn <- list(biop_2008_2009 = fr_spawn_2008_2009,
 usethis::use_data(fr_spawn, overwrite = TRUE)
 
 # st spawn 2008 2009 
-st_spawn_2008_2009 <- get_spawn_hab_all(spawning_watersheds, 'st')
+st_spawn_2008_2009 <- get_spawn_hab_all(spawning_watersheds, 'st', "biop_2008_2009")
 st_spawn_2008_2009[which(is.na(st_spawn_2008_2009))] <- 0
 dimnames(st_spawn_2008_2009) <- list(watersheds, month.abb, 1979:2000)
 
 # st spawn 2018 2019 
-st_spawn_2018_2019 <- get_spawn_hab_all(spawning_watersheds, 'st')
+st_spawn_2018_2019 <- get_spawn_hab_all(spawning_watersheds, 'st', "biop_itp_2018_2019")
 st_spawn_2018_2019[which(is.na(st_spawn_2018_2019))] <- 0
 dimnames(st_spawn_2018_2019) <- list(watersheds, month.abb, 1979:2000)
 
@@ -226,7 +226,7 @@ st_spawn <- list(biop_2008_2009 = st_spawn_2008_2009,
 usethis::use_data(st_spawn, overwrite = TRUE)
 
 # sr spawn 2008 2009 
-sr_spawn_2008_2009 <- get_spawn_hab_all(spawning_watersheds, 'sr')
+sr_spawn_2008_2009 <- get_spawn_hab_all(spawning_watersheds, 'sr', "biop_2008_2009")
 sr_spawn_2008_2009[which(is.na(sr_spawn_2008_2009))] <- 0
 dimnames(sr_spawn_2008_2009) <- list(watersheds, month.abb, 1979:2000)
 
@@ -237,7 +237,7 @@ sr_spawn_2008_2009["Cosumnes River", , ] <- fr_spawn$biop_2008_2009["Cosumnes Ri
 sr_spawn_2008_2009["Merced River", , ] <- fr_spawn$biop_2008_2009["Merced River", , ] 
 
 # sr spawn 2018 2019 
-sr_spawn_2018_2019 <- get_spawn_hab_all(spawning_watersheds, 'sr')
+sr_spawn_2018_2019 <- get_spawn_hab_all(spawning_watersheds, 'sr', "biop_itp_2018_2019")
 sr_spawn_2018_2019[which(is.na(sr_spawn_2018_2019))] <- 0
 dimnames(sr_spawn_2018_2019) <- list(watersheds, month.abb, 1979:2000)
 
