@@ -192,80 +192,200 @@ spawning_watersheds <- DSMhabitat::watershed_species_present %>%
          spawn) %>%
   pull(watershed_name)
 
-fr_spawn <- get_spawn_hab_all(spawning_watersheds, 'fr')
-dimnames(fr_spawn) <- list(watersheds, month.abb, 1979:2000)
-fr_spawn[which(is.na(fr_spawn))] <- 0
+# fr spawn 2008 2009 
+fr_spawn_2008_2009 <- get_spawn_hab_all(spawning_watersheds, 'fr', "biop_2008_2009")
+dimnames(fr_spawn_2008_2009) <- list(watersheds, month.abb, 1979:2000)
+fr_spawn_2008_2009[which(is.na(fr_spawn_2008_2009))] <- 0
+
+# fr spawn 2018 2019 
+fr_spawn_2018_2019 <- get_spawn_hab_all(spawning_watersheds, 'fr', "biop_2018_2019")
+dimnames(fr_spawn_2018_2019) <- list(watersheds, month.abb, 1979:2000)
+fr_spawn_2018_2019[which(is.na(fr_spawn_2018_2019))] <- 0
+
+# list together both fr spawning versions
+fr_spawn <- list(biop_2008_2009 = fr_spawn_2008_2009,
+                 biop_itp_2018_2019 = fr_spawn_2018_2019
+)
 usethis::use_data(fr_spawn, overwrite = TRUE)
 
-st_spawn <- get_spawn_hab_all(spawning_watersheds, 'st')
-st_spawn[which(is.na(st_spawn))] <- 0
-dimnames(st_spawn) <- list(watersheds, month.abb, 1979:2000)
+# st spawn 2008 2009 
+st_spawn_2008_2009 <- get_spawn_hab_all(spawning_watersheds, 'st')
+st_spawn_2008_2009[which(is.na(st_spawn_2008_2009))] <- 0
+dimnames(st_spawn_2008_2009) <- list(watersheds, month.abb, 1979:2000)
+
+# st spawn 2018 2019 
+st_spawn_2018_2019 <- get_spawn_hab_all(spawning_watersheds, 'st')
+st_spawn_2018_2019[which(is.na(st_spawn_2018_2019))] <- 0
+dimnames(st_spawn_2018_2019) <- list(watersheds, month.abb, 1979:2000)
+
+# list together both steelhead spawning versions
+st_spawn <- list(biop_2008_2009 = st_spawn_2008_2009,
+                 biop_itp_2018_2019 = st_spawn_2018_2019
+)
+
 usethis::use_data(st_spawn, overwrite = TRUE)
 
-sr_spawn <- get_spawn_hab_all(spawning_watersheds, 'sr')
-sr_spawn[which(is.na(sr_spawn))] <- 0
-dimnames(sr_spawn) <- list(watersheds, month.abb, 1979:2000)
+# sr spawn 2008 2009 
+sr_spawn_2008_2009 <- get_spawn_hab_all(spawning_watersheds, 'sr')
+sr_spawn_2008_2009[which(is.na(sr_spawn_2008_2009))] <- 0
+dimnames(sr_spawn_2008_2009) <- list(watersheds, month.abb, 1979:2000)
 
 # several watershed that do not have spring run populations but SIT wants to enable colonization
-sr_spawn["Thomes Creek", , ] <- st_spawn["Thomes Creek", , ] 
-sr_spawn["Calaveras River", , ] <- fr_spawn["Calaveras River", , ] 
-sr_spawn["Cosumnes River", , ] <- fr_spawn["Cosumnes River", , ] 
-sr_spawn["Merced River", , ] <- fr_spawn["Merced River", , ] 
+sr_spawn_2008_2009["Thomes Creek", , ] <- st_spawn$biop_2008_2009["Thomes Creek", , ] 
+sr_spawn_2008_2009["Calaveras River", , ] <- fr_spawn$biop_2008_2009["Calaveras River", , ] 
+sr_spawn_2008_2009["Cosumnes River", , ] <- fr_spawn$biop_2008_2009["Cosumnes River", , ] 
+sr_spawn_2008_2009["Merced River", , ] <- fr_spawn$biop_2008_2009["Merced River", , ] 
+
+# sr spawn 2018 2019 
+sr_spawn_2018_2019 <- get_spawn_hab_all(spawning_watersheds, 'sr')
+sr_spawn_2018_2019[which(is.na(sr_spawn_2018_2019))] <- 0
+dimnames(sr_spawn_2018_2019) <- list(watersheds, month.abb, 1979:2000)
+
+# several watershed that do not have spring run populations but SIT wants to enable colonization
+sr_spawn_2018_2019["Thomes Creek", , ] <- st_spawn$biop_itp_2018_2019["Thomes Creek", , ] 
+sr_spawn_2018_2019["Calaveras River", , ] <- fr_spawn$biop_itp_2018_2019["Calaveras River", , ] 
+sr_spawn_2018_2019["Cosumnes River", , ] <- fr_spawn$biop_itp_2018_2019["Cosumnes River", , ] 
+sr_spawn_2018_2019["Merced River", , ] <- fr_spawn$biop_itp_2018_2019["Merced River", , ] 
+
+# Combine together 
+sr_spawn <- list(biop_2008_2009 = sr_spawn_2008_2009,
+                 biop_itp_2018_2019 = sr_spawn_2018_2019
+)
 
 usethis::use_data(sr_spawn, overwrite = TRUE)
 
 # Winter Run 
 # only in Sacramento and battle creek
 # spawn just in Upper Sac
-wr_spawn <- array(0, dim = c(31, 12, 22), dimnames = list(watersheds, month.abb, 1979:2000)) 
-up_sac_flows <- get_flow('Upper Sacramento River', years = c(1979, 2000))
+# wr spawn 2008 2009 
+wr_spawn_2008_2009 <- array(0, dim = c(31, 12, 22), dimnames = list(watersheds, month.abb, 1979:2000)) 
+up_sac_flows_2008_2009 <- get_flow('Upper Sacramento River', 
+                                   "biop_2008_2009", years = c(1979, 2000))
 months <- rep(1:12, 22)
-up_sac_hab <- map2_dbl(months, up_sac_flows, function(month, flow) {
+up_sac_hab_2008_2009 <- map2_dbl(months, up_sac_flows_2008_2009, function(month, flow) {
   DSMhabitat::set_spawning_habitat('Upper Sacramento River',
                                    species = 'wr',
                                    flow = flow, month = month)
 })
 
-battle_flows <- get_flow('Battle Creek', years = c(1979, 2000))
-battle_hab <- map_dbl(battle_flows, function(flow) {
+battle_flows_2008_2009 <- get_flow('Battle Creek', "biop_2008_2009", years = c(1979, 2000))
+battle_hab_2008_2009 <- map_dbl(battle_flows_2008_2009, function(flow) {
   DSMhabitat::set_spawning_habitat('Battle Creek',
                                    species = 'wr',
                                    flow = flow)
 })
 
-wr_spawn["Upper Sacramento River",,] <- up_sac_hab
-wr_spawn["Battle Creek",,] <- battle_hab
+wr_spawn_2008_2009["Upper Sacramento River",,] <- up_sac_hab_2008_2009
+wr_spawn_2008_2009["Battle Creek",,] <- battle_hab_2008_2009
+
+# wr spawn 2018 2019 
+wr_spawn_2018_2019 <- array(0, dim = c(31, 12, 22), dimnames = list(watersheds, month.abb, 1979:2000)) 
+up_sac_flows_2018_2019 <- get_flow('Upper Sacramento River', 
+                                   "biop_itp_2018_2019", years = c(1979, 2000))
+months <- rep(1:12, 22)
+up_sac_hab_2018_2019 <- map2_dbl(months, up_sac_flows_2018_2019, function(month, flow) {
+  DSMhabitat::set_spawning_habitat('Upper Sacramento River',
+                                   species = 'wr',
+                                   flow = flow, month = month)
+})
+
+battle_flows_2018_2019 <- get_flow('Battle Creek', "biop_itp_2018_2019", 
+                         years = c(1979, 2000))
+battle_hab_2018_2019 <- map_dbl(battle_flows_2018_2019, function(flow) {
+  DSMhabitat::set_spawning_habitat('Battle Creek',
+                                   species = 'wr',
+                                   flow = flow)
+})
+
+wr_spawn_2018_2019["Upper Sacramento River",,] <- up_sac_hab_2018_2019
+wr_spawn_2018_2019["Battle Creek",,] <- battle_hab_2018_2019
+
+# combine together
+wr_spawn <- list(biop_2008_2009 = wr_spawn_2008_2009,
+                 biop_itp_2018_2019 = wr_spawn_2018_2019
+)
+
+
 usethis::use_data(wr_spawn, overwrite = TRUE)
 
 
 # Late Fall Run 
 # only in sacramento clear creek and battle creek
 # spawn just in Upper Sac
-lfr_spawn <- array(0, dim = c(31, 12, 22), dimnames = list(watersheds, month.abb, 1979:2000))  
-up_sac_flows <- get_flow('Upper Sacramento River', years = c(1979, 2000))
+# lfr spawn 2008 2009 
+lfr_spawn_2008_2009 <- array(0, dim = c(31, 12, 22), 
+                             dimnames = list(watersheds, month.abb, 1979:2000))  
+up_sac_flows_2008_2009 <- get_flow('Upper Sacramento River', 
+                                   "biop_2008_2009",
+                                   years = c(1979, 2000))
 months <- rep(1:12, 22)
-up_sac_hab <- map2_dbl(months, up_sac_flows, function(month, flow) {
+up_sac_hab_2008_2009 <- map2_dbl(months, up_sac_flows_2008_2009, function(month, flow) {
   DSMhabitat::set_spawning_habitat('Upper Sacramento River',
                                    species = 'lfr',
                                    flow = flow, month = month)
 })
 
-battle_flows <- get_flow('Battle Creek', years = c(1979, 2000))
-battle_hab <- map_dbl(battle_flows, function(flow) {
+battle_flows_2008_2009 <- get_flow('Battle Creek', 
+                                   "biop_2008_2009", years = c(1979, 2000))
+battle_hab_2008_2009 <- map_dbl(battle_flows_2008_2009, function(flow) {
   DSMhabitat::set_spawning_habitat('Battle Creek',
                                    species = 'lfr',
                                    flow = flow)
 })
 
-clear_flows <- get_flow('Clear Creek', years = c(1979, 2000))
-clear_hab <- map_dbl(battle_flows, function(flow) {
+clear_flows_2008_2009 <- get_flow('Clear Creek', "biop_2008_2009", 
+                                  years = c(1979, 2000))
+clear_hab_2008_2009 <- map_dbl(clear_flows_2008_2009, function(flow) {
   DSMhabitat::set_spawning_habitat('Clear Creek',
                                    species = 'lfr',
                                    flow = flow)
 })
-lfr_spawn["Upper Sacramento River", , ] <- up_sac_hab
-lfr_spawn["Battle Creek", , ] <- battle_hab
-lfr_spawn["Clear Creek", , ] <- clear_hab
+
+lfr_spawn_2008_2009["Upper Sacramento River", , ] <- up_sac_hab_2008_2009
+lfr_spawn_2008_2009["Battle Creek", , ] <- battle_hab_2008_2009
+lfr_spawn_2008_2009["Clear Creek", , ] <- clear_hab_2008_2009
+
+# lfr spawn 2018 2019 
+lfr_spawn_2018_2019 <- array(0, dim = c(31, 12, 22), 
+                             dimnames = list(watersheds, month.abb, 1979:2000))  
+up_sac_flows_2018_2019 <- get_flow('Upper Sacramento River', 
+                                   "biop_itp_2018_2019",
+                                   years = c(1979, 2000))
+months <- rep(1:12, 22)
+up_sac_hab_2018_2019 <- map2_dbl(months, up_sac_flows_2018_2019, 
+                                 function(month, flow) {
+  DSMhabitat::set_spawning_habitat('Upper Sacramento River',
+                                   species = 'lfr',
+                                   flow = flow, month = month)
+})
+
+battle_flows_2018_2019 <- get_flow('Battle Creek', 
+                                   "biop_itp_2018_2019",
+                                   years = c(1979, 2000))
+battle_hab_2018_2019 <- map_dbl(battle_flows_2018_2019, function(flow) {
+  DSMhabitat::set_spawning_habitat('Battle Creek',
+                                   species = 'lfr',
+                                   flow = flow)
+})
+
+clear_flows_2018_2019 <- get_flow('Clear Creek', 
+                                  "biop_itp_2018_2019",
+                                  years = c(1979, 2000))
+clear_hab_2018_2019 <- map_dbl(clear_flows_2018_2019, function(flow) {
+  DSMhabitat::set_spawning_habitat('Clear Creek',
+                                   species = 'lfr',
+                                   flow = flow)
+})
+lfr_spawn_2018_2019["Upper Sacramento River", , ] <- up_sac_hab_2018_2019
+lfr_spawn_2018_2019["Battle Creek", , ] <- battle_hab_2018_2019
+lfr_spawn_2018_2019["Clear Creek", , ] <- clear_hab_2018_2019
+
+# combine together
+lfr_spawn <- list(biop_2008_2009 = lfr_spawn_2008_2009,
+                 biop_itp_2018_2019 = lfr_spawn_2018_2019
+)
+
+
 usethis::use_data(lfr_spawn, overwrite = TRUE)
 
 # rearing--------------------
