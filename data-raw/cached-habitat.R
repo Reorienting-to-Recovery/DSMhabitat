@@ -25,7 +25,9 @@ create_SIT_array <- function(input) {
   
 }
 
-# functions ---------
+# functions --------------------------------------------------------------------
+# get flow, added calsim_version to describe which flow data to take 
+# calsim_version options are "biop_2008_2009" or "biop_itp_2018_2019" 
 get_flow <- function(watershed, calsim_version, years = c(1980, 1999)) {
   
   # get the flow values at the dates
@@ -34,6 +36,7 @@ get_flow <- function(watershed, calsim_version, years = c(1980, 1999)) {
                             lubridate::year(date) <= years[2]), 2)
 }
 
+# get rearing habitat for all watersheds 
 get_rear_hab_all <- function(watersheds, species, life_stage, calsim_version, years = 1980:1999) {
   total_obs <- 12 * length(years)
   most <- map_df(watersheds, function(watershed) {
@@ -83,6 +86,7 @@ get_rear_hab_all <- function(watersheds, species, life_stage, calsim_version, ye
   return(hab)
 }
 
+# get spawning habitat for all watersheds
 get_spawn_hab_all <- function(watersheds, species, calsim_version, years = 1979:2000) {
   total_obs <- 12 * length(years)
   most <- map_df(watersheds, function(watershed) {
@@ -134,6 +138,7 @@ get_spawn_hab_all <- function(watersheds, species, calsim_version, years = 1979:
   return(hab)
 }
 
+# gets floodplain habitat for all watersheds 
 get_floodplain_hab_all <- function(watersheds, species, calsim_version, years = 1980:1999) {
   total_obs <- 12 * length(years)
   most <- map_df(watersheds, function(watershed) {
@@ -186,12 +191,13 @@ get_floodplain_hab_all <- function(watersheds, species, calsim_version, years = 
   
 }
 
-# spawning---------------------
+# spawning habitat data objects ------------------------------------------------
 spawning_watersheds <- DSMhabitat::watershed_species_present %>%
   filter(!(watershed_name %in% c("Upper Sacramento River", "Upper Mid Sac Region")),
          spawn) %>%
   pull(watershed_name)
 
+# fall run spawning habitat --
 # fr spawn 2008 2009 
 fr_spawn_2008_2009 <- get_spawn_hab_all(spawning_watersheds, 'fr', "biop_2008_2009")
 dimnames(fr_spawn_2008_2009) <- list(watersheds, month.abb, 1979:2000)
@@ -208,6 +214,7 @@ fr_spawn <- list(biop_2008_2009 = fr_spawn_2008_2009,
 )
 usethis::use_data(fr_spawn, overwrite = TRUE)
 
+# steelhead spawning habitat -- 
 # st spawn 2008 2009 
 st_spawn_2008_2009 <- get_spawn_hab_all(spawning_watersheds, 'st', "biop_2008_2009")
 st_spawn_2008_2009[which(is.na(st_spawn_2008_2009))] <- 0
@@ -225,6 +232,7 @@ st_spawn <- list(biop_2008_2009 = st_spawn_2008_2009,
 
 usethis::use_data(st_spawn, overwrite = TRUE)
 
+# spring run spawning habitat -- 
 # sr spawn 2008 2009 
 sr_spawn_2008_2009 <- get_spawn_hab_all(spawning_watersheds, 'sr', "biop_2008_2009")
 sr_spawn_2008_2009[which(is.na(sr_spawn_2008_2009))] <- 0
@@ -254,7 +262,8 @@ sr_spawn <- list(biop_2008_2009 = sr_spawn_2008_2009,
 
 usethis::use_data(sr_spawn, overwrite = TRUE)
 
-# Winter Run 
+# Winter Run spawning habitat -- 
+# TODO should turn this into a function
 # only in Sacramento and battle creek
 # spawn just in Upper Sac
 # wr spawn 2008 2009 
@@ -310,6 +319,7 @@ usethis::use_data(wr_spawn, overwrite = TRUE)
 
 
 # Late Fall Run 
+# TODO should turn this into a function
 # only in sacramento clear creek and battle creek
 # spawn just in Upper Sac
 # lfr spawn 2008 2009 
@@ -388,14 +398,16 @@ lfr_spawn <- list(biop_2008_2009 = lfr_spawn_2008_2009,
 
 usethis::use_data(lfr_spawn, overwrite = TRUE)
 
-# rearing--------------------
+# rearing habitat objects ------------------------------------------------------
+# subset reraing watersheds in order 
 watersheds_in_order <- DSMhabitat::watershed_species_present %>%
   filter(!(watershed_name  %in% c('Sutter Bypass',
                              'Lower-mid Sacramento River', 'Yolo Bypass', 
                              'Upper Mid Sac Region'))) %>%
   pull(watershed_name)
 
-#fry------
+# fry habitat ------------------------------------------------------------------
+# fall run fry rearing habitat -- 
 # fr fry 2008 2009 
 fr_fry_2008_2009 <- get_rear_hab_all(watersheds_in_order, 'fr', 'fry', "biop_2008_2009", 1980:2000)
 dimnames(fr_fry_2008_2009) <- list(watersheds, month.abb, 1980:2000)
@@ -414,6 +426,7 @@ fr_fry <- list(biop_2008_2009 = fr_fry_2008_2009,
 
 usethis::use_data(fr_fry, overwrite = TRUE)
 
+# steelhead fry rearing habitat -- 
 # st fry 2008 2009 
 st_fry_2008_2009 <- get_rear_hab_all(watersheds_in_order, 'st', 'fry', "biop_2008_2009", 1980:2000)
 dimnames(st_fry_2008_2009) <- list(watersheds, month.abb, 1980:2000)
@@ -431,6 +444,7 @@ st_fry <- list(biop_2008_2009 = st_fry_2008_2009,
 
 usethis::use_data(st_fry, overwrite = TRUE)
 
+# spring run fry rearing habitat -- 
 # sr fry 2008 2009 
 sr_fry_2008_2009 <- get_rear_hab_all(watersheds_in_order, 'sr', 'fry', "biop_2008_2009", years = 1980:2000)
 dimnames(sr_fry_2008_2009) <- list(watersheds, month.abb, 1980:2000)
@@ -448,9 +462,8 @@ sr_fry <- list(biop_2008_2009 = sr_fry_2008_2009,
 
 usethis::use_data(sr_fry, overwrite = TRUE)
 
-# winter run 
-
-# fry and juv
+# winter run rearing habitat -- 
+# TODO should combine with the generate_wr_juv to be more efficient (ls as argument)
 generate_wr_fry <- function(calsim_version) {
   wr_fry <- fr_fry[[calsim_version]] # Set default values to fall run to allow for straying
   wr_fry["Upper Sacramento River", , ] <- DSMhabitat::set_instream_habitat('Upper Sacramento River',
@@ -500,7 +513,7 @@ generate_wr_fry <- function(calsim_version) {
   
   return(wr_fry)
 }
-
+# call on function for both 2009 calsim and 2019 calsim 
 wr_fry_2008_2009 <- generate_wr_fry(calsim_version = "biop_2008_2009")
 wr_fry_2018_2019 <- generate_wr_fry(calsim_version = "biop_itp_2018_2019")
 
@@ -511,7 +524,8 @@ wr_fry <- list(biop_2008_2009 = wr_fry_2008_2009,
 
 usethis::use_data(wr_fry, overwrite = TRUE)
 
-# Late fall run fry 
+# Late fall run fry rearing habitat -- 
+# TODO should combine with the generate_lfr_juv to be more efficient (ls as argument)
 generate_lfr_fry <- function(calsim_version) {
   lfr_fry <- fr_fry[[calsim_version]] # Set default values to fall run to allow for straying
   lfr_fry['Upper Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Upper Sacramento River',
@@ -564,6 +578,7 @@ generate_lfr_fry <- function(calsim_version) {
   return(lfr_fry)
 }
 
+# call on function for both calsim versions 
 lfr_fry_2008_2009 <- generate_lfr_fry(calsim_version = "biop_2008_2009")
 lfr_fry_2018_2019 <- generate_lfr_fry(calsim_version = "biop_itp_2018_2019")
 
@@ -574,8 +589,9 @@ lfr_fry <- list(biop_2008_2009 = lfr_fry_2008_2009,
 
 usethis::use_data(lfr_fry, overwrite = TRUE)
 
-#juvenile------
+# juvenile----------------------------------------------------------------------
 
+# fall run juvenile rearing habitat -- 
 # fr juv 2008 2009 
 fr_juv_2008_2009 <- get_rear_hab_all(watersheds_in_order, 'fr', 'juv', 'biop_2008_2009', 1980:2000)
 dimnames(fr_juv_2008_2009) <- list(watersheds, month.abb, 1980:2000)
@@ -594,6 +610,7 @@ fr_juv <- list(biop_2008_2009 = fr_juv_2008_2009,
 
 usethis::use_data(fr_juv, overwrite = TRUE)
 
+# steelhead juvenile reraing habitat -- 
 # st juv 2008 2009 
 st_juv_2008_2009 <- get_rear_hab_all(watersheds_in_order, 'st', 'juv', 'biop_2008_2009', 1980:2000)
 dimnames(st_juv_2008_2009) <- list(watersheds, month.abb, 1980:2000)
@@ -611,6 +628,7 @@ st_juv <- list(biop_2008_2009 = st_juv_2008_2009,
 
 usethis::use_data(st_juv, overwrite = TRUE)
 
+# spring run juvenile rearing habitat -- 
 # sr juv 2008 2009 
 sr_juv_2008_2009 <- get_rear_hab_all(watersheds_in_order, 'sr', 'juv', 'biop_2008_2009', years = 1980:2000)
 dimnames(sr_juv_2008_2009) <- list(watersheds, month.abb, 1980:2000)
@@ -628,7 +646,8 @@ sr_juv <- list(biop_2008_2009 = sr_juv_2008_2009,
 
 usethis::use_data(sr_juv, overwrite = TRUE)
 
-# winter run
+# winter run juvenile rearing habitat -- 
+# TODO combine with fry one above 
 generate_wr_juv <- function(calsim_version) {
   wr_juv <- fr_juv[[calsim_version]] # Set default values to fall run to allow for straying
   wr_juv['Upper Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Upper Sacramento River',
@@ -686,8 +705,8 @@ wr_juv <- list(biop_2008_2009 = wr_juv_2008_2009,
 
 usethis::use_data(wr_juv, overwrite = TRUE)
 
-# Late fall Run juvenile 
-
+# Late fall Run juvenile habitat -- 
+# TODO combine with lfr fry one above 
 generate_lfr_juv <- function(calsim_version) {
   lfr_juv <- fr_juv[[calsim_version]] # Set default values to fall run to allow for straying
   lfr_juv['Upper Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Upper Sacramento River',
@@ -751,13 +770,15 @@ lfr_juv <- list(biop_2008_2009 = lfr_juv_2008_2009,
 
 usethis::use_data(lfr_juv, overwrite = TRUE)
 
-# floodplain------------------------
+# floodplain--------------------------------------------------------------------
+# create floodplain watershed list 
 watersheds_fp <- DSMhabitat::watershed_species_present %>%
   filter(!(watershed_name  %in% c('Sutter Bypass','Yolo Bypass',
                              'Lower-mid Sacramento River', 
                              'Upper Mid Sac Region'))) %>%
   pull(watershed_name)
 
+# fall run floodplain habitat -- 
 # TODO fix this warning!
 # fr floodplain 2008 2009 
 fr_fp_2008_2009 <- get_floodplain_hab_all(watersheds_fp, 'fr', 'biop_2008_2009', 1980:2000)
@@ -776,6 +797,7 @@ fr_fp <- list(biop_2008_2009 = fr_fp_2008_2009,
 
 usethis::use_data(fr_fp, overwrite = TRUE)
 
+# steelhead floodplain habitat -- 
 # st fp 2008 2009 
 st_fp_2008_2009 <- get_floodplain_hab_all(watersheds_fp, 'st', 'biop_2008_2009', 1980:2000)
 dimnames(st_fp_2008_2009) <- list(watersheds, month.abb, 1980:2000)
@@ -792,6 +814,7 @@ st_fp <- list(biop_2008_2009 = st_fp_2008_2009,
 
 usethis::use_data(st_fp, overwrite = TRUE)
 
+# spring run floodplain habitat -- 
 # sr floodplain 2008 2009 
 sr_fp_2008_2009 <- get_floodplain_hab_all(watersheds_fp, 'sr', 'biop_2008_2009', years = 1980:2000)
 dimnames(sr_fp_2008_2009) <- list(watersheds, month.abb, 1980:2000)
@@ -808,6 +831,7 @@ sr_fp <- list(biop_2008_2009 = sr_fp_2008_2009,
 
 usethis::use_data(sr_fp, overwrite = TRUE)
 
+# winter run floodplain habitat -- 
 generate_wr_floodplain <- function(calsim_version) {
   wr_fp <- fr_fp[[calsim_version]] # Set default values to fall run to allow for straying
   wr_fp['Upper Sacramento River', , ] <- DSMhabitat::set_floodplain_habitat('Upper Sacramento River', 'wr',
@@ -834,53 +858,57 @@ generate_wr_floodplain <- function(calsim_version) {
   return(wr_fp)
 }
 
+# call on function for both calsim runs  
 wr_fp_2008_2009 <- generate_wr_floodplain("biop_2008_2009")
 wr_fp_2018_2019 <- generate_wr_floodplain("biop_itp_2018_2019")
 
+# combine 
 wr_fp <- list(biop_2008_2009 = wr_fp_2008_2009,
               biop_itp_2018_2019 = wr_fp_2018_2019
 )
 
 usethis::use_data(wr_fp, overwrite = TRUE)
 
-# Late fall run floodplain 
-
+# Late fall run floodplain habitat -- 
 generate_lfr_floodplain <- function(calsim_version) {
-lfr_fp <- fr_fp[[calsim_version]] # Set default values to fall run to allow for straying
-lfr_fp['Upper Sacramento River',,] <- DSMhabitat::set_floodplain_habitat('Upper Sacramento River', 'lfr',
-                                                 get_flow('Upper Sacramento River',
-                                                          calsim_version, 
-                                                          years = c(1980, 2000)))
-lfr_fp['Upper-mid Sacramento River',,] <- DSMhabitat::set_floodplain_habitat('Upper-mid Sacramento River', 'lfr',
-                                                  get_flow('Upper-mid Sacramento River',
-                                                           calsim_version, 
-                                                           years = c(1980, 2000)))
-lfr_fp['Lower Sacramento River',,] <- DSMhabitat::set_floodplain_habitat('Lower Sacramento River', 'lfr',
-                                                  get_flow('Lower Sacramento River',
-                                                           calsim_version, 
-                                                           years = c(1980, 2000)))
-
-# lower-mid sacramento
-low_mid_sac_flows1 <- get_flow("Lower-mid Sacramento River1", calsim_version, years = c(1980, 2000))
-low_mid_sac_flows2 <- get_flow("Lower-mid Sacramento River2", calsim_version, years = c(1980, 2000))
-low_mid_sac_fp <- DSMhabitat::set_floodplain_habitat('Lower-mid Sacramento River', 'lfr',
-                                                     low_mid_sac_flows1, flow2 = low_mid_sac_flows2)
-
-lfr_fp['Lower-mid Sacramento River',,] <- low_mid_sac_fp
-dimnames(lfr_fp) <- list(watersheds, month.abb, 1980:2000)
-return(lfr_fp)
+  lfr_fp <- fr_fp[[calsim_version]] # Set default values to fall run to allow for straying
+  lfr_fp['Upper Sacramento River',,] <- DSMhabitat::set_floodplain_habitat('Upper Sacramento River', 'lfr',
+                                                   get_flow('Upper Sacramento River',
+                                                            calsim_version, 
+                                                            years = c(1980, 2000)))
+  lfr_fp['Upper-mid Sacramento River',,] <- DSMhabitat::set_floodplain_habitat('Upper-mid Sacramento River', 'lfr',
+                                                    get_flow('Upper-mid Sacramento River',
+                                                             calsim_version, 
+                                                             years = c(1980, 2000)))
+  lfr_fp['Lower Sacramento River',,] <- DSMhabitat::set_floodplain_habitat('Lower Sacramento River', 'lfr',
+                                                    get_flow('Lower Sacramento River',
+                                                             calsim_version, 
+                                                             years = c(1980, 2000)))
+  
+  # lower-mid sacramento
+  low_mid_sac_flows1 <- get_flow("Lower-mid Sacramento River1", calsim_version, years = c(1980, 2000))
+  low_mid_sac_flows2 <- get_flow("Lower-mid Sacramento River2", calsim_version, years = c(1980, 2000))
+  low_mid_sac_fp <- DSMhabitat::set_floodplain_habitat('Lower-mid Sacramento River', 'lfr',
+                                                       low_mid_sac_flows1, flow2 = low_mid_sac_flows2)
+  
+  lfr_fp['Lower-mid Sacramento River',,] <- low_mid_sac_fp
+  dimnames(lfr_fp) <- list(watersheds, month.abb, 1980:2000)
+  return(lfr_fp)
 }
 
+# call on function for both calsim versions 
 lfr_fp_2008_2009 <- generate_lfr_floodplain("biop_2008_2009")
 lfr_fp_2018_2019 <- generate_lfr_floodplain("biop_itp_2018_2019")
 
+# combine 
 lfr_fp <- list(biop_2008_2009 = lfr_fp_2008_2009,
               biop_itp_2018_2019 = lfr_fp_2018_2019
 )
 
 usethis::use_data(lfr_fp, overwrite = TRUE)
 
-# bypass in stream ----------------
+# bypass in stream -------------------------------------------------------------
+# sutter bypass habitat 
 generate_sutter_habitat <- function(calsim_version) {
   bpf <- DSMflow::bypass_flows[[calsim_version]] %>%
     filter(between(year(date), 1980, 2000))
@@ -903,15 +931,18 @@ generate_sutter_habitat <- function(calsim_version) {
   return(sutter_habitat) 
 }
 
+# call on function for both calsim versions 
 sutter_habitat_2008_2009 <- generate_sutter_habitat("biop_2008_2009")
 sutter_habitat_2018_2019 <- generate_sutter_habitat("biop_itp_2018_2019")
 
+# combine 
 sutter_habitat <- list(biop_2008_2009 = sutter_habitat_2008_2009,
                        biop_itp_2018_2019 = sutter_habitat_2018_2019
 )
 
 usethis::use_data(sutter_habitat, overwrite = TRUE)
 
+# yolo bypass habitat -- 
 generate_yolo_habitat <- function(calsim_version) {
   bpf <- DSMflow::bypass_flows[[calsim_version]] %>%
     filter(between(year(date), 1980, 2000))
@@ -932,9 +963,11 @@ generate_yolo_habitat <- function(calsim_version) {
   return(yolo_habitat)
 }
 
+# call on function for both calsim versions 
 yolo_habitat_2008_2009 <- generate_yolo_habitat("biop_2008_2009")
 yolo_habitat_2018_2019 <- generate_yolo_habitat("biop_itp_2018_2019")
 
+# combine 
 yolo_habitat <- list(biop_2008_2009 = yolo_habitat_2008_2009,
                        biop_itp_2018_2019 = yolo_habitat_2018_2019
 )
@@ -942,7 +975,7 @@ yolo_habitat <- list(biop_2008_2009 = yolo_habitat_2008_2009,
 usethis::use_data(yolo_habitat, overwrite = TRUE)
 
 
-# weeks flooded -----
+# weeks flooded ----------------------------------------------------------------
 generate_weeks_flooded <- function(calsim_version) {
   weeks_flooded <- array(0, dim = c(31, 12, 21))
   
@@ -962,9 +995,11 @@ generate_weeks_flooded <- function(calsim_version) {
   return(weeks_flooded)
 }
 
+# call on function for both calsim versions 
 weeks_flooded_2008_2009 <- generate_weeks_flooded("biop_2008_2009")
 weeks_flooded_2018_2019 <- generate_weeks_flooded("biop_itp_2018_2019")
 
+# combine 
 weeks_flooded <- list(biop_2008_2009 = weeks_flooded_2008_2009,
                       biop_itp_2018_2019 = weeks_flooded_2018_2019
 )
@@ -972,7 +1007,9 @@ weeks_flooded <- list(biop_2008_2009 = weeks_flooded_2008_2009,
 
 usethis::use_data(weeks_flooded, overwrite = TRUE)
 
-# delta -----
+# delta habitat ----------------------------------------------------------------
+# TODO confirm not changed with flows so only one version - inputs currently WR lcm 
+
 delta_habitat <- array(0, dim = c(12, 21, 2))
 delta_rearing_habitat_filtered <- delta_rearing_habitat %>% 
   filter(year(date) < 2001)
