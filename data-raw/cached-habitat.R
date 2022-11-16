@@ -263,51 +263,34 @@ sr_spawn <- list(biop_2008_2009 = sr_spawn_2008_2009,
 usethis::use_data(sr_spawn, overwrite = TRUE)
 
 # Winter Run spawning habitat -- 
-# TODO should turn this into a function
 # only in Sacramento and battle creek
 # spawn just in Upper Sac
-# wr spawn 2008 2009 
-wr_spawn_2008_2009 <- array(0, dim = c(31, 12, 22), dimnames = list(watersheds, month.abb, 1979:2000)) 
-up_sac_flows_2008_2009 <- get_flow('Upper Sacramento River', 
-                                   "biop_2008_2009", years = c(1979, 2000))
-months <- rep(1:12, 22)
-up_sac_hab_2008_2009 <- map2_dbl(months, up_sac_flows_2008_2009, function(month, flow) {
-  DSMhabitat::set_spawning_habitat('Upper Sacramento River',
-                                   species = 'wr',
-                                   flow = flow, month = month)
-})
+generate_wr_spawn <- function(calsim_version) {
+  wr_spawn <- array(0, dim = c(31, 12, 22), dimnames = list(watersheds, month.abb, 1979:2000)) 
+  up_sac_flows <- get_flow('Upper Sacramento River', 
+                           calsim_version, 
+                           years = c(1979, 2000))
+  months <- rep(1:12, 22)
+  up_sac_hab <- map2_dbl(months, up_sac_flows, function(month, flow) {
+    DSMhabitat::set_spawning_habitat('Upper Sacramento River',
+                                     species = 'wr',
+                                     flow = flow, month = month)
+  })
+  
+  battle_flows <- get_flow('Battle Creek', calsim_version, years = c(1979, 2000))
+  battle_hab <- map_dbl(battle_flows, function(flow) {
+    DSMhabitat::set_spawning_habitat('Battle Creek',
+                                     species = 'wr',
+                                     flow = flow)
+  })
+  
+  wr_spawn["Upper Sacramento River",,] <- up_sac_hab
+  wr_spawn["Battle Creek",,] <- battle_hab
+  return(wr_spawn)
+}
 
-battle_flows_2008_2009 <- get_flow('Battle Creek', "biop_2008_2009", years = c(1979, 2000))
-battle_hab_2008_2009 <- map_dbl(battle_flows_2008_2009, function(flow) {
-  DSMhabitat::set_spawning_habitat('Battle Creek',
-                                   species = 'wr',
-                                   flow = flow)
-})
-
-wr_spawn_2008_2009["Upper Sacramento River",,] <- up_sac_hab_2008_2009
-wr_spawn_2008_2009["Battle Creek",,] <- battle_hab_2008_2009
-
-# wr spawn 2018 2019 
-wr_spawn_2018_2019 <- array(0, dim = c(31, 12, 22), dimnames = list(watersheds, month.abb, 1979:2000)) 
-up_sac_flows_2018_2019 <- get_flow('Upper Sacramento River', 
-                                   "biop_itp_2018_2019", years = c(1979, 2000))
-months <- rep(1:12, 22)
-up_sac_hab_2018_2019 <- map2_dbl(months, up_sac_flows_2018_2019, function(month, flow) {
-  DSMhabitat::set_spawning_habitat('Upper Sacramento River',
-                                   species = 'wr',
-                                   flow = flow, month = month)
-})
-
-battle_flows_2018_2019 <- get_flow('Battle Creek', "biop_itp_2018_2019", 
-                         years = c(1979, 2000))
-battle_hab_2018_2019 <- map_dbl(battle_flows_2018_2019, function(flow) {
-  DSMhabitat::set_spawning_habitat('Battle Creek',
-                                   species = 'wr',
-                                   flow = flow)
-})
-
-wr_spawn_2018_2019["Upper Sacramento River",,] <- up_sac_hab_2018_2019
-wr_spawn_2018_2019["Battle Creek",,] <- battle_hab_2018_2019
+wr_spawn_2008_2009 <- generate_wr_spawn("biop_2008_2009")
+wr_spawn_2018_2019 <- generate_wr_spawn("biop_itp_2018_2019")
 
 # combine together
 wr_spawn <- list(biop_2008_2009 = wr_spawn_2008_2009,
@@ -319,80 +302,52 @@ usethis::use_data(wr_spawn, overwrite = TRUE)
 
 
 # Late Fall Run 
-# TODO should turn this into a function
 # only in sacramento clear creek and battle creek
 # spawn just in Upper Sac
-# lfr spawn 2008 2009 
-lfr_spawn_2008_2009 <- array(0, dim = c(31, 12, 22), 
-                             dimnames = list(watersheds, month.abb, 1979:2000))  
-up_sac_flows_2008_2009 <- get_flow('Upper Sacramento River', 
-                                   "biop_2008_2009",
-                                   years = c(1979, 2000))
-months <- rep(1:12, 22)
-up_sac_hab_2008_2009 <- map2_dbl(months, up_sac_flows_2008_2009, function(month, flow) {
-  DSMhabitat::set_spawning_habitat('Upper Sacramento River',
-                                   species = 'lfr',
-                                   flow = flow, month = month)
-})
+generate_lfr_spawn <- function(calsim_version) {
+  lfr_spawn <- array(0, dim = c(31, 12, 22), 
+                               dimnames = list(watersheds, month.abb, 1979:2000))  
+  up_sac_flows <- get_flow('Upper Sacramento River', 
+                           calsim_version,
+                           years = c(1979, 2000))
+  months <- rep(1:12, 22)
+  up_sac_hab <- map2_dbl(months, up_sac_flows, function(month, flow) {
+    DSMhabitat::set_spawning_habitat('Upper Sacramento River',
+                                     species = 'lfr',
+                                     flow = flow, month = month)
+  })
+  
+  battle_flows <- get_flow('Battle Creek', 
+                           calsim_version, 
+                           years = c(1979, 2000))
+  battle_hab <- map_dbl(battle_flows, function(flow) {
+    DSMhabitat::set_spawning_habitat('Battle Creek',
+                                     species = 'lfr',
+                                     flow = flow)
+  })
+  
+  clear_flows <- get_flow('Clear Creek',
+                          calsim_version, 
+                          years = c(1979, 2000))
+  clear_hab <- map_dbl(clear_flows, function(flow) {
+    DSMhabitat::set_spawning_habitat('Clear Creek',
+                                     species = 'lfr',
+                                     flow = flow)
+  })
+  
+  lfr_spawn["Upper Sacramento River", , ] <- up_sac_hab
+  lfr_spawn["Battle Creek", , ] <- battle_hab
+  lfr_spawn["Clear Creek", , ] <- clear_hab
+  return(lfr_spawn)
+}
 
-battle_flows_2008_2009 <- get_flow('Battle Creek', 
-                                   "biop_2008_2009", years = c(1979, 2000))
-battle_hab_2008_2009 <- map_dbl(battle_flows_2008_2009, function(flow) {
-  DSMhabitat::set_spawning_habitat('Battle Creek',
-                                   species = 'lfr',
-                                   flow = flow)
-})
-
-clear_flows_2008_2009 <- get_flow('Clear Creek', "biop_2008_2009", 
-                                  years = c(1979, 2000))
-clear_hab_2008_2009 <- map_dbl(clear_flows_2008_2009, function(flow) {
-  DSMhabitat::set_spawning_habitat('Clear Creek',
-                                   species = 'lfr',
-                                   flow = flow)
-})
-
-lfr_spawn_2008_2009["Upper Sacramento River", , ] <- up_sac_hab_2008_2009
-lfr_spawn_2008_2009["Battle Creek", , ] <- battle_hab_2008_2009
-lfr_spawn_2008_2009["Clear Creek", , ] <- clear_hab_2008_2009
-
-# lfr spawn 2018 2019 
-lfr_spawn_2018_2019 <- array(0, dim = c(31, 12, 22), 
-                             dimnames = list(watersheds, month.abb, 1979:2000))  
-up_sac_flows_2018_2019 <- get_flow('Upper Sacramento River', 
-                                   "biop_itp_2018_2019",
-                                   years = c(1979, 2000))
-months <- rep(1:12, 22)
-up_sac_hab_2018_2019 <- map2_dbl(months, up_sac_flows_2018_2019, 
-                                 function(month, flow) {
-  DSMhabitat::set_spawning_habitat('Upper Sacramento River',
-                                   species = 'lfr',
-                                   flow = flow, month = month)
-})
-
-battle_flows_2018_2019 <- get_flow('Battle Creek', 
-                                   "biop_itp_2018_2019",
-                                   years = c(1979, 2000))
-battle_hab_2018_2019 <- map_dbl(battle_flows_2018_2019, function(flow) {
-  DSMhabitat::set_spawning_habitat('Battle Creek',
-                                   species = 'lfr',
-                                   flow = flow)
-})
-
-clear_flows_2018_2019 <- get_flow('Clear Creek', 
-                                  "biop_itp_2018_2019",
-                                  years = c(1979, 2000))
-clear_hab_2018_2019 <- map_dbl(clear_flows_2018_2019, function(flow) {
-  DSMhabitat::set_spawning_habitat('Clear Creek',
-                                   species = 'lfr',
-                                   flow = flow)
-})
-lfr_spawn_2018_2019["Upper Sacramento River", , ] <- up_sac_hab_2018_2019
-lfr_spawn_2018_2019["Battle Creek", , ] <- battle_hab_2018_2019
-lfr_spawn_2018_2019["Clear Creek", , ] <- clear_hab_2018_2019
+# apply function to both calsim runs 
+lfr_spawn_2008_2009 <- generate_lfr_spawn("biop_2008_2009")
+lfr_spawn_2018_2019 <- generate_lfr_spawn("biop_itp_2018_2019")
 
 # combine together
 lfr_spawn <- list(biop_2008_2009 = lfr_spawn_2008_2009,
-                 biop_itp_2018_2019 = lfr_spawn_2018_2019
+                  biop_itp_2018_2019 = lfr_spawn_2018_2019
 )
 
 
@@ -463,18 +418,23 @@ sr_fry <- list(biop_2008_2009 = sr_fry_2008_2009,
 usethis::use_data(sr_fry, overwrite = TRUE)
 
 # winter run rearing habitat -- 
-# TODO should combine with the generate_wr_juv to be more efficient (ls as argument)
-generate_wr_fry <- function(calsim_version) {
-  wr_fry <- fr_fry[[calsim_version]] # Set default values to fall run to allow for straying
-  wr_fry["Upper Sacramento River", , ] <- DSMhabitat::set_instream_habitat('Upper Sacramento River',
+generate_wr_fry_or_juv <- function(calsim_version, lifestage = c("fry", "juv")) {
+  # set default values to allow for straying 
+  if (lifestage == "fry") {
+    wr_hab <- fr_fry[[calsim_version]]
+  } 
+  if (lifestage == "juv") {
+    wr_hab <- fr_juv[[calsim_version]]
+  }
+  wr_hab["Upper Sacramento River", , ] <- DSMhabitat::set_instream_habitat('Upper Sacramento River',
                                                     species = 'wr',
-                                                    life_stage = 'fry',
+                                                    life_stage = lifestage,
                                                     flow = get_flow('Upper Sacramento River',
                                                                     calsim_version, 
                                                                     years = c(1980, 2000)))
-  wr_fry['Upper-mid Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Upper-mid Sacramento River',
+  wr_hab['Upper-mid Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Upper-mid Sacramento River',
                                                      species = 'wr',
-                                                     life_stage = 'fry',
+                                                     life_stage = lifestage,
                                                      flow = get_flow('Upper-mid Sacramento River',
                                                                      calsim_version, 
                                                                      years = c(1980, 2000)))
@@ -491,31 +451,33 @@ generate_wr_fry <- function(calsim_version) {
   })
   
   
-  wr_fry['Lower-mid Sacramento River', , ] <- low_mid_sac_hab
+  wr_hab['Lower-mid Sacramento River', , ] <- low_mid_sac_hab
   
-  wr_fry['Lower Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Lower Sacramento River',
+  wr_hab['Lower Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Lower Sacramento River',
                                                      species = 'wr',
-                                                     life_stage = 'fry',
+                                                     life_stage = lifestage,
                                                      flow = get_flow('Lower Sacramento River',
                                                                      calsim_version, 
                                                                      years = c(1980, 2000)))
   
   
-  wr_fry['Battle Creek', , ] <- DSMhabitat::set_instream_habitat('Battle Creek',
+  wr_hab['Battle Creek', , ] <- DSMhabitat::set_instream_habitat('Battle Creek',
                                                     species = 'wr',
-                                                    life_stage = 'fry',
+                                                    life_stage = lifestage,
                                                     flow = get_flow('Battle Creek',
                                                                     calsim_version, 
                                                                     years = c(1980, 2000)))
   
   
-  wr_fry[which(is.na(wr_fry))] <- 0
+  wr_hab[which(is.na(wr_hab))] <- 0
   
-  return(wr_fry)
+  return(wr_hab)
 }
 # call on function for both 2009 calsim and 2019 calsim 
-wr_fry_2008_2009 <- generate_wr_fry(calsim_version = "biop_2008_2009")
-wr_fry_2018_2019 <- generate_wr_fry(calsim_version = "biop_itp_2018_2019")
+wr_fry_2008_2009 <- generate_wr_fry_or_juv(calsim_version = "biop_2008_2009", 
+                                           lifestage = "fry")
+wr_fry_2018_2019 <- generate_wr_fry_or_juv(calsim_version = "biop_itp_2018_2019", 
+                                           lifestage = "fry")
 
 # combine together
 wr_fry <- list(biop_2008_2009 = wr_fry_2008_2009,
@@ -525,18 +487,24 @@ wr_fry <- list(biop_2008_2009 = wr_fry_2008_2009,
 usethis::use_data(wr_fry, overwrite = TRUE)
 
 # Late fall run fry rearing habitat -- 
-# TODO should combine with the generate_lfr_juv to be more efficient (ls as argument)
-generate_lfr_fry <- function(calsim_version) {
-  lfr_fry <- fr_fry[[calsim_version]] # Set default values to fall run to allow for straying
-  lfr_fry['Upper Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Upper Sacramento River',
+generate_lfr_juv_or_fry <- function(calsim_version, lifestage = c("juv", "fry")) {
+  # set default values to allow for straying 
+  if (lifestage == "fry") {
+    lfr_hab <- fr_fry[[calsim_version]]
+  } 
+  if (lifestage == "juv") {
+    lfr_hab <- fr_juv[[calsim_version]]
+  }
+  
+  lfr_hab['Upper Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Upper Sacramento River',
                                                     species = 'lfr',
-                                                    life_stage = 'fry',
+                                                    life_stage = lifestage,
                                                     flow = get_flow('Upper Sacramento River',
                                                                     calsim_version, 
                                                                     years = c(1980, 2000)))
-  lfr_fry['Upper-mid Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Upper-mid Sacramento River',
+  lfr_hab['Upper-mid Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Upper-mid Sacramento River',
                                                      species = 'lfr',
-                                                     life_stage = 'fry',
+                                                     life_stage = lifestage,
                                                      flow = get_flow('Upper-mid Sacramento River',
                                                                      calsim_version, 
                                                                      years = c(1980, 2000)))
@@ -548,43 +516,45 @@ generate_lfr_fry <- function(calsim_version) {
   low_mid_sac_hab <- map2_dbl(low_mid_sac_flow1, low_mid_sac_flow2, function(flow, flow2) {
     DSMhabitat::set_instream_habitat('Lower-mid Sacramento River',
                                      species = 'lfr',
-                                     life_stage = 'fry',
+                                     life_stage = lifestage,
                                      flow = flow, flow2 = flow2)
   })
-  lfr_fry['Lower-mid Sacramento River', , ] <- low_mid_sac_hab
+  lfr_hab['Lower-mid Sacramento River', , ] <- low_mid_sac_hab
   
-  lfr_fry['Lower Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Lower Sacramento River',
+  lfr_hab['Lower Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Lower Sacramento River',
                                                      species = 'lfr',
-                                                     life_stage = 'fry',
+                                                     life_stage = lifestage,
                                                      flow = get_flow('Lower Sacramento River',
                                                                      calsim_version, 
                                                                      years = c(1980, 2000)))
   
-  lfr_fry['Battle Creek', , ] <- DSMhabitat::set_instream_habitat('Battle Creek',
+  lfr_hab['Battle Creek', , ] <- DSMhabitat::set_instream_habitat('Battle Creek',
                                                     species = 'lfr',
-                                                    life_stage = 'fry',
+                                                    life_stage = lifestage,
                                                     flow = get_flow('Battle Creek',
                                                                     calsim_version, 
                                                                     years = c(1980, 2000)))
-  lfr_fry['Clear Creek', , ] <- DSMhabitat::set_instream_habitat('Clear Creek',
+  lfr_hab['Clear Creek', , ] <- DSMhabitat::set_instream_habitat('Clear Creek',
                                                      species = 'lfr',
-                                                     life_stage = 'fry',
+                                                     life_stage = lifestage,
                                                      flow = get_flow('Clear Creek',
                                                                      calsim_version, 
                                                                      years = c(1980, 2000)))
-  lfr_fry[which(is.na(lfr_fry))] <- 0
+  lfr_hab[which(is.na(lfr_hab))] <- 0
   
-  dimnames(lfr_fry) <- list(watersheds, month.abb, 1980:2000)
-  return(lfr_fry)
+  dimnames(lfr_hab) <- list(watersheds, month.abb, 1980:2000)
+  return(lfr_hab)
 }
 
 # call on function for both calsim versions 
-lfr_fry_2008_2009 <- generate_lfr_fry(calsim_version = "biop_2008_2009")
-lfr_fry_2018_2019 <- generate_lfr_fry(calsim_version = "biop_itp_2018_2019")
+lfr_fry_2008_2009 <- generate_lfr_juv_or_fry(calsim_version = "biop_2008_2009", 
+                                             lifestage = "fry")
+lfr_fry_2018_2019 <- generate_lfr_juv_or_fry(calsim_version = "biop_itp_2018_2019", 
+                                             lifestage = "fry")
 
 # combine together
 lfr_fry <- list(biop_2008_2009 = lfr_fry_2008_2009,
-               biop_itp_2018_2019 = lfr_fry_2018_2019
+                biop_itp_2018_2019 = lfr_fry_2018_2019
 )
 
 usethis::use_data(lfr_fry, overwrite = TRUE)
@@ -647,55 +617,11 @@ sr_juv <- list(biop_2008_2009 = sr_juv_2008_2009,
 usethis::use_data(sr_juv, overwrite = TRUE)
 
 # winter run juvenile rearing habitat -- 
-# TODO combine with fry one above 
-generate_wr_juv <- function(calsim_version) {
-  wr_juv <- fr_juv[[calsim_version]] # Set default values to fall run to allow for straying
-  wr_juv['Upper Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Upper Sacramento River',
-                                                    species = 'wr',
-                                                    life_stage = 'juv',
-                                                    flow = get_flow('Upper Sacramento River',
-                                                                    calsim_version, 
-                                                                    years = c(1980, 2000)))
-  wr_juv['Upper-mid Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Upper-mid Sacramento River',
-                                                     species = 'wr',
-                                                     life_stage = 'juv',
-                                                     flow = get_flow('Upper-mid Sacramento River',
-                                                                     calsim_version,
-                                                                     years = c(1980, 2000)))
-  # deal with sacramento special cases
-  # lower-mid sac
-  low_mid_sac_flow1 <- get_flow('Lower-mid Sacramento River1', calsim_version, years = c(1980, 2000))
-  low_mid_sac_flow2 <- get_flow('Lower-mid Sacramento River2', calsim_version, years = c(1980, 2000))
-  
-  low_mid_sac_hab <- map2_dbl(low_mid_sac_flow1, low_mid_sac_flow2, function(flow, flow2) {
-    DSMhabitat::set_instream_habitat('Lower-mid Sacramento River',
-                                     species = 'wr',
-                                     life_stage = 'juv',
-                                     flow = flow, flow2 = flow2)
-  })
-  
-  
-  wr_juv['Lower-mid Sacramento River', , ] <- low_mid_sac_hab
-  
-  wr_juv['Lower Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Lower Sacramento River',
-                                                   species = 'wr',
-                                                   life_stage = 'juv',
-                                                   flow = get_flow('Lower Sacramento River',
-                                                                   calsim_version, 
-                                                                   years = c(1980, 2000)))
-  
-  wr_juv['Battle Creek', , ] <- DSMhabitat::set_instream_habitat('Battle Creek',
-                                                  species = 'wr',
-                                                  life_stage = 'juv',
-                                                  flow = get_flow('Battle Creek',
-                                                                  calsim_version, 
-                                                                  years = c(1980, 2000)))
-  
-  dimnames(wr_juv) <- list(watersheds, month.abb, 1980:2000)
-  return(wr_juv)
-}
-wr_juv_2008_2009 <- generate_wr_juv(calsim_version = "biop_2008_2009")
-wr_juv_2018_2019 <- generate_wr_juv(calsim_version = "biop_itp_2018_2019")
+# use function defined above in fry section 
+wr_juv_2008_2009 <- generate_wr_fry_or_juv(calsim_version = "biop_2008_2009", 
+                                           lifestage = "juv")
+wr_juv_2018_2019 <- generate_wr_fry_or_juv(calsim_version = "biop_itp_2018_2019", 
+                                           lifestage = "juv")
 
 # combine together
 wr_juv <- list(biop_2008_2009 = wr_juv_2008_2009,
@@ -706,62 +632,11 @@ wr_juv <- list(biop_2008_2009 = wr_juv_2008_2009,
 usethis::use_data(wr_juv, overwrite = TRUE)
 
 # Late fall Run juvenile habitat -- 
-# TODO combine with lfr fry one above 
-generate_lfr_juv <- function(calsim_version) {
-  lfr_juv <- fr_juv[[calsim_version]] # Set default values to fall run to allow for straying
-  lfr_juv['Upper Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Upper Sacramento River',
-                                                    species = 'lfr',
-                                                    life_stage = 'juv',
-                                                    flow = get_flow('Upper Sacramento River',
-                                                                    calsim_version, 
-                                                                    years = c(1980, 2000)))
-  lfr_juv['Upper-mid Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Upper-mid Sacramento River',
-                                                     species = 'lfr',
-                                                     life_stage = 'juv',
-                                                     flow = get_flow('Upper-mid Sacramento River',
-                                                                     calsim_version,
-                                                                     years = c(1980, 2000)))
-  # deal with sacramento special cases
-  # lower-mid sac
-  low_mid_sac_flow1 <- get_flow('Lower-mid Sacramento River1', calsim_version, years = c(1980, 2000))
-  low_mid_sac_flow2 <- get_flow('Lower-mid Sacramento River2', calsim_version, years = c(1980, 2000))
-  
-  low_mid_sac_hab <- map2_dbl(low_mid_sac_flow1, low_mid_sac_flow2, function(flow, flow2) {
-    DSMhabitat::set_instream_habitat('Lower-mid Sacramento River',
-                                     species = 'lfr',
-                                     life_stage = 'juv',
-                                     flow = flow, flow2 = flow2)
-  })
-  
-  
-  lfr_juv['Lower-mid Sacramento River', , ] <- low_mid_sac_hab
-  
-  lfr_juv['Lower Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Lower Sacramento River',
-                                                     species = 'lfr',
-                                                     life_stage = 'juv',
-                                                     flow = get_flow('Lower Sacramento River',
-                                                                     calsim_version,
-                                                                     years = c(1980, 2000)))
-  
-  lfr_juv['Battle Creek', , ] <- DSMhabitat::set_instream_habitat('Battle Creek',
-                                                    species = 'lfr',
-                                                    life_stage = 'juv',
-                                                    flow = get_flow('Battle Creek',
-                                                                    calsim_version,
-                                                                    years = c(1980, 2000)))
-  lfr_juv['Clear Creek', , ] <- DSMhabitat::set_instream_habitat('Clear Creek',
-                                                     species = 'lfr',
-                                                     life_stage = 'juv',
-                                                     flow = get_flow('Clear Creek',
-                                                                     calsim_version,
-                                                                     years = c(1980, 2000)))
-  
-  dimnames(lfr_juv) <- list(watersheds, month.abb, 1980:2000)
-  return(lfr_juv)
-}
-
-lfr_juv_2008_2009 <- generate_lfr_juv(calsim_version = "biop_2008_2009")
-lfr_juv_2018_2019 <- generate_lfr_juv(calsim_version = "biop_itp_2018_2019")
+# use function defined in fry section above 
+lfr_juv_2008_2009 <- generate_lfr_juv_or_fry(calsim_version = "biop_2008_2009", 
+                                             lifestage = "juv")
+lfr_juv_2018_2019 <- generate_lfr_juv_or_fry(calsim_version = "biop_itp_2018_2019", 
+                                             lifestage = "juv")
 
 # combine together
 lfr_juv <- list(biop_2008_2009 = lfr_juv_2008_2009,
