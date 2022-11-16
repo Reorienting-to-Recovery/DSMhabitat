@@ -943,21 +943,32 @@ usethis::use_data(yolo_habitat, overwrite = TRUE)
 
 
 # weeks flooded -----
-weeks_flooded <- array(0, dim = c(31, 12, 21))
-
-for (i in 1:31) {
-  if (i %in% c(17, 21, 22)) next
-  flow <- get_flow(watersheds[i], years = c(1980, 2000))
-  flooded_weeks <- map_dbl(flow, ~get_weeks_flooded(watersheds[i], .))
-  weeks_flooded[i,,] <- matrix(flooded_weeks, ncol = 12)
+generate_weeks_flooded <- function(calsim_version) {
+  weeks_flooded <- array(0, dim = c(31, 12, 21))
+  
+  for (i in 1:31) {
+    if (i %in% c(17, 21, 22)) next
+    flow <- get_flow(watersheds[i], calsim_version, years = c(1980, 2000))
+    flooded_weeks <- map_dbl(flow, ~get_weeks_flooded(watersheds[i], .))
+    weeks_flooded[i,,] <- matrix(flooded_weeks, ncol = 12)
+  }
+  
+  flooded <- DSMhabitat::fr_fp > 0
+  weeks_flooded <- pmax(flooded*2, weeks_flooded)
+  
+  not_flooded <- DSMhabitat::fr_fp == 0
+  weeks_flooded[not_flooded] <- 0
+  dimnames(weeks_flooded) <- list(watersheds, month.abb, 1980:2000)
+  return(weeks_flooded)
 }
 
-flooded <- DSMhabitat::fr_fp > 0
-weeks_flooded <- pmax(flooded*2, weeks_flooded)
+weeks_flooded_2008_2009 <- generate_weeks_flooded("biop_2008_2009")
+weeks_flooded_2018_2019 <- generate_weeks_flooded("biop_itp_2018_2019")
 
-not_flooded <- DSMhabitat::fr_fp == 0
-weeks_flooded[not_flooded] <- 0
-dimnames(weeks_flooded) <- list(watersheds, month.abb, 1980:2000)
+weeks_flooded <- list(biop_2008_2009 = weeks_flooded_2008_2009,
+                      biop_itp_2018_2019 = weeks_flooded_2018_2019
+)
+
 
 usethis::use_data(weeks_flooded, overwrite = TRUE)
 
