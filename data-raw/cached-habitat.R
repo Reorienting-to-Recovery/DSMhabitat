@@ -881,40 +881,64 @@ lfr_fp <- list(biop_2008_2009 = lfr_fp_2008_2009,
 usethis::use_data(lfr_fp, overwrite = TRUE)
 
 # bypass in stream ----------------
-bpf <- DSMflow::bypass_flows %>%
-  filter(between(year(date), 1980, 2000))
+generate_sutter_habitat <- function(calsim_version) {
+  bpf <- DSMflow::bypass_flows[[calsim_version]] %>%
+    filter(between(year(date), 1980, 2000))
+  
+  sutter_habitat <- bind_cols(
+    'date' = pull(bpf, date),
+    square_meters = DSMhabitat::set_bypass_habitat(bypass = 'sutter1', flow = pull(bpf, sutter1)) + 
+      DSMhabitat::set_bypass_habitat(bypass = 'sutter2', flow = pull(bpf, sutter2)) + 
+      DSMhabitat::set_bypass_habitat(bypass = 'sutter3', flow = pull(bpf, sutter3)) +
+      DSMhabitat::set_bypass_habitat(bypass = 'sutter4', flow = pull(bpf, sutter4))
+  ) %>% 
+    mutate(year = year(date), 
+           month = month(date)) %>%
+    select(-date) %>% 
+    spread(year, square_meters) %>% 
+    select(-month) %>% 
+    as.matrix()
+  
+  rownames(sutter_habitat) <- month.abb
+  return(sutter_habitat) 
+}
 
-sutter_habitat <- bind_cols(
-  'date' = pull(bpf, date),
-  square_meters = DSMhabitat::set_bypass_habitat(bypass = 'sutter1', flow = pull(bpf, sutter1)) + 
-    DSMhabitat::set_bypass_habitat(bypass = 'sutter2', flow = pull(bpf, sutter2)) + 
-    DSMhabitat::set_bypass_habitat(bypass = 'sutter3', flow = pull(bpf, sutter3)) +
-    DSMhabitat::set_bypass_habitat(bypass = 'sutter4', flow = pull(bpf, sutter4))
-) %>% 
-  mutate(year = year(date), 
-         month = month(date)) %>%
-  select(-date) %>% 
-  spread(year, square_meters) %>% 
-  select(-month) %>% 
-  as.matrix()
+sutter_habitat_2008_2009 <- generate_sutter_habitat("biop_2008_2009")
+sutter_habitat_2018_2019 <- generate_sutter_habitat("biop_itp_2018_2019")
 
-rownames(sutter_habitat) <- month.abb
-
-yolo_habitat <- bind_cols(
-  'date' = pull(bpf, date),
-  square_meters = DSMhabitat::set_bypass_habitat(bypass = 'yolo1', flow = pull(bpf, yolo1)) + 
-    DSMhabitat::set_bypass_habitat(bypass = 'yolo2', flow = pull(bpf, yolo2)),
-) %>%
-  mutate(year = year(date), 
-         month = month(date)) %>%
-  select(-date) %>% 
-  spread(year, square_meters) %>% 
-  select(-month) %>% 
-  as.matrix()
-
-rownames(yolo_habitat) <- month.abb
+sutter_habitat <- list(biop_2008_2009 = sutter_habitat_2008_2009,
+                       biop_itp_2018_2019 = sutter_habitat_2018_2019
+)
 
 usethis::use_data(sutter_habitat, overwrite = TRUE)
+
+generate_yolo_habitat <- function(calsim_version) {
+  bpf <- DSMflow::bypass_flows[[calsim_version]] %>%
+    filter(between(year(date), 1980, 2000))
+  
+  yolo_habitat <- bind_cols(
+    'date' = pull(bpf, date),
+    square_meters = DSMhabitat::set_bypass_habitat(bypass = 'yolo1', flow = pull(bpf, yolo1)) + 
+      DSMhabitat::set_bypass_habitat(bypass = 'yolo2', flow = pull(bpf, yolo2)),
+  ) %>%
+    mutate(year = year(date), 
+           month = month(date)) %>%
+    select(-date) %>% 
+    spread(year, square_meters) %>% 
+    select(-month) %>% 
+    as.matrix()
+  
+  rownames(yolo_habitat) <- month.abb
+  return(yolo_habitat)
+}
+
+yolo_habitat_2008_2009 <- generate_yolo_habitat("biop_2008_2009")
+yolo_habitat_2018_2019 <- generate_yolo_habitat("biop_itp_2018_2019")
+
+yolo_habitat <- list(biop_2008_2009 = yolo_habitat_2008_2009,
+                       biop_itp_2018_2019 = yolo_habitat_2018_2019
+)
+
 usethis::use_data(yolo_habitat, overwrite = TRUE)
 
 
