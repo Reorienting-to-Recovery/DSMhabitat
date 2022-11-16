@@ -758,63 +758,126 @@ watersheds_fp <- DSMhabitat::watershed_species_present %>%
                              'Upper Mid Sac Region'))) %>%
   pull(watershed_name)
 
-fr_fp <- get_floodplain_hab_all(watersheds_fp, 'fr', 1980:2000)
-dimnames(fr_fp) <- list(watersheds, month.abb, 1980:2000)
-fr_fp[which(is.na(fr_fp))] <- 0
+# TODO fix this warning!
+# fr floodplain 2008 2009 
+fr_fp_2008_2009 <- get_floodplain_hab_all(watersheds_fp, 'fr', 'biop_2008_2009', 1980:2000)
+dimnames(fr_fp_2008_2009) <- list(watersheds, month.abb, 1980:2000)
+fr_fp_2008_2009[which(is.na(fr_fp_2008_2009))] <- 0
+
+# fr floodplain 2018 2019 
+fr_fp_2018_2019 <- get_floodplain_hab_all(watersheds_fp, 'fr', 'biop_itp_2018_2019', 1980:2000)
+dimnames(fr_fp_2018_2019) <- list(watersheds, month.abb, 1980:2000)
+fr_fp_2018_2019[which(is.na(fr_fp_2018_2019))] <- 0
+
+
+fr_fp <- list(biop_2008_2009 = fr_fp_2008_2009,
+              biop_itp_2018_2019 = fr_fp_2018_2019
+)
+
 usethis::use_data(fr_fp, overwrite = TRUE)
 
-st_fp <- get_floodplain_hab_all(watersheds_fp, 'st', 1980:2000)
-dimnames(st_fp) <- list(watersheds, month.abb, 1980:2000)
-st_fp[which(is.na(st_fp))] <- fr_fp[which(is.na(st_fp))]
+# st fp 2008 2009 
+st_fp_2008_2009 <- get_floodplain_hab_all(watersheds_fp, 'st', 'biop_2008_2009', 1980:2000)
+dimnames(st_fp_2008_2009) <- list(watersheds, month.abb, 1980:2000)
+st_fp_2008_2009[which(is.na(st_fp_2008_2009))] <- fr_fp_2008_2009[which(is.na(st_fp_2008_2009))]
+
+# st fp 2018 2019
+st_fp_2018_2019 <- get_floodplain_hab_all(watersheds_fp, 'st', 'biop_itp_2018_2019', 1980:2000)
+dimnames(st_fp_2018_2019) <- list(watersheds, month.abb, 1980:2000)
+st_fp_2018_2019[which(is.na(st_fp_2018_2019))] <- fr_fp_2018_2019[which(is.na(st_fp_2018_2019))]
+
+st_fp <- list(biop_2008_2009 = st_fp_2008_2009,
+              biop_itp_2018_2019 = st_fp_2018_2019
+)
+
 usethis::use_data(st_fp, overwrite = TRUE)
 
-# TODO fix this warning!
-sr_fp <- get_floodplain_hab_all(watersheds_fp, 'sr', years = 1980:2000)
-dimnames(sr_fp) <- list(watersheds, month.abb, 1980:2000)
-sr_fp[which(is.na(sr_fp))] <- fr_fp[which(is.na(sr_fp))]
+# sr floodplain 2008 2009 
+sr_fp_2008_2009 <- get_floodplain_hab_all(watersheds_fp, 'sr', 'biop_2008_2009', years = 1980:2000)
+dimnames(sr_fp_2008_2009) <- list(watersheds, month.abb, 1980:2000)
+sr_fp_2008_2009[which(is.na(sr_fp_2008_2009))] <- fr_fp_2008_2009[which(is.na(sr_fp_2008_2009))]
+
+# sr floodplain 2018 2019
+sr_fp_2018_2019 <- get_floodplain_hab_all(watersheds_fp, 'sr', 'biop_itp_2018_2019', years = 1980:2000)
+dimnames(sr_fp_2018_2019) <- list(watersheds, month.abb, 1980:2000)
+sr_fp_2018_2019[which(is.na(sr_fp_2018_2019))] <- fr_fp_2018_2019[which(is.na(sr_fp_2018_2019))]
+
+sr_fp <- list(biop_2008_2009 = sr_fp_2008_2009,
+              biop_itp_2018_2019 = sr_fp_2018_2019
+)
+
 usethis::use_data(sr_fp, overwrite = TRUE)
 
-wr_fp <- fr_fp # Set default values to fall run to allow for straying
-wr_fp['Upper Sacramento River', , ] <- DSMhabitat::set_floodplain_habitat('Upper Sacramento River', 'wr',
-                                                 get_flow('Upper Sacramento River',
-                                                          years = c(1980, 2000)))
-wr_fp['Upper-mid Sacramento River', , ] <- DSMhabitat::set_floodplain_habitat('Upper-mid Sacramento River', 'wr',
-                                                  get_flow('Upper-mid Sacramento River',
-                                                           years = c(1980, 2000)))
-wr_fp['Lower Sacramento River', , ] <- DSMhabitat::set_floodplain_habitat('Lower Sacramento River', 'wr',
-                                                  get_flow('Lower Sacramento River',
-                                                           years = c(1980, 2000)))
+generate_wr_floodplain <- function(calsim_version) {
+  wr_fp <- fr_fp[[calsim_version]] # Set default values to fall run to allow for straying
+  wr_fp['Upper Sacramento River', , ] <- DSMhabitat::set_floodplain_habitat('Upper Sacramento River', 'wr',
+                                                   get_flow('Upper Sacramento River',
+                                                            calsim_version, 
+                                                            years = c(1980, 2000)))
+  wr_fp['Upper-mid Sacramento River', , ] <- DSMhabitat::set_floodplain_habitat('Upper-mid Sacramento River', 'wr',
+                                                    get_flow('Upper-mid Sacramento River',
+                                                             calsim_version, 
+                                                             years = c(1980, 2000)))
+  wr_fp['Lower Sacramento River', , ] <- DSMhabitat::set_floodplain_habitat('Lower Sacramento River', 'wr',
+                                                    get_flow('Lower Sacramento River',
+                                                             calsim_version, 
+                                                             years = c(1980, 2000)))
+  
+  # lower-mid sacramento
+  low_mid_sac_flows1 <- get_flow("Lower-mid Sacramento River1", calsim_version, years = c(1980, 2000))
+  low_mid_sac_flows2 <- get_flow("Lower-mid Sacramento River2", calsim_version, years = c(1980, 2000))
+  low_mid_sac_fp <- DSMhabitat::set_floodplain_habitat('Lower-mid Sacramento River', 'wr',
+                                                       low_mid_sac_flows1, flow2 = low_mid_sac_flows2)
+  
+  wr_fp['Lower-mid Sacramento River',,] <- low_mid_sac_fp
+  dimnames(wr_fp) <- list(watersheds, month.abb, 1980:2000)
+  return(wr_fp)
+}
 
-# lower-mid sacramento
-low_mid_sac_flows1 <- get_flow("Lower-mid Sacramento River1", years = c(1980, 2000))
-low_mid_sac_flows2 <- get_flow("Lower-mid Sacramento River2", years = c(1980, 2000))
-low_mid_sac_fp <- DSMhabitat::set_floodplain_habitat('Lower-mid Sacramento River', 'wr',
-                                                     low_mid_sac_flows1, flow2 = low_mid_sac_flows2)
+wr_fp_2008_2009 <- generate_wr_floodplain("biop_2008_2009")
+wr_fp_2018_2019 <- generate_wr_floodplain("biop_itp_2018_2019")
 
-wr_fp['Lower-mid Sacramento River',,] <- low_mid_sac_fp
-dimnames(wr_fp) <- list(watersheds, month.abb, 1980:2000)
+wr_fp <- list(biop_2008_2009 = wr_fp_2008_2009,
+              biop_itp_2018_2019 = wr_fp_2018_2019
+)
+
 usethis::use_data(wr_fp, overwrite = TRUE)
 
 # Late fall run floodplain 
-lfr_fp <- fr_fp # Set default values to fall run to allow for straying
+
+generate_lfr_floodplain <- function(calsim_version) {
+lfr_fp <- fr_fp[[calsim_version]] # Set default values to fall run to allow for straying
 lfr_fp['Upper Sacramento River',,] <- DSMhabitat::set_floodplain_habitat('Upper Sacramento River', 'lfr',
                                                  get_flow('Upper Sacramento River',
+                                                          calsim_version, 
                                                           years = c(1980, 2000)))
 lfr_fp['Upper-mid Sacramento River',,] <- DSMhabitat::set_floodplain_habitat('Upper-mid Sacramento River', 'lfr',
                                                   get_flow('Upper-mid Sacramento River',
+                                                           calsim_version, 
                                                            years = c(1980, 2000)))
 lfr_fp['Lower Sacramento River',,] <- DSMhabitat::set_floodplain_habitat('Lower Sacramento River', 'lfr',
                                                   get_flow('Lower Sacramento River',
+                                                           calsim_version, 
                                                            years = c(1980, 2000)))
 
 # lower-mid sacramento
-low_mid_sac_flows1 <- get_flow("Lower-mid Sacramento River1", years = c(1980, 2000))
-low_mid_sac_flows2 <- get_flow("Lower-mid Sacramento River2", years = c(1980, 2000))
+low_mid_sac_flows1 <- get_flow("Lower-mid Sacramento River1", calsim_version, years = c(1980, 2000))
+low_mid_sac_flows2 <- get_flow("Lower-mid Sacramento River2", calsim_version, years = c(1980, 2000))
 low_mid_sac_fp <- DSMhabitat::set_floodplain_habitat('Lower-mid Sacramento River', 'lfr',
                                                      low_mid_sac_flows1, flow2 = low_mid_sac_flows2)
 
 lfr_fp['Lower-mid Sacramento River',,] <- low_mid_sac_fp
 dimnames(lfr_fp) <- list(watersheds, month.abb, 1980:2000)
+return(lfr_fp)
+}
+
+lfr_fp_2008_2009 <- generate_lfr_floodplain("biop_2008_2009")
+lfr_fp_2018_2019 <- generate_lfr_floodplain("biop_itp_2018_2019")
+
+lfr_fp <- list(biop_2008_2009 = lfr_fp_2008_2009,
+              biop_itp_2018_2019 = lfr_fp_2018_2019
+)
+
 usethis::use_data(lfr_fp, overwrite = TRUE)
 
 # bypass in stream ----------------
