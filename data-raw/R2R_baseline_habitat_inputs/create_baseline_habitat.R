@@ -124,6 +124,27 @@ updated_habitat <- DSMhabitat::fr_spawn$biop_itp_2018_2019["American River", , ]
 
 r_to_r_baseline_fr_spawn["American River", , ] <- updated_habitat 
 
+# add clear creek spawning habitat
+add_project_habitat <- DSMhabitat::fr_spawn$biop_itp_2018_2019["Clear Creek" , , ] * 
+  hab_prop_change_from_projects("spawning", "Clear Creek", "fr", "adult", "biop_itp_2018_2019")
+updated_habitat <- DSMhabitat::fr_spawn$biop_itp_2018_2019["Clear Creek", , ] + add_project_habitat
+
+r_to_r_baseline_fr_spawn["Clear Creek", , ] <- updated_habitat 
+
+# add paynes creek spawning habitat
+add_project_habitat <- DSMhabitat::fr_spawn$biop_itp_2018_2019["Paynes Creek" , , ] * 
+  hab_prop_change_from_projects("spawning", "Paynes Creek", "fr", "adult", "biop_itp_2018_2019")
+updated_habitat <- DSMhabitat::fr_spawn$biop_itp_2018_2019["Paynes Creek", , ] + add_project_habitat
+
+r_to_r_baseline_fr_spawn["Paynes Creek", , ] <- updated_habitat 
+
+# add tuolumne river spawning habitat
+add_project_habitat <- DSMhabitat::fr_spawn$biop_itp_2018_2019["Tuolumne River" , , ] * 
+  hab_prop_change_from_projects("spawning", "Tuolumne River", "fr", "adult", "biop_itp_2018_2019")
+updated_habitat <- DSMhabitat::fr_spawn$biop_itp_2018_2019["Tuolumne River", , ] + add_project_habitat
+
+r_to_r_baseline_fr_spawn["Tuolumne River", , ] <- updated_habitat 
+
 # Add sacramento river spawning habitat 
 add_project_habitat <- DSMhabitat::fr_spawn$biop_itp_2018_2019["Upper Sacramento River" , , ] * 
   hab_prop_change_from_projects("spawning", "Upper Sacramento River", "fr", "adult", "biop_itp_2018_2019")
@@ -155,7 +176,10 @@ spawn <- expand_grid(
     sit_habitat = as.vector(sit_habitat),
     r_to_r_baseline_habitat = as.vector(r_to_r_baseline_habitat)) |> 
   filter(watershed %in% c("American River", 
-                          "Upper Sacramento River"))
+                          "Upper Sacramento River", 
+                          "Paynes Creek", 
+                          "Clear Creek", 
+                          "Tuolumne River"))
 
 spawn |> 
   transmute(watershed, date = ymd(paste(year, month, 1)), 
@@ -326,7 +350,7 @@ usethis::use_data(fr_fp, overwrite = TRUE)
 r_to_r_baseline_habitat <- r_to_r_baseline_fr_fp |> 
   DSMhabitat::square_meters_to_acres()
 
-sit_habitat <- DSMhabitat::fr_fp |> DSMhabitat::square_meters_to_acres()
+sit_habitat <- DSMhabitat::fr_fp$biop_itp_2018_2019 |> DSMhabitat::square_meters_to_acres()
 
 fp <- expand_grid(
   watershed = factor(DSMscenario::watershed_labels, 
