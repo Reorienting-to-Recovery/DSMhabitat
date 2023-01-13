@@ -98,11 +98,12 @@ hab_prop_change_from_projects <- function(habitat_type, watershed, species, life
   }
   
   # find proportion of habitat added 
-  prop_added <- project_hab_sqmeters/sit_habitat
+  # TODO resolve yuba floodplain problem 
+  prop_added <- ifelse(site_habitat == 0, 0, project_hab_sqmeters/sit_habitat) 
   return(prop_added)
 } 
 
-hab_prop_change_from_projects("floodplain rearing", "North Delta", "fr", "juv", "biop_itp_2018_2019")
+# hab_prop_change_from_projects("floodplain rearing", "North Delta", "fr", "juv", "biop_itp_2018_2019")
 hab_prop_change_from_projects("floodplain rearing", "American River", "fr", "juv", "biop_itp_2018_2019")
 hab_prop_change_from_projects("spawning", "American River", "fr", "adult", "biop_itp_2018_2019")
 
@@ -138,13 +139,6 @@ updated_habitat <- DSMhabitat::fr_spawn$biop_itp_2018_2019["Paynes Creek", , ] +
 
 r_to_r_baseline_fr_spawn["Paynes Creek", , ] <- updated_habitat 
 
-# add tuolumne river spawning habitat
-add_project_habitat <- DSMhabitat::fr_spawn$biop_itp_2018_2019["Tuolumne River" , , ] * 
-  hab_prop_change_from_projects("spawning", "Tuolumne River", "fr", "adult", "biop_itp_2018_2019")
-updated_habitat <- DSMhabitat::fr_spawn$biop_itp_2018_2019["Tuolumne River", , ] + add_project_habitat
-
-r_to_r_baseline_fr_spawn["Tuolumne River", , ] <- updated_habitat 
-
 # Add sacramento river spawning habitat 
 add_project_habitat <- DSMhabitat::fr_spawn$biop_itp_2018_2019["Upper Sacramento River" , , ] * 
   hab_prop_change_from_projects("spawning", "Upper Sacramento River", "fr", "adult", "biop_itp_2018_2019")
@@ -178,8 +172,7 @@ spawn <- expand_grid(
   filter(watershed %in% c("American River", 
                           "Upper Sacramento River", 
                           "Paynes Creek", 
-                          "Clear Creek", 
-                          "Tuolumne River"))
+                          "Clear Creek"))
 
 spawn |> 
   transmute(watershed, date = ymd(paste(year, month, 1)), 
@@ -212,6 +205,20 @@ add_project_habitat <- DSMhabitat::fr_fry$biop_itp_2018_2019["American River" , 
 updated_habitat <- DSMhabitat::fr_fry$biop_itp_2018_2019["American River", , ] + add_project_habitat
 
 r_to_r_baseline_fr_fry["American River", , ] <- updated_habitat 
+
+# add tuolumne river juv habitat
+add_project_habitat <- DSMhabitat::fr_juv$biop_itp_2018_2019["Tuolumne River" , , ] * 
+  hab_prop_change_from_projects("inchannel rearing", "Tuolumne River", "fr", "juv", "biop_itp_2018_2019")
+updated_habitat <- DSMhabitat::fr_juv$biop_itp_2018_2019["Tuolumne River", , ] + add_project_habitat
+
+r_to_r_baseline_fr_juv["Tuolumne River", , ] <- updated_habitat 
+
+# add tuolumne river fry habitat
+add_project_habitat <- DSMhabitat::fr_fry$biop_itp_2018_2019["Tuolumne River" , , ] * 
+  hab_prop_change_from_projects("inchannel rearing", "Tuolumne River", "fr", "fry", "biop_itp_2018_2019")
+updated_habitat <- DSMhabitat::fr_fry$biop_itp_2018_2019["Tuolumne River", , ] + add_project_habitat
+
+r_to_r_baseline_fr_fry["Tuolumne River", , ] <- updated_habitat 
 
 # Upper sac river 
 # Add upper sac river juv habitat 
@@ -274,8 +281,10 @@ ic_juv <- expand_grid(
     sit_habitat = as.vector(sit_habitat),
     r_to_r_baseline_habitat = as.vector(r_to_r_baseline_habitat)) |> 
   filter(watershed %in% c("American River", 
+                          "Tuolumne River",
                           "Upper Sacramento River",
-                          "Upper-mid Sacramento River"))
+                          "Upper-mid Sacramento River"
+                          ))
 
 ic_juv |> 
   transmute(watershed, date = ymd(paste(year, month, 1)), 
@@ -303,6 +312,7 @@ ic_fry <- expand_grid(
     sit_habitat = as.vector(sit_habitat),
     r_to_r_baseline_habitat = as.vector(r_to_r_baseline_habitat)) |> 
   filter(watershed %in% c("American River", 
+                          "Tuolumne River",
                           "Upper Sacramento River",
                           "Upper-mid Sacramento River"))
 
@@ -328,6 +338,14 @@ add_project_habitat <- DSMhabitat::fr_fp$biop_itp_2018_2019["Lower-mid Sacrament
 updated_habitat <- DSMhabitat::fr_fp$biop_itp_2018_2019["Lower-mid Sacramento River" , , ] + add_project_habitat
 
 r_to_r_baseline_fr_fp["Lower-mid Sacramento River" , , ] <- updated_habitat 
+
+# TUolumne river floodplain 
+add_project_habitat <- DSMhabitat::fr_fp$biop_itp_2018_2019["Tuolumne River" , , ] * 
+  hab_prop_change_from_projects("floodplain rearing", "Tuolumne River" , 
+                                "fr", "juv", "biop_itp_2018_2019")
+updated_habitat <- DSMhabitat::fr_fp$biop_itp_2018_2019["Tuolumne River" , , ] + add_project_habitat
+
+r_to_r_baseline_fr_fp["Tuolumne River" , , ] <- updated_habitat 
 
 # Add Yuba floodlplain habitat 
 add_project_habitat <- DSMhabitat::fr_fp$biop_itp_2018_2019["Yuba River" , , ] * 
@@ -361,7 +379,7 @@ fp <- expand_grid(
   mutate(
     sit_habitat = as.vector(sit_habitat),
     r_to_r_baseline_habitat = as.vector(r_to_r_baseline_habitat)) |> 
-  filter(watershed %in% c("Yuba River", "Lower-mid Sacramento River"))
+  filter(watershed %in% c("Yuba River", "Lower-mid Sacramento River", "Tuolumne River"))
 
 fp |> 
   transmute(watershed, date = ymd(paste(year, month, 1)), 
