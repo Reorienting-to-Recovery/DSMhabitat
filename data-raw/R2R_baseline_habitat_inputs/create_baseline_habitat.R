@@ -99,7 +99,7 @@ hab_prop_change_from_projects <- function(habitat_type, watershed, species, life
   
   # find proportion of habitat added 
   # TODO resolve yuba floodplain problem 
-  prop_added <- ifelse(site_habitat == 0, 0, project_hab_sqmeters/sit_habitat) 
+  prop_added <- ifelse(sit_habitat == 0, 0, project_hab_sqmeters/sit_habitat) 
   return(prop_added)
 } 
 
