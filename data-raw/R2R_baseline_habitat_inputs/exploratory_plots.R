@@ -1,6 +1,6 @@
 library(tidyverse)
 library(DSMhabitat)
-source("data-raw/R2R_baseline_habitat_inputs/create_baseline_habitat.R")
+source("data-raw/R2R_baseline_habitat_inputs/generate_hab_helper_functions.R")
 DSMhabitat::american_river_instream
 
 american_river_instream %>% 
