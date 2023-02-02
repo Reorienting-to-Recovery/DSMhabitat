@@ -331,5 +331,5 @@ delta |>
   theme_minimal()
 
 # Save as data object to DSMhabitat
-delta_habitat <- c(sit_input = list(DSMhabitat::delta_habitat$sit_input), r_to_r_baseline = list(r_to_r_baseline_delta))
+delta_habitat <- c(sit_input = list(DSMhabitat::delta_habitat), r_to_r_baseline = list(r_to_r_baseline_delta))
 usethis::use_data(delta_habitat, overwrite = TRUE)
