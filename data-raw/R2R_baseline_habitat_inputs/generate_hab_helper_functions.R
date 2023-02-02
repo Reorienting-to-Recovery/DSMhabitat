@@ -57,7 +57,7 @@ existing_cfs_median_comparison_point <- function (habitat_type, watershed, speci
 }
 
 existing_cfs_median_comparison_point("inchannel rearing", "American River", "fr", 'biop_itp_2018_2019')
-existing_cfs_median_comparison_point("floodplain rearing", "American River", "fr", 'biop_itp_2018_2019')
+existing_cfs_median_comparison_point("floodplain rearing", "Tuolumne River", "fr", 'biop_itp_2018_2019')
 
   
 # calculate the proportion change frm projects 

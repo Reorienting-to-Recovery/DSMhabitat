@@ -1,6 +1,6 @@
-watershed,habitat_type,run,total_acres,suitable_acres
-Upper Sacramento River,spawning,fall ,3.5,0.42
-Upper Sacramento River,inchannel rearing ,fall ,12.1,1.21
+watershed,habitat_type,run,total_acres,percent_suitable 
+Upper Sacramento River,spawning,fall ,3.5,
+Upper Sacramento River,inchannel rearing ,fall ,12.1,
 Upper-mid Sacramento River,inchannel rearing ,fall ,1.95,
 Lower-mid Sacramento River,floodplain rearing,fall ,114,
 American River,spawning,fall ,13,
