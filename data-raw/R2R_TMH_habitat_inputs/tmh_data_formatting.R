@@ -316,6 +316,35 @@ for(i in 1:length(watersheds)) {
 }
 
 
+##delta: -------------------------------------------------------------------
+
+watersheds <- c('North Delta', 'South Delta')
+r_to_r_tmh_delta <- DSMhabitat::delta_habitat
+
+for(i in 1:length(watersheds)) {
+  ws = watersheds[i]
+  habitat = "rear"
+  
+  max_hab_acres <- all_hab_data_long |> 
+    filter(watershed == ws & hab == habitat) |> 
+    filter(max_hab == "max_hab") |> 
+    pull(value)
+  
+  # Instead of taking hab at the median flow to compare take median hab 
+  # Check in with Mark on this assumption 
+  existing_acres <- median(DSMhabitat::delta_habitat[ , , ws]) |> 
+    DSMhabitat::square_meters_to_acres()
+  
+  # Note: If the maximum theoretical habitat was less than the existing SIT habitat, 
+  # the theoretical maximum habitat value was used for baseline and model runs. 
+  adj_factor = (max_hab_acres - existing_acres) / existing_acres + 1
+  
+  new_hab_acres <- DSMhabitat::delta_habitat[ , , ws] * adj_factor
+  
+  r_to_r_tmh_delta[, , ws ] <- new_hab_acres 
+  
+}
+
 # save data objects -------------------------------------------------------
 
 # Save as data object to DSMhabitat
@@ -331,10 +360,11 @@ usethis::use_data(fr_juv, overwrite = TRUE)
 fr_spawn <- c(DSMhabitat::fr_spawn, r_to_r_scenario = list(r_to_r_tmh_fr_spawn))
 usethis::use_data(fr_spawn, overwrite = TRUE)
 
+# TODO: placeholder for when we trust the delta values 
 
 # Exploratory Plots:  -----------------------------------------------------
 
-### spawning plot:  ---------------------------------------------------------
+## spawning plot:  ---------------------------------------------------------
 r_to_r_max_habitat <- r_to_r_tmh_fr_spawn |> 
   DSMhabitat::square_meters_to_acres()
 
@@ -364,7 +394,7 @@ spawn |>
   theme_minimal()
 
 
-# fry and juv plots:  -----------------------------------------------------
+## fry and juv plots:  -----------------------------------------------------
 
 r_to_r_tmh_habitat <- r_to_r_tmh_fr_fry |> 
   DSMhabitat::square_meters_to_acres()
@@ -396,7 +426,7 @@ ic_fry |>
   theme_minimal()
 
 
-# floodplain exploratory plot:  -------------------------------------------
+## floodplain exploratory plot:  -------------------------------------------
 
 r_to_r_max_habitat <- r_to_r_tmh_fr_flood |> 
   DSMhabitat::square_meters_to_acres()
@@ -425,3 +455,31 @@ flood |>
   geom_line(alpha = .75) + 
   facet_wrap(~watershed, scales = 'free_y') + 
   theme_minimal()
+
+
+## delta plots -------------------------------------------------------------
+
+r_to_r_tmh_delta <- r_to_r_tmh_delta |> 
+  DSMhabitat::square_meters_to_acres()
+
+sit_habitat <- DSMhabitat::delta_habitat |> DSMhabitat::square_meters_to_acres()
+
+delta <- expand_grid(
+  watershed = c("North Delta", "South Delta"),
+  month = 1:12,
+  year = 1980:2000) |> 
+  arrange(year, month, watershed) |> 
+  mutate(
+    sit_habitat = as.vector(sit_habitat),
+    r_to_r_tmh_delta = as.vector(r_to_r_tmh_delta)) |> 
+  filter(watershed %in% c("North Delta", "South Delta"))
+
+delta |> 
+  transmute(watershed, date = lubridate::ymd(paste(year, month, 1)), 
+            sit_habitat, r_to_r_tmh_delta) |> 
+  gather(version, acres, -watershed, -date)  |> 
+  ggplot(aes(date, acres, color = version)) +
+  geom_line() + 
+  facet_wrap(~watershed, scales = 'free_y') + 
+  theme_minimal()
+
