@@ -348,16 +348,16 @@ for(i in 1:length(watersheds)) {
 # save data objects -------------------------------------------------------
 
 # Save as data object to DSMhabitat
-fr_fp <- c(DSMhabitat::fr_fp, r_to_r_scenario = list(r_to_r_tmh_fr_flood))
+fr_fp <- c(DSMhabitat::fr_fp, r_to_r_tmh = list(r_to_r_tmh_fr_flood))
 usethis::use_data(fr_fp, overwrite = TRUE)
 
-fr_fry <- c(DSMhabitat::fr_fry, r_to_r_scenario = list(r_to_r_tmh_fr_fry))
+fr_fry <- c(DSMhabitat::fr_fry, r_to_r_tmh = list(r_to_r_tmh_fr_fry))
 usethis::use_data(fr_fry, overwrite = TRUE)
 
-fr_juv <- c(DSMhabitat::fr_juv, r_to_r_scenario = list(r_to_r_tmh_fr_juv))
+fr_juv <- c(DSMhabitat::fr_juv, r_to_r_tmh = list(r_to_r_tmh_fr_juv))
 usethis::use_data(fr_juv, overwrite = TRUE)
 
-fr_spawn <- c(DSMhabitat::fr_spawn, r_to_r_scenario = list(r_to_r_tmh_fr_spawn))
+fr_spawn <- c(DSMhabitat::fr_spawn, r_to_r_tmh = list(r_to_r_tmh_fr_spawn))
 usethis::use_data(fr_spawn, overwrite = TRUE)
 
 # TODO: placeholder for when we trust the delta values 
