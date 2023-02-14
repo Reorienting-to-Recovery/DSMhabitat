@@ -212,9 +212,7 @@ all_hab_data_long <- all_habitat_data |>
 # update DSMhabitat values ------------------------------------------------
 
 watersheds <- unique(all_hab_data_long$watershed)
-
 watersheds <- watersheds[!(watersheds %in%  c('North Delta', "South Delta"))]
-
 
 ### spawning:
 r_to_r_tmh_fr_spawn <- DSMhabitat::fr_spawn$biop_itp_2018_2019
@@ -238,14 +236,91 @@ for(i in 1:length(watersheds)) {
   # the theoretical maximum habitat value was used for baseline and model runs. 
   adj_factor = (max_hab_acres - existing_acres) / existing_acres + 1
   
-  add_max_hab <- DSMhabitat::fr_spawn$biop_itp_2018_2019[ws , , ] * adj_factor
+  new_hab_acres <- DSMhabitat::fr_spawn$biop_itp_2018_2019[ws , , ] * adj_factor
   
-  updated_habitat_max_hab <- DSMhabitat::fr_spawn$biop_itp_2018_2019[ws, , ] + add_max_hab
+  #updated_habitat_max_hab <- DSMhabitat::fr_spawn$biop_itp_2018_2019[ws, , ] <- new_hab_acres
   
-  r_to_r_tmh_fr_spawn[ws, , ] <- updated_habitat_max_hab 
+  r_to_r_tmh_fr_spawn[ws, , ] <- new_hab_acres 
   
 }
 
+
+# Add inchannel habitat to both fry and juvenile habitat objects ---------------
+# set r_to_r_baseline_fr_juv and fry 
+r_to_r_max_habitat_fr_juv <- DSMhabitat::fr_juv$biop_itp_2018_2019
+r_to_r_max_habitat_fr_fry <- DSMhabitat::fr_fry$biop_itp_2018_2019
+
+for(i in 1:length(watersheds)) {
+  ws = watersheds[i]
+  habitat = "rear"
+  
+  max_hab_acres <- all_hab_data_long |> 
+    filter(watershed == ws & hab == habitat) |> 
+    filter(max_hab == "max_hab") |> 
+    pull(value)
+  
+  existing_acres_juv =   all_hab_data_long |> 
+    filter(watershed == ws & hab == habitat) |> 
+    filter(unit != "cfs") |>  
+    filter(is.na(max_hab)) |> 
+    filter(lifestage == "juv") |> 
+    pull(value)
+  
+  existing_acres_fry =   all_hab_data_long |> 
+    filter(watershed == ws & hab == habitat) |> 
+    filter(unit != "cfs") |>  
+    filter(is.na(max_hab)) |> 
+    filter(lifestage == "fry") |> 
+    pull(value)
+  
+  # Note: If the maximum theoretical habitat was less than the existing SIT habitat, 
+  # the theoretical maximum habitat value was used for baseline and model runs. 
+  adj_factor_juv = (max_hab_acres - existing_acres_juv) / existing_acres_juv + 1
+  adj_factor_fry = (max_hab_acres - existing_acres_fry) / existing_acres_fry + 1
+  
+  add_max_hab_juv <- DSMhabitat::fr_juv$biop_itp_2018_2019[ws , , ] * adj_factor_juv
+  add_max_hab_fry <- DSMhabitat::fr_fry$biop_itp_2018_2019[ws , , ] * adj_factor_fry
+  
+  r_to_r_max_habitat_fr_juv[ws, , ] <- add_max_hab_juv 
+  r_to_r_max_habitat_fr_fry[ws, , ] <- add_max_hab_fry 
+  
+}
+
+
+
+### floodplain: -------------------------------------------------------------
+r_to_r_tmh_fr_flood <- DSMhabitat::fr_fp$biop_itp_2018_2019
+
+for(i in 1:length(watersheds)) {
+  ws = watersheds[i]
+  habitat = "flood"
+  
+  max_hab_acres <- all_hab_data_long |> 
+    filter(watershed == ws & hab == habitat) |> 
+    filter(max_hab == "max_hab") |> 
+    pull(value)
+  
+  existing_acres =   all_hab_data_long |> 
+    filter(watershed == ws & hab == habitat) |> 
+    filter(unit != "cfs") |>  
+    filter(is.na(max_hab)) |> 
+    pull(value)
+  
+  # Note: If the maximum theoretical habitat was less than the existing SIT habitat, 
+  # the theoretical maximum habitat value was used for baseline and model runs. 
+  adj_factor = (max_hab_acres - existing_acres) / existing_acres + 1
+  
+  new_hab_acres <- DSMhabitat::fr_fp$biop_itp_2018_2019[ws , , ] * adj_factor
+  
+  r_to_r_tmh_fr_flood[ws, , ] <- new_hab_acres 
+  
+}
+
+
+
+# Exploratory Plots:  -----------------------------------------------------
+
+### spawning plot:  ---------------------------------------------------------
 r_to_r_max_habitat <- r_to_r_tmh_fr_spawn |> 
   DSMhabitat::square_meters_to_acres()
 
@@ -266,6 +341,69 @@ spawn <- expand_grid(
                           "Clear Creek"))
 
 spawn |> 
+  transmute(watershed, date = lubridate::ymd(paste(year, month, 1)), 
+            sit_habitat, r_to_r_max_habitat) |> 
+  gather(version, acres, -watershed, -date)  |> 
+  ggplot(aes(date, acres, color = version)) +
+  geom_line(alpha = .75) + 
+  facet_wrap(~watershed, scales = 'free_y') + 
+  theme_minimal()
+
+
+# fry and juv plots:  -----------------------------------------------------
+
+r_to_r_tmh_habitat <- r_to_r_max_habitat_fr_fry |> 
+  DSMhabitat::square_meters_to_acres()
+
+sit_habitat <- DSMhabitat::fr_fry$biop_itp_2018_2019 |> DSMhabitat::square_meters_to_acres()
+
+ic_fry <- expand_grid(
+  watershed = factor(DSMscenario::watershed_labels, 
+                     levels = DSMscenario::watershed_labels),
+  month = 1:12,
+  year = 1980:2000) |> 
+  arrange(year, month, watershed) |> 
+  mutate(
+    sit_habitat = as.vector(sit_habitat),
+    r_to_r_tmh_habitat = as.vector(r_to_r_tmh_habitat)) |> 
+  filter(watershed %in% c("American River", 
+                          "Tuolumne River",
+                          "Upper Sacramento River",
+                          "Upper-mid Sacramento River"
+  ))
+
+ic_fry |> 
+  transmute(watershed, date = lubridate::ymd(paste(year, month, 1)), 
+            sit_habitat, r_to_r_tmh_habitat) |> 
+  gather(version, acres, -watershed, -date)  |> 
+  ggplot(aes(date, acres, color = version)) +
+  geom_line(alpha = .75) + 
+  facet_wrap(~watershed, scales = 'free_y') + 
+  theme_minimal()
+
+
+# floodplain exploratory plot:  -------------------------------------------
+
+r_to_r_max_habitat <- r_to_r_tmh_fr_flood |> 
+  DSMhabitat::square_meters_to_acres()
+
+sit_habitat <- DSMhabitat::fr_fp$biop_itp_2018_2019 |> DSMhabitat::square_meters_to_acres()
+
+flood <- expand_grid(
+  watershed = factor(DSMscenario::watershed_labels, 
+                     levels = DSMscenario::watershed_labels),
+  month = 1:12,
+  year = 1980:2000) |> 
+  arrange(year, month, watershed) |> 
+  mutate(
+    sit_habitat = as.vector(sit_habitat),
+    r_to_r_max_habitat = as.vector(r_to_r_max_habitat)) |> 
+  filter(watershed %in% c("American River", 
+                          "Upper Sacramento River", 
+                          "Paynes Creek", 
+                          "Clear Creek"))
+
+flood |> 
   transmute(watershed, date = lubridate::ymd(paste(year, month, 1)), 
             sit_habitat, r_to_r_max_habitat) |> 
   gather(version, acres, -watershed, -date)  |> 
