@@ -214,7 +214,8 @@ all_hab_data_long <- all_habitat_data |>
 watersheds <- unique(all_hab_data_long$watershed)
 watersheds <- watersheds[!(watersheds %in%  c('North Delta', "South Delta"))]
 
-### spawning:
+## spawning ----------------------------------------------------------------
+
 r_to_r_tmh_fr_spawn <- DSMhabitat::fr_spawn$biop_itp_2018_2019
 
 for(i in 1:length(watersheds)) {
@@ -238,17 +239,15 @@ for(i in 1:length(watersheds)) {
   
   new_hab_acres <- DSMhabitat::fr_spawn$biop_itp_2018_2019[ws , , ] * adj_factor
   
-  #updated_habitat_max_hab <- DSMhabitat::fr_spawn$biop_itp_2018_2019[ws, , ] <- new_hab_acres
-  
   r_to_r_tmh_fr_spawn[ws, , ] <- new_hab_acres 
   
 }
 
 
-# Add inchannel habitat to both fry and juvenile habitat objects ---------------
-# set r_to_r_baseline_fr_juv and fry 
-r_to_r_max_habitat_fr_juv <- DSMhabitat::fr_juv$biop_itp_2018_2019
-r_to_r_max_habitat_fr_fry <- DSMhabitat::fr_fry$biop_itp_2018_2019
+## inchannel habitat to both fry and juvenile habitat objects ---------------
+### set r_to_r_baseline_fr_juv and fry 
+r_to_r_tmh_fr_juv <- DSMhabitat::fr_juv$biop_itp_2018_2019
+r_to_r_tmh_fr_fry <- DSMhabitat::fr_fry$biop_itp_2018_2019
 
 for(i in 1:length(watersheds)) {
   ws = watersheds[i]
@@ -281,14 +280,14 @@ for(i in 1:length(watersheds)) {
   add_max_hab_juv <- DSMhabitat::fr_juv$biop_itp_2018_2019[ws , , ] * adj_factor_juv
   add_max_hab_fry <- DSMhabitat::fr_fry$biop_itp_2018_2019[ws , , ] * adj_factor_fry
   
-  r_to_r_max_habitat_fr_juv[ws, , ] <- add_max_hab_juv 
-  r_to_r_max_habitat_fr_fry[ws, , ] <- add_max_hab_fry 
+  r_to_r_tmh_fr_juv[ws, , ] <- add_max_hab_juv 
+  r_to_r_tmh_fr_fry[ws, , ] <- add_max_hab_fry 
   
 }
 
 
 
-### floodplain: -------------------------------------------------------------
+##floodplain: -------------------------------------------------------------
 r_to_r_tmh_fr_flood <- DSMhabitat::fr_fp$biop_itp_2018_2019
 
 for(i in 1:length(watersheds)) {
@@ -316,6 +315,21 @@ for(i in 1:length(watersheds)) {
   
 }
 
+
+# save data objects -------------------------------------------------------
+
+# Save as data object to DSMhabitat
+fr_fp <- c(DSMhabitat::fr_fp, r_to_r_scenario = list(r_to_r_tmh_fr_flood))
+usethis::use_data(fr_fp, overwrite = TRUE)
+
+fr_fry <- c(DSMhabitat::fr_fry, r_to_r_scenario = list(r_to_r_tmh_fr_fry))
+usethis::use_data(fr_fry, overwrite = TRUE)
+
+fr_juv <- c(DSMhabitat::fr_juv, r_to_r_scenario = list(r_to_r_tmh_fr_juv))
+usethis::use_data(fr_juv, overwrite = TRUE)
+
+fr_spawn <- c(DSMhabitat::fr_spawn, r_to_r_scenario = list(r_to_r_tmh_fr_spawn))
+usethis::use_data(fr_spawn, overwrite = TRUE)
 
 
 # Exploratory Plots:  -----------------------------------------------------
@@ -352,7 +366,7 @@ spawn |>
 
 # fry and juv plots:  -----------------------------------------------------
 
-r_to_r_tmh_habitat <- r_to_r_max_habitat_fr_fry |> 
+r_to_r_tmh_habitat <- r_to_r_tmh_fr_fry |> 
   DSMhabitat::square_meters_to_acres()
 
 sit_habitat <- DSMhabitat::fr_fry$biop_itp_2018_2019 |> DSMhabitat::square_meters_to_acres()
