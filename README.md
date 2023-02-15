@@ -38,8 +38,7 @@ The `DSMhabitat` package provides data for several other packages within the [CV
 
 IP-117068
 
-::: {style="margin-top: 40px;"}
-Data Assembled and Maintained by <a href = "http://www.flowwest.com/" target = "_blank"> <img src="man/figures/TransLogoTreb.png" width="150px"/>
-:::
 
-### 
+Data Assembled and Maintained by <a href = "http://www.flowwest.com/" target = "_blank"> <img src="man/figures/TransLogoTreb.png" width="150px"/>
+
+
