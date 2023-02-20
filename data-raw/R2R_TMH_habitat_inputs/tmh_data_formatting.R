@@ -332,16 +332,16 @@ for(i in 1:length(watersheds)) {
   
   # Instead of taking hab at the median flow to compare take median hab 
   # Check in with Mark on this assumption 
-  existing_acres <- median(DSMhabitat::delta_habitat[ , , ws]) |> 
+  existing_acres <- median(DSMhabitat::delta_habitat$sit_input[ , , ws]) |> 
     DSMhabitat::square_meters_to_acres()
   
   # Note: If the maximum theoretical habitat was less than the existing SIT habitat, 
   # the theoretical maximum habitat value was used for baseline and model runs. 
   adj_factor = (max_hab_acres - existing_acres) / existing_acres + 1
   
-  new_hab_acres <- DSMhabitat::delta_habitat[ , , ws] * adj_factor
+  new_hab_acres <- DSMhabitat::delta_habitat$sit_input[ , , ws] * adj_factor
   
-  r_to_r_tmh_delta[, , ws ] <- new_hab_acres 
+  r_to_r_tmh_delta$sit_input[, , ws ] <- new_hab_acres 
   
 }
 
@@ -459,10 +459,10 @@ flood |>
 
 ## delta plots -------------------------------------------------------------
 
-r_to_r_tmh_delta <- r_to_r_tmh_delta |> 
+r_to_r_tmh_delta <- r_to_r_tmh_delta$sit_input |> 
   DSMhabitat::square_meters_to_acres()
 
-sit_habitat <- DSMhabitat::delta_habitat |> DSMhabitat::square_meters_to_acres()
+sit_habitat <- DSMhabitat::delta_habitat$sit_input |> DSMhabitat::square_meters_to_acres()
 
 delta <- expand_grid(
   watershed = c("North Delta", "South Delta"),
