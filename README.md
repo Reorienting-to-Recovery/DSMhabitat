@@ -32,12 +32,6 @@ Similarly, where available, results from floodplain hydraulic modeling studies w
 
 The `DSMhabitat` package provides data for several other packages within the [CVPIA Open Science Collaborative](https://github.com/CVPIA-OSC). These relationships are visualized in the dependency graph below. <img src="man/figures/dependencyChain.svg" width="100%"/>
 
-### License
-
-[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
-
-IP-117068
-
 
 Data Assembled and Maintained by <a href = "http://www.flowwest.com/" target = "_blank"> <img src="man/figures/TransLogoTreb.png" width="150px"/>
 
