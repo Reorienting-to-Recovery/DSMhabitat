@@ -186,6 +186,11 @@ widths_lengths <- bind_rows(above_dam_calcs |> mutate(dam = "above dam"),
 #saveRDS(widths_lengths, '../r2r_model_inputs_app/data/above_dam_extents/river_widths_lengths.rds')
 
 
+tmh_acres <- bind_rows(above_dam_acres |> mutate(dam = "above dam"), 
+                            below_dam_acres |>  mutate(dam = "below dam"), 
+                            unreg_acres |> mutate(dam = "unregulated"),
+                            hec_ras_calc |> mutate(dam = "below dam"))
+
 # format_all_data ---------------------------------------------------------
 
 cvpia_habitat_data <- read_csv('data-raw/R2R_TMH_habitat_inputs/CVPIA_habitat_data.csv') |> 
@@ -235,7 +240,11 @@ for(i in 1:length(watersheds)) {
   
   # Note: If the maximum theoretical habitat was less than the existing SIT habitat, 
   # the theoretical maximum habitat value was used for baseline and model runs. 
-  adj_factor = (max_hab_acres - existing_acres) / existing_acres + 1
+  if(existing_acres == 0 | is.na(existing_acres)) {
+    adj_factor = 1
+  } else {
+    adj_factor = (max_hab_acres - existing_acres) / existing_acres + 1
+  }
   
   new_hab_acres <- DSMhabitat::fr_spawn$biop_itp_2018_2019[ws , , ] * adj_factor
   
@@ -307,14 +316,18 @@ for(i in 1:length(watersheds)) {
   
   # Note: If the maximum theoretical habitat was less than the existing SIT habitat, 
   # the theoretical maximum habitat value was used for baseline and model runs. 
-  adj_factor = (max_hab_acres - existing_acres) / existing_acres + 1
+  if(existing_acres == 0) {
+    adj_factor = 1
+  } else {
+    adj_factor = (max_hab_acres - existing_acres) / existing_acres + 1
+  }
+  
   
   new_hab_acres <- DSMhabitat::fr_fp$biop_itp_2018_2019[ws , , ] * adj_factor
   
   r_to_r_tmh_fr_flood[ws, , ] <- new_hab_acres 
   
 }
-
 
 ##delta: -------------------------------------------------------------------
 
