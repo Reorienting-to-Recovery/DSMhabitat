@@ -201,6 +201,8 @@ all_habitat_data <- full_join(cvpia_habitat_data, all_max_habitat) |>
   select(-regulated) |> 
   glimpse()
 
+#write_csv(all_habitat_data, "../r2r_model_inputs_app/data-raw/all_habitat_data.csv")
+
 all_hab_data_long <- all_habitat_data |>
   mutate(watershed = ifelse(watershed == "Lower San Joaquin River", "San Joaquin River", watershed)) |> 
   rename(spwn_acres_max = max_spawning_acres,
@@ -361,16 +363,17 @@ for(i in 1:length(watersheds)) {
 # save data objects -------------------------------------------------------
 
 # Save as data object to DSMhabitat
-fr_fp <- c(DSMhabitat::fr_fp, r_to_r_tmh = list(r_to_r_tmh_fr_flood))
+
+fr_fp <- c(DSMhabitat::fr_fp[1:3], r_to_r_tmh = list(r_to_r_tmh_fr_flood))
 usethis::use_data(fr_fp, overwrite = TRUE)
 
-fr_fry <- c(DSMhabitat::fr_fry, r_to_r_tmh = list(r_to_r_tmh_fr_fry))
+fr_fry <- c(DSMhabitat::fr_fry[1:3], r_to_r_tmh = list(r_to_r_tmh_fr_fry))
 usethis::use_data(fr_fry, overwrite = TRUE)
 
-fr_juv <- c(DSMhabitat::fr_juv, r_to_r_tmh = list(r_to_r_tmh_fr_juv))
+fr_juv <- c(DSMhabitat::fr_juv[1:3], r_to_r_tmh = list(r_to_r_tmh_fr_juv))
 usethis::use_data(fr_juv, overwrite = TRUE)
 
-fr_spawn <- c(DSMhabitat::fr_spawn, r_to_r_tmh = list(r_to_r_tmh_fr_spawn))
+fr_spawn <- c(DSMhabitat::fr_spawn[1:3], r_to_r_tmh = list(r_to_r_tmh_fr_spawn))
 usethis::use_data(fr_spawn, overwrite = TRUE)
 
 # TODO: placeholder for when we trust the delta values 
