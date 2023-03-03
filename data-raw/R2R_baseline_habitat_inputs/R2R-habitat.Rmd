@@ -54,7 +54,7 @@ FlowWest summarized the project catalog by run, tributary, and habitat type to f
 ```{r, echo = FALSE, message = FALSE}
 fall_summary <- read_csv("data-raw/R2R_baseline_habitat_inputs/R2R_project_catalog_fall_summary.csv") |> 
   select(Watershed = watershed, `Habitat Type` = habitat_type, 
-         Run = run, `Total Acres` = total_acres) 
+         Run = run, `Proportion Suitable` = percent_suitable, `Total Acres` = total_acres) 
 
 knitr::kable(fall_summary, table.attr = "style='width:100%;'")  |> 
   kableExtra::kable_styling(full_width = T)
@@ -104,9 +104,24 @@ existing_cfs_median_comparison_point("inchannel rearing", "American River",
 
 For floodplain habitat we use the 2 year 30 day exceedence value.
 
+```{r}
+existing_cfs_median_comparison_point("floodplain rearing", "American River", 
+                                     "fr", 'biop_itp_2018_2019')
+```
+
 #### 2) Calculation proportion increase of habitat at flow point of reference
+```{r}
+hab_prop_change_from_projects("inchannel rearing", "American River", 
+                              "fr", "juv", "biop_itp_2018_2019")
+```
 
 #### 3) Scale existing habitat up by proportion increase
+```{r}
+add_project_habitat <- DSMhabitat::fr_juv$biop_itp_2018_2019["American River" , , ] * 
+  hab_prop_change_from_projects("inchannel rearing", "American River", "fr", "juv", "biop_itp_2018_2019")
+
+updated_habitat <- DSMhabitat::fr_juv$biop_itp_2018_2019["American River", , ] + add_project_habitat
+```
 
 ### Baseline Habitat Plots
 
@@ -148,8 +163,6 @@ spawn |>
 ```
 
 #### Inchannel Rearing Fry Habitat
-
-TODO make sure new Tuolumne inputs showing up in graphs
 
 ```{r, echo = FALSE}
 # Exploratory plot 
