@@ -702,7 +702,21 @@ inchannel rearing
 fall
 </td>
 <td style="text-align:right;">
-5.00
+2.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+American River
+</td>
+<td style="text-align:left;">
+inchannel rearing
+</td>
+<td style="text-align:left;">
+fall
+</td>
+<td style="text-align:right;">
+1.00
 </td>
 </tr>
 <tr>
@@ -811,11 +825,38 @@ fall
 <h3>Methodology for integrating habitat projects into model SIT DSM
 inputs</h3>
 <p>The first step was to convert total project acres into usable area
-given the following assumptins:</p>
+given the following assumptions:</p>
 <ul>
-<li>Floodplain use 90% suitable</li>
-<li>In channel use 10% suitable - low gradient (high gradient?)</li>
-<li>Spawning use 12% suitable</li>
+<li><p>Floodplain use 90% suitable</p></li>
+<li><p>In channel suitability depends on gradient (<a href="http://www.ycwa-relicensing.com/Technical%20References/07%20-%20Threatened%20Endangered%20and%20Fully%20Protected%20Species/2012%20-%200221%20-%20Stillwater%20Sciences%20RIPPLE%20Report.pdf">Stillwater
+Sciences. 2012</a>)</p>
+<table>
+<thead>
+<tr class="header">
+<th>Gradient</th>
+<th>Percent Suitable</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>&lt; 0.04%</td>
+<td>0.1</td>
+</tr>
+<tr class="even">
+<td>0 - 2</td>
+<td>0.78</td>
+</tr>
+<tr class="odd">
+<td>2 - 4</td>
+<td>0.585</td>
+</tr>
+<tr class="even">
+<td>4 - 8</td>
+<td>0.195</td>
+</tr>
+</tbody>
+</table></li>
+<li><p>Spawning use 12% suitable</p></li>
 </ul>
 <p>Habitat values for projects were not given for specific flows. To
 combine project acres with existing habitat we used a scaling approach
@@ -841,7 +882,7 @@ rearing</p>
 </div>
 <div id="floodplain-point-of-reference" class="section level5">
 <h5>Floodplain Point of Reference</h5>
-<p>For floodplain habitat we use the 2 year floodplan…</p>
+<p>For floodplain habitat we use the 2 year 30 day exceedence value.</p>
 </div>
 </div>
 <div id="calculation-proportion-increase-of-habitat-at-flow-point-of-reference" class="section level4">

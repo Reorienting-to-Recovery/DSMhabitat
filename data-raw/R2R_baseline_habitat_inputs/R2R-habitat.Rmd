@@ -19,6 +19,7 @@ knitr::opts_chunk$set(
 library(DSMhabitat)
 library(tidyverse)
 library(lubridate)
+source("data-raw/R2R_baseline_habitat_inputs/generate_hab_helper_functions.R")
 ```
 
 DRAFT
@@ -61,10 +62,19 @@ knitr::kable(fall_summary, table.attr = "style='width:100%;'")  |>
 
 ### Methodology for integrating habitat projects into model SIT DSM inputs
 
-The first step was to convert total project acres into usable area given the following assumptins:
+The first step was to convert total project acres into usable area given the following assumptions:
 
 -   Floodplain use 90% suitable
--   In channel use 10% suitable - low gradient (high gradient?)
+
+-   In channel suitability depends on gradient ([Stillwater Sciences. 2012](http://www.ycwa-relicensing.com/Technical%20References/07%20-%20Threatened%20Endangered%20and%20Fully%20Protected%20Species/2012%20-%200221%20-%20Stillwater%20Sciences%20RIPPLE%20Report.pdf))
+
+    | Gradient | Percent Suitable |
+    |----------|------------------|
+    | \< 0.04% | 0.1              |
+    | 0 - 2    | 0.78             |
+    | 2 - 4    | 0.585            |
+    | 4 - 8    | 0.195            |
+
 -   Spawning use 12% suitable
 
 Habitat values for projects were not given for specific flows. To combine project acres with existing habitat we used a scaling approach (figure 1).
@@ -92,7 +102,7 @@ existing_cfs_median_comparison_point("inchannel rearing", "American River",
 
 ##### Floodplain Point of Reference
 
-For floodplain habitat we use the 2 year floodplan...
+For floodplain habitat we use the 2 year 30 day exceedence value.
 
 #### 2) Calculation proportion increase of habitat at flow point of reference
 
