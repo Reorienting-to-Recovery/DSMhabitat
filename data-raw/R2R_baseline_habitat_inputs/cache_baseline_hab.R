@@ -2,13 +2,6 @@ library(tidyverse)
 source("data-raw/R2R_baseline_habitat_inputs/generate_hab_helper_functions.R")
 
 # Update DSMhabitat values 
-# TODO ALL fall run for now, generatlize for all later 
-# TODO add in habitats for the ones that are "Confirm if this is for adult or juvenile" 
-
-# Update spawning --------------------------------------------------------------
-# TODO see if I can functionalize this, for now this works 
-# watershed <- c("American River", "Upper Sacramento River") # list all spawning watersheds with projects
-
 # set r_to_r_baseline_fr_spawn to 
 r_to_r_baseline_fr_spawn <- DSMhabitat::fr_spawn$biop_itp_2018_2019
 
@@ -45,7 +38,9 @@ r_to_r_baseline_fr_spawn["Upper Sacramento River", , ] <- updated_habitat
 r_to_r_baseline_fr_spawn == DSMhabitat::fr_spawn$biop_itp_2018_2019
 
 # Save as data object to DSMhabitat
-fr_spawn <- c(DSMhabitat::fr_spawn, r_to_r_baseline = list(r_to_r_baseline_fr_spawn))
+current_fr_spawn <- DSMhabitat::fr_spawn
+current_fr_spawn$r_to_r_baseline <- r_to_r_baseline_fr_spawn
+fr_spawn <- current_fr_spawn
 usethis::use_data(fr_spawn, overwrite = TRUE)
 
 # Exploratory plot 
@@ -125,6 +120,7 @@ r_to_r_baseline_fr_juv["Upper Sacramento River", , ] <- updated_habitat
 # Add upper sacramento  river fry habitat 
 add_project_habitat <- DSMhabitat::fr_fry$biop_itp_2018_2019["Upper Sacramento River" , , ] * 
   hab_prop_change_from_projects("inchannel rearing", "Upper Sacramento River", "fr", "fry", "biop_itp_2018_2019")
+
 updated_habitat <- DSMhabitat::fr_fry$biop_itp_2018_2019["Upper Sacramento River", , ] + add_project_habitat
 
 r_to_r_baseline_fr_fry["Upper Sacramento River", , ] <- updated_habitat 
@@ -152,11 +148,15 @@ r_to_r_baseline_fr_juv == DSMhabitat::fr_juv$biop_itp_2018_2019
 r_to_r_baseline_fr_fry == DSMhabitat::fr_fry$biop_itp_2018_2019
 
 # Save as data object to DSMhabitat
-fr_juv <- c(DSMhabitat::fr_juv, r_to_r_baseline = list(r_to_r_baseline_fr_juv))
+current_fr_juv <- DSMhabitat::fr_juv
+current_fr_juv$r_to_r_baseline <- r_to_r_baseline_fr_juv
+fr_juv <- current_fr_juv
 usethis::use_data(fr_juv, overwrite = TRUE)
 
 # Save as data object to DSMhabitat
-fr_fry <- c(DSMhabitat::fr_fry, r_to_r_baseline = list(r_to_r_baseline_fr_fry))
+current_fr_fry <- DSMhabitat::fr_fry
+current_fr_fry$r_to_r_baseline <- r_to_r_baseline_fr_fry
+fr_fry <- current_fr_fry
 usethis::use_data(fr_fry, overwrite = TRUE)
 
 # Exploratory plot 
@@ -255,7 +255,9 @@ r_to_r_baseline_fr_fp["Yuba River" , , ] <- updated_habitat
 r_to_r_baseline_fr_fp == DSMhabitat::fr_fp$biop_itp_2018_2019
 
 # Save as data object to DSMhabitat
-fr_fp <- c(DSMhabitat::fr_fp, r_to_r_baseline = list(r_to_r_baseline_fr_fp))
+current_fr_fp <- DSMhabitat::fr_fp
+current_fr_fp$r_to_r_baseline <- r_to_r_baseline_fr_fp
+fr_fp <- current_fr_fp
 usethis::use_data(fr_fp, overwrite = TRUE)
 
 # Exploratory plot 
@@ -290,17 +292,17 @@ fp |>
 
 
 # Add north delta habitat ------------------------------------------------------
-r_to_r_baseline_delta <- DSMhabitat::delta_habitat
-add_project_habitat <- DSMhabitat::delta_habitat[ , ,"North Delta" ] * 
+r_to_r_baseline_delta <- DSMhabitat::delta_habitat$sit_input
+add_project_habitat <- DSMhabitat::delta_habitat$sit_input[ , ,"North Delta" ] * 
   hab_prop_change_from_projects("floodplain rearing", "North Delta" , 
                                 "fr", "juv", "biop_itp_2018_2019")
-updated_habitat <- DSMhabitat::delta_habitat[ , ,"North Delta" ] + add_project_habitat
+updated_habitat <- DSMhabitat::delta_habitat$sit_input[ , ,"North Delta" ] + add_project_habitat
 
 r_to_r_baseline_delta[ , , "North Delta"] <- updated_habitat 
 
 # check hab differences 
 # north delta should be different 
-r_to_r_baseline_delta == DSMhabitat::delta_habitat
+r_to_r_baseline_delta == DSMhabitat::delta_habitat$sit_input
 
 
 
@@ -308,7 +310,7 @@ r_to_r_baseline_delta == DSMhabitat::delta_habitat
 r_to_r_baseline_habitat <- r_to_r_baseline_delta[,, "North Delta"] |> 
   DSMhabitat::square_meters_to_acres()
 
-sit_habitat <- DSMhabitat::delta_habitat[,, "North Delta"] |> DSMhabitat::square_meters_to_acres()
+sit_habitat <- DSMhabitat::delta_habitat$sit_input[,, "North Delta"] |> DSMhabitat::square_meters_to_acres()
 
 delta <- expand_grid(
   watershed = "North Delta",
@@ -331,5 +333,6 @@ delta |>
   theme_minimal()
 
 # Save as data object to DSMhabitat
-delta_habitat <- c(sit_input = list(DSMhabitat::delta_habitat), r_to_r_baseline = list(r_to_r_baseline_delta))
+delta_habitat <- c(sit_input = list(DSMhabitat::delta_habitat$sit_input), r_to_r_baseline = list(r_to_r_baseline_delta))
 usethis::use_data(delta_habitat, overwrite = TRUE)
+
