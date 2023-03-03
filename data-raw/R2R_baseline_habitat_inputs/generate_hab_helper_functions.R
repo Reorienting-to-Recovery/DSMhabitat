@@ -68,9 +68,9 @@ hab_prop_change_from_projects <- function(habitat_type, watershed, species, life
   
   # pull project hab out of project catalog 
   project_hab_added <- read_csv("data-raw/R2R_baseline_habitat_inputs/R2R_project_catalog_fall_summary.csv") |> 
-    mutate(suitable_acres = case_when(habitat_type == "spawning" ~ total_acres * .12, 
-                                      habitat_type == "inchannel rearing" ~ total_acres * .1, 
-                                      habitat_type == "floodplain rearing" ~ total_acres * .9)) |> 
+    mutate(suitable_acres = total_acres * percent_suitable) |> 
+    group_by(watershed, habitat_type, run) |> 
+    summarize(suitable_acres = sum(suitable_acres)) |> 
     filter(watershed == ws & habitat_type == hab) |> pull(suitable_acres)
   
   project_hab_sqmeters <- DSMhabitat::acres_to_square_meters(project_hab_added)
@@ -91,10 +91,15 @@ hab_prop_change_from_projects <- function(habitat_type, watershed, species, life
                                                                        calsim_version)
     sit_habitat <- DSMhabitat::set_floodplain_habitat(watershed, species, thirty_day_mean_exceedence)
   }
+  if (habitat_type == "floodplain rearing" & watershed == "Tuolumne River") {
+    # pull comparison flow from FlowWest modeling instead of using the 30 day exceedence 
+    comparison_flow <- 2500
+    sit_habitat <- DSMhabitat::set_floodplain_habitat(watershed, species, comparison_flow)
+  }
   if (watershed == "North Delta") {
   # Instead of taking hab at the median flow to compare take median hab 
   # Check in with Mark on this assumption 
-  sit_habitat <- median(DSMhabitat::delta_habitat[ , , "North Delta"])
+  sit_habitat <- median(DSMhabitat::delta_habitat$sit_input[ , , "North Delta"])
   }
   
   # find proportion of habitat added 
@@ -104,5 +109,5 @@ hab_prop_change_from_projects <- function(habitat_type, watershed, species, life
 } 
 
 # hab_prop_change_from_projects("floodplain rearing", "North Delta", "fr", "juv", "biop_itp_2018_2019")
-hab_prop_change_from_projects("floodplain rearing", "American River", "fr", "juv", "biop_itp_2018_2019")
+hab_prop_change_from_projects("floodplain rearing", "Tuolumne River", "fr", "juv", "biop_itp_2018_2019")
 hab_prop_change_from_projects("spawning", "American River", "fr", "adult", "biop_itp_2018_2019")
