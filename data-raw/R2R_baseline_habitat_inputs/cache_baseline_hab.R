@@ -38,7 +38,9 @@ r_to_r_baseline_fr_spawn["Upper Sacramento River", , ] <- updated_habitat
 r_to_r_baseline_fr_spawn == DSMhabitat::fr_spawn$biop_itp_2018_2019
 
 # Save as data object to DSMhabitat
-fr_spawn <- c(DSMhabitat::fr_spawn, r_to_r_baseline = list(r_to_r_baseline_fr_spawn))
+current_fr_spawn <- DSMhabitat::fr_spawn
+current_fr_spawn$r_to_r_baseline <- r_to_r_baseline_fr_spawn
+fr_spawn <- current_fr_spawn
 usethis::use_data(fr_spawn, overwrite = TRUE)
 
 # Exploratory plot 
@@ -146,11 +148,15 @@ r_to_r_baseline_fr_juv == DSMhabitat::fr_juv$biop_itp_2018_2019
 r_to_r_baseline_fr_fry == DSMhabitat::fr_fry$biop_itp_2018_2019
 
 # Save as data object to DSMhabitat
-fr_juv <- c(DSMhabitat::fr_juv, r_to_r_baseline = list(r_to_r_baseline_fr_juv))
+current_fr_juv <- DSMhabitat::fr_juv
+current_fr_juv$r_to_r_baseline <- r_to_r_baseline_fr_juv
+fr_juv <- current_fr_juv
 usethis::use_data(fr_juv, overwrite = TRUE)
 
 # Save as data object to DSMhabitat
-fr_fry <- c(DSMhabitat::fr_fry, r_to_r_baseline = list(r_to_r_baseline_fr_fry))
+current_fr_fry <- DSMhabitat::fr_fry
+current_fr_fry$r_to_r_baseline <- r_to_r_baseline_fr_fry
+fr_fry <- current_fr_fry
 usethis::use_data(fr_fry, overwrite = TRUE)
 
 # Exploratory plot 
@@ -249,7 +255,9 @@ r_to_r_baseline_fr_fp["Yuba River" , , ] <- updated_habitat
 r_to_r_baseline_fr_fp == DSMhabitat::fr_fp$biop_itp_2018_2019
 
 # Save as data object to DSMhabitat
-fr_fp <- c(DSMhabitat::fr_fp, r_to_r_baseline = list(r_to_r_baseline_fr_fp))
+current_fr_fp <- DSMhabitat::fr_fp
+current_fr_fp$r_to_r_baseline <- r_to_r_baseline_fr_fp
+fr_fp <- current_fr_fp
 usethis::use_data(fr_fp, overwrite = TRUE)
 
 # Exploratory plot 
@@ -325,6 +333,6 @@ delta |>
   theme_minimal()
 
 # Save as data object to DSMhabitat
-delta_habitat <- c(sit_input = list(DSMhabitat::delta_habitat), r_to_r_baseline = list(r_to_r_baseline_delta))
+delta_habitat <- c(sit_input = list(DSMhabitat::delta_habitat$sit_input), r_to_r_baseline = list(r_to_r_baseline_delta))
 usethis::use_data(delta_habitat, overwrite = TRUE)
 
