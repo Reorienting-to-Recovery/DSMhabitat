@@ -54,7 +54,7 @@ knitr::kable(table_4_1, caption = "Table 4-1")
 
 ### Objective 1 - coarse vs. fine elevation estimate comparison
 
-As channels steepen, the ratio of suitable salmonid in-channel habitat (pools, riffles, and runs) lessens. The percent of a channel suitable for in-channel rearing depends on how steep the reach is. Calculating the channel gradient every 0.5 miles (or less) is time consuming and therefore an alternative approach was explored by estimating the average gradient by dividing the reach length by the elevation difference from top to bottom. Both approaches were used on Middle and North Yuba River to determine if the coarse estimate would be sufficient for this analysis.
+As channels steepen, the ratio of suitable salmonid in-channel habitat (pools, riffles, and runs) lessens. The percent of a channel suitable for in-channel rearing depends on how steep the reach is. A coarse elevation profile for each reach was calculated by dividing the elevation difference from top to bottom by the reach length. This is a much simpler approach than calculating the gradient with any finer granularity. A finer approach was used on Middle and North Yuba River to determine if the coarse estimate would be sufficient for this analysis.
 
 #### Coarse gradient estimate
 

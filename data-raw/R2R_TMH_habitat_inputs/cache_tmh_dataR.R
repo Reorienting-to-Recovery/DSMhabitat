@@ -1,3 +1,5 @@
+library(tidyverse)
+
 # file to cache Theoretical Max Habitat data objects 
 # and some exploratory plots to compare SIT existing 
 # to TMH
@@ -167,16 +169,16 @@ for(i in 1:length(watersheds)) {
 # Save as data object to DSMhabitat
 
 fr_fp <- c(DSMhabitat::fr_fp[1:3], r_to_r_tmh = list(r_to_r_tmh_fr_flood))
-usethis::use_data(fr_fp, overwrite = TRUE)
+#usethis::use_data(fr_fp, overwrite = TRUE)
 
 fr_fry <- c(DSMhabitat::fr_fry[1:3], r_to_r_tmh = list(r_to_r_tmh_fr_fry))
-usethis::use_data(fr_fry, overwrite = TRUE)
+#usethis::use_data(fr_fry, overwrite = TRUE)
 
 fr_juv <- c(DSMhabitat::fr_juv[1:3], r_to_r_tmh = list(r_to_r_tmh_fr_juv))
-usethis::use_data(fr_juv, overwrite = TRUE)
+#usethis::use_data(fr_juv, overwrite = TRUE)
 
 fr_spawn <- c(DSMhabitat::fr_spawn[1:3], r_to_r_tmh = list(r_to_r_tmh_fr_spawn))
-usethis::use_data(fr_spawn, overwrite = TRUE)
+#usethis::use_data(fr_spawn, overwrite = TRUE)
 
 # TODO: placeholder for when we trust the delta values 
 
