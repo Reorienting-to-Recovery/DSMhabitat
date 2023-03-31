@@ -138,29 +138,31 @@ for(i in 1:length(watersheds)) {
 ##delta: -------------------------------------------------------------------
 
 watersheds <- c('North Delta', 'South Delta')
-r_to_r_tmh_delta <- DSMhabitat::delta_habitat
+r_to_r_tmh_delta <- DSMhabitat::delta_habitat$r_to_r_baseline
 
 for(i in 1:length(watersheds)) {
   ws = watersheds[i]
   habitat = "rear"
   
-  max_hab_acres <- all_hab_data_long |> 
-    filter(watershed == ws & hab == habitat) |> 
-    filter(max_hab == "max_hab") |> 
-    pull(value)
+  # see: TMH methodology for calcs 
+  max_hab_df = data.frame(watershed = c("North Delta", "South Delta"),
+                             max_hab = c(41720, 102792)) 
   
+  max_hab_acres <- max_hab_df |> 
+    filter(watershed == ws) |> 
+    pull(max_hab)
   # Instead of taking hab at the median flow to compare take median hab 
   # Check in with Mark on this assumption 
-  existing_acres <- median(DSMhabitat::delta_habitat$sit_input[ , , ws]) |> 
+  existing_acres <- median(DSMhabitat::delta_habitat$r_to_r_baseline[ , , ws]) |> 
     DSMhabitat::square_meters_to_acres()
   
   # Note: If the maximum theoretical habitat was less than the existing SIT habitat, 
   # the theoretical maximum habitat value was used for baseline and model runs. 
   adj_factor = (max_hab_acres - existing_acres) / existing_acres + 1
   
-  new_hab_acres <- DSMhabitat::delta_habitat$sit_input[ , , ws] * adj_factor
+  new_hab_acres <- DSMhabitat::delta_habitat$r_to_r_baseline[ , , ws] * adj_factor
   
-  r_to_r_tmh_delta$sit_input[, , ws ] <- new_hab_acres 
+  r_to_r_tmh_delta[, , ws ] <- new_hab_acres 
   
 }
 
@@ -180,7 +182,8 @@ fr_juv <- c(DSMhabitat::fr_juv[1:3], r_to_r_tmh = list(r_to_r_tmh_fr_juv))
 fr_spawn <- c(DSMhabitat::fr_spawn[1:3], r_to_r_tmh = list(r_to_r_tmh_fr_spawn))
 #usethis::use_data(fr_spawn, overwrite = TRUE)
 
-# TODO: placeholder for when we trust the delta values 
+delta_habitat <- c(DSMhabitat::delta_habitat[1:2], r_to_r_tmh = list(r_to_r_tmh_delta))
+# usethis::use_data(delta_habitat, overwrite = TRUE)
 
 # Exploratory Plots:  -----------------------------------------------------
 
