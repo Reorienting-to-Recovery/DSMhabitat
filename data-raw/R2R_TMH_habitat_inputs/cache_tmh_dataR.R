@@ -4,7 +4,7 @@ library(tidyverse)
 # and some exploratory plots to compare SIT existing 
 # to TMH
 
-all_habitat_data <- readRDS('data-raw/R2R_TMH_habitat_inputs/all_habitat_data_for_tmh_inputs.rdata')
+all_habitat_data <- readRDS('data-raw/R2R_TMH_habitat_inputs/all_habitat_data_for_tmh_inputs_fall_run.rdata')
 
 
 all_hab_data_long <- all_habitat_data |>
@@ -282,10 +282,10 @@ flood |>
 
 ## delta plots -------------------------------------------------------------
 
-r_to_r_tmh_delta <- r_to_r_tmh_delta$sit_input |> 
+r_to_r_tmh_delta <- r_to_r_tmh_delta |> 
   DSMhabitat::square_meters_to_acres()
 
-sit_habitat <- DSMhabitat::delta_habitat$sit_input |> DSMhabitat::square_meters_to_acres()
+r_to_r_baseline <- DSMhabitat::delta_habitat$r_to_r_baseline |> DSMhabitat::square_meters_to_acres()
 
 delta <- expand_grid(
   watershed = c("North Delta", "South Delta"),
@@ -293,13 +293,13 @@ delta <- expand_grid(
   year = 1980:2000) |> 
   arrange(year, month, watershed) |> 
   mutate(
-    sit_habitat = as.vector(sit_habitat),
+    r_to_r_baseline = as.vector(r_to_r_baseline),
     r_to_r_tmh_delta = as.vector(r_to_r_tmh_delta)) |> 
   filter(watershed %in% c("North Delta", "South Delta"))
 
 delta |> 
   transmute(watershed, date = lubridate::ymd(paste(year, month, 1)), 
-            sit_habitat, r_to_r_tmh_delta) |> 
+            r_to_r_baseline, r_to_r_tmh_delta) |> 
   gather(version, acres, -watershed, -date)  |> 
   ggplot(aes(date, acres, color = version)) +
   geom_line() + 

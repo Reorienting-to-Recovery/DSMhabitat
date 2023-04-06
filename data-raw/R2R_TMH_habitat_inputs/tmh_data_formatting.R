@@ -10,6 +10,8 @@ rearing_perc_suitable_1_2 <- 0.78
 rearing_perc_suitable_2_4 <- 0.585
 rearing_perc_suitable_4_8 <- 0.195
 
+run <- 'Winter Run'
+
 gis_calcs <- function(data) {
   data |> 
     group_by(river) |> 
@@ -32,13 +34,14 @@ gradients <- readxl::read_excel('data-raw/R2R_TMH_habitat_inputs/River Length Su
   mutate(river_length_ft_grad = as.numeric(length_miles)*5280) |> 
   select(river = watershed, dam, river_length_ft_grad, gradient) |> 
   mutate(perc_suitable_rearing = ifelse(gradient < 0, 0.1, 
-           ifelse(gradient == 0, rearing_perc_suitable_low,
-                  ifelse(gradient > 0 & gradient < 1 , rearing_perc_suitable_0_1, 
-                         ifelse(gradient > 1 & gradient < 2, rearing_perc_suitable_1_2,
-                                ifelse(gradient > 2 & gradient < 4, rearing_perc_suitable_2_4,
-                                       ifelse(gradient > 4, rearing_perc_suitable_4_8, "uhoh"))))))) |> 
-      mutate(perc_suitable_rearing = as.numeric(perc_suitable_rearing)) |> 
-      glimpse()
+                                        ifelse(gradient == 0, rearing_perc_suitable_low,
+                                               ifelse(gradient > 0 & gradient < 1 , rearing_perc_suitable_0_1, 
+                                                      ifelse(gradient > 1 & gradient < 2, rearing_perc_suitable_1_2,
+                                                             ifelse(gradient > 2 & gradient < 4, rearing_perc_suitable_2_4,
+                                                                    ifelse(gradient > 4, rearing_perc_suitable_4_8, "uhoh"))))))) |> 
+  mutate(perc_suitable_rearing = as.numeric(perc_suitable_rearing)) |> 
+  mutate(river = ifelse(grepl("San Joaquin River", river), "San Joaquin River", river)) |> 
+  glimpse()
 
 gradients |> 
   ggplot(aes(x = river, y = gradient)) + geom_point() + coord_flip()
@@ -122,21 +125,33 @@ hec_ras_calc <- hec_ras |>
 all_below_dam_acres <- bind_rows(below_dam_acres, hec_ras_calc) 
 
 
-# total above and below dam acres  ----------------------------------------
+# total above and below dam acres  ---------------------------------------
 
-total_acres <- all_below_dam_acres |> 
-  select(-c(mean_channel_width, mean_inflection_width)) |> 
-  left_join(above_dam_acres |> 
-              select(-c(mean_channel_width, mean_inflection_width))
-            ) |> 
-  group_by(river, regulated) |> 
-  summarise(max_spawning_acres = sum(below_dam_spawning_acres, above_dam_spawning_acres, na.rm = TRUE), 
-            max_rearing_acres = sum(below_dam_rearing_acres, above_dam_rearing_acres, na.rm = TRUE), 
-            max_floodplain_acres = sum(below_dam_floodplain_acres, above_dam_floodplain_acres, na.rm = TRUE)) |> 
-  glimpse()
-
-
-
+if(run %in% c("Winter Run", "Spring Run")) {
+  total_acres <- all_below_dam_acres |> ungroup() |> 
+    mutate(river = ifelse(grepl("San Joaquin River", river), "San Joaquin River", river)) |> 
+    select(-mean_channel_width, -mean_inflection_width) |> 
+    left_join(above_dam_acres |> ungroup() |>  
+                 mutate(river = ifelse(grepl("San Joaquin River", river), "San Joaquin River", river)) |> 
+                 select(-c(mean_channel_width, mean_inflection_width))
+    ) |>  
+    group_by(river, regulated) |> 
+    summarise(max_spawning_acres = sum(below_dam_spawning_acres, above_dam_spawning_acres, na.rm = TRUE), 
+              max_rearing_acres = sum(below_dam_rearing_acres, above_dam_rearing_acres, na.rm = TRUE), 
+              max_floodplain_acres = sum(below_dam_floodplain_acres, above_dam_floodplain_acres, na.rm = TRUE)) |> 
+    glimpse()
+} else if (run == "Fall Run") {
+  ## FALL RUN: 
+  ### does not include above dam
+  total_acres <- all_below_dam_acres |> ungroup() |> 
+    select(-c(mean_channel_width, mean_inflection_width)) |> 
+    mutate(river = ifelse(grepl("San Joaquin River", river), "San Joaquin River", river)) |> 
+    group_by(river, regulated) |> 
+    summarise(max_spawning_acres = below_dam_spawning_acres, 
+              max_rearing_acres = below_dam_rearing_acres, 
+              max_floodplain_acres = below_dam_floodplain_acres) |> 
+    glimpse()
+}
 # Unregulated Calculations ------------------------------------------------
 
 unregulated <- readxl::read_excel('data-raw/R2R_TMH_habitat_inputs/Cleaned Floodplain Width Calculations.xlsx', sheet = "Unregulated") |> 
@@ -194,15 +209,20 @@ tmh_acres <- bind_rows(above_dam_acres |> mutate(dam = "above dam"),
 # format_all_data ---------------------------------------------------------
 
 cvpia_habitat_data <- read_csv('data-raw/R2R_TMH_habitat_inputs/CVPIA_habitat_data.csv') |> 
-  mutate(watershed = ifelse(watershed == "San Joaquin River", "Lower San Joaquin River", watershed)) |> 
+ # mutate(watershed = ifelse(watershed == "San Joaquin River", "Lower San Joaquin River", watershed)) |> 
   glimpse()
 
 all_habitat_data <- full_join(cvpia_habitat_data, all_max_habitat) |> 
   select(-regulated) |> 
   glimpse()
 
-#write_csv(all_habitat_data, "../r2r_model_inputs_app/data-raw/all_habitat_data.csv")
-saveRDS(all_habitat_data, "data-raw/R2R_TMH_habitat_inputs/all_habitat_data_for_tmh_inputs.rdata")
+if(run == "Fall Run") {
+  #write_csv(all_habitat_data, "../r2r_model_inputs_app/data-raw/all_habitat_data.csv")
+  saveRDS(all_habitat_data, "data-raw/R2R_TMH_habitat_inputs/all_habitat_data_for_tmh_inputs_fall_run.rdata")
+} else {
+  saveRDS(all_habitat_data, "data-raw/R2R_TMH_habitat_inputs/all_habitat_data_for_tmh_inputs_spring_winter_run.rdata")
+  
+}
 
 
 

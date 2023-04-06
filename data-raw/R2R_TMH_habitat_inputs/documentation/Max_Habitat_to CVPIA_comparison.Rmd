@@ -15,21 +15,29 @@ library(tidyverse)
 library(DSMhabitat)
 library(lubridate)
 
-all_max_habitat <- read_csv('../all_watersheds_max_habitat.csv')
+# fall run:
+all_max_habitat_fall <- readRDS('../all_habitat_data_for_tmh_inputs_fall_run.rdata') |> 
+  mutate(run = "fall run")
+
+all_max_habitat_winter_spring <- readRDS('../all_habitat_data_for_tmh_inputs_spring_winter_run.rdata') |> 
+  mutate(run = "winter and spring run")
+
 cvpia_habitat_data <- read_csv('../CVPIA_habitat_data.csv') |> 
    #select(-c(spwn_flow, rear_flow, flood_flow)) |> 
    mutate(watershed = ifelse(watershed == "San Joaquin River", "Lower San Joaquin River", watershed))
 ```
+
+## Fall Run
 
 ```{r}
 
 cvpia_habitat_data |> 
   glimpse()
 
-all_max_habitat |> 
+all_max_habitat_fall |> 
   glimpse()
 
-all_habitat_data <- full_join(cvpia_habitat_data, all_max_habitat) |> 
+all_habitat_data <- full_join(cvpia_habitat_data, all_max_habitat_fall) |> 
   glimpse()
 
 all_perc_increase <- all_habitat_data |> 
@@ -37,7 +45,7 @@ all_perc_increase <- all_habitat_data |>
          instream_rearing_fry_perc_increase = (max_rearing_acres - rear_acres_fry)/rear_acres_fry * 100,
          spwn_perc_increase = (max_spawning_acres - spwn_acres)/spwn_acres * 100,
          flood_perc_increase = (max_floodplain_acres - flood_acres)/flood_acres * 100) |> 
-  select(watershed, regulated, rear_acres_juv, rear_acres_fry, max_rearing_acres, 
+  select(watershed, rear_acres_juv, rear_acres_fry, max_rearing_acres, 
          instream_rearing_juv_perc_increase, instream_rearing_fry_perc_increase,
          spwn_acres, max_spawning_acres, spwn_perc_increase, 
          flood_acres, max_floodplain_acres, flood_perc_increase)  |> 
@@ -48,19 +56,20 @@ all_perc_increase <- all_habitat_data |>
   #write_csv('habitat_markdowns/data_output/max_hab_perc_increases.csv')
 ```
 
-### Fry Rearing Differences: 
+### Fry Rearing Differences:
+
 ```{r}
 all_perc_increase |> 
-  select(watershed, regulated, rear_acres_fry, max_rearing_acres, instream_rearing_fry_perc_increase,
+  select(watershed, rear_acres_fry, max_rearing_acres, instream_rearing_fry_perc_increase,
          flag1:flag4) |> 
   knitr::kable(digits = 1) 
 ```
 
+### Juvenile Rearing Differences:
 
-### Juvenile Rearing Differences: 
 ```{r}
 all_perc_increase |> 
-  select(watershed, regulated, rear_acres_juv, max_rearing_acres, instream_rearing_fry_perc_increase, flag1:flag4) |> 
+  select(watershed, rear_acres_juv, max_rearing_acres, instream_rearing_fry_perc_increase, flag1:flag4) |> 
   knitr::kable(digits = 1)
 
 ggplot(all_habitat_data) + 
@@ -83,11 +92,11 @@ ggplot(all_habitat_data) +
         legend.title = element_blank())
 ```
 
+### Spawning Differences:
 
-### Spawning Differences: 
 ```{r}
 all_perc_increase |> 
-  select(watershed, regulated, spwn_acres, max_spawning_acres, spwn_perc_increase, flag1:flag4) |> 
+  select(watershed, spwn_acres, max_spawning_acres, spwn_perc_increase, flag1:flag4) |> 
   knitr::kable(digits = 1)
 
 all_habitat_data |> 
@@ -104,11 +113,11 @@ all_habitat_data |>
 
 ```
 
+### Floodplain Differences:
 
-### Floodplain Differences: 
 ```{r}
 all_perc_increase |> 
-  select(watershed, regulated, flood_acres, max_floodplain_acres, flood_perc_increase, flag1:flag4) |> 
+  select(watershed, flood_acres, max_floodplain_acres, flood_perc_increase, flag1:flag4) |> 
   knitr::kable(digits = 1)
 
 ggplot(all_habitat_data) + 
@@ -121,9 +130,21 @@ ggplot(all_habitat_data) +
         legend.title = element_blank())
 ```
 
+### Compare Max Habitat across Runs 
+
+```{r}
+
+all_max_hab <- all_max_habitat_fall |> bind_rows(all_max_habitat_winter_spring)
+
+ggplot(all_max_hab) + 
+  geom_col(aes(x = watershed, y = max_floodplain_acres, fill =  run), alpha = 0.75, 
+           position = "dodge") +
+  #geom_col(aes(x = watershed, y = max_floodplain_acres, fill = "SIT values"), alpha = 0.75) +
+  ggtitle('floodplain acres') +
+  coord_flip() + 
+  theme_minimal() +
+  theme(legend.position="top", 
+        legend.title = element_blank())
 
 
-
-
-
-
+```
