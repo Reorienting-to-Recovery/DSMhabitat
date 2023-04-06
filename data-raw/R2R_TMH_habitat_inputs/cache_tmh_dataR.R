@@ -6,7 +6,6 @@ library(tidyverse)
 
 all_habitat_data <- readRDS('data-raw/R2R_TMH_habitat_inputs/all_habitat_data_for_tmh_inputs_fall_run.rdata')
 
-
 all_hab_data_long <- all_habitat_data |>
   mutate(watershed = ifelse(watershed == "Lower San Joaquin River", "San Joaquin River", watershed)) |> 
   rename(spwn_acres_max = max_spawning_acres,

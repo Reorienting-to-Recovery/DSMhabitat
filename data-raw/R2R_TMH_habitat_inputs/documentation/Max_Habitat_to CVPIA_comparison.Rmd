@@ -137,7 +137,7 @@ ggplot(all_habitat_data) +
 all_max_hab <- all_max_habitat_fall |> bind_rows(all_max_habitat_winter_spring)
 
 ggplot(all_max_hab) + 
-  geom_col(aes(x = watershed, y = max_floodplain_acres, fill =  run), alpha = 0.75, 
+  geom_col(aes(x = watershed, y = max_spawning_acres, fill =  run), alpha = 0.75, 
            position = "dodge") +
   #geom_col(aes(x = watershed, y = max_floodplain_acres, fill = "SIT values"), alpha = 0.75) +
   ggtitle('floodplain acres') +

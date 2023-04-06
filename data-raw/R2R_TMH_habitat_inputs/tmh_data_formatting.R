@@ -10,7 +10,7 @@ rearing_perc_suitable_1_2 <- 0.78
 rearing_perc_suitable_2_4 <- 0.585
 rearing_perc_suitable_4_8 <- 0.195
 
-run <- 'Winter Run'
+run <- 'Fall Run'
 
 gis_calcs <- function(data) {
   data |> 
