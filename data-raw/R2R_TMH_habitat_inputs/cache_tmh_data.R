@@ -5,9 +5,9 @@ library(tidyverse)
 # to TMH. Currently just for Fall Run. 
 # TODO: adapt to add Spring and Winter Runs
 
-all_habitat_data <- readRDS('data-raw/R2R_TMH_habitat_inputs/all_habitat_data_for_tmh_inputs_fall_run.rdata')
+all_existing_and_tmh_data <- readRDS('data-raw/R2R_TMH_habitat_inputs/all_habitat_data_for_tmh_inputs_fall_run.rdata')
 
-all_hab_data_long <- all_habitat_data |>
+all_hab_data_long <- all_existing_and_tmh_data |>
   mutate(watershed = ifelse(watershed == "Lower San Joaquin River", "San Joaquin River", watershed)) |> 
   rename(spwn_acres_max = max_spawning_acres,
          rear_acres_max = max_rearing_acres, 
@@ -44,8 +44,7 @@ for(i in 1:length(watersheds)) {
     filter(is.na(max_hab)) |> 
     pull(value)
   
-  # Note: If the maximum theoretical habitat was less than the existing SIT habitat, 
-  # the theoretical maximum habitat value was used for baseline and model runs. 
+  # Note:when existing SIT habitat is greater than TMH, we are still using TMH so the WUA would get scaled down
   if(existing_acres == 0 | is.na(existing_acres)) {
     adj_factor = 1
   } else {
@@ -87,8 +86,7 @@ for(i in 1:length(watersheds)) {
     filter(lifestage == "fry") |> 
     pull(value)
   
-  # Note: If the maximum theoretical habitat was less than the existing SIT habitat, 
-  # the theoretical maximum habitat value was used for baseline and model runs. 
+  # Note: when existing SIT habitat is greater than TMH, we are still using TMH so the WUA would get scaled down
   adj_factor_juv = (max_hab_acres - existing_acres_juv) / existing_acres_juv + 1
   adj_factor_fry = (max_hab_acres - existing_acres_fry) / existing_acres_fry + 1
   
@@ -120,8 +118,8 @@ for(i in 1:length(watersheds)) {
     filter(is.na(max_hab)) |> 
     pull(value)
   
-  # Note: If the maximum theoretical habitat was less than the existing SIT habitat, 
-  # the theoretical maximum habitat value was used for baseline and model runs. 
+  # Note: when existing SIT habitat is greater than TMH, we are still using TMH 
+  # so the WUA would get scaled down
   if(existing_acres == 0) {
     adj_factor = 1
   } else {
