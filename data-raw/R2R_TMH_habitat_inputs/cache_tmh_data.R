@@ -1,5 +1,8 @@
 library(tidyverse)
 
+source('data-raw/R2R_TMH_habitat_inputs/tmh_helper_functions.R')
+
+
 # file to cache Theoretical Max Habitat data objects 
 # and some exploratory plots to compare SIT existing 
 # to TMH. Currently just for Fall Run. 
@@ -8,11 +11,11 @@ library(tidyverse)
 all_existing_and_tmh_data <- readRDS('data-raw/R2R_TMH_habitat_inputs/all_habitat_data_for_tmh_inputs_fall_run.rdata')
 
 all_hab_data_long <- all_existing_and_tmh_data |>
-  mutate(watershed = ifelse(watershed == "Lower San Joaquin River", "San Joaquin River", watershed)) |> 
+  #mutate(watershed = ifelse(watershed == "Lower San Joaquin River", "San Joaquin River", watershed)) |> 
   rename(spwn_acres_max = max_spawning_acres,
          rear_acres_max = max_rearing_acres, 
          flood_acres_max = max_floodplain_acres) |> 
-  pivot_longer(cols = c(spwn_flow:flood_acres_max), names_to = "metric") |>
+  pivot_longer(cols = c(spwn_acres_max:flood_acres_max), names_to = "metric") |>
   separate(metric, c('hab', 'unit', 'lifestage'), "_") |>
   mutate(max_hab = ifelse(lifestage == "max", "max_hab", NA),
          lifestage = ifelse(lifestage == "max", NA, lifestage),
@@ -38,11 +41,7 @@ for(i in 1:length(watersheds)) {
     filter(max_hab == "max_hab") |> 
     pull(value)
   
-  existing_acres =   all_hab_data_long |> 
-    filter(watershed == ws & hab == habitat) |> 
-    filter(unit != "cfs") |>  
-    filter(is.na(max_hab)) |> 
-    pull(value)
+  existing_acres <- existing_acres_fun(ws, 'spawn') 
   
   # Note:when existing SIT habitat is greater than TMH, we are still using TMH so the WUA would get scaled down
   if(existing_acres == 0 | is.na(existing_acres)) {
@@ -72,19 +71,8 @@ for(i in 1:length(watersheds)) {
     filter(max_hab == "max_hab") |> 
     pull(value)
   
-  existing_acres_juv =   all_hab_data_long |> 
-    filter(watershed == ws & hab == habitat) |> 
-    filter(unit != "cfs") |>  
-    filter(is.na(max_hab)) |> 
-    filter(lifestage == "juv") |> 
-    pull(value)
-  
-  existing_acres_fry =   all_hab_data_long |> 
-    filter(watershed == ws & hab == habitat) |> 
-    filter(unit != "cfs") |>  
-    filter(is.na(max_hab)) |> 
-    filter(lifestage == "fry") |> 
-    pull(value)
+  existing_acres_juv <- existing_acres_fun(ws, 'rear_juv') 
+  existing_acres_fry <- existing_acres_fun(ws, 'rear_fry') 
   
   # Note: when existing SIT habitat is greater than TMH, we are still using TMH so the WUA would get scaled down
   adj_factor_juv = (max_hab_acres - existing_acres_juv) / existing_acres_juv + 1
@@ -112,11 +100,7 @@ for(i in 1:length(watersheds)) {
     filter(max_hab == "max_hab") |> 
     pull(value)
   
-  existing_acres =   all_hab_data_long |> 
-    filter(watershed == ws & hab == habitat) |> 
-    filter(unit != "cfs") |>  
-    filter(is.na(max_hab)) |> 
-    pull(value)
+  existing_acres <- existing_acres_fun(ws, 'floodplain') 
   
   # Note: when existing SIT habitat is greater than TMH, we are still using TMH 
   # so the WUA would get scaled down
@@ -264,7 +248,7 @@ flood <- expand_grid(
     sit_habitat = as.vector(sit_habitat),
     r_to_r_max_habitat = as.vector(r_to_r_max_habitat)) |> 
   filter(watershed %in% c("American River", 
-                          "Upper Sacramento River", 
+                          "San Joaquin River", 
                           "Paynes Creek", 
                           "Clear Creek"))
 
