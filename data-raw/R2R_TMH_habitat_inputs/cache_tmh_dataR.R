@@ -2,7 +2,8 @@ library(tidyverse)
 
 # file to cache Theoretical Max Habitat data objects 
 # and some exploratory plots to compare SIT existing 
-# to TMH
+# to TMH. Currently just for Fall Run. 
+# TODO: adapt to add Spring and Winter Runs
 
 all_habitat_data <- readRDS('data-raw/R2R_TMH_habitat_inputs/all_habitat_data_for_tmh_inputs_fall_run.rdata')
 
@@ -137,7 +138,7 @@ for(i in 1:length(watersheds)) {
 ##delta: -------------------------------------------------------------------
 
 watersheds <- c('North Delta', 'South Delta')
-r_to_r_tmh_delta <- DSMhabitat::delta_habitat$r_to_r_baseline
+r_to_r_tmh_delta <- DSMhabitat::delta_habitat$biop_itp_2018_2019
 
 for(i in 1:length(watersheds)) {
   ws = watersheds[i]
@@ -152,14 +153,14 @@ for(i in 1:length(watersheds)) {
     pull(max_hab)
   # Instead of taking hab at the median flow to compare take median hab 
   # Check in with Mark on this assumption 
-  existing_acres <- median(DSMhabitat::delta_habitat$r_to_r_baseline[ , , ws]) |> 
+  existing_acres <- median(DSMhabitat::delta_habitat$biop_itp_2018_2019[ , , ws]) |> 
     DSMhabitat::square_meters_to_acres()
   
   # Note: If the maximum theoretical habitat was less than the existing SIT habitat, 
   # the theoretical maximum habitat value was used for baseline and model runs. 
   adj_factor = (max_hab_acres - existing_acres) / existing_acres + 1
   
-  new_hab_acres <- DSMhabitat::delta_habitat$r_to_r_baseline[ , , ws] * adj_factor
+  new_hab_acres <- DSMhabitat::delta_habitat$biop_itp_2018_2019[ , , ws] * adj_factor
   
   r_to_r_tmh_delta[, , ws ] <- new_hab_acres 
   
