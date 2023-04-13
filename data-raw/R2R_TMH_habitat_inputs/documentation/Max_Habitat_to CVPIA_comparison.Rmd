@@ -130,7 +130,7 @@ ggplot(all_habitat_data) +
         legend.title = element_blank())
 ```
 
-### Compare Max Habitat across Runs 
+### Compare Max Habitat across Runs
 
 ```{r}
 
@@ -140,7 +140,7 @@ ggplot(all_max_hab) +
   geom_col(aes(x = watershed, y = max_spawning_acres, fill =  run), alpha = 0.75, 
            position = "dodge") +
   #geom_col(aes(x = watershed, y = max_floodplain_acres, fill = "SIT values"), alpha = 0.75) +
-  ggtitle('floodplain acres') +
+  ggtitle('spawning acres') +
   coord_flip() + 
   theme_minimal() +
   theme(legend.position="top", 

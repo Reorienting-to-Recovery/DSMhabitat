@@ -1,4 +1,5 @@
 library(tidyverse)
+library(DSMflow)
 
 spwn_perc_suitable <- 0.12
 
@@ -10,7 +11,7 @@ rearing_perc_suitable_1_2 <- 0.78
 rearing_perc_suitable_2_4 <- 0.585
 rearing_perc_suitable_4_8 <- 0.195
 
-run <- 'Fall Run'
+run <- 'Fall Run' #'Spring Run' 'Winter Run'
 
 gis_calcs <- function(data) {
   data |> 
@@ -22,6 +23,34 @@ gis_calcs <- function(data) {
            mean_inflection_width = mean_channel_width  * (1 + mean(perc_increase_of_floodplain_area, na.rm = TRUE))) |> 
     select(river, mean_channel_width, mean_inflection_width, river_length_feet) |> 
     filter(!is.na(river_length_feet)) 
+}
+
+existing_flow_cfs <- function(habitat_type, watershed_input, bypass = FALSE) {
+  
+  flow_df <- if (bypass == FALSE) {DSMflow::flows_cfs$biop_itp_2018_2019} else {DSMflow::bypass_flows$biop_itp_2018_2019}
+  
+  if(habitat_type == "spawning") {
+    flow_df |> 
+      filter(date >= as_date("1980-01-01")) |> 
+      filter(month(date) %in% spawning_months) |> 
+      pull(watershed_input) |> 
+      median()
+  } else if(habitat_type == "rearing") {
+    flow_df |> 
+      filter(date >= as_date("1980-01-01")) |> 
+      filter(month(date) %in% rearing_months) |> 
+      pull(watershed_input) |> 
+      median()
+  } else if(habitat_type == "flood") {
+    flood = flow_df |> 
+      filter(date >= as_date("1980-01-01")) |> 
+      select(watershed_input, date) |> 
+      rename(flow_cfs = watershed_input) 
+    
+    exceedance_probs_monthly_fun <- exceedance_probs_monthly(flood, roll_stat, annual_stat)
+    calsim_30_day(flood, exceedance_probs_monthly_fun)
+    
+  }
 }
 
 # url <- 'https://docs.google.com/spreadsheets/d/1-3WZAcOzrk5ugZq4CAYK1LRLP0005NmjwpifNQHZ_iA/edit#gid=0'
@@ -48,6 +77,83 @@ gradients |>
 
 gradients |> 
   ggplot(aes(x = river, y = perc_suitable_rearing)) + geom_point() + coord_flip()
+
+
+# cache CVPIA habitat values ----------------------------------------------
+# TODO: this could be removed when functionalized:
+
+watersheds_labels <- DSMscenario::watershed_labels[-c(17, 22)] # removes bypasses 
+
+# not included in floodplain suitability factor 
+modeling_in_suitable_area <- c("Antelope Creek", "Battle Creek", "Bear Creek", 
+                               "Cow Creek", "Mill Creek", "Paynes Creek", 
+                               "Deer Creek",'Upper Sacramento River',
+                               'Upper-mid Sacramento River','Lower Sacramento River')
+
+spawning_months <- c(10:12)
+rearing_months <- c(1:8)
+
+cvpia_habitat_data <- data.frame()
+for(i in 1:length(watersheds_labels)) {
+  watershed_input <- watersheds_labels[i]
+  
+  if (watershed_input == "Lower-mid Sacramento River") {
+    # The Lower-mid Sacramento River has two nodes, one above Fremont Weir (C134) and one below (C160). 
+    # rearing: 
+    rear_flow1 <- existing_flow_cfs("rearing", "Lower-mid Sacramento River1")
+    rear_flow2 <- existing_flow_cfs("rearing", "Lower-mid Sacramento River2")
+    
+    rear_acres_juv <- square_meters_to_acres(DSMhabitat::set_instream_habitat('Lower-mid Sacramento River', 
+                                                                              species = "fr", life_stage = "juv",
+                                                                              rear_flow1, rear_flow2))
+    rear_acres_fry <- square_meters_to_acres(DSMhabitat::set_instream_habitat('Lower-mid Sacramento River',
+                                                                              "fr", "fry",  rear_flow1, rear_flow2))
+    
+    # floodplain: 
+    flood_flow1 <- existing_flow_cfs("flood", "Lower-mid Sacramento River1")
+    flood_flow2 <- existing_flow_cfs("flood", "Lower-mid Sacramento River2")
+    flow_acres = square_meters_to_acres(set_floodplain_habitat("Lower-mid Sacramento River", "fr", 
+                                                               flood_flow1, flood_flow2))
+    
+    
+    spwn_acres = NA
+    spwn_flow = NA
+    rear_flow = NA
+    flood_flow = NA
+    
+  } else {
+    spwn_flow <- existing_flow_cfs("spawning", watershed_input)
+    spwn_acres <- square_meters_to_acres(set_spawning_habitat(watershed_input, "fr", spwn_flow, month = 10))
+    
+    rear_flow <- existing_flow_cfs("rearing", watershed_input)
+    rear_acres_juv <- square_meters_to_acres(DSMhabitat::set_instream_habitat(watershed_input, "fr", "juv", rear_flow))
+    rear_acres_fry <- square_meters_to_acres(DSMhabitat::set_instream_habitat(watershed_input, "fr", "fry", rear_flow))
+    
+    flood_flow <- existing_flow_cfs("flood", watershed_input)
+    flood_acres <- square_meters_to_acres(DSMhabitat::set_floodplain_habitat(watershed_input, "fr", flood_flow))
+  }
+  
+  if (!(watershed_input %in% modeling_in_suitable_area)) {
+    flood_acres <- DSMhabitat::apply_suitability(flood_acres)
+  }
+  
+  cvpia_habitat_data <- bind_rows(cvpia_habitat_data, 
+                           tibble(
+                             watershed = watershed_input, 
+                             spwn_flow = spwn_flow, 
+                             spwn_acres = spwn_acres, 
+                             rear_flow = rear_flow, 
+                             rear_acres_juv = rear_acres_juv,
+                             rear_acres_fry = rear_acres_fry,
+                             flood_flow = flood_flow, 
+                             flood_acres = flood_acres
+                           )
+  )
+  
+}
+
+# write_csv(sit_outputs,'../CVPIA_habitat_data.csv')
+
 
 # Above Dam Calculations --------------------------------------------------
 
@@ -208,9 +314,8 @@ tmh_acres <- bind_rows(above_dam_acres |> mutate(dam = "above dam"),
 
 # format_all_data ---------------------------------------------------------
 
-cvpia_habitat_data <- read_csv('data-raw/R2R_TMH_habitat_inputs/CVPIA_habitat_data.csv') |> 
- # mutate(watershed = ifelse(watershed == "San Joaquin River", "Lower San Joaquin River", watershed)) |> 
-  glimpse()
+# cvpia_habitat_data <- read_csv('data-raw/R2R_TMH_habitat_inputs/CVPIA_habitat_data.csv') |> 
+#   glimpse()
 
 all_habitat_data <- full_join(cvpia_habitat_data, all_max_habitat) |> 
   select(-regulated) |> 

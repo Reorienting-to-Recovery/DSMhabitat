@@ -13,19 +13,17 @@ library(DSMhabitat)
 
 ### Theoretical Maximum Habitat Inputs
 
-Habitat inputs for Reorienting to Recovery theoretical maximum habitat model run include baseline DSMhabitat values, which include habitat acres from recently completed or in progress habitat restoration projects (TODO: link to baseline habitat documentation):
+Habitat inputs for Reorienting to Recovery theoretical maximum habitat model run was scaled existing habitat to area curves using the 2018/2019 BiOp flows.
 
--   `DSMhabitat::fr_spawn$r_to_r_baseline`
--   `DSMhabitat::fr_juv$r_to_r_baseline`
--   `DSMhabitat::fr_fry$r_to_r_baseline`
--   `DSMhabitat::fr_fp$r_to_r_baseline`
--   `DSMhabitat::fr_delta$r_to_r_baseline`
+-   `DSMhabitat::fr_spawn$biop_itp_2018_2019`
+-   `DSMhabitat::fr_juv$biop_itp_2018_2019`
+-   `DSMhabitat::fr_fry$biop_itp_2018_2019`
+-   `DSMhabitat::fr_fp$biop_itp_2018_2019`
+-   `DSMhabitat::fr_delta$biop_itp_2018_2019`
 
 For each river reach in the [SIT DSM]('https://cvpia-osc.github.io/DSMhabitat/articles/habitat-extents-map.html'), the theoretical maximum habitat was calculated for above and below dams and for unregulated rivers. See methodology (TODO LINK to methodology) for in-depth overview of theoretical maximum habitat modeling.
 
 Theoretical maximum habitat was not calculated at specific flows and therefore to combine this added habitat with existing (at baseline), the existing was scaled using the following approach.
-
-[Insert diagram]
 
 **1) Calculate flow point of reference**
 
@@ -96,15 +94,15 @@ ggplot(DSMflow::flows_cfs$biop_itp_2018_2019 |>
 
 **2) Calculate the proportion increase of habitat at flow point of reference**
 
-The proportion increase between baseline and theoretical maximum habitat was calculated using the following equation. The `baseline_acres` were calculated using the median (for in-channel) and 2-year flows (for floodplain).
+The proportion increase between baseline and theoretical maximum habitat was calculated using the following equation. The `existing_acres` were calculated using the median (for in-channel) and 2-year flows (for floodplain).
 
-`proportion_increase = (max_hab_acres - baseline_acres) / baseline_acres + 1`
+`proportion_increase = (max_hab_acres - existing_acres) / existing_acres + 1`
 
 **3) Scale existing habitat by proportion increase**
 
-The baseline acres are then scaled for each watershed (`ws`) by the calculated `proportion_increase`.
+The existing acres are then scaled for each watershed (`ws`) by the calculated `proportion_increase`.
 
-`new_hab_acres <- DSMhabitat::fr_fp$r_to_r_baseline[ws , , ] * proportion_increase`
+`new_hab_acres <- DSMhabitat::fr_fp$biop_itp_2018_2019[ws , , ] * proportion_increase`
 
 **4) Save new data objects for Theoretical Maximum Habitat**
 
@@ -140,7 +138,7 @@ spawn <- expand_grid(
   filter(watershed %in% c("American River", 
                           "Upper Sacramento River", 
                           "Paynes Creek", 
-                          "Clear Creek"))
+                          "Feather River"))
 
 spawn |> 
   transmute(watershed, date = lubridate::ymd(paste(year, month, 1)), 
@@ -214,7 +212,7 @@ flood <- expand_grid(
   filter(watershed %in% c("American River", 
                           "Upper Sacramento River", 
                           "Paynes Creek", 
-                          "Clear Creek"))
+                          "Feather River"))
 
 flood |> 
   transmute(watershed, date = lubridate::ymd(paste(year, month, 1)), 
