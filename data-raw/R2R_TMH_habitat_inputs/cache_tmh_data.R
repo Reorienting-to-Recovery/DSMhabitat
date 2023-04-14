@@ -11,7 +11,6 @@ source('data-raw/R2R_TMH_habitat_inputs/tmh_helper_functions.R')
 all_existing_and_tmh_data <- readRDS('data-raw/R2R_TMH_habitat_inputs/all_habitat_data_for_tmh_inputs_fall_run.rdata')
 
 all_hab_data_long <- all_existing_and_tmh_data |>
-  #mutate(watershed = ifelse(watershed == "Lower San Joaquin River", "San Joaquin River", watershed)) |> 
   rename(spwn_acres_max = max_spawning_acres,
          rear_acres_max = max_rearing_acres, 
          flood_acres_max = max_floodplain_acres) |> 
@@ -102,6 +101,8 @@ for(i in 1:length(watersheds)) {
   
   existing_acres <- existing_acres_fun(ws, 'floodplain') 
   
+  print(paste(ws, max_hab_acres, existing_acres))
+  
   # Note: when existing SIT habitat is greater than TMH, we are still using TMH 
   # so the WUA would get scaled down
   if(existing_acres == 0) {
@@ -120,7 +121,7 @@ for(i in 1:length(watersheds)) {
 ##delta: -------------------------------------------------------------------
 
 watersheds <- c('North Delta', 'South Delta')
-r_to_r_tmh_delta <- DSMhabitat::delta_habitat$biop_itp_2018_2019
+r_to_r_tmh_delta <- DSMhabitat::delta_habitat$sit_input
 
 for(i in 1:length(watersheds)) {
   ws = watersheds[i]
@@ -135,14 +136,14 @@ for(i in 1:length(watersheds)) {
     pull(max_hab)
   # Instead of taking hab at the median flow to compare take median hab 
   # Check in with Mark on this assumption 
-  existing_acres <- median(DSMhabitat::delta_habitat$biop_itp_2018_2019[ , , ws]) |> 
+  existing_acres <- median(DSMhabitat::delta_habitat$sit_input[ , , ws]) |> 
     DSMhabitat::square_meters_to_acres()
   
   # Note: If the maximum theoretical habitat was less than the existing SIT habitat, 
   # the theoretical maximum habitat value was used for baseline and model runs. 
   adj_factor = (max_hab_acres - existing_acres) / existing_acres + 1
   
-  new_hab_acres <- DSMhabitat::delta_habitat$biop_itp_2018_2019[ , , ws] * adj_factor
+  new_hab_acres <- DSMhabitat::delta_habitat$sit_input[ , , ws] * adj_factor
   
   r_to_r_tmh_delta[, , ws ] <- new_hab_acres 
   
@@ -264,10 +265,10 @@ flood |>
 
 ## delta plots -------------------------------------------------------------
 
-r_to_r_tmh_delta <- r_to_r_tmh_delta |> 
+r_to_r_tmh_delta_hab <- r_to_r_tmh_delta |> 
   DSMhabitat::square_meters_to_acres()
 
-r_to_r_baseline <- DSMhabitat::delta_habitat$r_to_r_baseline |> DSMhabitat::square_meters_to_acres()
+r_to_r_baseline <- DSMhabitat::delta_habitat$sit_input |> DSMhabitat::square_meters_to_acres()
 
 delta <- expand_grid(
   watershed = c("North Delta", "South Delta"),
@@ -276,7 +277,7 @@ delta <- expand_grid(
   arrange(year, month, watershed) |> 
   mutate(
     r_to_r_baseline = as.vector(r_to_r_baseline),
-    r_to_r_tmh_delta = as.vector(r_to_r_tmh_delta)) |> 
+    r_to_r_tmh_delta = as.vector(r_to_r_tmh_delta_hab)) |> 
   filter(watershed %in% c("North Delta", "South Delta"))
 
 delta |> 

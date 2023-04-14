@@ -94,7 +94,7 @@ existing_acres_fun <- function(watershed_input, habitat_type) {
     # floodplain: 
     flood_flow1 <- existing_flow_cfs("flood", "Lower-mid Sacramento River1")
     flood_flow2 <- existing_flow_cfs("flood", "Lower-mid Sacramento River2")
-    flow_acres = square_meters_to_acres(set_floodplain_habitat("Lower-mid Sacramento River", "fr", 
+    flood_acres = square_meters_to_acres(set_floodplain_habitat("Lower-mid Sacramento River", "fr", 
                                                                flood_flow1, flood_flow2))
     
     
