@@ -1,3 +1,7 @@
+# This script formats the Theoretical Maximum Habitat 
+# values from GIS output to inputs into DSMhabitat within the 
+# `cache_tmh_data.R` file 
+
 library(tidyverse)
 
 source('data-raw/R2R_TMH_habitat_inputs/tmh_helper_functions.R')
@@ -23,14 +27,14 @@ gradients <- readxl::read_excel('data-raw/R2R_TMH_habitat_inputs/River Length Su
   mutate(gradient = ifelse(hqt_boundary == "Valley Lowland (<0.4%)", 0, gradient)) |> 
   mutate(river_length_ft_grad = as.numeric(length_miles)*5280) |> 
   select(river = watershed, dam, river_length_ft_grad, gradient) |> 
-  mutate(perc_suitable_rearing = ifelse(gradient < 0, 0.1, 
-                                        ifelse(gradient == 0, rearing_perc_suitable_low,
-                                               ifelse(gradient > 0 & gradient < 1 , rearing_perc_suitable_0_1, 
-                                                      ifelse(gradient > 1 & gradient < 2, rearing_perc_suitable_1_2,
-                                                             ifelse(gradient > 2 & gradient < 4, rearing_perc_suitable_2_4,
-                                                                    ifelse(gradient > 4, rearing_perc_suitable_4_8, "uhoh"))))))) |> 
+  mutate(perc_suitable_rearing = case_when(gradient < 0 ~ 0.1, 
+                                           gradient == 0 ~ rearing_perc_suitable_low,
+                                           gradient > 0 & gradient < 1 ~ rearing_perc_suitable_0_1, 
+                                           gradient > 1 & gradient < 2 ~ rearing_perc_suitable_1_2,
+                                           gradient > 2 & gradient < 4 ~ rearing_perc_suitable_2_4,
+                                           gradient > 4 ~ rearing_perc_suitable_4_8 
+                                           )) |> 
   mutate(perc_suitable_rearing = as.numeric(perc_suitable_rearing)) |> 
-  #mutate(river = ifelse(grepl("San Joaquin River", river), "San Joaquin River", river)) |> 
   glimpse()
 
 # Above Dam Calculations --------------------------------------------------
@@ -85,11 +89,11 @@ hec_ras <- readxl::read_excel('data-raw/R2R_TMH_habitat_inputs/Cleaned Floodplai
   janitor::clean_names() 
 
 hec_ras_calc <- hec_ras |>  
-  mutate(perc_suitable_rearing = ifelse(gradient == 0, rearing_perc_suitable_low,
-                                        ifelse(gradient > 0 & gradient < 1 , rearing_perc_suitable_0_1, 
-                                               ifelse(gradient > 1 & gradient < 2, rearing_perc_suitable_1_2,
-                                                      ifelse(gradient > 2 & gradient < 4, rearing_perc_suitable_2_4,
-                                                             ifelse(gradient > 4, rearing_perc_suitable_4_8, "uhoh")))))) |> 
+  mutate(perc_suitable_rearing = case_when(gradient == 0 ~ rearing_perc_suitable_low,
+                                           gradient > 0 & gradient < 1 ~ rearing_perc_suitable_0_1, 
+                                           gradient > 1 & gradient < 2 ~ rearing_perc_suitable_1_2,
+                                           gradient > 2 & gradient < 4 ~ rearing_perc_suitable_2_4,
+                                           gradient > 4 ~ rearing_perc_suitable_4_8 )) |> 
   mutate(perc_suitable_rearing = as.numeric(perc_suitable_rearing)) |> 
   group_by(river) |> 
   mutate(channel_area_acres = channel_width * channel_length / 43560,

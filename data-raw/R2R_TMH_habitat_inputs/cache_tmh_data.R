@@ -1,4 +1,6 @@
 library(tidyverse)
+library(DSMhabitat)
+library(lubridate)
 
 source('data-raw/R2R_TMH_habitat_inputs/tmh_helper_functions.R')
 
@@ -16,28 +18,24 @@ all_hab_data_long <- all_existing_and_tmh_data |>
          flood_acres_max = max_floodplain_acres) |> 
   pivot_longer(cols = c(spwn_acres_max:flood_acres_max), names_to = "metric") |>
   separate(metric, c('hab', 'unit', 'lifestage'), "_") |>
-  mutate(max_hab = ifelse(lifestage == "max", "max_hab", NA),
-         lifestage = ifelse(lifestage == "max", NA, lifestage),
-         unit = ifelse(unit == "flow", "cfs", unit)) |> 
   glimpse()
 
 
 # update DSMhabitat values ------------------------------------------------
 
 watersheds <- unique(all_hab_data_long$watershed)
-watersheds <- watersheds[!(watersheds %in%  c('North Delta', "South Delta"))]
+watersheds_trunc <- watersheds[!(watersheds %in%  c('North Delta', "South Delta"))]
 
 ## spawning ----------------------------------------------------------------
 
 r_to_r_tmh_fr_spawn <- DSMhabitat::fr_spawn$biop_itp_2018_2019
 
-for(i in 1:length(watersheds)) {
-  ws = watersheds[i]
+for(i in 1:length(watersheds_trunc)) {
+  ws = watersheds_trunc[i]
   habitat = "spwn"
   
   max_hab_acres <- all_hab_data_long |> 
     filter(watershed == ws & hab == habitat) |> 
-    filter(max_hab == "max_hab") |> 
     pull(value)
   
   existing_acres <- existing_acres_fun(ws, 'spawn') 
@@ -61,13 +59,12 @@ for(i in 1:length(watersheds)) {
 r_to_r_tmh_fr_juv <- DSMhabitat::fr_juv$biop_itp_2018_2019
 r_to_r_tmh_fr_fry <- DSMhabitat::fr_fry$biop_itp_2018_2019
 
-for(i in 1:length(watersheds)) {
-  ws = watersheds[i]
+for(i in 1:length(watersheds_trunc)) {
+  ws = watersheds_trunc[i]
   habitat = "rear"
   
   max_hab_acres <- all_hab_data_long |> 
     filter(watershed == ws & hab == habitat) |> 
-    filter(max_hab == "max_hab") |> 
     pull(value)
   
   existing_acres_juv <- existing_acres_fun(ws, 'rear_juv') 
@@ -90,18 +87,17 @@ for(i in 1:length(watersheds)) {
 ##floodplain: -------------------------------------------------------------
 r_to_r_tmh_fr_flood <- DSMhabitat::fr_fp$biop_itp_2018_2019
 
-for(i in 1:length(watersheds)) {
-  ws = watersheds[i]
+for(i in 1:length(watersheds_trunc)) {
+  ws = watersheds_trunc[i]
   habitat = "flood"
   
   max_hab_acres <- all_hab_data_long |> 
     filter(watershed == ws & hab == habitat) |> 
-    filter(max_hab == "max_hab") |> 
     pull(value)
   
   existing_acres <- existing_acres_fun(ws, 'floodplain') 
   
-  print(paste(ws, max_hab_acres, existing_acres))
+  # print(paste(ws, max_hab_acres, existing_acres))
   
   # Note: when existing SIT habitat is greater than TMH, we are still using TMH 
   # so the WUA would get scaled down

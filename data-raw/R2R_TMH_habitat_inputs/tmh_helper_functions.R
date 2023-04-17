@@ -1,3 +1,7 @@
+library(tidyverse)
+library(DSMhabitat)
+library(lubridate)
+
 gis_calcs <- function(data) {
   data |> 
     group_by(river) |> 

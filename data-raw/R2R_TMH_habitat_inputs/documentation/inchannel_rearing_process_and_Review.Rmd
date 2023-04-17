@@ -3,7 +3,6 @@ title: "In-channel Rearing Suitability for High Gradient Reaches"
 author: "Maddee Rubenson (FlowWest)"
 date: "`r Sys.Date()`"
 output:
-  word_document: default
   html_document:
     theme: paper
     df_print: paged
@@ -72,12 +71,13 @@ coarse_elevations <- data.frame('subbasin' = c("NY", "MY"),
   left_join(table_4_1) |> 
   mutate(length_ft = upstream_rm * 5280,
          gradient = (elevation_high_ft - elevation_low_ft)/length_ft * 100,
-         channel_gradient = ifelse(gradient < 1, "0-1%",
-                                    ifelse(gradient > 1 & gradient < 2, "1–2%",
-                                           ifelse(gradient > 2 & gradient < 4, "2–4%",
-                                                  ifelse(gradient > 4 & gradient < 8, "4–8%",
-                                                         ifelse(gradient > 8, "8-12%",
-                                                                "uhoh"))))))
+         channel_gradient = case_when(gradient < 1 ~ "0-1%",
+                                      gradient > 1 & gradient < 2 ~ "1–2%",
+                                      gradient > 2 & gradient < 4 ~ "2–4%",
+                                      gradient > 4 & gradient < 8 ~ "4–8%",
+                                      gradient > 8 ~  "8-12%"
+                                      ))
+
 
 knitr::kable(coarse_elevations, caption = "the composition of gradient classes within the Middle and North Yuba River, estimating gradient using the coarse approach of dividing the length by the maximum and minimum reach elevation difference", digits = 1)
 
@@ -95,12 +95,12 @@ grad_summary <- grads |>
   group_by(gnis_name) |> 
   summarise(elev_change = elevation_meters - lag(elevation_meters, 1),
             gradient = (elev_change/804.672) * 100 ,
-            channel_gradient = ifelse(gradient < 1, "0-1%",
-                                    ifelse(gradient > 1 & gradient < 2,  "1–2%",
-                                           ifelse(gradient > 2 & gradient < 4, "2–4%",
-                                                  ifelse(gradient > 4 & gradient < 8, "4–8%",
-                                                         ifelse(gradient > 8, ">8%",
-                                                                "uhoh"))))))
+            channel_gradient = case_when(gradient < 1 ~ "0-1%",
+                                      gradient > 1 & gradient < 2 ~ "1–2%",
+                                      gradient > 2 & gradient < 4 ~ "2–4%",
+                                      gradient > 4 & gradient < 8 ~ "4–8%",
+                                      gradient > 8 ~  ">8%"
+                                      ))
 
 
 
@@ -201,8 +201,8 @@ channel_grad_0_1 <- round(mean(total_in_channel_rearing$total_in_channel_rearing
 all_gradients <- data.frame(channel_gradient = c("0-1%",  "1–2%",  "2–4%",  "4–8%"),
            perc_suitable_inchannel_rearing = c(channel_grad_0_1, 
                                                channel_grad_0_1, 
-                                               channel_grad_0_1*0.75, 
-                                               channel_grad_0_1*0.25))
+                                               channel_grad_0_1 * 0.75, 
+                                               channel_grad_0_1  *0.25))
 
 knitr::kable(all_gradients, caption = "% suitable for in-channel rearing at all gradients")
 ```
