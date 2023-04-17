@@ -135,7 +135,7 @@ gradient_summary_table <- perc_summary |>
                 select(subbasin, description, coarse_gradient_class = channel_gradient)) |> 
   select(subbasin, description, fine_gradient_class = channel_gradient, coarse_gradient_class)
 
-knitr::kable(gradient_summary_table, caption = "The channel gradients determined through the coarse and fine scale approach for the Middle and North Yuba River")
+knitr::kable(gradient_summary_table, caption = "The channel gradients determined through the coarse and fine scale approach for the Middle and North Yuba River",  col.names = c('Subbasin', 'Description', 'Fine Gradient Class', 'Coarse Gradietn Class'))
 ```
 
 Though variability exists between the coarse and fine gradients for the Middle and North Yuba River, we decided to use the coarse approach for the reaches within the R2R landscape. The in-channel rearing suitability is similar between these two gradient classes (see Table F-6 of the Stillwater Sciences report) and this process can be further refined later in this project if deemed necessary.
@@ -188,7 +188,7 @@ total_in_channel_rearing <- total_suitable_perc |>
   select(subbasin, total_in_channel_rearing_perc)
 
 
-knitr::kable(total_in_channel_rearing, caption = "in channel rearing % suitable based on gradient study in the Yuba River", digits = 1)
+knitr::kable(total_in_channel_rearing, caption = "in channel rearing % suitable based on gradient study in the Yuba River", digits = 1, col.names = c('Subbasin', 'Total In-channel Rearing (%)'))
 
 ```
 
@@ -202,7 +202,8 @@ all_gradients <- data.frame(channel_gradient = c("0-1%",  "1–2%",  "2–4%",  
            perc_suitable_inchannel_rearing = c(channel_grad_0_1, 
                                                channel_grad_0_1, 
                                                channel_grad_0_1 * 0.75, 
-                                               channel_grad_0_1  *0.25))
+                                               channel_grad_0_1 * 0.25))
 
-knitr::kable(all_gradients, caption = "% suitable for in-channel rearing at all gradients")
+knitr::kable(all_gradients, caption = "% suitable for in-channel rearing at all gradients", 
+             col.names = c('Channel Gradient Class', 'Total In-channel Rearing (%)'))
 ```
