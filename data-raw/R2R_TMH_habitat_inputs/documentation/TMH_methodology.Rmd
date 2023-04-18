@@ -23,7 +23,7 @@ Set a maximum abundance target through estimating maximum habitat potential - ha
 
 ### Methodology
 
-The theoretical maximum suitable habitat for spawning, instream rearing and floodplain rearing was estimated for Fall Run Chinook. For reaches with major rim dams, habitat values were estimated for above and below the dam. Theoretical maximum habitat values were calculated for most watersheds using a geospatial analysis and for a few watersheds using a HEC RAS model.
+The theoretical maximum suitable habitat for spawning, instream rearing and floodplain rearing was estimated. For runs and reaches with major rim dams, habitat values were estimated for above and below the dam. Theoretical maximum habitat values were calculated for most watersheds using a geospatial analysis and for a few watersheds using a HEC RAS model (see table A-1).
 
 #### Geospatial Method for Estimating TMH
 
@@ -33,7 +33,7 @@ was calculated separately for unregulated and regulated rivers using the followi
 
 ###### Regulated
 
-Above dam lengths were determined by Historical and Present Distribution of Chinook Salmon in the Central Valley Drainage of California (Ronald M. Yoshiyama et al.). Yoshiyama listed historical reach extents for tributaries of the Sacramento and San Joaquin Rivers. Below dam lengths were measured as the length of river from the dam's outflow to the river's confluence. 
+Above dam lengths were determined by Historical and Present Distribution of Chinook Salmon in the Central Valley Drainage of California ([Ronald M. Yoshiyama et al.](https://escholarship.org/content/qt6sd4z5b2/qt6sd4z5b2.pdf#page=94%3E)). Yoshiyama listed historical reach extents for tributaries of the Sacramento and San Joaquin Rivers. Below dam lengths were measured as the length of river from the dam's outflow to the river's confluence. 
 
 ###### Unregulated
 
@@ -94,7 +94,7 @@ The monthly median full natural flow was used as the input into the HEC RAS mode
 Table 2. Flows used to run HEC-RAS model for applicable watersheds. 
 
 | **Watersheds**             | **Floodplain**                            | **Rearing**                    | **Spawning**                   |
-|----------------------------|-------------------------------------------|--------------------------------|--------------------------------|
+|-----------------|--------------------|-----------------|-----------------|
 | American River             | 2 Year 14 day functional flow: 8087 cfs   | --                             | --                             |
 | Upper-mid Sacramento River | 2 Year 14 day functional flow: 14,903 cfs | --                             | --                             |
 | Lower-mid Sacramento River | 2 Year 14 day functional flow: 21,516 cfs | Minimum HEC RAS flow: 7833 cfs | Minimum HEC RAS flow: 7833 cfs |
@@ -134,7 +134,7 @@ The maximum theoretical habitat is calculated based on the channel area that app
 
 ### Delta In-channel Rearing Methodology
 
-The North and South Deltas represent estuaries where multiple rivers come together. The San Francisco Estuary Institute and Aquatic Science Center[^2] has done extensive research on Salmon rearing and habitat within the Sacramento-San Joaquin Delta that was integrated into the calculation of maximum potential habitat within the Deltas.
+We chose to use a modified approach for the theoretical maximum habitat in the North and South Deltas because deltas perform differently than rivers and to capitalize on the work already done in the Deltas. The San Francisco Estuary Institute and Aquatic Science Center[^2] has done extensive research on Salmon rearing and habitat within the Sacramento-San Joaquin Delta that was integrated into the calculation of maximum potential habitat within the Deltas.
 
 [^2]: <https://www.sfei.org/projects/delta-salmon>
 
@@ -173,6 +173,46 @@ Figure 1. SFEI mapped minimally subsided and intertidal areas in the North and S
 
 -   In-channel and floodplain flows are not considered in the proportion suitable metric 
 
--   Assumes natural systems in areas that have been heavily impacted by urbanization \
-    \
-    \
+-   Assumes natural systems in areas that have been heavily impacted by urbanization 
+
+## Appendix
+
+Table A-1. the modeling approach done for each watershed
+
+|                            |                        |                                                                                        |
+|----------------------------|------------------------|----------------------------------------------------------------------------------------|
+| **Watersheds**             | **Modeled with a Dam** | **Total Max Theoretical Habitat Modeling Approach**                                    |
+| Upper Sacramento River     | Yes                    | GIS approach                                                                           |
+| Clear Creek                | Yes                    | GIS approach                                                                           |
+| Stony Creek                | Yes                    | GIS approach                                                                           |
+| Feather River              | Yes                    | GIS approach                                                                           |
+| Yuba River                 | Yes                    | GIS approach                                                                           |
+| American River             | Yes                    | HEC RAS used to model Floodplain TMH, GIS approach for in-channel rearing and spawning |
+| Calaveras River            | No                     | GIS approach                                                                           |
+| Mokelumne River            | Yes                    | GIS approach                                                                           |
+| Merced River               | Yes                    | GIS approach                                                                           |
+| Stanislaus River           | Yes                    | GIS approach                                                                           |
+| Tuolumne River             | Yes                    | GIS approach                                                                           |
+| Antelope Creek             | No                     | GIS approach                                                                           |
+| Battle Creek               | No                     | GIS approach                                                                           |
+| Bear Creek                 | No                     | GIS approach                                                                           |
+| Big Chico Creek            | No                     | GIS approach                                                                           |
+| Butte Creek                | No                     | GIS approach                                                                           |
+| Cottonwood Creek           | No                     | GIS approach                                                                           |
+| Cow Creek                  | No                     | GIS approach                                                                           |
+| Deer Creek                 | Yes                    | GIS approach                                                                           |
+| Elder Creek                | No                     | GIS approach                                                                           |
+| Mill Creek                 | No                     | GIS approach                                                                           |
+| Paynes Creek               | No                     | GIS approach                                                                           |
+| Thomes Creek               | No                     | GIS approach                                                                           |
+| Upper-mid Sacramento River | No                     | HEC RAS used to model Floodplain TMH, GIS approach for in-channel rearing and spawning |
+| Sutter Bypass              | No                     | GIS approach                                                                           |
+| Bear River                 | No                     | GIS approach                                                                           |
+| Lower-mid Sacramento River | No                     | HEC RAS used to model all habitats                                                     |
+| Yolo Bypass                | No                     | GIS approach                                                                           |
+| Lower Sacramento River     | No                     | HEC RAS used to model Floodplain TMH, GIS approach for in-channel rearing and spawning |
+| Cosumnes River             | No                     | GIS approach                                                                           |
+| Upper San Joaquin River    | No                     | GIS approach                                                                           |
+| Lower San Joaquin River    | No                     | GIS approach                                                                           |
+| North Delta                | No                     | GIS approach using SFEI data                                                           |
+| South Delta                | No                     | GIS approach using SFEI data                                                           |

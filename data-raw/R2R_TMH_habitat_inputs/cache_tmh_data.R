@@ -180,11 +180,11 @@ spawn <- expand_grid(
   arrange(year, month, watershed) |> 
   mutate(
     sit_habitat = as.vector(sit_habitat),
-    r_to_r_max_habitat = as.vector(r_to_r_max_habitat)) |> 
-  filter(watershed %in% c("American River", 
-                          "Upper Sacramento River", 
-                          "Paynes Creek", 
-                          "Clear Creek"))
+    r_to_r_max_habitat = as.vector(r_to_r_max_habitat)) #|> 
+  # filter(watershed %in% c("American River", 
+  #                         "Upper Sacramento River", 
+  #                         "Paynes Creek", 
+  #                         "Clear Creek"))
 
 spawn |> 
   transmute(watershed, date = lubridate::ymd(paste(year, month, 1)), 
@@ -211,12 +211,13 @@ ic_fry <- expand_grid(
   arrange(year, month, watershed) |> 
   mutate(
     sit_habitat = as.vector(sit_habitat),
-    r_to_r_tmh_habitat = as.vector(r_to_r_tmh_habitat)) |> 
-  filter(watershed %in% c("American River", 
-                          "Tuolumne River",
-                          "Upper Sacramento River",
-                          "Upper-mid Sacramento River"
-  ))
+    r_to_r_tmh_habitat = as.vector(r_to_r_tmh_habitat)) 
+# |> 
+#   filter(watershed %in% c("American River", 
+#                           "Tuolumne River",
+#                           "Upper Sacramento River",
+#                           "Upper-mid Sacramento River"
+#   ))
 
 ic_fry |> 
   transmute(watershed, date = lubridate::ymd(paste(year, month, 1)), 
@@ -243,11 +244,11 @@ flood <- expand_grid(
   arrange(year, month, watershed) |> 
   mutate(
     sit_habitat = as.vector(sit_habitat),
-    r_to_r_max_habitat = as.vector(r_to_r_max_habitat)) |> 
-  filter(watershed %in% c("American River", 
-                          "San Joaquin River", 
-                          "Paynes Creek", 
-                          "Clear Creek"))
+    r_to_r_max_habitat = as.vector(r_to_r_max_habitat)) # |> 
+  # filter(watershed %in% c("American River", 
+  #                         "San Joaquin River", 
+  #                         "Paynes Creek", 
+  #                         "Clear Creek"))
 
 flood |> 
   transmute(watershed, date = lubridate::ymd(paste(year, month, 1)), 

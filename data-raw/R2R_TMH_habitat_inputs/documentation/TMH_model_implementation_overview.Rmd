@@ -21,9 +21,9 @@ Habitat inputs for Reorienting to Recovery theoretical maximum habitat model run
 -   `DSMhabitat::fr_fp$biop_itp_2018_2019`
 -   `DSMhabitat::fr_delta$biop_itp_2018_2019`
 
-For each river reach in the [SIT DSM]('https://cvpia-osc.github.io/DSMhabitat/articles/habitat-extents-map.html'), the theoretical maximum habitat was calculated for above and below dams and for unregulated rivers. See methodology (TODO LINK to methodology) for in-depth overview of theoretical maximum habitat modeling.
+For each river reach in the [SIT DSM]('https://cvpia-osc.github.io/DSMhabitat/articles/habitat-extents-map.html'), the theoretical maximum habitat was calculated for above and below dams and for unregulated rivers. See methodology for overview of theoretical maximum habitat modeling approach.
 
-Theoretical maximum habitat was not calculated at specific flows and therefore to combine this added habitat with existing (at baseline), the existing was scaled using the following approach.
+Theoretical maximum habitat was not calculated at specific flows and therefore to combine this new habitat with existing, the existing habitat to area curves were scaled using the following approach.
 
 **1) Calculate flow point of reference**
 
@@ -71,9 +71,9 @@ flood_flow_ex = DSMflow::flows_cfs$biop_itp_2018_2019 |>
 exceedance_probs_monthly_fun <- exceedance_probs_monthly(flood_flow_ex, 'min', 'max')
 calsim_30_day(flood_flow_ex, exceedance_probs_monthly_fun)
 
-ggplot(exceedance_probs_monthly_fun, aes(x = dist, y = stat_in_duration)) + 
-  geom_line() + 
-  ggtitle('interpolation example: want 50% distance value')
+# ggplot(exceedance_probs_monthly_fun, aes(x = dist, y = stat_in_duration)) + 
+#   geom_line() + 
+#   ggtitle('interpolation example: want 50% distance value')
     
 ```
 
@@ -86,6 +86,8 @@ ggplot(DSMflow::flows_cfs$biop_itp_2018_2019 |>
   geom_line(aes(x = date, y = flow_cfs)) +
   geom_hline(aes(yintercept = calsim_30_day(flood_flow_ex, exceedance_probs_monthly_fun), color = "2 year flow"), linetype = "dashed") + 
   ggtitle('Example of 2 Year Flow on the Consumnes River', subtitle = "used to scale floodplain habitat") +
+  ylab('Flow (cfs)') + 
+  xlab('Date') + 
   theme_minimal() + 
   theme(legend.position="top", 
         legend.title = element_blank())
@@ -124,7 +126,7 @@ The new data objects are saved in the package as:
 r_to_r_max_habitat <- DSMhabitat::fr_spawn$r_to_r_tmh |> 
   DSMhabitat::square_meters_to_acres()
 
-baseline <- DSMhabitat::fr_spawn$r_to_r_baseline |> DSMhabitat::square_meters_to_acres()
+sit_habitat <- DSMhabitat::fr_spawn$biop_itp_2018_2019 |> DSMhabitat::square_meters_to_acres()
 
 spawn <- expand_grid(
   watershed = factor(DSMscenario::watershed_labels, 
@@ -133,7 +135,7 @@ spawn <- expand_grid(
   year = 1979:2000) |> 
   arrange(year, month, watershed) |> 
   mutate(
-    baseline = as.vector(baseline),
+    sit_habitat = as.vector(sit_habitat),
     r_to_r_max_habitat = as.vector(r_to_r_max_habitat)) |> 
   filter(watershed %in% c("American River", 
                           "Upper Sacramento River", 
@@ -142,12 +144,13 @@ spawn <- expand_grid(
 
 spawn |> 
   transmute(watershed, date = lubridate::ymd(paste(year, month, 1)), 
-            baseline, r_to_r_max_habitat) |> 
+            sit_habitat, r_to_r_max_habitat) |> 
   gather(version, acres, -watershed, -date)  |> 
   ggplot(aes(date, acres, color = version)) +
   geom_line(alpha = .75) + 
   facet_wrap(~watershed, scales = 'free_y') + 
   theme_minimal() + 
+  ylab('acres of spawning habitat') + 
   theme(legend.position="top", 
         legend.title = element_blank())
 
@@ -161,7 +164,7 @@ spawn |>
 r_to_r_tmh_habitat <- DSMhabitat::fr_juv$r_to_r_tmh |> 
   DSMhabitat::square_meters_to_acres()
 
-baseline <- DSMhabitat::fr_juv$r_to_r_baseline |> DSMhabitat::square_meters_to_acres()
+sit_habitat <- DSMhabitat::fr_juv$biop_itp_2018_2019 |> DSMhabitat::square_meters_to_acres()
 
 ic_juv <- expand_grid(
   watershed = factor(DSMscenario::watershed_labels, 
@@ -170,7 +173,7 @@ ic_juv <- expand_grid(
   year = 1980:2000) |> 
   arrange(year, month, watershed) |> 
   mutate(
-    baseline = as.vector(baseline),
+    sit_habitat = as.vector(sit_habitat),
     r_to_r_tmh_habitat = as.vector(r_to_r_tmh_habitat)) |> 
   filter(watershed %in% c("American River", 
                           "Tuolumne River",
@@ -180,11 +183,12 @@ ic_juv <- expand_grid(
 
 ic_juv |> 
   transmute(watershed, date = lubridate::ymd(paste(year, month, 1)), 
-            baseline, r_to_r_tmh_habitat) |> 
+            sit_habitat, r_to_r_tmh_habitat) |> 
   gather(version, acres, -watershed, -date)  |> 
   ggplot(aes(date, acres, color = version)) +
   geom_line(alpha = .75) + 
   facet_wrap(~watershed, scales = 'free_y') + 
+  ylab('acres of juvenile rearing habitat') + 
   theme_minimal() + 
   theme(legend.position="top", 
         legend.title = element_blank())
@@ -198,7 +202,7 @@ ic_juv |>
 r_to_r_max_habitat <- DSMhabitat::fr_fp$r_to_r_tmh |> 
   DSMhabitat::square_meters_to_acres()
 
-baseline <- DSMhabitat::fr_fp$r_to_r_baseline |> DSMhabitat::square_meters_to_acres()
+sit_habitat <- DSMhabitat::fr_fp$biop_itp_2018_2019 |> DSMhabitat::square_meters_to_acres()
 
 flood <- expand_grid(
   watershed = factor(DSMscenario::watershed_labels, 
@@ -207,7 +211,7 @@ flood <- expand_grid(
   year = 1980:2000) |> 
   arrange(year, month, watershed) |> 
   mutate(
-    baseline = as.vector(baseline),
+    sit_habitat = as.vector(sit_habitat),
     r_to_r_max_habitat = as.vector(r_to_r_max_habitat)) |> 
   filter(watershed %in% c("American River", 
                           "Upper Sacramento River", 
@@ -216,11 +220,12 @@ flood <- expand_grid(
 
 flood |> 
   transmute(watershed, date = lubridate::ymd(paste(year, month, 1)), 
-            baseline, r_to_r_max_habitat) |> 
+            sit_habitat, r_to_r_max_habitat) |> 
   gather(version, acres, -watershed, -date)  |> 
   ggplot(aes(date, acres, color = version)) +
   geom_line(alpha = .75) + 
   facet_wrap(~watershed, scales = 'free_y') + 
+  ylab('acres of floodplain rearing habitat') + 
   theme_minimal() + 
   theme(legend.position="top", 
         legend.title = element_blank())
@@ -233,7 +238,7 @@ flood |>
 r_to_r_tmh_delta <- DSMhabitat::delta_habitat$r_to_r_tmh |> 
   DSMhabitat::square_meters_to_acres()
 
-baseline <- DSMhabitat::delta_habitat$r_to_r_baseline |> DSMhabitat::square_meters_to_acres()
+sit_habitat <- DSMhabitat::delta_habitat$sit_input |> DSMhabitat::square_meters_to_acres()
 
 delta <- expand_grid(
   watershed = c("North Delta", "South Delta"),
@@ -241,17 +246,18 @@ delta <- expand_grid(
   year = 1980:2000) |> 
   arrange(year, month, watershed) |> 
   mutate(
-    baseline = as.vector(baseline),
+    sit_habitat = as.vector(sit_habitat),
     r_to_r_tmh_delta = as.vector(r_to_r_tmh_delta)) |> 
   filter(watershed %in% c("North Delta", "South Delta"))
 
 delta |> 
   transmute(watershed, date = lubridate::ymd(paste(year, month, 1)), 
-            baseline, r_to_r_tmh_delta) |> 
+            sit_habitat, r_to_r_tmh_delta) |> 
   gather(version, acres, -watershed, -date)  |> 
   ggplot(aes(date, acres, color = version)) +
   geom_line() + 
   facet_wrap(~watershed, scales = 'free_y') + 
+  ylab('acres of Delta rearing habitat') + 
   theme_minimal() + 
   theme(legend.position="top", 
         legend.title = element_blank())
