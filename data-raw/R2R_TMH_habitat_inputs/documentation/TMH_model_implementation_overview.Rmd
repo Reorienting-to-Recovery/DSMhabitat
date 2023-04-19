@@ -1,0 +1,266 @@
+---
+title: "Reorienting to Recovery - Theoretical Maximum Habitat Model Inputs"
+author: ""
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(DSMhabitat)
+```
+
+### Theoretical Maximum Habitat Inputs
+
+Habitat inputs for Reorienting to Recovery theoretical maximum habitat model run was scaled existing habitat to area curves using the 2018/2019 BiOp flows.
+
+-   `DSMhabitat::fr_spawn$biop_itp_2018_2019`
+-   `DSMhabitat::fr_juv$biop_itp_2018_2019`
+-   `DSMhabitat::fr_fry$biop_itp_2018_2019`
+-   `DSMhabitat::fr_fp$biop_itp_2018_2019`
+-   `DSMhabitat::fr_delta$biop_itp_2018_2019`
+
+For each river reach in the [SIT DSM]('https://cvpia-osc.github.io/DSMhabitat/articles/habitat-extents-map.html'), the theoretical maximum habitat was calculated for above and below dams and for unregulated rivers. See methodology for overview of theoretical maximum habitat modeling approach.
+
+Theoretical maximum habitat was not calculated at specific flows and therefore to combine this new habitat with existing, the existing habitat to area curves were scaled using the following approach.
+
+**1) Calculate flow point of reference**
+
+For in-channel habitat we use the median flow over the entire modeled period 1980 - 2000. Flow inputs come from CalSim II benchmark from the 2019 Itp and 2020 BiOp. For floodplain habitat, we use a 2 year flow value, which represents a flow that is exceeded in 50% of the years between 1980 and 2000. This is done by take the yearly rolling maximum of monthly CalSim flows and applying a cumulative distribution function on the ranked values to find the proportion of all values less than or equal to the ranked order. An interpolation function is then developed to to find the 2 year flow value.
+
+```{r include=FALSE}
+roll_stat = min
+annual_stat = max
+
+exceedance_probs_monthly <- function(data, roll_stat, annual_stat) {
+  annual_durations <- data %>%
+    mutate(water_year = ifelse(month(date) %in% 10:12, year(date) + 1, year(date))) 
+  
+  annual_stats <- annual_durations %>%
+    group_by(water_year) %>%
+    summarise(stat_in_duration = annual_stat(flow_cfs, na.rm = TRUE))
+  
+  annual_stats %>%
+    mutate(dist = round(cume_dist(-stat_in_duration), 3)) %>%
+    arrange(dist)
+  
+}
+
+calsim_30_day <- function(data, exceedance_function) {
+  dur_30_min_max <- exceedance_probs_monthly(data, roll_stat = roll_stat, annual_stat = annual_stat)
+  
+  interpolate_probs_30_min_max <- approxfun(x = dur_30_min_max$dist, 
+                                            dur_30_min_max$stat_in_duration)
+  
+  d30 <- interpolate_probs_30_min_max(0.5) 
+  
+  return(d30)
+}
+
+```
+
+```{r include=FALSE}
+watershed_input <- "Cosumnes River"
+
+flood_flow_ex = DSMflow::flows_cfs$biop_itp_2018_2019 |> 
+      filter(date >= as_date("1980-01-01")) |> 
+      select(watershed_input, date) |> 
+      rename(flow_cfs = watershed_input) 
+    
+exceedance_probs_monthly_fun <- exceedance_probs_monthly(flood_flow_ex, 'min', 'max')
+calsim_30_day(flood_flow_ex, exceedance_probs_monthly_fun)
+
+# ggplot(exceedance_probs_monthly_fun, aes(x = dist, y = stat_in_duration)) + 
+#   geom_line() + 
+#   ggtitle('interpolation example: want 50% distance value')
+    
+```
+
+```{r echo=FALSE}
+# plot it: 
+ggplot(DSMflow::flows_cfs$biop_itp_2018_2019 |> 
+      filter(date >= as_date("1980-01-01")) |> 
+      select(watershed_input, date) |> 
+      rename(flow_cfs = watershed_input)) +
+  geom_line(aes(x = date, y = flow_cfs)) +
+  geom_hline(aes(yintercept = calsim_30_day(flood_flow_ex, exceedance_probs_monthly_fun), color = "2 year flow"), linetype = "dashed") + 
+  ggtitle('Example of 2 Year Flow on the Consumnes River', subtitle = "used to scale floodplain habitat") +
+  ylab('Flow (cfs)') + 
+  xlab('Date') + 
+  theme_minimal() + 
+  theme(legend.position="top", 
+        legend.title = element_blank())
+
+```
+
+**2) Calculate the proportion increase of habitat at flow point of reference**
+
+The proportion increase between baseline and theoretical maximum habitat was calculated using the following equation. The `existing_acres` were calculated using the median (for in-channel) and 2-year flows (for floodplain).
+
+`proportion_increase = (max_hab_acres - existing_acres) / existing_acres + 1`
+
+**3) Scale existing habitat by proportion increase**
+
+The existing acres are then scaled for each watershed (`ws`) by the calculated `proportion_increase`.
+
+`new_hab_acres <- DSMhabitat::fr_fp$biop_itp_2018_2019[ws , , ] * proportion_increase`
+
+**4) Save new data objects for Theoretical Maximum Habitat**
+
+The new data objects are saved in the package as:
+
+-   `DSMhabitat::fr_spawn$r_to_r_tmh`
+-   `DSMhabitat::fr_juv$r_to_r_tmh`
+-   `DSMhabitat::fr_fry$r_to_r_tmh`
+-   `DSMhabitat::fr_fp$r_to_r_tmh`
+-   `DSMhabitat::fr_delta$r_to_r_tmh` *See [TODO link]* for details on Delta methodology for theoretical maximum habitat
+
+#### Comparison plots between Baseline and Theoretical Maximum Habitat
+
+##### Spawning Habitat: 
+
+```{r echo=FALSE}
+
+## spawning plot:  ---------------------------------------------------------
+r_to_r_max_habitat <- DSMhabitat::fr_spawn$r_to_r_tmh |> 
+  DSMhabitat::square_meters_to_acres()
+
+sit_habitat <- DSMhabitat::fr_spawn$biop_itp_2018_2019 |> DSMhabitat::square_meters_to_acres()
+
+spawn <- expand_grid(
+  watershed = factor(DSMscenario::watershed_labels, 
+                     levels = DSMscenario::watershed_labels),
+  month = 1:12,
+  year = 1979:2000) |> 
+  arrange(year, month, watershed) |> 
+  mutate(
+    sit_habitat = as.vector(sit_habitat),
+    r_to_r_max_habitat = as.vector(r_to_r_max_habitat)) |> 
+  filter(watershed %in% c("American River", 
+                          "Upper Sacramento River", 
+                          "Paynes Creek", 
+                          "Feather River"))
+
+spawn |> 
+  transmute(watershed, date = lubridate::ymd(paste(year, month, 1)), 
+            sit_habitat, r_to_r_max_habitat) |> 
+  gather(version, acres, -watershed, -date)  |> 
+  ggplot(aes(date, acres, color = version)) +
+  geom_line(alpha = .75) + 
+  facet_wrap(~watershed, scales = 'free_y') + 
+  theme_minimal() + 
+  ylab('acres of spawning habitat') + 
+  theme(legend.position="top", 
+        legend.title = element_blank())
+
+```
+
+##### Inchannel Juvenile Rearing Habitat: 
+
+```{r echo=FALSE}
+
+## juv rearing plot:  ---------------------------------------------------------
+r_to_r_tmh_habitat <- DSMhabitat::fr_juv$r_to_r_tmh |> 
+  DSMhabitat::square_meters_to_acres()
+
+sit_habitat <- DSMhabitat::fr_juv$biop_itp_2018_2019 |> DSMhabitat::square_meters_to_acres()
+
+ic_juv <- expand_grid(
+  watershed = factor(DSMscenario::watershed_labels, 
+                     levels = DSMscenario::watershed_labels),
+  month = 1:12,
+  year = 1980:2000) |> 
+  arrange(year, month, watershed) |> 
+  mutate(
+    sit_habitat = as.vector(sit_habitat),
+    r_to_r_tmh_habitat = as.vector(r_to_r_tmh_habitat)) |> 
+  filter(watershed %in% c("American River", 
+                          "Tuolumne River",
+                          "Upper Sacramento River",
+                          "Upper-mid Sacramento River"
+  ))
+
+ic_juv |> 
+  transmute(watershed, date = lubridate::ymd(paste(year, month, 1)), 
+            sit_habitat, r_to_r_tmh_habitat) |> 
+  gather(version, acres, -watershed, -date)  |> 
+  ggplot(aes(date, acres, color = version)) +
+  geom_line(alpha = .75) + 
+  facet_wrap(~watershed, scales = 'free_y') + 
+  ylab('acres of juvenile rearing habitat') + 
+  theme_minimal() + 
+  theme(legend.position="top", 
+        legend.title = element_blank())
+
+```
+
+##### Floodplain Rearing Habitat: 
+
+```{r echo=FALSE}
+
+r_to_r_max_habitat <- DSMhabitat::fr_fp$r_to_r_tmh |> 
+  DSMhabitat::square_meters_to_acres()
+
+sit_habitat <- DSMhabitat::fr_fp$biop_itp_2018_2019 |> DSMhabitat::square_meters_to_acres()
+
+flood <- expand_grid(
+  watershed = factor(DSMscenario::watershed_labels, 
+                     levels = DSMscenario::watershed_labels),
+  month = 1:12,
+  year = 1980:2000) |> 
+  arrange(year, month, watershed) |> 
+  mutate(
+    sit_habitat = as.vector(sit_habitat),
+    r_to_r_max_habitat = as.vector(r_to_r_max_habitat)) |> 
+  filter(watershed %in% c("American River", 
+                          "Upper Sacramento River", 
+                          "Paynes Creek", 
+                          "Feather River"))
+
+flood |> 
+  transmute(watershed, date = lubridate::ymd(paste(year, month, 1)), 
+            sit_habitat, r_to_r_max_habitat) |> 
+  gather(version, acres, -watershed, -date)  |> 
+  ggplot(aes(date, acres, color = version)) +
+  geom_line(alpha = .75) + 
+  facet_wrap(~watershed, scales = 'free_y') + 
+  ylab('acres of floodplain rearing habitat') + 
+  theme_minimal() + 
+  theme(legend.position="top", 
+        legend.title = element_blank())
+
+```
+
+##### Delta Habitat 
+
+```{r, echo = FALSE}
+r_to_r_tmh_delta <- DSMhabitat::delta_habitat$r_to_r_tmh |> 
+  DSMhabitat::square_meters_to_acres()
+
+sit_habitat <- DSMhabitat::delta_habitat$sit_input |> DSMhabitat::square_meters_to_acres()
+
+delta <- expand_grid(
+  watershed = c("North Delta", "South Delta"),
+  month = 1:12,
+  year = 1980:2000) |> 
+  arrange(year, month, watershed) |> 
+  mutate(
+    sit_habitat = as.vector(sit_habitat),
+    r_to_r_tmh_delta = as.vector(r_to_r_tmh_delta)) |> 
+  filter(watershed %in% c("North Delta", "South Delta"))
+
+delta |> 
+  transmute(watershed, date = lubridate::ymd(paste(year, month, 1)), 
+            sit_habitat, r_to_r_tmh_delta) |> 
+  gather(version, acres, -watershed, -date)  |> 
+  ggplot(aes(date, acres, color = version)) +
+  geom_line() + 
+  facet_wrap(~watershed, scales = 'free_y') + 
+  ylab('acres of Delta rearing habitat') + 
+  theme_minimal() + 
+  theme(legend.position="top", 
+        legend.title = element_blank())
+
+
+```

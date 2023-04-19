@@ -1,0 +1,218 @@
+---
+output:
+  html_document:
+    theme: paper
+    df_print: paged
+  pdf_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Theoretical Maximum Habitat Methodology
+
+### Purpose
+
+Set a maximum abundance target through estimating maximum habitat potential - habitat isn't directly proportional to abundance but is a key parameter in defining population carrying capacity in the DSM estimate of maximum suitable area of spawning, in-channel rearing, and floodplain rearing habitat for salmonids in all watersheds included in the CVPIA Decision Support Models (DSMs). The main objectives for theoretical maximum habitat calculations are to:
+
+-   Include potential suitable habitat area downstream and upstream of dams
+
+-   Include potential suitable habitat area within and beyond levees
+
+### Methodology
+
+The theoretical maximum suitable habitat for spawning, instream rearing and floodplain rearing was estimated. For runs and reaches with major rim dams, habitat values were estimated for above and below the dam. Theoretical maximum habitat values were calculated for most watersheds using a geospatial analysis and for a few watersheds using a HEC RAS model (see table A-1).
+
+#### Geospatial Method for Estimating TMH
+
+##### River Length
+
+was calculated separately for unregulated and regulated rivers using the following two approaches.
+
+###### Regulated
+
+Above dam lengths were determined by Historical and Present Distribution of Chinook Salmon in the Central Valley Drainage of California ([Ronald M. Yoshiyama et al.](https://escholarship.org/content/qt6sd4z5b2/qt6sd4z5b2.pdf#page=94%3E)). Yoshiyama listed historical reach extents for tributaries of the Sacramento and San Joaquin Rivers. Below dam lengths were measured as the length of river from the dam's outflow to the river's confluence. 
+
+###### Unregulated
+
+In rivers without a major rim dam, the river length was measured as the furthest extent of the [SIT model](https://cvpia-osc.github.io/DSMhabitat/articles/habitat-extents-map.html) to the river's confluence. 
+
+##### Inflection Point of Channel Width:
+
+This metric used to define the maximum inundation beyond the river reach for floodplain rearing. Inflection points were created using DEMs to identify the point of the stream channel where elevations rapidly increase. Multiple representative polygons were created for each river's inflection area, defined by the inflection point. For areas where inflection points were not viable floodplain indicators, existing riparian habitats and aerial imagery analysis were used to create sub-area polygons. Major population centers and the channel area were removed from all inflection areas.  The existing channel was then used to scale the in-channel width to get an average inflection width, representing the extent of a theoretical floodplain.
+
+##### Channel Width:
+
+Channel width was estimated using 2018 Google Earth imagery of the channel during spawning and rearing. Approximately 10-15 measurements were taken for each watershed, spaced evenly over the entire length and averaged to get a single value. For regulated rivers, an above and below dam channel width were measured. 
+
+##### Habitat Suitability
+
+The percent of the river or floodplain suitable for habitat was defined through literature review for spawning, in-channel rearing, and floodplain rearing.
+
+-   **Spawning:** The percent suitable for spawning habitat was defined as 12%, based of typical riffle spacing in unmodified channels[^1]. 
+
+-   **Floodplain rearing:** The percent suitable for floodplain rearing was defined as 90% and based on the assumption that natural floodplains are heterogeneous landscapes with approximately 10% of the area unsuitable. 
+
+-   **In-channel rearing:** The percent suitable for in-channel rearing is dependent on the channel gradient. Average gradients were calculated for each river reach by dividing the elevation difference from the highest and lowest points by the reach length. The document [TODO link] provides in depth methodology. The proportion suitable for in-channel rearing by gradient class is in Table 1.
+
+[^1]: Hudson, Paul. (2002). Pool-Riffle Morphology in an Actively Migrating Alluvial Channel: The Lower Mississippi River. Physical Geography - PHYS GEOGR. 23. 154-169. 10.2747/0272-3646.23.2.154.
+
+    \
+
+Table 1. Percent suitable for in-channel rearing at all gradient classes
+
+| Channel Gradient Class (%) | \% Suitable for In-channel rearing |
+|----------------------------|------------------------------------|
+| \<0.04                     | 10                                 |
+| 0-1                        | 78                                 |
+| 1-2                        | 78                                 |
+| 2-4                        | 58.5                               |
+| 4-8                        | 19.5                               |
+
+#### HEC-RAS Modeling for Below Dam Maximum Habitat
+
+The CVFED "Combined Upper and Lower Sacramento River" Model No. 14001 was used to approximate below dam maximum habitats based on historical data. The model uses the 2006 flow conditions to approximate 500-year storm flows. This was the best available model as it encompasses a large portion of the Sacramento Valley region. This model was used to evaluate below dam maximum habitats for the American River and the Sacramento River. The model was not used for other rivers due to model geometry limitations, as its extents do not include various rivers evaluated in this study. 
+
+Channel centerline latitude and longitude coordinate data were extracted from the model geometry and water surface elevation data were extracted from the model results. The model was evaluated at flows most proximal to the 2 year 14 day functional flows sourced from CDEC data. The water surface elevations were determined at these flows at locations near the middle of each river reach. These locations were used to determine the timesteps at which to export flows and water surface elevations from. The flows of interest occurred during the rising leg of the model hydrograph, during which the flows in the upper reach of the river are higher than in the lower reach. Thus selecting a timestep at which the flow of interest occurs from the middle of the reach minimizes the average difference between the flow of interest and the modeled flow at any given point in the river. 
+
+See Table 2 for the American River and Sacramento River below dam flows derived from the hydraulic model.
+
+The water surface elevation data derived from the model results were then used to approximate maximum below dam habitat.
+
+##### Unimpaired Flow Calculations for Floodplain Rearing:
+
+When available, the 2 year 14 day flows were calculated from [daily full natural flows](http://cdec4gov.water.ca.gov/reportapp/javareports?name=FNF). Full natural flow represents natural water production of a river basin, unaltered by upstream diversions, storage, or by export or import of water to and from other watersheds. The flows reported are calculated by project operators from US Army Corps of Engineers and/or Snow Surveys on the respective rivers. The 2 year 14 flow is the maximum flow that lasts 14 days over the course of two years and is meant to represent a commonly occurring flood event. For each river, data was assessed from 2014 to September 2022 and a single 2 year 14 day value reported. 
+
+Calculated flood flows are used as inputs into a HEC RAS model of the Sacramento and San Joaquin Rivers. Since the HEC RAS model was developed to model flood flows, the minimum modeled flow was sometimes larger than the 2 year 14 flows. Summary of which flow was used as a model input below is in Table 2.
+
+##### **In-channel Rearing and Spawning:**
+
+The monthly median full natural flow was used as the input into the HEC RAS model to calculate in-channel and spawning maximum theoretical habitats. In-channel rearing included full natural flow between January and August while spawning included full natural flow between October and December. These values were only used to calculate the habitat area for the Mid-Sacramento River.
+
+Table 2. Flows used to run HEC-RAS model for applicable watersheds. 
+
+| **Watersheds**             | **Floodplain**                            | **Rearing**                    | **Spawning**                   |
+|-----------------|--------------------|-----------------|-----------------|
+| American River             | 2 Year 14 day functional flow: 8087 cfs   | --                             | --                             |
+| Upper-mid Sacramento River | 2 Year 14 day functional flow: 14,903 cfs | --                             | --                             |
+| Lower-mid Sacramento River | 2 Year 14 day functional flow: 21,516 cfs | Minimum HEC RAS flow: 7833 cfs | Minimum HEC RAS flow: 7833 cfs |
+| Lower Sacramento River     | Minimum HEC RAS flow: 59,588 cfs          | --                             | --                             |
+
+### Maximum Theoretical Habitat Calculation
+
+The maximum theoretical habitat is calculated based on the channel area that applies to each habitat type. For spawning and in-channel rearing, the entire channel area is calculated and a proportion suitable is applied. For floodplain rearing, the floodplain inundation area is calculated without the channel area and a proportion suitable is applied. The equations are as follows. 
+
+#### Spawning: 
+
+-   *Habitat Estimate = Length \* Width \* Proportion Suitable* 
+
+**When HEC RAS modeling available:**
+
+-   *Habitat Estimate = HEC RAS channel area for median flow during spawning period \* proportion suitable*
+
+#### In-channel Rearing: 
+
+-   *Habitat Estimate: Length \* Width \* Proportion Suitable* 
+
+**When HEC RAS modeling available:**
+
+-   *Habitat Estimate = HEC RAS channel area for median flow during spawning period \* proportion suitable*
+
+#### Floodplain Rearing:
+
+-   *Habitat Estimate: Length \* (Inflection Point Width - River Width) \* Proportion Suitable* 
+
+**When HEC RAS modeling available:**
+
+-   *Inundation Area = HEC RAS inundation extent for 2 year 14 day flow* 
+
+-   *Channel Area = Mean channel area within extent*
+
+-   *Habitat Estimate = ( Inundation Area -  Channel Area ) \* ProportionSuitable*
+
+### Delta In-channel Rearing Methodology
+
+We chose to use a modified approach for the theoretical maximum habitat in the North and South Deltas because deltas perform differently than rivers and to capitalize on the work already done in the Deltas. The San Francisco Estuary Institute and Aquatic Science Center[^2] has done extensive research on Salmon rearing and habitat within the Sacramento-San Joaquin Delta that was integrated into the calculation of maximum potential habitat within the Deltas.
+
+[^2]: <https://www.sfei.org/projects/delta-salmon>
+
+#### Aggregate the Combined Habitat Suitability Raster
+
+The Combined Habitat Suitability raster[^3] was aggregated by suitability score and the North and South Deltas. It was found that combined habitat suitability scores 50 and greater matched the average existing SIT modeled Delta habitat. The North Delta has 2767 acres with rearing habitat score of 50 and greater, the South Delta has 7971 acres.
+
+[^3]: Looking at individual habitat parameters separately is of limited value because criteria for multiple habitat parameters must be met in order for an area to truly provide suitable rearing habitat. However, considering suitability across parameters is challenging because 1) suitability has not been determined for all important parameters, and 2) there is uncertainty around which habitat parameters are most important, and whether there are interactions between parameters, both of which are important for determining how criteria for individual parameters should be combined. The combined suitability map presented here was created by taking the geometric mean of suitability scores for the four parameters for which suitability was assessed: weighted wetland edge, wetland adjacency, water depth, and water temperature. Numeric weights were given to reflect relative suitability for each of the criteria. Suitability values ranged from 0 (unsuitable) to 100 (most suitable). Water depth was the only criteria that had values weighted zero. This combined map is meant to be an initial look at how parameters might be combined and is expected to be refined in future efforts as data availability and our understanding of salmon rearing habitat in the Delta increases. <https://www.sfei.org/data/delta-salmon-rearing-geospatial-analyses#sthash.KKeTs6Gx.dpbs>
+
+#### Identify Delta Landscapes Usable in Maximum Habitat
+
+We defined SFEI's "restorable" landscapes as the minimally subsided and intertidal areas[^4] (Figure 1, Table X).
+
+[^4]: <https://www.sfei.org/projects/delta-landscapes-scenario-planning-tool>
+
+Table X. Minimally Subisded and Intertidal areas with SFEI combined habitat suitability \>50 removed
+
+| **Delta** |    **Dataset**     | **Acreage** |
+|:---------:|:------------------:|:-----------:|
+|   North   | Minimally Subsided | **31,369**  |
+|   North   |     Intertidal     | **10,351**  |
+|   South   | Minimally Subsided | **78,122**  |
+|   South   |     Intertidal     | **24,669**  |
+
+[![](images/SFEI_max_hab.png){width="548"}](https://deltaplanningmap.sfei.org/)
+
+Figure 1. SFEI mapped minimally subsided and intertidal areas in the North and South Deltas
+
+### Limitations
+
+-   Most watersheds are modeled using GIS methodology and therefore results are divorced from instream flows 
+
+-   Modeling assumes a linear riverine system
+
+-   Assumes salmonid migration past potential barriers, such as dams
+
+-   In-channel and floodplain flows are not considered in the proportion suitable metric 
+
+-   Assumes natural systems in areas that have been heavily impacted by urbanization 
+
+## Appendix
+
+Table A-1. the modeling approach done for each watershed
+
+|                            |                        |                                                                                        |
+|----------------------------|------------------------|----------------------------------------------------------------------------------------|
+| **Watersheds**             | **Modeled with a Dam** | **Total Max Theoretical Habitat Modeling Approach**                                    |
+| Upper Sacramento River     | Yes                    | GIS approach                                                                           |
+| Clear Creek                | Yes                    | GIS approach                                                                           |
+| Stony Creek                | Yes                    | GIS approach                                                                           |
+| Feather River              | Yes                    | GIS approach                                                                           |
+| Yuba River                 | Yes                    | GIS approach                                                                           |
+| American River             | Yes                    | HEC RAS used to model Floodplain TMH, GIS approach for in-channel rearing and spawning |
+| Calaveras River            | No                     | GIS approach                                                                           |
+| Mokelumne River            | Yes                    | GIS approach                                                                           |
+| Merced River               | Yes                    | GIS approach                                                                           |
+| Stanislaus River           | Yes                    | GIS approach                                                                           |
+| Tuolumne River             | Yes                    | GIS approach                                                                           |
+| Antelope Creek             | No                     | GIS approach                                                                           |
+| Battle Creek               | No                     | GIS approach                                                                           |
+| Bear Creek                 | No                     | GIS approach                                                                           |
+| Big Chico Creek            | No                     | GIS approach                                                                           |
+| Butte Creek                | No                     | GIS approach                                                                           |
+| Cottonwood Creek           | No                     | GIS approach                                                                           |
+| Cow Creek                  | No                     | GIS approach                                                                           |
+| Deer Creek                 | Yes                    | GIS approach                                                                           |
+| Elder Creek                | No                     | GIS approach                                                                           |
+| Mill Creek                 | No                     | GIS approach                                                                           |
+| Paynes Creek               | No                     | GIS approach                                                                           |
+| Thomes Creek               | No                     | GIS approach                                                                           |
+| Upper-mid Sacramento River | No                     | HEC RAS used to model Floodplain TMH, GIS approach for in-channel rearing and spawning |
+| Sutter Bypass              | No                     | GIS approach                                                                           |
+| Bear River                 | No                     | GIS approach                                                                           |
+| Lower-mid Sacramento River | No                     | HEC RAS used to model all habitats                                                     |
+| Yolo Bypass                | No                     | GIS approach                                                                           |
+| Lower Sacramento River     | No                     | HEC RAS used to model Floodplain TMH, GIS approach for in-channel rearing and spawning |
+| Cosumnes River             | No                     | GIS approach                                                                           |
+| Upper San Joaquin River    | No                     | GIS approach                                                                           |
+| Lower San Joaquin River    | No                     | GIS approach                                                                           |
+| North Delta                | No                     | GIS approach using SFEI data                                                           |
+| South Delta                | No                     | GIS approach using SFEI data                                                           |
