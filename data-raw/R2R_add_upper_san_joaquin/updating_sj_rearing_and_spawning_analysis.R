@@ -1,6 +1,7 @@
-# for rearing habitat update:
-# 
-# create a flow to suitable area curve from each reach 
+library(tidyverse)
+
+# Add Upper San Joaquin Rearing flow to area curves 
+
 
 flow_habitat_raw <- read_csv('data-raw/R2R_add_upper_san_joaquin/data-raw/tidy_rearing_data_sjrrp_fish_habitat_study_results.csv') |> 
   glimpse()
@@ -55,7 +56,7 @@ total_reach_length_miles <- sum(flow_habitat_length |>
   summarise(sum_miles = sum(unique(reach_length_miles), na.rm = TRUE)) |> 
   pull(sum_miles))
   
-upper_san_joaquin_instream <- rearing |> 
+upper_san_joaquin_rearing <- rearing |> 
   mutate(sj_wua_fr = sj_wua_fr_1B * (reach_1B$reach_length_miles/total_reach_length_miles) + 
            sj_wua_fr_2A * (reach_2A$reach_length_miles/total_reach_length_miles) +
            sj_wua_fr_3 * (reach_3$reach_length_miles/total_reach_length_miles) +
@@ -68,7 +69,7 @@ upper_san_joaquin_instream <- rearing |>
     watershed = "Upper San Joaquin")
 
 options(scipen = 999)
-upper_san_joaquin_instream |> 
+upper_san_joaquin_rearing |> 
   ggplot(aes(x = flow_cfs, y = FR_fry_wua)) +
   geom_line() +
   ggtitle('Upper San Joaquin WUA') +
@@ -76,7 +77,72 @@ upper_san_joaquin_instream |>
   labs(x = 'Flow (cfs)', y = 'WUA (sqft/1000ft)') + 
   scale_y_continuous(labels = scales::comma)
 
+# add Spawning to Upper San Joaquin  --------------------------------------
+
+spawning_raw <- read_csv('data-raw/R2R_add_upper_san_joaquin/data-raw/san_joaquin_spawning.csv') |> 
+  glimpse()
+
+# reach lengths 
+reach_length_spawn <- tribble(
+  ~reach, ~mile_post_num_high, ~mile_post_num_low,
+  "friant to 41", 41, 0, # TODO placeholder for these reach lengths - want to verify with GIS
+  "41 to 99", 99, 41 # TODO placeholder for these reach lengths - want to verify with GIS
+) |> 
+  mutate(reach_length_miles = mile_post_num_high - mile_post_num_low) |> 
+  select(-mile_post_num_high, -mile_post_num_low)
+
+flow_habitat_length_spwn <- spawning_raw |> 
+  left_join(reach_length_spawn) |> 
+  rename(flow_cfs = flow, 
+         suitable_acres = area)
+
+reach_friant_to_41 <- flow_habitat_length_spwn |> filter(reach == "friant to 41")
+reach_41_to_99 <- flow_habitat_length_spwn |> filter(reach == "41 to 99")
+
+spawning <- tibble(
+  flow_cfs = c(200, 500, 750, 1000, 1250, 1500, 1750, 2000, 2500, 3000, 3500, 
+               4000, 4500, 5000, 5500, 6000, 6500, 7000),
+  sj_wua_fr_friant_to_41 = approx(reach_friant_to_41$flow_cfs, reach_friant_to_41$suitable_acres, xout = flow_cfs, rule = 2)$y,
+  sj_wua_fr_41_to_99 = approx(reach_41_to_99$flow_cfs, reach_41_to_99$suitable_acres, xout = flow_cfs, rule = 2)$y
+)
+
+spawning |> 
+  pivot_longer(cols = c(sj_wua_fr_friant_to_41, sj_wua_fr_41_to_99), values_to = "wua") |> 
+  ggplot(aes(x = flow_cfs, y = wua)) +
+  geom_line(aes(color = name)) +
+  ggtitle('WUAs: by reach. Prior to weighting by length. Spawning.') +
+  theme_minimal()
+
+# total reach length:
+total_reach_length_miles_spwn <- sum(flow_habitat_length_spwn |> 
+                                  group_by(reach) |> 
+                                  summarise(sum_miles = sum(unique(reach_length_miles), na.rm = TRUE)) |> 
+                                  pull(sum_miles))
+
+upper_san_joaquin_spawning <- spawning |> 
+  mutate(sj_wua_fr = sj_wua_fr_friant_to_41 * (unique(reach_friant_to_41$reach_length_miles/total_reach_length_miles_spwn)) + 
+           sj_wua_fr_41_to_99 * unique(reach_41_to_99$reach_length_miles/total_reach_length_miles_spwn) 
+  ) |> 
+  select(flow_cfs, FR_spawn_wua = sj_wua_fr) |> # TODO: check that we want to use the same value for fry and juv
+  mutate(
+    FR_spawn_wua = DSMhabitat::acres_to_square_meters(FR_spawn_wua),
+    watershed = "Upper San Joaquin")
+
+options(scipen = 999)
+upper_san_joaquin_spawning |> 
+  ggplot(aes(x = flow_cfs, y = FR_spawn_wua)) +
+  geom_line() +
+  ggtitle('Upper San Joaquin WUA: Spawning') +
+  theme_minimal() + 
+  labs(x = 'Flow (cfs)', y = 'WUA (sqft/1000ft)') + 
+  scale_y_continuous(labels = scales::comma)
+
+
+
+# combine rearing and spawning into one instream object -------------------
+
+upper_san_joaquin_instream <- upper_san_joaquin_rearing |> 
+  full_join(upper_san_joaquin_spawning) |> 
+  select(watershed, everything())
+
 # usethis::use_data(upper_san_joaquin_instream, overwrite = TRUE)
-
-
-
