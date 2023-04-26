@@ -226,21 +226,51 @@ dimnames(hab) <- list('San Joaquin River', month.abb, 1980:2000)
 hab[which(is.na(hab))] <- 0
 
 # add habitats together 
-# # Juv
-
+# # Juveniles
 # update instream juvenile object 
 r_to_r_add_sj_fr_juv <- DSMhabitat::fr_juv$r_to_r_baseline
 new_juv_hab <- DSMhabitat::fr_juv$r_to_r_baseline['San Joaquin River', , ] + hab['San Joaquin River', , ]
 r_to_r_add_sj_fr_juv["San Joaquin River" , , ] <- new_juv_hab 
 
 # check to make sure it works 
-r_to_r_add_sj_fr_juv['San Joaquin River',,] == DSMhabitat::fr_juv$r_to_r_baseline['San Joaquin River',,]
+r_to_r_add_sj_fr_juv['San Joaquin River' , , ] == DSMhabitat::fr_juv$r_to_r_baseline['San Joaquin River' , , ]
 
-DSMhabitat::fr_juv$r_to_r_baseline <- r_to_r_add_sj_fr_juv
+baseline_fr_juv <- DSMhabitat::fr_juv
+baseline_fr_juv$r_to_r_baseline <- r_to_r_add_sj_fr_juv
+fr_juv <- baseline_fr_juv
 
-usethis::use_data(fr_fp, overwrite = TRUE)
+# check to make sure it works 
+fr_juv$r_to_r_baseline == DSMhabitat::fr_juv$r_to_r_baseline
 
-# exploratory plot: 
+# save new data object
+usethis::use_data(fr_juv, overwrite = TRUE)
+
+
+# Update Fry object -------------------------------------------------------
+r_to_r_add_sj_fr_fry <- DSMhabitat::fr_fry$r_to_r_baseline
+new_fry_hab <- DSMhabitat::fr_fry$r_to_r_baseline['San Joaquin River', , ] + hab['San Joaquin River', , ]
+r_to_r_add_sj_fr_fry["San Joaquin River" , , ] <- new_fry_hab 
+
+# check to make sure it works 
+r_to_r_add_sj_fr_fry['San Joaquin River' , , ] == DSMhabitat::fr_fry$r_to_r_baseline['San Joaquin River' , , ]
+
+baseline_fr_fry <- DSMhabitat::fr_fry
+baseline_fr_fry$r_to_r_baseline <- r_to_r_add_sj_fr_fry
+fr_fry <- baseline_fr_fry
+
+# check to make sure it works 
+fr_fry$r_to_r_baseline == DSMhabitat::fr_fry$r_to_r_baseline
+
+# save new data object: 
+usethis::use_data(fr_fry, overwrite = TRUE)
+
+
+
+
+# Exploratory Plots:  -----------------------------------------------------
+
+
+# Juve
 juv <- expand_grid(
     watershed = as.factor('San Joaquin River'),
     month = 1:12,
@@ -260,6 +290,32 @@ juv |>
   ggplot(aes(date, acres, color = reach)) +
   geom_line(alpha = .75) + 
   facet_wrap(~watershed, scales = 'free_y') + 
+  theme_minimal() + 
+  theme(legend.position = "top") + 
+  ggtitle('New San Joaquin Juvenile Habitat') 
+
+# Fry: 
+
+fry <- expand_grid(
+  watershed = as.factor('San Joaquin River'),
+  month = 1:12,
+  year = 1980:2000) |> 
+  arrange(year, month, watershed) |> 
+  mutate(
+    low_sj = as.vector(DSMhabitat::fr_fry$biop_itp_2018_2019['San Joaquin River' , , ] |> 
+                         DSMhabitat::square_meters_to_acres()),
+    upper_sj = as.vector(hab['San Joaquin River', , ]) |>  
+      DSMhabitat::square_meters_to_acres(),
+    new_hab = as.vector(new_fry_hab) |>   DSMhabitat::square_meters_to_acres()) 
+
+fry |> 
+  transmute(watershed, date = ymd(paste(year, month, 1)), 
+            low_sj, upper_sj, new_hab) |> 
+  gather(reach, acres, -watershed, -date)  |> 
+  ggplot(aes(date, acres, color = reach)) +
+  geom_line(alpha = .75) + 
+  facet_wrap(~watershed, scales = 'free_y') + 
+  ggtitle('New San Joaquin Fry Habitat') + 
   theme_minimal() + 
   theme(legend.position = "top")
   
