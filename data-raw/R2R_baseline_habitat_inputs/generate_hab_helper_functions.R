@@ -21,12 +21,14 @@ calsim_30_day <- function(data) {
 
 # Pull existing flow comparison point
 existing_cfs_median_comparison_point <- function (habitat_type, watershed, species, calsim_version) {
-  spawning_months <- case_when(species == "fr" ~ c(10:12)
-                               # fill in the rest 
-                               )
-  rearing_months <- case_when(species == "fr" ~ c(1:8)
-                               # fill in the rest 
-                              )
+  spawning_months <- switch(species, 
+                            "fr" = c(10:12),
+                            "sr" = c(7:10),
+                            "wr" = c(5:7))
+  rearing_months <- switch(species,
+                              "fr" = c(1:8), 
+                              "sr" = c(1:5),
+                              "wr" = c(1:5))
   if (habitat_type == "spawning") {
     DSMflow::flows_cfs[[calsim_version]] |> 
       filter(date >= as_date("1979-01-01")) |> 
@@ -66,16 +68,24 @@ hab_prop_change_from_projects <- function(habitat_type, watershed, species, life
   hab <- habitat_type
   ws <- watershed 
   
+  selected_run <- switch(species, 
+                         "fr" = "fall", 
+                         "sr" = "spring",
+                         "wr" = "winter")
+  
   # pull project hab out of project catalog 
-  project_hab_added <- read_csv("data-raw/R2R_baseline_habitat_inputs/R2R_project_catalog_fall_summary.csv") |> 
+  project_hab_added <- read_csv("data-raw/R2R_baseline_habitat_inputs/R2R_project_catalog_summary.csv") |> 
     mutate(suitable_acres = total_acres * percent_suitable) |> 
     group_by(watershed, habitat_type, run) |> 
     summarize(suitable_acres = sum(suitable_acres)) |> 
-    filter(watershed == ws & habitat_type == hab) |> pull(suitable_acres)
+    filter(watershed == ws & habitat_type == hab & run == selected_run) |> pull(suitable_acres)
   
   project_hab_sqmeters <- DSMhabitat::acres_to_square_meters(project_hab_added)
-
-  if (habitat_type == "inchannel rearing") {
+  if (habitat_type == "inchannel rearing" & watershed == "Upper-mid Sacramento River") {
+    median_flow <- existing_cfs_median_comparison_point(habitat_type, watershed, species, calsim_version)
+    sit_habitat <- DSMhabitat::set_instream_habitat(watershed, "fr", lifestage, median_flow)
+  } 
+  if (habitat_type == "inchannel rearing" & watershed != "Upper-mid Sacramento River") {
     median_flow <- existing_cfs_median_comparison_point(habitat_type, watershed, species, calsim_version)
     sit_habitat <- DSMhabitat::set_instream_habitat(watershed, species, lifestage, median_flow)
   } 
@@ -110,4 +120,4 @@ hab_prop_change_from_projects <- function(habitat_type, watershed, species, life
 
 # hab_prop_change_from_projects("floodplain rearing", "North Delta", "fr", "juv", "biop_itp_2018_2019")
 hab_prop_change_from_projects("floodplain rearing", "Tuolumne River", "fr", "juv", "biop_itp_2018_2019")
-hab_prop_change_from_projects("spawning", "American River", "fr", "adult", "biop_itp_2018_2019")
+hab_prop_change_from_projects("spawning", "Cottonwood Creek", "sr", "adult", "biop_itp_2018_2019")
