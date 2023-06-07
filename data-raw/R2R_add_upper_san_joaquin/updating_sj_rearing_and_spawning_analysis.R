@@ -1,19 +1,21 @@
 library(tidyverse)
 
 # Add Upper San Joaquin Rearing flow to area curves 
-
-
 flow_habitat_raw <- read_csv('data-raw/R2R_add_upper_san_joaquin/data-raw/tidy_rearing_data_sjrrp_fish_habitat_study_results.csv') |> 
   glimpse()
 
 # TODO: research inundated acres and floodplain - can we use that column? remove the suitable acres and use? 
+# Inundation mapping was conducted for Reach 5 from results of 1D HEC-RAS modeling. The existing conditions model 
+# titled SJRRP07, documented in Mussetter Engineering, Inc (MEI, 2008) 
+# was used in order to represent the existing levels of floodplain available along the San Joaquin River. 
 
 unique(flow_habitat_raw$reach)
 
 flow_habitat <- flow_habitat_raw |> 
   group_by(reach) |> 
   reframe(flow_cfs = flow_cfs,
-          suitable_acres = suitable_acres) |> 
+          suitable_acres = suitable_acres, 
+          total_inundated_acres = total_inundated_acres) |> 
   filter(reach != "5") # reach 5 does not have flow associated with suitable acres
 
 # reach lengths 
@@ -143,7 +145,6 @@ upper_san_joaquin_instream <- upper_san_joaquin_rearing |>
   select(watershed, everything())
 
 # update DSMhabitat san joaquin object as current hab + new hab
-
 lower_san_joaquin_length <- dplyr::pull(dplyr::filter(DSMhabitat::watershed_lengths,
                                                       watershed == 'San Joaquin River',
                                                       species == 'fr',
@@ -164,10 +165,62 @@ ggplot() +
   theme_minimal() +
   labs(x = 'Flow (cfs)', y = 'Spawning Acres') 
 
-# TODO: 
-# 1. use set_instream_habitat function and logic from get_rear_hab_all() to run "upper san joaquin instream" data object 
-# 2. add new data object to san joaquin data object and over-write existing san joaquin instream object 
-# 3. do the same for spawning 
+
+# floodplain  -------------------------------------------------------------
+
+floodplain <- tibble(
+  flow_cfs = c(200, 500, 750, 1000, 1250, 1500, 1750, 2000, 2500, 3000, 3500, 
+               4000, 4500, 5000, 5500, 6000, 6500, 7000),
+  sj_fr_1B = approx(reach_1B$flow_cfs, reach_1B$total_inundated_acres, xout = flow_cfs, rule = 2)$y,
+  sj_fr_2A = approx(reach_2A$flow_cfs, reach_2A$total_inundated_acres, xout = flow_cfs, rule = 2)$y,
+  sj_fr_3 = approx(reach_3$flow_cfs, reach_3$total_inundated_acres, xout = flow_cfs, rule = 2)$y,
+  sj_fr_4A = approx(reach_4A$flow_cfs, reach_4A$total_inundated_acres, xout = flow_cfs, rule = 2)$y,
+)
+
+floodplain |> 
+  pivot_longer(cols = c(sj_fr_1B, sj_fr_2A, sj_fr_3, sj_fr_4A), values_to = "total_inundated_acres") |> 
+  ggplot(aes(x = flow_cfs, y = total_inundated_acres)) +
+  geom_line(aes(color = name)) +
+  ggtitle('Inundated Acres By Reach (prior to weighting by reach length): Floodplain') +
+  theme_minimal()
+
+# total reach length:
+total_reach_length_miles <- sum(flow_habitat_length |> 
+                                  group_by(reach) |> 
+                                  summarise(sum_miles = sum(unique(reach_length_miles), na.rm = TRUE)) |> 
+                                  pull(sum_miles))
+
+upper_san_joaquin_floodplain <- floodplain |> 
+  mutate(sj_fr_fp = sj_fr_1B * (reach_1B$reach_length_miles/total_reach_length_miles) + 
+           sj_fr_2A * (reach_2A$reach_length_miles/total_reach_length_miles) +
+           sj_fr_3 * (reach_3$reach_length_miles/total_reach_length_miles) +
+           sj_fr_4A * (reach_4A$reach_length_miles/total_reach_length_miles) 
+  ) |> 
+  select(flow_cfs, FR_floodplain_acres = sj_fr_fp) 
+
+# TODO: do we need to scale floodplain? How?
+# TODO: increase flows?
+
+upper_san_joaquin_floodplain |> 
+  ggplot(aes(x = flow_cfs, y = FR_floodplain_acres)) +
+  geom_line() +
+  ggtitle('Upper San Joaquin Suitable Floodplain Acres') +
+  theme_minimal() + 
+  labs(x = 'Flow (cfs)', y = 'Inundated Acres') + 
+  scale_y_continuous(labels = scales::comma)
+
+ggplot() +
+  geom_line(data = upper_san_joaquin_floodplain, aes(y = FR_floodplain_acres, x = flow_cfs, color = "Upper San Joaquin")) +
+  geom_line(data = DSMhabitat::san_joaquin_river_floodplain, 
+            aes(y = DSMhabitat::wua_to_area(DSMhabitat::san_joaquin_river_floodplain$FR_floodplain_acres, "San Joaquin River", "rearing", "fr") * 0.000247105, 
+                x = flow_cfs, color = "Lower San Joaquin")) +
+  theme_minimal() +
+  labs(x = 'Flow (cfs)', y = 'Flooplain Acres') 
+
+
+# save new data objects ---------------------------------------------------
+# TODO: save new instream object 
+# TODO: save new flooplain object
 
 # create instream object 
 

@@ -58,7 +58,6 @@ above_dam_acres <- above_dam_calcs |>
   group_by(river, mean_channel_width, mean_inflection_width, above_dam_spawning_acres, above_dam_floodplain_acres) |> 
   summarise(above_dam_rearing_acres = sum(above_dam_rearing_acres)) |> 
   mutate(river = ifelse(grepl("San Joaquin River", river), "San Joaquin River", river)) 
-  glimpse()
 
 # Below Dam Calculations --------------------------------------------------
 
@@ -188,7 +187,7 @@ widths_lengths <- bind_rows(above_dam_calcs |> mutate(dam = "above dam"),
                   unreg_calcs |> mutate(dam = "unregulated"),
                   hec_ras_calc)
 
-#saveRDS(widths_lengths, '../r2r_model_inputs_app/data/above_dam_extents/river_widths_lengths.rds')
+#saveRDS(widths_lengths, '../r2r_spatial_extents_app/data/river_widths_lengths.rds')
 
 
 tmh_acres <- bind_rows(above_dam_acres |> mutate(dam = "above dam"), 
@@ -199,7 +198,7 @@ tmh_acres <- bind_rows(above_dam_acres |> mutate(dam = "above dam"),
 # format_all_data ---------------------------------------------------------
 
 if(run == "Fall Run") {
-  #write_csv(all_habitat_data, "../r2r_model_inputs_app/data-raw/all_habitat_data.csv")
+  #write_csv(all_max_habitat, "../r2r_spatial_extents_app/data-raw/all_habitat_data.csv")
   saveRDS(all_max_habitat, "data-raw/R2R_TMH_habitat_inputs/all_habitat_data_for_tmh_inputs_fall_run.rdata")
 } else {
   saveRDS(all_max_habitat, "data-raw/R2R_TMH_habitat_inputs/all_habitat_data_for_tmh_inputs_spring_winter_run.rdata")

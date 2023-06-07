@@ -94,7 +94,7 @@ The monthly median full natural flow was used as the input into the HEC RAS mode
 Table 2. Flows used to run HEC-RAS model for applicable watersheds. 
 
 | **Watersheds**             | **Floodplain**                            | **Rearing**                    | **Spawning**                   |
-|-----------------|--------------------|-----------------|-----------------|
+|----------------------------|-------------------------------------------|--------------------------------|--------------------------------|
 | American River             | 2 Year 14 day functional flow: 8087 cfs   | --                             | --                             |
 | Upper-mid Sacramento River | 2 Year 14 day functional flow: 14,903 cfs | --                             | --                             |
 | Lower-mid Sacramento River | 2 Year 14 day functional flow: 21,516 cfs | Minimum HEC RAS flow: 7833 cfs | Minimum HEC RAS flow: 7833 cfs |

@@ -128,7 +128,7 @@ df <- read_excel('data-raw/mark_gard_data/Floodplainarea.xlsx',
          modeled_floodplain_area_acres = 
               pmax(total_area_acres - wetted_area_acres, 0))
 
-feather_river_floodplain <- scale_fp_flow_area_partial_model(ws = "Feather River", df)
+  feather_river_floodplain <- scale_fp_flow_area_partial_model(ws = "Feather River", df)
 
 knitr::kable(align = 'c', head(feather_river_floodplain, 5), 
              caption = "Header Descriptions: flow_cfs = flow in cubic feet per second,
