@@ -294,14 +294,14 @@ fp |>
 # set r_to_r_baseline_fr_spawn to 
 r_to_r_baseline_sr_spawn <- DSMhabitat::sr_spawn$biop_itp_2018_2019
 
-# Add american river spawning habitat 
+# Add cottonwood creek spawning habitat 
 add_project_habitat <- DSMhabitat::sr_spawn$biop_itp_2018_2019["Cottonwood Creek", , ] * 
   hab_prop_change_from_projects("spawning", "Cottonwood Creek", "sr", "adult", "biop_itp_2018_2019")
 updated_habitat <- DSMhabitat::sr_spawn$biop_itp_2018_2019["Cottonwood Creek", , ] + add_project_habitat
 
 r_to_r_baseline_sr_spawn["Cottonwood Creek", , ] <- updated_habitat 
 
-# add clear creek spawning habitat
+# add deer creek spawning habitat
 add_project_habitat <- DSMhabitat::sr_spawn$biop_itp_2018_2019["Deer Creek" , , ] * 
   hab_prop_change_from_projects("spawning", "Deer Creek", "sr", "adult", "biop_itp_2018_2019")
 updated_habitat <- DSMhabitat::sr_spawn$biop_itp_2018_2019["Deer Creek", , ] + add_project_habitat
