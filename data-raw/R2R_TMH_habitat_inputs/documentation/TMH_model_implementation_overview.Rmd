@@ -5,7 +5,9 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE,
+                      fig.width = 12, 
+                      fig.height = 8)
 
 library(tidyverse)
 library(DSMhabitat)
@@ -39,7 +41,7 @@ Winter Run Habitat
 -   [`DSMhabitat::wr_fry`](https://cvpia-osc.github.io/DSMhabitat/reference/fry.html)
 -   [`DSMhabitat::wr_fp`](https://cvpia-osc.github.io/DSMhabitat/reference/floodplain.html)
 
-Non Run Specific Habitat 
+Non Run Specific Habitat
 
 -   [`DSMhabitat::delta_habitat`](https://cvpia-osc.github.io/DSMhabitat/reference/delta_habitat.html)
 
@@ -132,17 +134,45 @@ The existing acres are then scaled for each watershed (`ws`) by the calculated `
 
 The new data objects are saved in the package as:
 
--   `DSMhabitat::fr_spawn$r_to_r_tmh`
--   `DSMhabitat::fr_juv$r_to_r_tmh`
--   `DSMhabitat::fr_fry$r_to_r_tmh`
--   `DSMhabitat::fr_fp$r_to_r_tmh`
--   `DSMhabitat::fr_delta$r_to_r_tmh` *See [TODO link]* for details on Delta methodology for theoretical maximum habitat
+**Fall Run**
+
+`DSMhabitat::fr_spawn$r_to_r_tmh`
+
+`DSMhabitat::fr_juv$r_to_r_tmh`
+
+`DSMhabitat::fr_fry$r_to_r_tmh`
+
+`DSMhabitat::fr_fp$r_to_r_tmh`
+
+**Spring Run**
+
+`DSMhabitat::sr_spawn$r_to_r_tmh`
+
+`DSMhabitat::sr_juv$r_to_r_tmh`
+
+`DSMhabitat::sr_fry$r_to_r_tmh`
+
+`DSMhabitat::sr_fp$r_to_r_tmh`
+
+**Winter Run**
+
+`DSMhabitat::wr_spawn$r_to_r_tmh`
+
+`DSMhabitat::wr_juv$r_to_r_tmh`
+
+`DSMhabitat::wr_fry$r_to_r_tmh`
+
+`DSMhabitat::wr_fp$r_to_r_tmh`
+
+**Non Run Specific Habitat**
+
+`DSMhabitat::delta_habitat$r_to_r_tmh` *See Calculating Theoretical Maximum Habitat* for details on Delta methodology for theoretical maximum habitat
 
 #### Comparison plots between Baseline and Theoretical Maximum Habitat
 
-##### Spawning Habitat: 
+##### Spawning Habitat:
 
-###### Fall Run: 
+###### Fall Run:
 
 ```{r echo=FALSE}
 
@@ -151,100 +181,80 @@ tmh_comparison_plot(tmh_data = DSMhabitat::fr_spawn$r_to_r_tmh,
 
 ```
 
-###### Winter Run: 
+###### Winter Run:
 
-```{r}
+```{r echo=FALSE}
 
 tmh_comparison_plot(tmh_data = DSMhabitat::wr_spawn$r_to_r_tmh, 
                     sit_habitat = DSMhabitat::wr_spawn$biop_itp_2018_2019, "spawn")
 
 ```
 
-###### Spring Run: 
+###### Spring Run:
 
-```{r}
-tmh_comparison_plot(tmh_data = r_to_r_tmh_sr_spawn, 
+```{r echo=FALSE}
+tmh_comparison_plot(tmh_data = DSMhabitat::sr_spawn$r_to_r_tmh, 
                     sit_habitat = DSMhabitat::sr_spawn$biop_itp_2018_2019, "spawn")
 
 ```
 
-##### Inchannel Juvenile Rearing Habitat: 
+##### Inchannel Juvenile Rearing Habitat:
+
+###### Fall Run:
 
 ```{r echo=FALSE}
 
-## juv rearing plot:  ---------------------------------------------------------
-r_to_r_tmh_habitat <- DSMhabitat::fr_juv$r_to_r_tmh |> 
-  DSMhabitat::square_meters_to_acres()
-
-sit_habitat <- DSMhabitat::fr_juv$biop_itp_2018_2019 |> DSMhabitat::square_meters_to_acres()
-
-ic_juv <- expand_grid(
-  watershed = factor(DSMscenario::watershed_labels, 
-                     levels = DSMscenario::watershed_labels),
-  month = 1:12,
-  year = 1980:2000) |> 
-  arrange(year, month, watershed) |> 
-  mutate(
-    sit_habitat = as.vector(sit_habitat),
-    r_to_r_tmh_habitat = as.vector(r_to_r_tmh_habitat)) |> 
-  filter(watershed %in% c("American River", 
-                          "Tuolumne River",
-                          "Upper Sacramento River",
-                          "Upper-mid Sacramento River"
-  ))
-
-ic_juv |> 
-  transmute(watershed, date = lubridate::ymd(paste(year, month, 1)), 
-            sit_habitat, r_to_r_tmh_habitat) |> 
-  gather(version, acres, -watershed, -date)  |> 
-  ggplot(aes(date, acres, color = version)) +
-  geom_line(alpha = .75) + 
-  facet_wrap(~watershed, scales = 'free_y') + 
-  ylab('acres of juvenile rearing habitat') + 
-  theme_minimal() + 
-  theme(legend.position="top", 
-        legend.title = element_blank())
+tmh_comparison_plot(tmh_data = DSMhabitat::fr_juv$r_to_r_tmh, 
+                    sit_habitat = DSMhabitat::fr_juv$biop_itp_2018_2019, "juv")
 
 ```
 
-##### Floodplain Rearing Habitat: 
+###### Winter Run:
 
 ```{r echo=FALSE}
 
-r_to_r_max_habitat <- DSMhabitat::fr_fp$r_to_r_tmh |> 
-  DSMhabitat::square_meters_to_acres()
-
-sit_habitat <- DSMhabitat::fr_fp$biop_itp_2018_2019 |> DSMhabitat::square_meters_to_acres()
-
-flood <- expand_grid(
-  watershed = factor(DSMscenario::watershed_labels, 
-                     levels = DSMscenario::watershed_labels),
-  month = 1:12,
-  year = 1980:2000) |> 
-  arrange(year, month, watershed) |> 
-  mutate(
-    sit_habitat = as.vector(sit_habitat),
-    r_to_r_max_habitat = as.vector(r_to_r_max_habitat)) |> 
-  filter(watershed %in% c("American River", 
-                          "Upper Sacramento River", 
-                          "Paynes Creek", 
-                          "Feather River"))
-
-flood |> 
-  transmute(watershed, date = lubridate::ymd(paste(year, month, 1)), 
-            sit_habitat, r_to_r_max_habitat) |> 
-  gather(version, acres, -watershed, -date)  |> 
-  ggplot(aes(date, acres, color = version)) +
-  geom_line(alpha = .75) + 
-  facet_wrap(~watershed, scales = 'free_y') + 
-  ylab('acres of floodplain rearing habitat') + 
-  theme_minimal() + 
-  theme(legend.position="top", 
-        legend.title = element_blank())
+tmh_comparison_plot(tmh_data = DSMhabitat::wr_juv$r_to_r_tmh, 
+                    sit_habitat = DSMhabitat::wr_juv$biop_itp_2018_2019, "juv")
 
 ```
 
-##### Delta Habitat 
+###### Spring Run:
+
+```{r echo=FALSE}
+tmh_comparison_plot(tmh_data = DSMhabitat::sr_juv$r_to_r_tmh, 
+                    sit_habitat = DSMhabitat::sr_juv$biop_itp_2018_2019, "juv")
+
+```
+
+##### Floodplain Rearing Habitat:
+
+###### Fall Run:
+
+```{r echo=FALSE}
+
+tmh_comparison_plot(tmh_data = DSMhabitat::fr_fp$r_to_r_tmh, 
+                    sit_habitat = DSMhabitat::fr_fp$biop_itp_2018_2019, "flood")
+
+```
+
+###### Winter Run:
+
+```{r echo=FALSE}
+
+tmh_comparison_plot(tmh_data = DSMhabitat::wr_fp$r_to_r_tmh, 
+                    sit_habitat = DSMhabitat::wr_fp$biop_itp_2018_2019, "flood")
+
+```
+
+###### Spring Run:
+
+```{r echo=FALSE}
+tmh_comparison_plot(tmh_data = DSMhabitat::sr_fp$r_to_r_tmh, 
+                    sit_habitat = DSMhabitat::sr_fp$biop_itp_2018_2019, "flood")
+
+```
+
+##### Delta Habitat
 
 ```{r, echo = FALSE}
 r_to_r_tmh_delta <- DSMhabitat::delta_habitat$r_to_r_tmh |> 

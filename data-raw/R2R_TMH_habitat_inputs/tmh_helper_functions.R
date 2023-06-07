@@ -166,5 +166,7 @@ tmh_comparison_plot <- function(tmh_data, sit_habitat, hab_type) {
     ggplot(aes(date, acres, color = version)) +
     geom_line(alpha = .75) + 
     facet_wrap(~watershed, scales = 'free_y') + 
-    theme_minimal()
+    theme_minimal() + 
+    theme(legend.position="top", 
+          legend.title = element_blank())
 }
