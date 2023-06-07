@@ -16,7 +16,8 @@ rearing_perc_suitable_1_2 <- 0.78
 rearing_perc_suitable_2_4 <- 0.585
 rearing_perc_suitable_4_8 <- 0.195
 
-run <- 'Fall Run' #'Spring Run' 'Winter Run'
+#run <- 'Fall Run' #'Spring Run' 'Winter Run'
+run <- 'Spring Run'
 
 # url <- 'https://docs.google.com/spreadsheets/d/1-3WZAcOzrk5ugZq4CAYK1LRLP0005NmjwpifNQHZ_iA/edit#gid=0'
 
@@ -58,7 +59,6 @@ above_dam_acres <- above_dam_calcs |>
   group_by(river, mean_channel_width, mean_inflection_width, above_dam_spawning_acres, above_dam_floodplain_acres) |> 
   summarise(above_dam_rearing_acres = sum(above_dam_rearing_acres)) |> 
   mutate(river = ifelse(grepl("San Joaquin River", river), "San Joaquin River", river)) 
-  glimpse()
 
 # Below Dam Calculations --------------------------------------------------
 
