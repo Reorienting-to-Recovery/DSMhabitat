@@ -133,3 +133,40 @@ existing_acres_fun <- function(watershed_input, habitat_type) {
     return(flood_acres)
   }
 }
+
+# TMH Plots: 
+tmh_comparison_plot <- function(tmh_data, sit_habitat, hab_type) {
+  
+  year = switch(hab_type, 
+                "spawn" = c(1979:2000),
+                "juv" = c(1980:2000),
+                "fry" = c(1980:2000),
+                "flood" = c(1980:2000)
+                )
+  
+  r_to_r_max_habitat <- tmh_data |> 
+    DSMhabitat::square_meters_to_acres()
+  
+  sit_habitat <- sit_habitat |> DSMhabitat::square_meters_to_acres()
+  
+  plot <- expand_grid(
+    watershed = factor(DSMscenario::watershed_labels, 
+                       levels = DSMscenario::watershed_labels),
+    month = 1:12,
+    year = year) |> 
+    arrange(year, month, watershed) |> 
+    mutate(
+      sit_habitat = as.vector(sit_habitat),
+      r_to_r_max_habitat = as.vector(r_to_r_max_habitat)) 
+  
+  plot |> 
+    transmute(watershed, date = lubridate::ymd(paste(year, month, 1)), 
+              sit_habitat, r_to_r_max_habitat) |> 
+    gather(version, acres, -watershed, -date)  |> 
+    ggplot(aes(date, acres, color = version)) +
+    geom_line(alpha = .75) + 
+    facet_wrap(~watershed, scales = 'free_y') + 
+    theme_minimal() + 
+    theme(legend.position="top", 
+          legend.title = element_blank())
+}
