@@ -15,9 +15,9 @@ source('data-raw/R2R_tmh_max_flow_inputs/tmh_helper_functions.R')
 # update DSMhabitat values ------------------------------------------------
 watersheds_trunc <- DSMscenario::watershed_labels[!(DSMscenario::watershed_labels %in%  c('North Delta', "South Delta", "Sutter Bypass", "Yolo Bypass"))]
 
-r_to_r_tmh_fr_spawn <- spawn_tmh_processing(watersheds = watersheds_trunc, species = "fr")
-r_to_r_tmh_wr_spawn <- spawn_tmh_processing(watersheds = watersheds_trunc, species = "wr")
-r_to_r_tmh_sr_spawn <- spawn_tmh_processing(watersheds = watersheds_trunc, species = "sr")
+r_to_r_tmh_fr_spawn <- spawn_tmh_processing(watersheds = watersheds_trunc, species = "fr", calsim_run = "run_of_river")
+r_to_r_tmh_wr_spawn <- spawn_tmh_processing(watersheds = watersheds_trunc, species = "wr", calsim_run = "run_of_river")
+r_to_r_tmh_sr_spawn <- spawn_tmh_processing(watersheds = watersheds_trunc, species = "sr", calsim_run = "run_of_river")
 
 r_to_r_tmh_fr_spawn == r_to_r_tmh_wr_spawn # check, should be different 
 

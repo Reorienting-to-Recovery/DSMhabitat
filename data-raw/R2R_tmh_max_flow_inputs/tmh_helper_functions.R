@@ -34,14 +34,14 @@ all_existing_and_tmh_data_fun <- function(species) {
 }
 
 ## spawning ----------------------------------------------------------------
-spawn_tmh_processing <- function(watersheds, species) {
+spawn_tmh_processing <- function(watersheds, species, calsim_run) {
   
   all_existing_and_tmh_data <- all_existing_and_tmh_data_fun(species)
   
   r_to_r_tmh_spawn <- switch(species, 
-                             "fr" = DSMhabitat::fr_spawn$biop_itp_2018_2019,
-                             "sr" = DSMhabitat::sr_spawn$biop_itp_2018_2019,
-                             "wr" = DSMhabitat::wr_spawn$biop_itp_2018_2019)
+                             "fr" = DSMhabitat::fr_spawn[[calsim_run]],
+                             "sr" = DSMhabitat::sr_spawn[[calsim_run]],
+                             "wr" = DSMhabitat::wr_spawn[[calsim_run]])
   
   for(i in 1:length(watersheds)) {
     ws = watersheds[i]
@@ -51,7 +51,7 @@ spawn_tmh_processing <- function(watersheds, species) {
       filter(watershed == ws & hab == habitat) |> 
       pull(value)
     
-    existing_acres <- existing_acres_fun(watershed_input = ws, habitat_type = 'spawn', species = species) 
+    existing_acres <- existing_acres_fun(watershed_input = ws, habitat_type = 'spawn', species = species, calsim_run = calsim_run) 
     
     if(existing_acres == 0 | is.na(existing_acres)) {
       adj_factor = 1
@@ -61,9 +61,9 @@ spawn_tmh_processing <- function(watersheds, species) {
     
     new_hab_acres <- 
       switch(species, 
-             "fr" = DSMhabitat::fr_spawn$biop_itp_2018_2019[ws , , ] * adj_factor,
-             "sr" = DSMhabitat::sr_spawn$biop_itp_2018_2019[ws , , ] * adj_factor,
-             "wr" = DSMhabitat::wr_spawn$biop_itp_2018_2019[ws , , ] * adj_factor
+             "fr" = DSMhabitat::fr_spawn[[calsim_run]][ws , , ] * adj_factor,
+             "sr" = DSMhabitat::sr_spawn[[calsim_run]][ws , , ] * adj_factor,
+             "wr" = DSMhabitat::wr_spawn[[calsim_run]][ws , , ] * adj_factor
       )
     
     r_to_r_tmh_spawn[ws, , ] <- new_hab_acres 
@@ -73,18 +73,18 @@ spawn_tmh_processing <- function(watersheds, species) {
 }
 
 ## In channel and Fry Rearing ----------------------------------------------------------------
-rearing_tmh_processing <- function(watersheds, species) {
+rearing_tmh_processing <- function(watersheds, species, calsim_run) {
   
   all_existing_and_tmh_data <- all_existing_and_tmh_data_fun(species)
   
   r_to_r_tmh_juv <- switch(species, 
-                             "fr" = DSMhabitat::fr_juv$biop_itp_2018_2019,
-                             "sr" = DSMhabitat::sr_juv$biop_itp_2018_2019,
-                             "wr" = DSMhabitat::wr_juv$biop_itp_2018_2019)
+                             "fr" = DSMhabitat::fr_juv[[calsim_run]],
+                             "sr" = DSMhabitat::sr_juv[[calsim_run]],
+                             "wr" = DSMhabitat::wr_juv[[calsim_run]])
   r_to_r_tmh_fry <- switch(species, 
-                           "fr" = DSMhabitat::fr_fry$biop_itp_2018_2019,
-                           "sr" = DSMhabitat::sr_fry$biop_itp_2018_2019,
-                           "wr" = DSMhabitat::wr_fry$biop_itp_2018_2019)
+                           "fr" = DSMhabitat::fr_fry[[calsim_run]],
+                           "sr" = DSMhabitat::sr_fry[[calsim_run]],
+                           "wr" = DSMhabitat::wr_fry[[calsim_run]])
   
   for(i in 1:length(watersheds)) {
     ws = watersheds[i]
@@ -94,24 +94,24 @@ rearing_tmh_processing <- function(watersheds, species) {
       filter(watershed == ws & hab == habitat) |> 
       pull(value)
     
-    existing_acres_juv <- existing_acres_fun(watershed_input = ws, habitat_type = 'rear_juv', species = species) 
-    existing_acres_fry <- existing_acres_fun(watershed_input = ws, habitat_type = 'rear_fry', species = species) 
+    existing_acres_juv <- existing_acres_fun(watershed_input = ws, habitat_type = 'rear_juv', species = species, calsim_run = calsim_run) 
+    existing_acres_fry <- existing_acres_fun(watershed_input = ws, habitat_type = 'rear_fry', species = species, calsim_run = calsim_run) 
     
     adj_factor_juv = (max_hab_acres - existing_acres_juv) / existing_acres_juv + 1
     adj_factor_fry = (max_hab_acres - existing_acres_fry) / existing_acres_fry + 1
     
     add_max_hab_juv <- 
       switch(species, 
-             "fr" = DSMhabitat::fr_juv$biop_itp_2018_2019[ws , , ] * adj_factor_juv,
-             "sr" = DSMhabitat::sr_juv$biop_itp_2018_2019[ws , , ] * adj_factor_juv,
-             "wr" = DSMhabitat::wr_juv$biop_itp_2018_2019[ws , , ] * adj_factor_juv
+             "fr" = DSMhabitat::fr_juv[[calsim_run]][ws , , ] * adj_factor_juv,
+             "sr" = DSMhabitat::sr_juv[[calsim_run]][ws , , ] * adj_factor_juv,
+             "wr" = DSMhabitat::wr_juv[[calsim_run]][ws , , ] * adj_factor_juv
       )
     
     add_max_hab_fry <- 
       switch(species, 
-             "fr" = DSMhabitat::fr_fry$biop_itp_2018_2019[ws , , ] * adj_factor_fry,
-             "sr" = DSMhabitat::sr_fry$biop_itp_2018_2019[ws , , ] * adj_factor_fry,
-             "wr" = DSMhabitat::wr_fry$biop_itp_2018_2019[ws , , ] * adj_factor_fry
+             "fr" = DSMhabitat::fr_fry[[calsim_run]][ws , , ] * adj_factor_fry,
+             "sr" = DSMhabitat::sr_fry[[calsim_run]][ws , , ] * adj_factor_fry,
+             "wr" = DSMhabitat::wr_fry[[calsim_run]][ws , , ] * adj_factor_fry
       )
     
     
@@ -123,14 +123,14 @@ rearing_tmh_processing <- function(watersheds, species) {
 }
 
 ## floodplain  ----------------------------------------------------------------
-floodplain_tmh_processing <- function(watersheds, species) {
+floodplain_tmh_processing <- function(watersheds, species, calsim_run) {
   
   all_existing_and_tmh_data <- all_existing_and_tmh_data_fun(species)
   
   r_to_r_tmh_flood <- switch(species, 
-                             "fr" = DSMhabitat::fr_fp$biop_itp_2018_2019,
-                             "sr" = DSMhabitat::sr_fp$biop_itp_2018_2019,
-                             "wr" = DSMhabitat::wr_fp$biop_itp_2018_2019)
+                             "fr" = DSMhabitat::fr_fp[[calsim_run]],
+                             "sr" = DSMhabitat::sr_fp[[calsim_run]],
+                             "wr" = DSMhabitat::wr_fp[[calsim_run]])
   
   for(i in 1:length(watersheds)) {
     ws = watersheds[i]
@@ -140,7 +140,7 @@ floodplain_tmh_processing <- function(watersheds, species) {
       filter(watershed == ws & hab == habitat) |> 
       pull(value)
     
-    existing_acres <- existing_acres_fun(watershed_input = ws, habitat_type = 'floodplain', species = species) 
+    existing_acres <- existing_acres_fun(watershed_input = ws, habitat_type = 'floodplain', species = species, calsim_run = calsim_run) 
     
     if(existing_acres == 0 | is.na(existing_acres)) {
       adj_factor = 1
@@ -150,9 +150,9 @@ floodplain_tmh_processing <- function(watersheds, species) {
     
     new_hab_acres <- 
       switch(species, 
-             "fr" = DSMhabitat::fr_fp$biop_itp_2018_2019[ws , , ] * adj_factor,
-             "sr" = DSMhabitat::sr_fp$biop_itp_2018_2019[ws , , ] * adj_factor,
-             "wr" = DSMhabitat::wr_fp$biop_itp_2018_2019[ws , , ] * adj_factor
+             "fr" = DSMhabitat::fr_fp[[calsim_run]][ws , , ] * adj_factor,
+             "sr" = DSMhabitat::sr_fp[[calsim_run]][ws , , ] * adj_factor,
+             "wr" = DSMhabitat::wr_fp[[calsim_run]][ws , , ] * adj_factor
       )
     
     r_to_r_tmh_flood[ws, , ] <- new_hab_acres 
@@ -193,9 +193,9 @@ delta_tmh_processing <- function(watersheds = c('North Delta', 'South Delta')) {
   return(r_to_r_tmh_delta)
 }
 
-existing_flow_cfs <- function(habitat_type, watershed_input, bypass = FALSE, species) {
+existing_flow_cfs <- function(habitat_type, watershed_input, bypass = FALSE, species, calsim_run) {
   
-  flow_df <- if (bypass == FALSE) {DSMflow::flows_cfs$run_of_river} else {DSMflow::bypass_flows$run_of_river}
+  flow_df <- if (bypass == FALSE) {DSMflow::flows_cfs[[calsim_run]]} else {DSMflow::bypass_flows[[calsim_run]]}
   
   if(habitat_type == "spawning") {
     flow_df |> 
@@ -270,13 +270,13 @@ modeling_in_suitable_area <- c("Antelope Creek", "Battle Creek", "Bear Creek",
                                "Deer Creek",'Upper Sacramento River',
                                'Upper-mid Sacramento River','Lower Sacramento River', 'Lower-mid Sacramento River')
 
-existing_acres_fun <- function(watershed_input, habitat_type, species) {
+existing_acres_fun <- function(watershed_input, habitat_type, species,  calsim_run) {
 
   if (watershed_input == "Lower-mid Sacramento River") {
     # The Lower-mid Sacramento River has two nodes, one above Fremont Weir (C134) and one below (C160). 
     # rearing: 
-    rear_flow1 <- existing_flow_cfs("rearing", "Lower-mid Sacramento River1", species = species)
-    rear_flow2 <- existing_flow_cfs("rearing", "Lower-mid Sacramento River2", species = species)
+    rear_flow1 <- existing_flow_cfs("rearing", "Lower-mid Sacramento River1", species = species, calsim_run = calsim_run)
+    rear_flow2 <- existing_flow_cfs("rearing", "Lower-mid Sacramento River2", species = species, calsim_run = calsim_run)
     
     rear_acres_juv <- square_meters_to_acres(DSMhabitat::set_instream_habitat('Lower-mid Sacramento River', 
                                                                               species = species, life_stage = "juv",
@@ -285,8 +285,8 @@ existing_acres_fun <- function(watershed_input, habitat_type, species) {
                                                                               species, "fry",  rear_flow1, rear_flow2))
     
     # floodplain: 
-    flood_flow1 <- existing_flow_cfs("flood", "Lower-mid Sacramento River1", species = species)
-    flood_flow2 <- existing_flow_cfs("flood", "Lower-mid Sacramento River2", species = species)
+    flood_flow1 <- existing_flow_cfs("flood", "Lower-mid Sacramento River1", species = species, calsim_run = calsim_run)
+    flood_flow2 <- existing_flow_cfs("flood", "Lower-mid Sacramento River2", species = species, calsim_run = calsim_run)
     flood_acres = square_meters_to_acres(set_floodplain_habitat("Lower-mid Sacramento River", species, 
                                                                flood_flow1, flood_flow2))
     
@@ -297,14 +297,14 @@ existing_acres_fun <- function(watershed_input, habitat_type, species) {
     flood_flow = NA
     
   } else {
-    spwn_flow <- existing_flow_cfs("spawning", watershed_input, species = species)
+    spwn_flow <- existing_flow_cfs("spawning", watershed_input, species = species, calsim_run = calsim_run)
     spwn_acres <- square_meters_to_acres(set_spawning_habitat(watershed_input, species, spwn_flow, month = 10))
     
-    rear_flow <- existing_flow_cfs("rearing", watershed_input, species = species)
+    rear_flow <- existing_flow_cfs("rearing", watershed_input, species = species, calsim_run = calsim_run)
     rear_acres_juv <- square_meters_to_acres(DSMhabitat::set_instream_habitat(watershed_input, species, "juv", rear_flow))
     rear_acres_fry <- square_meters_to_acres(DSMhabitat::set_instream_habitat(watershed_input, species, "fry", rear_flow))
     
-    flood_flow <- existing_flow_cfs("flood", watershed_input, species = species)
+    flood_flow <- existing_flow_cfs("flood", watershed_input, species = species, calsim_run = calsim_run)
     flood_acres <- square_meters_to_acres(DSMhabitat::set_floodplain_habitat(watershed_input, species, flood_flow))
   }
   
