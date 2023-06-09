@@ -208,9 +208,15 @@ fr_spawn_2018_2019 <- get_spawn_hab_all(spawning_watersheds, 'fr', "biop_itp_201
 dimnames(fr_spawn_2018_2019) <- list(watersheds, month.abb, 1979:2000)
 fr_spawn_2018_2019[which(is.na(fr_spawn_2018_2019))] <- 0
 
+# fr spawn run of river
+fr_spawn_run_of_river <- get_spawn_hab_all(spawning_watersheds, 'fr', "run_of_river")
+dimnames(fr_spawn_run_of_river) <- list(watersheds, month.abb, 1979:2000)
+fr_spawn_run_of_river[which(is.na(fr_spawn_run_of_river))] <- 0
+
 # list together both fr spawning versions
 fr_spawn <- list(biop_2008_2009 = fr_spawn_2008_2009,
-                 biop_itp_2018_2019 = fr_spawn_2018_2019
+                 biop_itp_2018_2019 = fr_spawn_2018_2019,
+                 run_of_river = fr_spawn_run_of_river
 )
 usethis::use_data(fr_spawn, overwrite = TRUE)
 
@@ -225,9 +231,15 @@ st_spawn_2018_2019 <- get_spawn_hab_all(spawning_watersheds, 'st', "biop_itp_201
 st_spawn_2018_2019[which(is.na(st_spawn_2018_2019))] <- 0
 dimnames(st_spawn_2018_2019) <- list(watersheds, month.abb, 1979:2000)
 
+# st spawn run of river
+st_spawn_run_of_river <- get_spawn_hab_all(spawning_watersheds, 'st', "run_of_river")
+st_spawn_run_of_river[which(is.na(st_spawn_run_of_river))] <- 0
+dimnames(st_spawn_run_of_river) <- list(watersheds, month.abb, 1979:2000)
+
 # list together both steelhead spawning versions
 st_spawn <- list(biop_2008_2009 = st_spawn_2008_2009,
-                 biop_itp_2018_2019 = st_spawn_2018_2019
+                 biop_itp_2018_2019 = st_spawn_2018_2019,
+                 run_of_river = st_spawn_run_of_river
 )
 
 usethis::use_data(st_spawn, overwrite = TRUE)
