@@ -260,7 +260,7 @@ tmh_comparison_plot(tmh_data = DSMhabitat::sr_fp$r_to_r_tmh,
 r_to_r_tmh_delta <- DSMhabitat::delta_habitat$r_to_r_tmh |> 
   DSMhabitat::square_meters_to_acres()
 
-sit_habitat <- DSMhabitat::delta_habitat$sit_input |> DSMhabitat::square_meters_to_acres()
+sit_habitat <- DSMhabitat::delta_habitat$sit_habitat |> DSMhabitat::square_meters_to_acres()
 
 delta <- expand_grid(
   watershed = c("North Delta", "South Delta"),
