@@ -74,7 +74,8 @@ floodplain_approx <- function(watershed, species) {
          'fr' = approxfun(df$flow_cfs, df$FR_floodplain_acres, yleft = 0, yright = max(df$FR_floodplain_acres)),
          'sr' = approxfun(df$flow_cfs, df$SR_floodplain_acres, yleft = 0, yright = max(df$SR_floodplain_acres)),
          'st' = approxfun(df$flow_cfs, df$ST_floodplain_acres, yleft = 0, yright = max(df$ST_floodplain_acres)),
-         'lfr' = approxfun(df$flow_cfs, df$LFR_floodplain_acres, yleft = 0, yright = max(df$LFR_floodplain_acres))) 
+         'lfr' = approxfun(df$flow_cfs, df$LFR_floodplain_acres, yleft = 0, yright = max(df$LFR_floodplain_acres)),
+         "wr" = approxfun(df$flow_cfs, df$WR_floodplain_acres, yleft = 0, yright = max(df$WR_floodplain_acres)) )  
 
 }
 

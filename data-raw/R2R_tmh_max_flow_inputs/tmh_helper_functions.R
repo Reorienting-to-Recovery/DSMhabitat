@@ -161,6 +161,37 @@ floodplain_tmh_processing <- function(watersheds, species) {
   return(r_to_r_tmh_flood)
 }
 
+# Delta: 
+delta_tmh_processing <- function(watersheds = c('North Delta', 'South Delta')) {
+  
+  r_to_r_tmh_delta <- DSMhabitat::delta_habitat$sit_input
+  
+  for(i in 1:length(watersheds)) {
+    ws = watersheds[i]
+    habitat = "rear"
+    
+    # see: TMH methodology for calcs 
+    max_hab_df = data.frame(watershed = c("North Delta", "South Delta"),
+                            max_hab = c(41720, 102792)) 
+    
+    max_hab_acres <- max_hab_df |> 
+      filter(watershed == ws) |> 
+      pull(max_hab)
+    # Instead of taking hab at the median flow to compare take median hab 
+    # Check in with Mark on this assumption 
+    existing_acres <- median(DSMhabitat::delta_habitat$sit_input[ , , ws]) |> 
+      DSMhabitat::square_meters_to_acres()
+    
+    # Note: If the maximum theoretical habitat was less than the existing SIT habitat, 
+    # the theoretical maximum habitat value was used for baseline and model runs. 
+    adj_factor = (max_hab_acres - existing_acres) / existing_acres + 1
+    
+    new_hab_acres <- DSMhabitat::delta_habitat$sit_input[ , , ws] * adj_factor
+    
+    r_to_r_tmh_delta[, , ws ] <- new_hab_acres 
+  }
+  return(r_to_r_tmh_delta)
+}
 
 existing_flow_cfs <- function(habitat_type, watershed_input, bypass = FALSE, species) {
   
@@ -218,22 +249,6 @@ calsim_30_day <- function(data, exceedance_function) {
   
   return(d30)
 }
-
-# Fall-run:
-#   Adults return (Oct-Dec)
-# Spawning (Oct-Dec)
-# Incubation (Nov-Dec)
-# Juvenile Rearing and outmigration (Jan-Aug)
-# Winter-run:
-#   Adults return (Jan-April)
-# Spawning (May-July)
-# Incubation (May-Aug)
-# Juvenile Rearing and outmigration (Sep-May)
-# Spring-run:
-#   Adults return (Mar-Aug)
-# Spawning (Sep-Oct)
-# Incubation (Sep-Nov)
-# Juvenile Rearing and outmigration (Nov-Aug)
 
 spawning_months <- function(species) {
   switch(species, 

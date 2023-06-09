@@ -19,7 +19,7 @@ r_to_r_tmh_fr_spawn <- spawn_tmh_processing(watersheds = watersheds_trunc, speci
 r_to_r_tmh_wr_spawn <- spawn_tmh_processing(watersheds = watersheds_trunc, species = "wr")
 r_to_r_tmh_sr_spawn <- spawn_tmh_processing(watersheds = watersheds_trunc, species = "sr")
 
-r_to_r_tmh_fr_spawn == r_to_r_tmh_wr_spawn # check
+r_to_r_tmh_fr_spawn == r_to_r_tmh_wr_spawn # check, should be different 
 
 
 ## inchannel habitat to both fry and juvenile habitat objects ---------------
@@ -32,49 +32,23 @@ r_to_r_tmh_wr_juv <- rearing_tmh_processing(watersheds = watersheds_trunc, speci
 r_to_r_tmh_sr_fry <- rearing_tmh_processing(watersheds = watersheds_trunc, species = "sr")$fry
 r_to_r_tmh_sr_juv <- rearing_tmh_processing(watersheds = watersheds_trunc, species = "sr")$juv
 
-r_to_r_tmh_fr_fry == DSMhabitat::fr_fry$r_to_r_tmh_max_flow # test 
-r_to_r_tmh_fr_juv == DSMhabitat::fr_juv$r_to_r_tmh_max_flow # test 
-r_to_r_tmh_sr_juv == r_to_r_tmh_wr_juv
+r_to_r_tmh_fr_fry == DSMhabitat::fr_fry$r_to_r_tmh_max_flow # test, should be equal 
+r_to_r_tmh_fr_juv == DSMhabitat::fr_juv$r_to_r_tmh_max_flow # test, should be equal 
+r_to_r_tmh_sr_juv == r_to_r_tmh_wr_juv # test - should be different 
 
 ##floodplain: -------------------------------------------------------------
 r_to_r_tmh_fr_flood <- floodplain_tmh_processing(watersheds = watersheds_trunc, species = "fr")
 r_to_r_tmh_sr_flood <- floodplain_tmh_processing(watersheds = watersheds_trunc, species = "sr")
 r_to_r_tmh_wr_flood <- floodplain_tmh_processing(watersheds = watersheds_trunc, species = "wr")
 
-r_to_r_tmh_fr_fp == DSMhabitat::fr_fp$r_to_r_tmh_max_flow # test 
-r_to_r_tmh_fr_fp == r_to_r_tmh_sr_fp
+r_to_r_tmh_fr_flood == DSMhabitat::fr_fp$r_to_r_tmh_max_flow # test, should be equal
+r_to_r_tmh_fr_flood == r_to_r_tmh_sr_flood # test - should be different 
 
 
 ##delta: -------------------------------------------------------------------
+r_to_r_tmh_delta <- delta_tmh_processing()
 
-watersheds <- c('North Delta', 'South Delta')
-r_to_r_tmh_delta <- DSMhabitat::delta_habitat$sit_input
-
-for(i in 1:length(watersheds)) {
-  ws = watersheds[i]
-  habitat = "rear"
-  
-  # see: TMH methodology for calcs 
-  max_hab_df = data.frame(watershed = c("North Delta", "South Delta"),
-                             max_hab = c(41720, 102792)) 
-  
-  max_hab_acres <- max_hab_df |> 
-    filter(watershed == ws) |> 
-    pull(max_hab)
-  # Instead of taking hab at the median flow to compare take median hab 
-  # Check in with Mark on this assumption 
-  existing_acres <- median(DSMhabitat::delta_habitat$sit_input[ , , ws]) |> 
-    DSMhabitat::square_meters_to_acres()
-  
-  # Note: If the maximum theoretical habitat was less than the existing SIT habitat, 
-  # the theoretical maximum habitat value was used for baseline and model runs. 
-  adj_factor = (max_hab_acres - existing_acres) / existing_acres + 1
-  
-  new_hab_acres <- DSMhabitat::delta_habitat$sit_input[ , , ws] * adj_factor
-  
-  r_to_r_tmh_delta[, , ws ] <- new_hab_acres 
-  
-}
+r_to_r_tmh_delta == DSMhabitat::delta_habitat$r_to_r_tmh_max_flow # test, should be equal
 
 # save data objects -------------------------------------------------------
 
