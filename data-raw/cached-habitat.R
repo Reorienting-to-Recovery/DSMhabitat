@@ -267,9 +267,21 @@ sr_spawn_2018_2019["Calaveras River", , ] <- fr_spawn$biop_itp_2018_2019["Calave
 sr_spawn_2018_2019["Cosumnes River", , ] <- fr_spawn$biop_itp_2018_2019["Cosumnes River", , ] 
 sr_spawn_2018_2019["Merced River", , ] <- fr_spawn$biop_itp_2018_2019["Merced River", , ] 
 
+# sr spawn run of river
+sr_spawn_run_of_river <- get_spawn_hab_all(spawning_watersheds, 'sr', "run_of_river")
+sr_spawn_run_of_river[which(is.na(sr_spawn_run_of_river))] <- 0
+dimnames(sr_spawn_run_of_river) <- list(watersheds, month.abb, 1979:2000)
+
+# several watershed that do not have spring run populations but SIT wants to enable colonization
+sr_spawn_run_of_river["Thomes Creek", , ] <- st_spawn$run_of_river["Thomes Creek", , ] 
+sr_spawn_run_of_river["Calaveras River", , ] <- fr_spawn$run_of_river["Calaveras River", , ] 
+sr_spawn_run_of_river["Cosumnes River", , ] <- fr_spawn$run_of_river["Cosumnes River", , ] 
+sr_spawn_run_of_river["Merced River", , ] <- fr_spawn$run_of_river["Merced River", , ] 
+
 # Combine together 
 sr_spawn <- list(biop_2008_2009 = sr_spawn_2008_2009,
-                 biop_itp_2018_2019 = sr_spawn_2018_2019
+                 biop_itp_2018_2019 = sr_spawn_2018_2019,
+                 run_of_river = sr_spawn_run_of_river
 )
 
 usethis::use_data(sr_spawn, overwrite = TRUE)
@@ -303,10 +315,12 @@ generate_wr_spawn <- function(calsim_version) {
 
 wr_spawn_2008_2009 <- generate_wr_spawn("biop_2008_2009")
 wr_spawn_2018_2019 <- generate_wr_spawn("biop_itp_2018_2019")
+wr_spawn_run_of_river <- generate_wr_spawn("run_of_river")
 
 # combine together
 wr_spawn <- list(biop_2008_2009 = wr_spawn_2008_2009,
-                 biop_itp_2018_2019 = wr_spawn_2018_2019
+                 biop_itp_2018_2019 = wr_spawn_2018_2019,
+                 run_of_river = wr_spawn_run_of_river
 )
 
 
@@ -356,10 +370,12 @@ generate_lfr_spawn <- function(calsim_version) {
 # apply function to both calsim runs 
 lfr_spawn_2008_2009 <- generate_lfr_spawn("biop_2008_2009")
 lfr_spawn_2018_2019 <- generate_lfr_spawn("biop_itp_2018_2019")
+lfr_spawn_run_of_river <- generate_lfr_spawn("run_of_river")
 
 # combine together
 lfr_spawn <- list(biop_2008_2009 = lfr_spawn_2008_2009,
-                  biop_itp_2018_2019 = lfr_spawn_2018_2019
+                  biop_itp_2018_2019 = lfr_spawn_2018_2019,
+                  run_of_river = lfr_spawn_run_of_river
 )
 
 
@@ -380,14 +396,20 @@ fr_fry_2008_2009 <- get_rear_hab_all(watersheds_in_order, 'fr', 'fry', "biop_200
 dimnames(fr_fry_2008_2009) <- list(watersheds, month.abb, 1980:2000)
 fr_fry_2008_2009[which(is.na(fr_fry_2008_2009))] <- 0
 
-# fr fry 2008 2009 
+# fr fry 2018 2019
 fr_fry_2018_2019 <- get_rear_hab_all(watersheds_in_order, 'fr', 'fry', "biop_itp_2018_2019", 1980:2000)
 dimnames(fr_fry_2018_2019) <- list(watersheds, month.abb, 1980:2000)
 fr_fry_2018_2019[which(is.na(fr_fry_2018_2019))] <- 0
 
+# fr fry run of river
+fr_fry_run_of_river <- get_rear_hab_all(watersheds_in_order, 'fr', 'fry', "run_of_river", 1980:2000)
+dimnames(fr_fry_run_of_river) <- list(watersheds, month.abb, 1980:2000)
+fr_fry_run_of_river[which(is.na(fr_fry_run_of_river))] <- 0
+
 # combine together
 fr_fry <- list(biop_2008_2009 = fr_fry_2008_2009,
-               biop_itp_2018_2019 = fr_fry_2018_2019
+               biop_itp_2018_2019 = fr_fry_2018_2019,
+               run_of_river = fr_fry_run_of_river
 )
 
 
@@ -404,9 +426,15 @@ st_fry_2018_2019 <- get_rear_hab_all(watersheds_in_order, 'st', 'fry', "biop_itp
 dimnames(st_fry_2018_2019) <- list(watersheds, month.abb, 1980:2000)
 st_fry_2018_2019[which(is.na(st_fry_2018_2019))] <- fr_fry_2018_2019[which(is.na(st_fry_2018_2019))]
 
+# st fry run of river
+st_fry_run_of_river <- get_rear_hab_all(watersheds_in_order, 'st', 'fry', "run_of_river", 1980:2000)
+dimnames(st_fry_run_of_river) <- list(watersheds, month.abb, 1980:2000)
+st_fry_run_of_river[which(is.na(st_fry_run_of_river))] <- fr_fry_run_of_river[which(is.na(st_fry_run_of_river))]
+
 # combine together
 st_fry <- list(biop_2008_2009 = st_fry_2008_2009,
-               biop_itp_2018_2019 = st_fry_2018_2019
+               biop_itp_2018_2019 = st_fry_2018_2019,
+               run_of_river = st_fry_run_of_river
 )
 
 usethis::use_data(st_fry, overwrite = TRUE)
@@ -417,14 +445,20 @@ sr_fry_2008_2009 <- get_rear_hab_all(watersheds_in_order, 'sr', 'fry', "biop_200
 dimnames(sr_fry_2008_2009) <- list(watersheds, month.abb, 1980:2000)
 sr_fry_2008_2009[which(is.na(sr_fry_2008_2009))] <- fr_fry_2008_2009[which(is.na(sr_fry_2008_2009))]
 
-# sr fry 2008 2009 
+# sr fry 2018 2019
 sr_fry_2018_2019 <- get_rear_hab_all(watersheds_in_order, 'sr', 'fry', "biop_itp_2018_2019", years = 1980:2000)
 dimnames(sr_fry_2018_2019) <- list(watersheds, month.abb, 1980:2000)
 sr_fry_2018_2019[which(is.na(sr_fry_2018_2019))] <- fr_fry_2018_2019[which(is.na(sr_fry_2018_2019))]
 
+# sr fry run of river
+sr_fry_run_of_river <- get_rear_hab_all(watersheds_in_order, 'sr', 'fry', "run_of_river", years = 1980:2000)
+dimnames(sr_fry_run_of_river) <- list(watersheds, month.abb, 1980:2000)
+sr_fry_run_of_river[which(is.na(sr_fry_run_of_river))] <- fr_fry_run_of_river[which(is.na(sr_fry_run_of_river))]
+
 # combine together
 sr_fry <- list(biop_2008_2009 = sr_fry_2008_2009,
-               biop_itp_2018_2019 = sr_fry_2018_2019
+               biop_itp_2018_2019 = sr_fry_2018_2019,
+               run_of_river = sr_fry_run_of_river
 )
 
 usethis::use_data(sr_fry, overwrite = TRUE)
@@ -490,10 +524,13 @@ wr_fry_2008_2009 <- generate_wr_fry_or_juv(calsim_version = "biop_2008_2009",
                                            lifestage = "fry")
 wr_fry_2018_2019 <- generate_wr_fry_or_juv(calsim_version = "biop_itp_2018_2019", 
                                            lifestage = "fry")
+wr_fry_run_of_river <- generate_wr_fry_or_juv(calsim_version = "run_of_river", 
+                                           lifestage = "fry")
 
 # combine together
 wr_fry <- list(biop_2008_2009 = wr_fry_2008_2009,
-               biop_itp_2018_2019 = wr_fry_2018_2019
+               biop_itp_2018_2019 = wr_fry_2018_2019,
+               run_of_river = wr_fry_run_of_river
 )
 
 usethis::use_data(wr_fry, overwrite = TRUE)
@@ -563,10 +600,13 @@ lfr_fry_2008_2009 <- generate_lfr_juv_or_fry(calsim_version = "biop_2008_2009",
                                              lifestage = "fry")
 lfr_fry_2018_2019 <- generate_lfr_juv_or_fry(calsim_version = "biop_itp_2018_2019", 
                                              lifestage = "fry")
+lfr_fry_run_of_river <- generate_lfr_juv_or_fry(calsim_version = "run_of_river", 
+                                             lifestage = "fry")
 
 # combine together
 lfr_fry <- list(biop_2008_2009 = lfr_fry_2008_2009,
-                biop_itp_2018_2019 = lfr_fry_2018_2019
+                biop_itp_2018_2019 = lfr_fry_2018_2019,
+                run_of_river = lfr_fry_run_of_river
 )
 
 usethis::use_data(lfr_fry, overwrite = TRUE)
@@ -584,9 +624,15 @@ fr_juv_2018_2019 <- get_rear_hab_all(watersheds_in_order, 'fr', 'juv', 'biop_itp
 dimnames(fr_juv_2018_2019) <- list(watersheds, month.abb, 1980:2000)
 fr_juv_2018_2019[which(is.na(fr_juv_2018_2019))] <- 0
 
+# fr juv run of river
+fr_juv_run_of_river <- get_rear_hab_all(watersheds_in_order, 'fr', 'juv', 'run_of_river', 1980:2000)
+dimnames(fr_juv_run_of_river) <- list(watersheds, month.abb, 1980:2000)
+fr_juv_run_of_river[which(is.na(fr_juv_run_of_river))] <- 0
+
 # combine together
 fr_juv <- list(biop_2008_2009 = fr_juv_2008_2009,
-               biop_itp_2018_2019 = fr_juv_2018_2019
+               biop_itp_2018_2019 = fr_juv_2018_2019,
+               run_of_river = fr_juv_run_of_river
 )
 
 
@@ -603,9 +649,15 @@ st_juv_2018_2019 <- get_rear_hab_all(watersheds_in_order, 'st', 'juv', 'biop_itp
 dimnames(st_juv_2018_2019) <- list(watersheds, month.abb, 1980:2000)
 st_juv_2018_2019[which(is.na(st_juv_2018_2019))] <- fr_juv_2018_2019[which(is.na(st_juv_2018_2019))]
 
+# st juv run of river
+st_juv_run_of_river <- get_rear_hab_all(watersheds_in_order, 'st', 'juv', 'run_of_river', 1980:2000)
+dimnames(st_juv_run_of_river) <- list(watersheds, month.abb, 1980:2000)
+st_juv_run_of_river[which(is.na(st_juv_run_of_river))] <- fr_juv_run_of_river[which(is.na(st_juv_run_of_river))]
+
 # combine together
 st_juv <- list(biop_2008_2009 = st_juv_2008_2009,
-               biop_itp_2018_2019 = st_juv_2018_2019
+               biop_itp_2018_2019 = st_juv_2018_2019,
+               run_of_river = st_juv_run_of_river
 )
 
 usethis::use_data(st_juv, overwrite = TRUE)
@@ -616,14 +668,20 @@ sr_juv_2008_2009 <- get_rear_hab_all(watersheds_in_order, 'sr', 'juv', 'biop_200
 dimnames(sr_juv_2008_2009) <- list(watersheds, month.abb, 1980:2000)
 sr_juv_2008_2009[which(is.na(sr_juv_2008_2009))] <- fr_juv_2008_2009[which(is.na(sr_juv_2008_2009))]
 
-# sr juv 2008 2009 
+# sr juv 2018 2019
 sr_juv_2018_2019 <- get_rear_hab_all(watersheds_in_order, 'sr', 'juv', 'biop_itp_2018_2019', years = 1980:2000)
 dimnames(sr_juv_2018_2019) <- list(watersheds, month.abb, 1980:2000)
 sr_juv_2018_2019[which(is.na(sr_juv_2018_2019))] <- fr_juv_2018_2019[which(is.na(sr_juv_2018_2019))]
 
+# sr juv run of river
+sr_juv_run_of_river <- get_rear_hab_all(watersheds_in_order, 'sr', 'juv', 'run_of_river', years = 1980:2000)
+dimnames(sr_juv_run_of_river) <- list(watersheds, month.abb, 1980:2000)
+sr_juv_run_of_river[which(is.na(sr_juv_run_of_river))] <- fr_juv_run_of_river[which(is.na(sr_juv_run_of_river))]
+
 # combine together
 sr_juv <- list(biop_2008_2009 = sr_juv_2008_2009,
-               biop_itp_2018_2019 = sr_juv_2018_2019
+               biop_itp_2018_2019 = sr_juv_2018_2019,
+               run_of_river = sr_juv_run_of_river
 )
 
 usethis::use_data(sr_juv, overwrite = TRUE)
@@ -634,10 +692,13 @@ wr_juv_2008_2009 <- generate_wr_fry_or_juv(calsim_version = "biop_2008_2009",
                                            lifestage = "juv")
 wr_juv_2018_2019 <- generate_wr_fry_or_juv(calsim_version = "biop_itp_2018_2019", 
                                            lifestage = "juv")
+wr_juv_run_of_river <- generate_wr_fry_or_juv(calsim_version = "run_of_river", 
+                                           lifestage = "juv")
 
 # combine together
 wr_juv <- list(biop_2008_2009 = wr_juv_2008_2009,
-               biop_itp_2018_2019 = wr_juv_2018_2019
+               biop_itp_2018_2019 = wr_juv_2018_2019,
+               run_of_river = wr_juv_run_of_river
 )
 
 
@@ -649,10 +710,13 @@ lfr_juv_2008_2009 <- generate_lfr_juv_or_fry(calsim_version = "biop_2008_2009",
                                              lifestage = "juv")
 lfr_juv_2018_2019 <- generate_lfr_juv_or_fry(calsim_version = "biop_itp_2018_2019", 
                                              lifestage = "juv")
+lfr_juv_run_of_river <- generate_lfr_juv_or_fry(calsim_version = "run_of_river", 
+                                             lifestage = "juv")
 
 # combine together
 lfr_juv <- list(biop_2008_2009 = lfr_juv_2008_2009,
-               biop_itp_2018_2019 = lfr_juv_2018_2019
+               biop_itp_2018_2019 = lfr_juv_2018_2019,
+               run_of_river = lfr_juv_run_of_river
 )
 
 usethis::use_data(lfr_juv, overwrite = TRUE)
@@ -666,7 +730,6 @@ watersheds_fp <- DSMhabitat::watershed_species_present %>%
   pull(watershed_name)
 
 # fall run floodplain habitat -- 
-# TODO fix this warning!
 # fr floodplain 2008 2009 
 fr_fp_2008_2009 <- get_floodplain_hab_all(watersheds_fp, 'fr', 'biop_2008_2009', 1980:2000)
 dimnames(fr_fp_2008_2009) <- list(watersheds, month.abb, 1980:2000)
@@ -677,9 +740,15 @@ fr_fp_2018_2019 <- get_floodplain_hab_all(watersheds_fp, 'fr', 'biop_itp_2018_20
 dimnames(fr_fp_2018_2019) <- list(watersheds, month.abb, 1980:2000)
 fr_fp_2018_2019[which(is.na(fr_fp_2018_2019))] <- 0
 
+# fr floodplain run of river
+fr_fp_run_of_river <- get_floodplain_hab_all(watersheds_fp, 'fr', 'run_of_river', 1980:2000)
+dimnames(fr_fp_run_of_river) <- list(watersheds, month.abb, 1980:2000)
+fr_fp_run_of_river[which(is.na(fr_fp_run_of_river))] <- 0
+
 
 fr_fp <- list(biop_2008_2009 = fr_fp_2008_2009,
-              biop_itp_2018_2019 = fr_fp_2018_2019
+              biop_itp_2018_2019 = fr_fp_2018_2019,
+              run_of_river = fr_fp_run_of_river
 )
 
 usethis::use_data(fr_fp, overwrite = TRUE)
@@ -695,8 +764,15 @@ st_fp_2018_2019 <- get_floodplain_hab_all(watersheds_fp, 'st', 'biop_itp_2018_20
 dimnames(st_fp_2018_2019) <- list(watersheds, month.abb, 1980:2000)
 st_fp_2018_2019[which(is.na(st_fp_2018_2019))] <- fr_fp_2018_2019[which(is.na(st_fp_2018_2019))]
 
+# st fp run of river
+st_fp_run_of_river <- get_floodplain_hab_all(watersheds_fp, 'st', 'run_of_river', 1980:2000)
+dimnames(st_fp_run_of_river) <- list(watersheds, month.abb, 1980:2000)
+st_fp_run_of_river[which(is.na(st_fp_run_of_river))] <- fr_fp_run_of_river[which(is.na(st_fp_run_of_river))]
+
+
 st_fp <- list(biop_2008_2009 = st_fp_2008_2009,
-              biop_itp_2018_2019 = st_fp_2018_2019
+              biop_itp_2018_2019 = st_fp_2018_2019,
+              run_of_river = st_fp_run_of_river
 )
 
 usethis::use_data(st_fp, overwrite = TRUE)
@@ -712,8 +788,14 @@ sr_fp_2018_2019 <- get_floodplain_hab_all(watersheds_fp, 'sr', 'biop_itp_2018_20
 dimnames(sr_fp_2018_2019) <- list(watersheds, month.abb, 1980:2000)
 sr_fp_2018_2019[which(is.na(sr_fp_2018_2019))] <- fr_fp_2018_2019[which(is.na(sr_fp_2018_2019))]
 
+# sr floodplain run of river
+sr_fp_run_of_river <- get_floodplain_hab_all(watersheds_fp, 'sr', 'run_of_river', years = 1980:2000)
+dimnames(sr_fp_run_of_river) <- list(watersheds, month.abb, 1980:2000)
+sr_fp_run_of_river[which(is.na(sr_fp_run_of_river))] <- fr_fp_run_of_river[which(is.na(sr_fp_run_of_river))]
+
 sr_fp <- list(biop_2008_2009 = sr_fp_2008_2009,
-              biop_itp_2018_2019 = sr_fp_2018_2019
+              biop_itp_2018_2019 = sr_fp_2018_2019,
+              run_of_river = sr_fp_run_of_river
 )
 
 usethis::use_data(sr_fp, overwrite = TRUE)
@@ -748,10 +830,12 @@ generate_wr_floodplain <- function(calsim_version) {
 # call on function for both calsim runs  
 wr_fp_2008_2009 <- generate_wr_floodplain("biop_2008_2009")
 wr_fp_2018_2019 <- generate_wr_floodplain("biop_itp_2018_2019")
+wr_fp_run_of_river <- generate_wr_floodplain("run_of_river")
 
 # combine 
 wr_fp <- list(biop_2008_2009 = wr_fp_2008_2009,
-              biop_itp_2018_2019 = wr_fp_2018_2019
+              biop_itp_2018_2019 = wr_fp_2018_2019,
+              run_of_river = wr_fp_run_of_river
 )
 
 usethis::use_data(wr_fp, overwrite = TRUE)
@@ -786,10 +870,12 @@ generate_lfr_floodplain <- function(calsim_version) {
 # call on function for both calsim versions 
 lfr_fp_2008_2009 <- generate_lfr_floodplain("biop_2008_2009")
 lfr_fp_2018_2019 <- generate_lfr_floodplain("biop_itp_2018_2019")
+lfr_fp_run_of_river <- generate_lfr_floodplain("run_of_river")
 
 # combine 
 lfr_fp <- list(biop_2008_2009 = lfr_fp_2008_2009,
-              biop_itp_2018_2019 = lfr_fp_2018_2019
+              biop_itp_2018_2019 = lfr_fp_2018_2019,
+              run_of_river = lfr_fp_run_of_river
 )
 
 usethis::use_data(lfr_fp, overwrite = TRUE)
@@ -821,10 +907,12 @@ generate_sutter_habitat <- function(calsim_version) {
 # call on function for both calsim versions 
 sutter_habitat_2008_2009 <- generate_sutter_habitat("biop_2008_2009")
 sutter_habitat_2018_2019 <- generate_sutter_habitat("biop_itp_2018_2019")
+sutter_habitat_run_of_river <- generate_sutter_habitat("run_of_river")
 
 # combine 
 sutter_habitat <- list(biop_2008_2009 = sutter_habitat_2008_2009,
-                       biop_itp_2018_2019 = sutter_habitat_2018_2019
+                       biop_itp_2018_2019 = sutter_habitat_2018_2019,
+                       run_of_river = sutter_habitat_run_of_river
 )
 
 usethis::use_data(sutter_habitat, overwrite = TRUE)
@@ -853,10 +941,12 @@ generate_yolo_habitat <- function(calsim_version) {
 # call on function for both calsim versions 
 yolo_habitat_2008_2009 <- generate_yolo_habitat("biop_2008_2009")
 yolo_habitat_2018_2019 <- generate_yolo_habitat("biop_itp_2018_2019")
+yolo_habitat_run_of_river <- generate_yolo_habitat("run_of_river")
 
 # combine 
 yolo_habitat <- list(biop_2008_2009 = yolo_habitat_2008_2009,
-                       biop_itp_2018_2019 = yolo_habitat_2018_2019
+                       biop_itp_2018_2019 = yolo_habitat_2018_2019,
+                     run_of_river = yolo_habitat_run_of_river
 )
 
 usethis::use_data(yolo_habitat, overwrite = TRUE)
@@ -866,17 +956,17 @@ usethis::use_data(yolo_habitat, overwrite = TRUE)
 generate_weeks_flooded <- function(calsim_version) {
   weeks_flooded <- array(0, dim = c(31, 12, 21))
   
-  for (i in 1:31) {
+   for (i in 1:31) {
     if (i %in% c(17, 21, 22)) next
     flow <- get_flow(watersheds[i], calsim_version, years = c(1980, 2000))
     flooded_weeks <- map_dbl(flow, ~get_weeks_flooded(watersheds[i], .))
     weeks_flooded[i,,] <- matrix(flooded_weeks, ncol = 12)
   }
   
-  flooded <- DSMhabitat::fr_fp > 0
+  flooded <- DSMhabitat::fr_fp[[calsim_version]] > 0
   weeks_flooded <- pmax(flooded*2, weeks_flooded)
   
-  not_flooded <- DSMhabitat::fr_fp == 0
+  not_flooded <- DSMhabitat::fr_fp[[calsim_version]] == 0
   weeks_flooded[not_flooded] <- 0
   dimnames(weeks_flooded) <- list(watersheds, month.abb, 1980:2000)
   return(weeks_flooded)
@@ -885,10 +975,12 @@ generate_weeks_flooded <- function(calsim_version) {
 # call on function for both calsim versions 
 weeks_flooded_2008_2009 <- generate_weeks_flooded("biop_2008_2009")
 weeks_flooded_2018_2019 <- generate_weeks_flooded("biop_itp_2018_2019")
+weeks_flooded_run_of_river <- generate_weeks_flooded("run_of_river")
 
 # combine 
 weeks_flooded <- list(biop_2008_2009 = weeks_flooded_2008_2009,
-                      biop_itp_2018_2019 = weeks_flooded_2018_2019
+                      biop_itp_2018_2019 = weeks_flooded_2018_2019,
+                      run_of_river = weeks_flooded_run_of_river
 )
 
 
