@@ -2,6 +2,20 @@ library(tidyverse)
 library(DSMhabitat)
 library(lubridate)
 
+spawning_months <- function(species) {
+  switch(species, 
+         "fr" = c(10:12),
+         "sr" = c(9:10),
+         "wr" = c(5:7))
+}
+
+rearing_months <- function(species) {
+  switch(species, 
+         "fr" = c(1:8),
+         "sr" = c(1:8, 11, 12),
+         "wr" = c(9:12, 1:5))
+}
+
 gis_calcs <- function(data) {
   data |> 
     group_by(river) |> 
@@ -250,20 +264,6 @@ calsim_30_day <- function(data, exceedance_function) {
   return(d30)
 }
 
-spawning_months <- function(species) {
-  switch(species, 
-         "fr" = c(10:12),
-         "sr" = c(9:10),
-         "wr" = c(5:7))
-}
-
-rearing_months <- function(species) {
-  switch(species, 
-         "fr" = c(1:8),
-         "sr" = c(1:8, 11, 12),
-         "wr" = c(9:12, 1:5))
-}
-
 # not included in floodplain suitability factor 
 modeling_in_suitable_area <- c("Antelope Creek", "Battle Creek", "Bear Creek", 
                                "Cow Creek", "Mill Creek", "Paynes Creek", 
@@ -287,7 +287,7 @@ existing_acres_fun <- function(watershed_input, habitat_type, species,  calsim_r
     # floodplain: 
     flood_flow1 <- existing_flow_cfs("flood", "Lower-mid Sacramento River1", species = species, calsim_run = calsim_run)
     flood_flow2 <- existing_flow_cfs("flood", "Lower-mid Sacramento River2", species = species, calsim_run = calsim_run)
-    flood_acres = square_meters_to_acres(set_floodplain_habitat("Lower-mid Sacramento River", species, 
+    flood_acres <-  square_meters_to_acres(set_floodplain_habitat("Lower-mid Sacramento River", species, 
                                                                 flood_flow1, flood_flow2))
     
     
