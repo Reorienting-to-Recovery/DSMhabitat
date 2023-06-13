@@ -1,0 +1,412 @@
+---
+title: "Upper San Joaquin Habitat"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, out.width = '100%')
+# knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+options(usethis.quiet = TRUE)
+library(tidyverse)
+library(readxl)
+library(DSMhabitat)
+library(scales)
+```
+
+```{r}
+# functions: 
+get_flow <- function(watershed, calsim_version, years = c(1980, 1999)) {
+  
+  # get the flow values at the dates
+  dplyr::pull(dplyr::filter(dplyr::select(DSMflow::flows_cfs[[calsim_version]], date, watershed),
+                            lubridate::year(date) >= years[1],
+                            lubridate::year(date) <= years[2]), 2)
+}
+
+create_SIT_array <- function(input) {
+  
+  output <- array(NA, dim = c(nrow(input), 12, ncol(input) / 12))
+  index <-  1
+  for (i in seq(1, ncol(input), 12)) {
+    output[ , , index] <- as.matrix(input[ , i:(i + 11)])
+    index <- index + 1
+  }
+  return(output)
+  
+}
+
+
+```
+
+## Instream Rearing Habitat
+
+**Data Source:**
+
+-   Reclamation (2012). Hydraulic Studies for Fish Habitat Analysis, Technical Report No. SRH-2012-15. Prepared for San Joaquin River Restoration Project, Mid-Pacific Region, US Bureau of Reclamation, Technical Service Center, Denver, CO
+
+Rearing data for the Lower San Joaquin River (below Friant Dam) was calculated through the [CVPIA SIT process]('http://cvpia-habitat-docs-markdown.s3-website-us-west-2.amazonaws.com/watershed/san_joaquin_river.html'). Data provided by the Reclamation was used to add additional habitat for the Upper San Joaquin River. San Joaquin flows and temperature remain the same. 
+
+```{r}
+files <- list.files('data-raw/sjrrp_model_results/')
+
+all_files <- data.frame()
+for(i in 1:length(files)) {
+  
+  tmp <- read_csv(paste0('data-raw/sjrrp_model_results/', files[i])) |> janitor::clean_names()
+
+  all_files <- bind_rows(tmp, all_files)
+  
+}
+
+# Hyd Depth C = average depth in the Channel
+# 
+# Hyd Depth R = average depth in the Right overbank
+# 
+# Hyd Dep L = average depth on the Left overbank
+# 
+# Same with velocities, except there is a total average velocity for the Cross-section. Let me know if you want to talk over the results and how to use them.
+
+
+
+```
+
+
+
+
+```{r, include = FALSE}
+# Add Upper San Joaquin Rearing flow to area curves 
+flow_habitat_raw <- read_csv('data-raw/tidy_rearing_data_sjrrp_fish_habitat_study_results.csv') 
+
+# TODO: research inundated acres and floodplain - can we use that column? remove the suitable acres and use? 
+# Inundation mapping was conducted for Reach 5 from results of 1D HEC-RAS modeling. The existing conditions model 
+# titled SJRRP07, documented in Mussetter Engineering, Inc (MEI, 2008) 
+# was used in order to represent the existing levels of floodplain available along the San Joaquin River. 
+
+flow_habitat <- flow_habitat_raw |> 
+  group_by(water_year) |> 
+  filter(reach != "5") |> # reach 5 does not have flow associated with suitable acres
+  reframe(flow_cfs = mean(flow_cfs),
+          suitable_acres = sum(suitable_acres), 
+          total_inundated_acres = sum(total_inundated_acres)) |> 
+  select(-water_year) |> 
+  add_row(flow_cfs = 0, suitable_acres = 0, total_inundated_acres = 0)
+
+ggplot(flow_habitat, aes(x = flow_cfs, y = suitable_acres)) +
+  geom_line() + 
+  geom_vline(xintercept = 1000, color = 'darkred', linetype = "dashed") +
+  theme_minimal()
+
+upper_san_joaquin_rearing <- tibble(
+  flow_cfs = c(0, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000),
+  in_channel_rearing_approx = approx(flow_habitat$flow_cfs, flow_habitat$suitable_acres, xout = flow_cfs, rule = 2)$y,
+) |> 
+  select(flow_cfs, FR_fry_acres = in_channel_rearing_approx, FR_juv_acres = in_channel_rearing_approx) |> 
+  mutate(watershed = "Upper San Joaquin")
+
+upper_san_joaquin_rearing |> 
+  ggplot(aes(x = flow_cfs, y = FR_fry_acres)) +
+  geom_line() +
+  ggtitle('Upper San Joaquin Suitable Rearing Acres') +
+  theme_minimal() + 
+  labs(x = 'Flow (cfs)', y = 'Suitable Acres') + 
+  scale_y_continuous(labels = scales::comma)
+
+ggplot() +
+  geom_line(data = upper_san_joaquin_rearing, aes(y = FR_fry_acres, x = flow_cfs, color = "Upper San Joaquin")) +
+  geom_line(data = DSMhabitat::san_joaquin_river_instream, 
+            aes(y = DSMhabitat::wua_to_area(DSMhabitat::san_joaquin_river_instream$FR_juv_wua, "San Joaquin River", "rearing", "fr") * 0.000247105, 
+                x = flow_cfs, color = "Lower San Joaquin")) +
+  theme_minimal() +
+  labs(x = 'Flow (cfs)', y = 'Rearing Acres') 
+```
+
+<!-- *... with `r nrow(san_joaquin_river_instream) - 5` more rows* -->
+
+## Floodplain Rearing Habitat
+
+Process the Reclamation 2012 data for floodplain rearing. Assumes that there is no floodplain rearing available in the bypass. Inundated suitable floodplain area is aggregated for reaches: `r paste0(unique(flow_habitat_raw$reach), collapse = ", ")` at flows between `r min(flow_habitat$flow_cfs)`cfs and `r max(flow_habitat$flow_cfs)`cfs. No data is provided for reach 5 and is therefore not included in analysis. 
+
+```{r}
+
+upper_san_joaquin_floodplain <- tibble(
+  flow_cfs = c(1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500),
+  floodplain_approx = approx(flow_habitat$flow_cfs, flow_habitat$suitable_acres, xout = flow_cfs, rule = 2)$y,
+) |> 
+  select(flow_cfs, FR_floodplain_acres = floodplain_approx) |> 
+  mutate(watershed = "Upper San Joaquin")
+
+upper_san_joaquin_floodplain |> 
+  ggplot(aes(x = flow_cfs, y = FR_floodplain_acres)) +
+  geom_line() +
+  ggtitle('Upper San Joaquin Suitable Floodplain Rearing Acres') +
+  theme_minimal() + 
+  labs(x = 'Flow (cfs)', y = 'Suitable Acres') + 
+  scale_y_continuous(labels = scales::comma)
+
+ggplot() +
+  geom_line(data = upper_san_joaquin_floodplain, aes(y = FR_floodplain_acres, x = flow_cfs, color = "Upper San Joaquin")) +
+  geom_line(data = DSMhabitat::san_joaquin_river_floodplain, 
+            aes(y = DSMhabitat::san_joaquin_river_floodplain$FR_floodplain_acres, 
+                x = flow_cfs, color = "Lower San Joaquin")) +
+  theme_minimal() +
+  labs(x = 'Flow (cfs)', y = 'Floodplain Rearing Acres') 
+
+# TODO: is there other modeling that goes to higher flows? ask Dan Dombrowski
+# TODO: use DEM and project 1D model across to get total inundated. Use same proportion suitable. 
+
+```
+
+## Spawning Habitat
+
+**Data Source:**
+
+-   Two-dimensional processed model results in Reach 1A from Friant Dam to HW 99 provided by:
+
+Spawning habitat data is aggregated for reaches: `friant to 41` and `41 to 99` at flows between 350 cfs and 7650 cfs. 
+
+```{r}
+spawning_raw <- read_csv('data-raw/san_joaquin_spawning.csv') |> 
+  glimpse()
+
+flow_habitat_length_spwn <- spawning_raw |> 
+  spread(reach, area) |> 
+  arrange(flow)
+
+friant_to_41_approx <- approxfun(flow_habitat_length_spwn$flow, flow_habitat_length_spwn$`friant to 41`)
+rm41_to_99_approx <- approxfun(flow_habitat_length_spwn$flow, flow_habitat_length_spwn$`41 to 99`)
+
+flow_habitat_length_spwn_imputed <- flow_habitat_length_spwn |> 
+  mutate(friant_to_41 = friant_to_41_approx(flow),
+         rm41_to_99 = rm41_to_99_approx(flow)) |> 
+  select(-`41 to 99`, -`friant to 41`) |> 
+  filter(across(everything(), ~!is.na(.x))) |> 
+  gather(reach, area, friant_to_41:rm41_to_99) |> 
+  group_by(flow) |> 
+  summarise(suitable_acres = sum(area)) |> 
+  rename(flow_cfs = flow)
+
+ggplot(spawning_raw) +
+  geom_line(aes(y = area, x = flow, color = reach)) +
+  geom_line(data = flow_habitat_length_spwn_imputed, aes(y = suitable_acres, x = flow_cfs)) +
+  theme_minimal()
+
+
+upper_san_joaquin_spawning <- tibble(
+  flow_cfs = c(0, 200, 500, 750, 1000, 1250, 1500, 1750, 2000, 2500, 3000, 3500, 
+               4000, 4500, 5000, 5500),
+  spawning_approx = approx(flow_habitat_length_spwn_imputed$flow_cfs, flow_habitat_length_spwn_imputed$suitable_acres, xout = flow_cfs, rule = 2)$y
+) |> 
+  select(flow_cfs, FR_spawn_acres = spawning_approx) |> 
+  mutate(watershed = "Upper San Joaquin")
+
+upper_san_joaquin_spawning |> 
+  ggplot(aes(x = flow_cfs, y = FR_spawn_acres)) +
+  geom_line(aes(color = "Upper San Joaquin")) +
+  # geom_line(data = DSMhabitat::san_joaquin_river_instream,
+  #           aes(y = DSMhabitat::wua_to_area(DSMhabitat::san_joaquin_river_instream$FR_spawn_wua, "San Joaquin River", "spawning", "fr") * 0.000247105,
+  #               x = flow_cfs, color = "Lower San Joaquin")) +
+  ggtitle('Upper San Joaquin Suitable Spawning Acres') +
+  theme_minimal() + 
+  labs(x = 'Flow (cfs)', y = 'Suitable Acres') + 
+  scale_y_continuous(labels = scales::comma)
+
+```
+
+```{r}
+upper_san_joaquin_instream <- upper_san_joaquin_rearing |> 
+  full_join(upper_san_joaquin_spawning) |> 
+  select(watershed, everything())
+```
+
+### Save new Spawning Data Object 
+```{r}
+# save new spawning data object 
+calsim_version = 'biop_itp_2018_2019'
+years = 1979:2000
+watersheds_order <- DSMhabitat::watershed_species_present %>% 
+  select(order, watershed = watershed_name)
+
+total_obs <- 12 * length(years)
+flows <- get_flow('San Joaquin River', calsim_version, range(years))
+
+hab_func <- approxfun(upper_san_joaquin_instream$flow_cfs, upper_san_joaquin_instream$FR_spawn_acres , rule = 2)
+habitat_area <- hab_func(flows)
+
+sj_hab <- tibble(
+  year = rep(years, each = 12),
+  month = rep(1:12, length(years)),
+  watershed = 'San Joaquin River',
+  hab_sq_m = acres_to_square_meters(habitat_area)
+)
+
+watershed = "San Joaquin River"
+
+hab <- sj_hab %>%
+  spread(watershed, hab_sq_m) %>% 
+  gather(watershed, habitat, -year, -month) %>%
+  mutate(date = lubridate::ymd(paste(year, month, 1, '-'))) %>%
+  select(date, watershed, habitat) %>%
+  spread(date, habitat) %>%
+  left_join(watersheds_order) %>%
+  arrange(order) %>%
+  select(-watershed, -order) %>%
+  create_SIT_array()
+
+dimnames(hab) <- list('San Joaquin River', month.abb, 1979:2000)
+hab[which(is.na(hab))] <- 0
+
+# add habitats together 
+# # Juveniles
+# update instream juvenile object 
+r_to_r_add_sj_fr_spawn <- DSMhabitat::fr_spawn$r_to_r_baseline
+new_spawn_hab <- DSMhabitat::fr_spawn$r_to_r_baseline['San Joaquin River', , ] + hab['San Joaquin River', , ]
+r_to_r_add_sj_fr_spawn["San Joaquin River" , , ] <- new_spawn_hab 
+
+# check to make sure it works 
+# r_to_r_add_sj_fr_spawn['San Joaquin River' , , ] == DSMhabitat::fr_spawn$r_to_r_baseline['San Joaquin River' , , ]
+
+baseline_fr_spawn <- DSMhabitat::fr_spawn
+baseline_fr_spawn$r_to_r_baseline <- r_to_r_add_sj_fr_spawn
+fr_spawn <- baseline_fr_spawn
+
+# fr_spawn$r_to_r_baseline == DSMhabitat::fr_spawn$r_to_r_baseline
+
+#usethis::use_data(fr_spawn, overwrite = TRUE)
+
+```
+
+### Save new Floodplain Data Object 
+```{r}
+# save new spawning data object 
+calsim_version = 'biop_itp_2018_2019'
+years = 1980:2000
+watersheds_order <- DSMhabitat::watershed_species_present %>% 
+  select(order, watershed = watershed_name)
+
+total_obs <- 12 * length(years)
+flows <- get_flow('San Joaquin River', calsim_version, range(years))
+
+hab_func <- approxfun(upper_san_joaquin_floodplain$flow_cfs, upper_san_joaquin_floodplain$FR_floodplain_acres , rule = 2)
+habitat_area <- hab_func(flows)
+
+sj_hab <- tibble(
+  year = rep(years, each = 12),
+  month = rep(1:12, length(years)),
+  watershed = 'San Joaquin River',
+  hab_sq_m = acres_to_square_meters(habitat_area)
+)
+
+watershed = "San Joaquin River"
+
+hab <- sj_hab %>%
+  spread(watershed, hab_sq_m) %>% 
+  gather(watershed, habitat, -year, -month) %>%
+  mutate(date = lubridate::ymd(paste(year, month, 1, '-'))) %>%
+  select(date, watershed, habitat) %>%
+  spread(date, habitat) %>%
+  left_join(watersheds_order) %>%
+  arrange(order) %>%
+  select(-watershed, -order) %>%
+  create_SIT_array()
+
+dimnames(hab) <- list('San Joaquin River', month.abb, 1980:2000)
+hab[which(is.na(hab))] <- 0
+
+# add habitats together 
+r_to_r_add_sj_fr_fp <- DSMhabitat::fr_fp$r_to_r_baseline
+new_fp_hab <- DSMhabitat::fr_fp$r_to_r_baseline['San Joaquin River', , ] + hab['San Joaquin River', , ]
+r_to_r_add_sj_fr_fp["San Joaquin River" , , ] <- new_fp_hab 
+
+# check to make sure it works 
+# r_to_r_add_sj_fr_fp['San Joaquin River' , , ] == DSMhabitat::fr_fp$r_to_r_baseline['San Joaquin River' , , ]
+
+baseline_fr_fp <- DSMhabitat::fr_fp
+baseline_fr_fp$r_to_r_baseline <- r_to_r_add_sj_fr_fp
+fr_fp <- baseline_fr_fp
+
+# fr_fp$r_to_r_baseline == DSMhabitat::fr_fp$r_to_r_baseline
+
+#usethis::use_data(fr_fp, overwrite = TRUE)
+
+```
+
+# Plots
+
+## Spawning Plot
+```{r}
+
+# spawn
+spawn <- expand_grid(
+    watershed = as.factor('San Joaquin River'),
+    month = 1:12,
+    year = 1979:2000) |> 
+  arrange(year, month, watershed) |> 
+  mutate(
+    low_sj = as.vector(DSMhabitat::fr_spawn$biop_itp_2018_2019['San Joaquin River' , , ] |> 
+                         DSMhabitat::square_meters_to_acres()),
+    upper_sj = as.vector(fr_spawn$r_to_r_baseline['San Joaquin River', , ]) |>  
+      DSMhabitat::square_meters_to_acres()
+    )
+    #new_hab = as.vector(new_juv_hab) |>   DSMhabitat::square_meters_to_acres()) 
+
+spawn |> 
+  transmute(watershed, date = ymd(paste(year, month, 1)), 
+            low_sj, upper_sj) |> 
+  gather(reach, acres, -watershed, -date)  |> 
+  ggplot(aes(date, acres, color = reach)) +
+  geom_line(alpha = .75) + 
+  facet_wrap(~watershed, scales = 'free_y') + 
+  theme_minimal() + 
+  theme(legend.position = "top") + 
+  ggtitle('New San Joaquin Spawning Habitat') 
+
+```
+
+## Floodplain Rearing Plot
+```{r}
+
+floodplain <- expand_grid(
+    watershed = as.factor('San Joaquin River'),
+    month = 1:12,
+    year = 1980:2000) |> 
+  arrange(year, month, watershed) |> 
+  mutate(
+    low_sj = as.vector(DSMhabitat::fr_fp$biop_itp_2018_2019['San Joaquin River' , , ] |> 
+                         DSMhabitat::square_meters_to_acres()),
+    upper_sj = as.vector(fr_fp$r_to_r_baseline['San Joaquin River', , ]) |>  
+      DSMhabitat::square_meters_to_acres()
+    )
+
+floodplain |> 
+  transmute(watershed, date = ymd(paste(year, month, 1)), 
+            low_sj, upper_sj) |> 
+  gather(reach, acres, -watershed, -date)  |> 
+  ggplot(aes(date, acres, color = reach)) +
+  geom_line(alpha = .75) + 
+  facet_wrap(~watershed, scales = 'free_y') + 
+  theme_minimal() + 
+  theme(legend.position = "top") + 
+  ggtitle('New San Joaquin Floodplain Habitat') 
+
+```
+## Compare
+
+```{r eval=FALSE, include=FALSE}
+#floodplain: 
+floodplain_flow <- existing_flow_cfs("flood", 'San Joaquin River')
+flood_acres <- DSMhabitat::floodplain_approx('San Joaquin River', 'fr')(floodplain_flow) #SIT: 1007.886
+new_flood_acres = approxfun(upper_san_joaquin_floodplain$flow_cfs, upper_san_joaquin_floodplain$FR_floodplain_acres, yleft = 0, yright = max(upper_san_joaquin_floodplain$FR_floodplain_acres))(floodplain_flow) #1171
+
+# according to DSMhabitat::watershed_species_present species aonly present for floodplain in sr and fr, NOT wr and lfr
+subset(DSMhabitat::watershed_species_present, 
+        watershed_name == 'San Joaquin River', 'lfr', drop = TRUE)
+    
+
+# spawning: 
+spawning_flow <- existing_flow_cfs("spawning", 'San Joaquin River')
+hab_func <- approxfun(upper_san_joaquin_spawning$flow_cfs, upper_san_joaquin_spawning$FR_spawn_acres , rule = 2)
+spawn_acres <- hab_func(spawning_flow)
+
+
+
+```
