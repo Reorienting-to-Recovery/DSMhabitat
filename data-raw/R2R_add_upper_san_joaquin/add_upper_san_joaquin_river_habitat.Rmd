@@ -11,6 +11,7 @@ library(tidyverse)
 library(readxl)
 library(DSMhabitat)
 library(scales)
+library(purrr)
 ```
 
 ```{r}
@@ -47,30 +48,90 @@ create_SIT_array <- function(input) {
 Rearing data for the Lower San Joaquin River (below Friant Dam) was calculated through the [CVPIA SIT process]('http://cvpia-habitat-docs-markdown.s3-website-us-west-2.amazonaws.com/watershed/san_joaquin_river.html'). Data provided by the Reclamation was used to add additional habitat for the Upper San Joaquin River. San Joaquin flows and temperature remain the same. 
 
 ```{r}
-files <- list.files('data-raw/sjrrp_model_results/')
+files <- list.files('/Volumes/flowwest/Shared/Active_Projects/002-01_San_Joaquin_River_Restoration/Modeling/DWR_2008_1D_models/results/data-raw/', pattern = "results")
+files_sa <- grep(x = files, pattern = "sa", value = TRUE)
+files_sa <- files_sa[files_sa != "mariposa_results.csv" ]
+files_depth <- setdiff(files, files_sa)
 
-all_files <- data.frame()
-for(i in 1:length(files)) {
+all_files_sa <- map_df(files_sa, ~{
+  tmp <- read_csv(paste0('/Volumes/flowwest/Shared/Active_Projects/002-01_San_Joaquin_River_Restoration/Modeling/DWR_2008_1D_models/results/data-raw/', .x), skip_empty_rows = TRUE)|> 
+    janitor::clean_names() |> 
+    filter(q_total != "(cfs)") |> 
+    mutate(sa_chan = as.numeric(sa_chan),
+           sa_total = as.numeric(sa_total),
+           sa_left = as.numeric(sa_left),
+           sa_right = as.numeric(sa_right),
+           q_total = as.numeric(q_total),
+           river_sta = as.character(river_sta)) |> 
+    filter(!is.na(q_total)) |> 
+    group_by(reach) |> 
+    mutate(order = row_number()) 
   
-  tmp <- read_csv(paste0('data-raw/sjrrp_model_results/', files[i])) |> janitor::clean_names()
+  tmp
+})
 
-  all_files <- bind_rows(tmp, all_files)
+all_files_depth <- map_df(files_depth, ~{
+  tmp <- read_csv(paste0('/Volumes/flowwest/Shared/Active_Projects/002-01_San_Joaquin_River_Restoration/Modeling/DWR_2008_1D_models/results/data-raw/', .x), skip_empty_rows = TRUE) |> 
+    janitor::clean_names() |> 
+    mutate(river_sta = as.character(river_sta),
+           q_total = as.numeric(q_total)) |> 
+    filter(q_total != "(cfs)")
   
-}
+  tmp
+})
 
-# Hyd Depth C = average depth in the Channel
-# 
-# Hyd Depth R = average depth in the Right overbank
-# 
-# Hyd Dep L = average depth on the Left overbank
-# 
-# Same with velocities, except there is a total average velocity for the Cross-section. Let me know if you want to talk over the results and how to use them.
+## the surface area is supplied as a cumulative 
+## the following code back-calculates the cumulative 
+## surface area to get a single surface area value 
+## for each reach, station, and flow 
+lookup <- all_files_sa |> 
+  group_by(reach, river_sta) |> 
+  summarise(max_order = max(order))
+  
+flows <- unique(all_files_sa$q_total)
+reaches <- unique(all_files_sa$reach)
 
+all_reaches_sa_diff <- map_df(reaches, ~{
+  
+  add_order <- all_files_sa |> 
+    left_join(lookup) |> 
+    filter(reach == .x) |> 
+    select(-order) |> 
+    arrange(max_order) |> 
+    mutate(id = match(max_order, unique(max_order))) |> 
+    select(-max_order) 
+  
+  all_diff <- map_df(flows, ~{
+    diff_tmp <- add_order |>
+      filter(q_total == .x) |> 
+      mutate(sa_chan_diff = sa_chan - lead(sa_chan),
+             sa_left_diff = sa_left - lead(sa_left),
+             sa_right_diff = sa_right - lead(sa_right),
+             sa_total_diff = sa_total - lead(sa_total)) 
+    
+    diff_tmp 
+    
+  }) |> 
+    arrange(reach, river_sta, q_total, id)
+  
+  all_diff
+})
+  
+# join by flow, reach and station with results containing depth and velocity
+all_ras_results <- all_reaches_sa_diff |> 
+  left_join(all_files_depth) |> 
+  select(reach, river_sta, q_total, sa_chan_diff, sa_right_diff, sa_left_diff, sa_total_diff, hydr_depth, hydr_depth_l, hydr_depth_c, hydr_depth_r, vel_total, vel_left, vel_chnl, vel_right)
 
 
 ```
 
+### Apply depth and velocity suitability 
 
+```{r}
+
+
+
+```
 
 
 ```{r, include = FALSE}
