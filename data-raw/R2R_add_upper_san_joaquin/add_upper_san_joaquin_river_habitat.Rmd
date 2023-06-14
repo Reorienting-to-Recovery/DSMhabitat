@@ -127,9 +127,15 @@ all_ras_results <- all_reaches_sa_diff |>
 
 ### Apply depth and velocity suitability 
 
+TODO: 
+* what suitability do we want to use? proxy watershed? For spring, watershed HSIs exist for: Butte, Clear, Yuba
+
 ```{r}
+suitability <- readxl::read_excel('data-raw/HSC.xlsx', sheet = "flat") |> janitor::clean_names()
 
-
+# TODO: use Tuolumne, fall run as proxy for now 
+tuol_suit <- suitability |> 
+  filter(river == "Tuolumne" & suitability_metric %in% c('Depth', 'Velocity'))
 
 ```
 
