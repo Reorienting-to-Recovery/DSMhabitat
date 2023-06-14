@@ -59,21 +59,24 @@ spawn_tmh_processing <- function(watersheds, species, calsim_run) {
                              "sr" = DSMhabitat::sr_spawn[[calsim_run]],
                              "wr" = DSMhabitat::wr_spawn[[calsim_run]])
   
-  for(i in 1:length(watersheds)) {
-    ws = watersheds[i]
-    habitat = "spwn"
+ for(i in 1:length(watersheds)) {
+    ws <- watersheds[i]
     
     max_hab_acres <- all_existing_and_tmh_data |> 
-      filter(watershed == ws & hab == habitat) |> 
+      filter(watershed == ws & hab == 'spwn') |> 
       pull(value)
     
-    existing_acres <- existing_acres_fun(watershed_input = ws, habitat_type = 'spawn', species = species, calsim_run = calsim_run) 
+    existing_acres <- existing_acres_fun(watershed_input = ws, habitat_type = 'spawning', selected_species = species, 
+                                         selected_life_stage = "spawning", calsim_run = calsim_run) 
     
-    if(existing_acres == 0 | is.na(existing_acres)) {
+    if(any(existing_acres == 0 || is.na(existing_acres) || is.null(existing_acres))) {
       adj_factor = 1
     } else {
       adj_factor = (max_hab_acres - existing_acres) / existing_acres + 1
     }
+    
+    print(ws)
+    print(adj_factor)
     
     new_hab_acres <- 
       switch(species, 
@@ -103,15 +106,14 @@ rearing_tmh_processing <- function(watersheds, species, calsim_run) {
                            "wr" = DSMhabitat::wr_fry[[calsim_run]])
   
   for(i in 1:length(watersheds)) {
-    ws = watersheds[i]
-    habitat = "rear"
+    ws <- watersheds[i]
     
-    max_hab_acres <- all_existing_and_tmh_data |> 
-      filter(watershed == ws & hab == habitat) |> 
+    max_hab_acres <- all_existing_and_tmh_data %>%
+      filter(watershed == ws & hab == 'rear') %>%
       pull(value)
     
-    existing_acres_juv <- existing_acres_fun(watershed_input = ws, habitat_type = 'rear_juv', species = species, calsim_run = calsim_run) 
-    existing_acres_fry <- existing_acres_fun(watershed_input = ws, habitat_type = 'rear_fry', species = species, calsim_run = calsim_run) 
+    existing_acres_juv <- existing_acres_fun(watershed_input = ws, habitat_type = 'rearing', selected_species = species, selected_life_stage = "juv", calsim_run = calsim_run) 
+    existing_acres_fry <- existing_acres_fun(watershed_input = ws, habitat_type = 'rearing', selected_species = species, selected_life_stage = "fry", calsim_run = calsim_run) 
     
     adj_factor_juv = (max_hab_acres - existing_acres_juv) / existing_acres_juv + 1
     adj_factor_fry = (max_hab_acres - existing_acres_fry) / existing_acres_fry + 1
@@ -149,14 +151,14 @@ floodplain_tmh_processing <- function(watersheds, species, calsim_run) {
                              "wr" = DSMhabitat::wr_fp[[calsim_run]])
   
   for(i in 1:length(watersheds)) {
-    ws = watersheds[i]
+    ws <- watersheds[i]
     habitat = "flood"
     
     max_hab_acres <- all_existing_and_tmh_data |> 
       filter(watershed == ws & hab == habitat) |> 
       pull(value)
     
-    existing_acres <- existing_acres_fun(watershed_input = ws, habitat_type = 'floodplain', species = species, calsim_run = calsim_run) 
+    existing_acres <- existing_acres_fun(watershed_input = ws, habitat_type = 'flood', selected_species = species, selected_life_stage = "flood", calsim_run = calsim_run) 
     
     if(existing_acres == 0 | is.na(existing_acres)) {
       adj_factor = 1
@@ -180,11 +182,11 @@ floodplain_tmh_processing <- function(watersheds, species, calsim_run) {
 # Delta: 
 delta_tmh_processing <- function(watersheds = c('North Delta', 'South Delta')) {
   
-  r_to_r_tmh_delta <- DSMhabitat::delta_habitat
+  r_to_r_tmh_delta <- DSMhabitat::delta_habitat$sit_habitat
   
   for(i in 1:length(watersheds)) {
-    ws = watersheds[i]
-    habitat = "rear"
+      ws <-watersheds[i]
+     habitat = "rear"
     
     # see: TMH methodology for calcs 
     max_hab_df = data.frame(watershed = c("North Delta", "South Delta"),
@@ -195,14 +197,14 @@ delta_tmh_processing <- function(watersheds = c('North Delta', 'South Delta')) {
       pull(max_hab)
     # Instead of taking hab at the median flow to compare take median hab 
     # Check in with Mark on this assumption 
-    existing_acres <- median(DSMhabitat::delta_habitat[ , , ws]) |> 
+    existing_acres <- median(DSMhabitat::delta_habitat$sit_habitat[ , , ws]) |> 
       DSMhabitat::square_meters_to_acres()
     
     # Note: If the maximum theoretical habitat was less than the existing SIT habitat, 
     # the theoretical maximum habitat value was used for baseline and model runs. 
     adj_factor = (max_hab_acres - existing_acres) / existing_acres + 1
     
-    new_hab_acres <- DSMhabitat::delta_habitat[ , , ws] * adj_factor
+    new_hab_acres <- DSMhabitat::delta_habitat$sit_habitat[ , , ws] * adj_factor
     
     r_to_r_tmh_delta[, , ws ] <- new_hab_acres 
   }
@@ -266,78 +268,59 @@ calsim_30_day <- function(data, exceedance_function) {
   return(d30)
 }
 
-# not included in floodplain suitability factor 
-modeling_in_suitable_area <- c("Antelope Creek", "Battle Creek", "Bear Creek", 
-                               "Cow Creek", "Mill Creek", "Paynes Creek", 
-                               "Deer Creek",'Upper Sacramento River',
-                               'Upper-mid Sacramento River','Lower Sacramento River', 'Lower-mid Sacramento River')
-
-existing_acres_fun <- function(watershed_input, habitat_type, species,  calsim_run) {
+existing_acres_fun <- function(watershed_input, habitat_type, selected_species, selected_life_stage = NULL, calsim_run) {
   
   if (watershed_input == "Lower-mid Sacramento River") {
     # The Lower-mid Sacramento River has two nodes, one above Fremont Weir (C134) and one below (C160). 
     # rearing: 
-    rear_flow1 <- existing_flow_cfs("rearing", "Lower-mid Sacramento River1", species = species, calsim_run = calsim_run)
-    rear_flow2 <- existing_flow_cfs("rearing", "Lower-mid Sacramento River2", species = species, calsim_run = calsim_run)
+    flow1 <- existing_flow_cfs(habitat_type, "Lower-mid Sacramento River1", species = selected_species, calsim_run = calsim_run)
+    flow2 <- existing_flow_cfs(habitat_type, "Lower-mid Sacramento River2", species = selected_species, calsim_run = calsim_run)
     
-    rear_acres_juv <- square_meters_to_acres(DSMhabitat::set_instream_habitat('Lower-mid Sacramento River', 
-                                                                              species = species, life_stage = "juv",
-                                                                              rear_flow1, rear_flow2))
-    rear_acres_fry <- square_meters_to_acres(DSMhabitat::set_instream_habitat('Lower-mid Sacramento River',
-                                                                              species, "fry",  rear_flow1, rear_flow2))
-    
-    # floodplain: 
-    flood_flow1 <- existing_flow_cfs("flood", "Lower-mid Sacramento River1", species = species, calsim_run = calsim_run)
-    flood_flow2 <- existing_flow_cfs("flood", "Lower-mid Sacramento River2", species = species, calsim_run = calsim_run)
-    flood_acres <-  square_meters_to_acres(set_floodplain_habitat("Lower-mid Sacramento River", species, 
-                                                                flood_flow1, flood_flow2))
-    
-    
-    spwn_acres = NA
-    spwn_flow = NA
-    rear_flow = NA
-    flood_flow = NA
-    
+    acres <- switch(habitat_type, 
+                    "flood" = square_meters_to_acres(set_floodplain_habitat("Lower-mid Sacramento River", 
+                                                                            species = selected_species, 
+                                                                            flow1, flow2)),
+                    "rearing" = square_meters_to_acres(DSMhabitat::set_instream_habitat("Lower-mid Sacramento River", 
+                                                                                        species = selected_species, 
+                                                                                        selected_life_stage,
+                                                                                        flow1, flow2)) # No spawn on lower-mid sac 
+    )
   } else {
-    spwn_flow <- existing_flow_cfs("spawning", watershed_input, species = species, calsim_run = calsim_run)
-    spwn_acres <- square_meters_to_acres(set_spawning_habitat(watershed_input, species, spwn_flow, month = median(spawning_months(species))))
+    flow <- existing_flow_cfs(habitat_type, watershed_input, species = selected_species, calsim_run = calsim_run)
+    acres <- switch(habitat_type, 
+                    "flood" = square_meters_to_acres(set_floodplain_habitat(watershed = watershed_input, 
+                                                                            species = selected_species, 
+                                                                            flow = flow)),
+                    "rearing" = square_meters_to_acres(DSMhabitat::set_instream_habitat(watershed = watershed_input, 
+                                                                                        species = selected_species, 
+                                                                                        life_stage = selected_life_stage,
+                                                                                        flow = flow)),
+                    "spawning" = square_meters_to_acres(DSMhabitat::set_spawning_habitat(watershed = watershed_input, 
+                                                                                         species = selected_species, 
+                                                                                         flow = flow, 
+                                                                                         month = median(spawning_months(selected_species)))))
     
-    if(species == "wr") {
-      if(watershed_input != c('Upper Sacramento River', 'Upper-mid Sacramento River',
-                              'Lower-mid Sacramento River', 'Battle Creek')) {
+    if((selected_species == "wr" & 
+       selected_life_stage == "rearing" & 
+       !(watershed_input %in% c('Upper Sacramento River', 'Upper-mid Sacramento River',
+                            'Lower-mid Sacramento River', 'Battle Creek')))) {
         # use fall run as proxy for most watersheds: 
-        rear_flow <- existing_flow_cfs("rearing", watershed_input, species = 'fr', calsim_run = calsim_run)
-        rear_acres_juv <- square_meters_to_acres(DSMhabitat::set_instream_habitat(watershed_input, 'fr', "juv", rear_flow))
-        rear_acres_fry <- square_meters_to_acres(DSMhabitat::set_instream_habitat(watershed_input, 'fr', "fry", rear_flow))
-      } else {
-        rear_flow <- existing_flow_cfs("rearing", watershed_input, species = 'wr', calsim_run = calsim_run)
-        rear_acres_juv <- square_meters_to_acres(DSMhabitat::set_instream_habitat(watershed_input, 'wr', "juv", rear_flow))
-        rear_acres_fry <- square_meters_to_acres(DSMhabitat::set_instream_habitat(watershed_input, 'wr', "fry", rear_flow))
-      }
-      
-    } else {
-      rear_flow <- existing_flow_cfs("rearing", watershed_input, species = species, calsim_run = calsim_run)
-      rear_acres_juv <- square_meters_to_acres(DSMhabitat::set_instream_habitat(watershed_input, species, "juv", rear_flow))
-      rear_acres_fry <- square_meters_to_acres(DSMhabitat::set_instream_habitat(watershed_input, species, "fry", rear_flow))
+        flow <- existing_flow_cfs(habitat_type, watershed_input, species = "fr", calsim_run = calsim_run)
+        acres <- switch(selected_life_stage, 
+                      "juv" = square_meters_to_acres(DSMhabitat::set_instream_habitat(watershed = watershed_input, species = 'fr', life_stage = "juv", flow = flow)),
+                      "fry" = square_meters_to_acres(DSMhabitat::set_instream_habitat(watershed = watershed_input, species = 'fr', life_stage = "fry", flow = flow))
+        )
     }
-    
-    flood_flow <- existing_flow_cfs("flood", watershed_input, species = species, calsim_run = calsim_run)
-    flood_acres <- square_meters_to_acres(DSMhabitat::set_floodplain_habitat(watershed_input, species, flood_flow))
   }
+  modeling_in_suitable_area <- c("Antelope Creek", "Battle Creek", "Bear Creek", 
+                                 "Cow Creek", "Mill Creek", "Paynes Creek", 
+                                 "Deer Creek",'Upper Sacramento River',
+                                 'Upper-mid Sacramento River','Lower Sacramento River', 'Lower-mid Sacramento River')
   
-  if (!(watershed_input %in% modeling_in_suitable_area)) {
-    flood_acres <- DSMhabitat::apply_suitability(flood_acres)
+  if ((!watershed_input %in% modeling_in_suitable_area) & habitat_type == "flood") {
+    acres <- DSMhabitat::apply_suitability(acres)
   }
-  
-  if (habitat_type == "rear_juv"){
-    return(rear_acres_juv)
-  } else if (habitat_type == "rear_fry") {
-    return(rear_acres_fry)
-  } else if (habitat_type == "spawn") {
-    return(spwn_acres)
-  } else if (habitat_type == "floodplain") {
-    return(flood_acres)
-  }
+  return(acres)
 }
 
 # TMH Plots: 

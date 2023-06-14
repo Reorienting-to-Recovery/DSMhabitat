@@ -6,8 +6,6 @@ library(tidyverse)
 library(DSMhabitat)
 library(lubridate)
 
-options(warn = -1)
-
 source('data-raw/R2R_TMH_habitat_inputs/tmh_helper_functions.R')
 
 # FALL RUN: does not extend past reservoirs -------------------------------
@@ -96,7 +94,11 @@ usethis::use_data(wr_spawn, overwrite = TRUE)
 delta_habitat <- c(DSMhabitat::delta_habitat, r_to_r_tmh = list(r_to_r_tmh_delta))
 usethis::use_data(delta_habitat, overwrite = TRUE)
 
+# do some checks, but make sure you build library first 
 
+table(DSMhabitat::fr_spawn$biop_itp_2018_2019 == DSMhabitat::fr_spawn$r_to_r_tmh)
+table(DSMhabitat::fr_fp$biop_itp_2018_2019 == DSMhabitat::fr_fp$r_to_r_tmh)
+table(DSMhabitat::sr_juv$biop_itp_2018_2019 == DSMhabitat::sr_juv$r_to_r_tmh)
 
 # Exploratory Plots:  -----------------------------------------------------
 ## spawning plot:  ---------------------------------------------------------
