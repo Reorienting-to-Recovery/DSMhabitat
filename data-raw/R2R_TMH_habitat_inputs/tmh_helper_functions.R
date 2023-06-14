@@ -39,10 +39,12 @@ format_all_hab_data_long <- function(tmh_data_formatting) {
 
 all_existing_and_tmh_data_fun <- function(species) {
   if(species == "fr") {
-    all_existing_and_tmh_data <- readRDS('data-raw/R2R_TMH_habitat_inputs/all_habitat_data_for_tmh_inputs_fall_run.rdata') |> 
+    all_existing_and_tmh_data <- readRDS('data-raw/R2R_TMH_habitat_inputs/all_habitat_data_for_tmh_inputs_all_runs.rdata') |> 
+      filter(run == "Fall Run") |> 
       format_all_hab_data_long()
   } else {
-    all_existing_and_tmh_data <- readRDS('data-raw/R2R_TMH_habitat_inputs/all_habitat_data_for_tmh_inputs_spring_winter_run.rdata') |> 
+    all_existing_and_tmh_data <- readRDS('data-raw/R2R_TMH_habitat_inputs/all_habitat_data_for_tmh_inputs_all_runs.rdata') |> 
+      filter(run == "Winter and Spring Run") |> 
       format_all_hab_data_long()
   }
 }
