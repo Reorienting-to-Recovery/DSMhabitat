@@ -301,7 +301,7 @@ existing_acres_fun <- function(watershed_input, habitat_type, selected_species, 
                                                                                          month = median(spawning_months(selected_species)))))
     
     if((selected_species == "wr" & 
-       selected_life_stage == "rearing" & 
+       habitat_type == "rearing" & 
        !(watershed_input %in% c('Upper Sacramento River', 'Upper-mid Sacramento River',
                             'Lower-mid Sacramento River', 'Battle Creek')))) {
         # use fall run as proxy for most watersheds: 
