@@ -65,10 +65,11 @@ set_spawning_habitat <- function(watershed, species, flow, ...) {
                                 watershed_name == watershed,
                                 c(species, 'spawn'), drop = TRUE))
   
+
   if (!species_present) {
     return(NA)
   }
-  
+
   quantification_mode <- subset(DSMhabitat::watershed_methods, 
                                 watershed_name == watershed, 
                                 spawning, drop = TRUE)

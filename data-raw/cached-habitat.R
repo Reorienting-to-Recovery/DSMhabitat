@@ -995,6 +995,9 @@ delta_rearing_habitat_filtered <- delta_rearing_habitat %>%
 delta_habitat[ , , 1] <- matrix(delta_rearing_habitat_filtered$`North Delta`, ncol = 21)
 delta_habitat[ , , 2] <- matrix(delta_rearing_habitat_filtered$`South Delta`, ncol = 21)
 dimnames(delta_habitat) <- list(month.abb, 1980:2000, c("North Delta", "South Delta"))
+
+delta_habitat <- list(sit_habitat = delta_habitat)
+
 usethis::use_data(delta_habitat, overwrite = TRUE)
 
 tisdale_bypass_watershed <- c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 
