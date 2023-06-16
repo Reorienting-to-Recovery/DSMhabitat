@@ -768,11 +768,11 @@ fp |>
 # all runs - delta 
 # 
 # Add north delta habitat ------------------------------------------------------
-r_to_r_baseline_delta <- DSMhabitat::delta_habitat$sit_input
-add_project_habitat <- DSMhabitat::delta_habitat$sit_input[ , ,"North Delta" ] * 
+r_to_r_baseline_delta <- DSMhabitat::delta_habitat$sit_habitat
+add_project_habitat <- DSMhabitat::delta_habitat$sit_habitat[ , ,"North Delta" ] * 
   hab_prop_change_from_projects("floodplain rearing", "North Delta" , 
                                 "fr", "juv", "biop_itp_2018_2019")
-updated_habitat <- DSMhabitat::delta_habitat$sit_input[ , ,"North Delta" ] + add_project_habitat
+updated_habitat <- DSMhabitat::delta_habitat$sit_habitat[ , ,"North Delta" ] + add_project_habitat
 
 r_to_r_baseline_delta[ , , "North Delta"] <- updated_habitat 
 
@@ -786,7 +786,7 @@ r_to_r_baseline_delta == DSMhabitat::delta_habitat$sit_input
 r_to_r_baseline_habitat <- r_to_r_baseline_delta[,, "North Delta"] |> 
   DSMhabitat::square_meters_to_acres()
 
-sit_habitat <- DSMhabitat::delta_habitat$sit_input[,, "North Delta"] |> DSMhabitat::square_meters_to_acres()
+sit_habitat <- DSMhabitat::delta_habitat$sit_habitat[,, "North Delta"] |> DSMhabitat::square_meters_to_acres()
 
 delta <- expand_grid(
   watershed = "North Delta",

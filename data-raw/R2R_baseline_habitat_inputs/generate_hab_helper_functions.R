@@ -109,7 +109,7 @@ hab_prop_change_from_projects <- function(habitat_type, watershed, species, life
   if (watershed == "North Delta") {
   # Instead of taking hab at the median flow to compare take median hab 
   # Check in with Mark on this assumption 
-  sit_habitat <- median(DSMhabitat::delta_habitat$sit_input[ , , "North Delta"])
+  sit_habitat <- median(DSMhabitat::delta_habitat$sit_habitat[ , , "North Delta"])
   }
   
   # find proportion of habitat added 
