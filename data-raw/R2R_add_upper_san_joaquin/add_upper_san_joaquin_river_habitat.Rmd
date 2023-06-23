@@ -700,9 +700,9 @@ floodplain_flow <- existing_flow_cfs("flood", 'San Joaquin River')
 flood_acres <- DSMhabitat::floodplain_approx('San Joaquin River', 'fr')(floodplain_flow) #SIT: 1007.886
 new_flood_acres = approxfun(upper_san_joaquin_floodplain$flow_cfs, upper_san_joaquin_floodplain$FR_floodplain_acres, yleft = 0, yright = max(upper_san_joaquin_floodplain$FR_floodplain_acres))(floodplain_flow) #1171
 
-# according to DSMhabitat::watershed_species_present species aonly present for floodplain in sr and fr, NOT wr and lfr
+# according to DSMhabitat::watershed_species_present species only present for floodplain in sr and fr, NOT wr and lfr
 subset(DSMhabitat::watershed_species_present, 
-        watershed_name == 'San Joaquin River', 'lfr', drop = TRUE)
+        watershed_name == 'San Joaquin River', 'sr', drop = TRUE)
     
 
 # spawning: 
