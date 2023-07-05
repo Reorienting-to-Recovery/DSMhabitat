@@ -110,7 +110,7 @@ objective_func <- function(threshold) {
   
   # scale down the tranport curves to just the d50mm threshold of movement
   scaled_sed_transport <- rating_curve$sed_ft3_per_day_min * 
-    DSMhabitat::gravel_size_to_prop_of_movement$avg_fraction
+    gravel_size_to_prop_of_movement$avg_fraction
   
   # create an approxfun given a threshold of movement (this value will be searched by the optim function)
   calib_sed_curve <- approxfun(rating_curve$flow_cfs, 
@@ -119,6 +119,7 @@ objective_func <- function(threshold) {
                                      length(rating_curve$flow_cfs)))
   
   # convert square meters to cubic feet, assume 2ft depth
+  # TODO what are thse hard-coded values?
   starting_volume <- (254690.3 * 10.764) * 2
   
   calib_kwk_sed_transport <- tibble(
@@ -149,10 +150,10 @@ sac_river_observation_scaledown <- result$minimum
 
 # create a new curve with this scaledown applied
 flow_cfs_to_sed_cfd_calibrated <- approxfun(
-  x = srh$flow_cfs, 
+  x = rating_curve$flow_cfs, 
   y = rating_curve$sed_ft3_per_day_min * 
-    DSMhabitat::gravel_size_to_prop_of_movement$avg_fraction * 
-    rep(sac_river_observation_scaledown, 
+    gravel_size_to_prop_of_movement$avg_fraction * # gravel scaledown
+    rep(sac_river_observation_scaledown,           # observation scale-down
         length(rating_curve$flow_cfs))
 )
 
@@ -188,13 +189,30 @@ grid.arrange(p2, p1, nrow = 2)
 
 
 # apply to upper sac 
-upper_sac_flows_dsm <- DSMflow::flows_cfs$biop_2008_2009 |> 
+upper_sac_flows_dsm_rr <- DSMflow::flows_cfs$run_of_river |> 
   filter(year(date) >= 1979, year(date) <= 2000) |> 
   select(date, flow = `Upper Sacramento River`)
 
-upper_sac_decay <- tibble(
-  date = upper_sac_flows_dsm$date,
-  flow = upper_sac_flows_dsm$flow,
+upper_sac_decay_rr <- tibble(
+  date = upper_sac_flows_dsm_rr$date,
+  flow = upper_sac_flows_dsm_rr$flow,
+  decay_cfd = ifelse(is.na(
+    (x <- flow_cfs_to_sed_cfd_calibrated(flow))), 
+    0, x
+  ), 
+  decay_cfm = decay_cfd * days_in_month(month(date)),
+  decay_sqm = decay_cfm / 2, 
+  decay_acres_month = decay_sqm / 43560 
+)
+
+
+upper_sac_flows_dsm_09 <- DSMflow::flows_cfs$biop_2008_2009 |> 
+  filter(year(date) >= 1979, year(date) <= 2000) |> 
+  select(date, flow = `Upper Sacramento River`)
+
+upper_sac_decay_09 <- tibble(
+  date = upper_sac_flows_dsm_09$date,
+  flow = upper_sac_flows_dsm_09$flow,
   decay_cfd = ifelse(is.na(
     (x <- flow_cfs_to_sed_cfd_calibrated(flow))), 
     0, x
@@ -248,8 +266,23 @@ sac_aug_totals <-
 
 gt(sac_aug_totals |> select(-source))
 
-decays <- upper_sac_decay |> select(date, decay_acres_month, flow) |> 
-  mutate(scaled_decay = decay_acres_month * .18)
+decays_rr <- upper_sac_decay_rr |> select(date, decay_acres_month, flow) |> 
+  mutate(scaled_decay = decay_acres_month * .03, calsim = "rr")
+
+decays <- upper_sac_decay_09 |> select(date, decay_acres_month, flow) |> 
+  mutate(scaled_decay = decay_acres_month * .03, calsim = "09")
+
+all_decays <- bind_rows(decays_rr, decays_09) |>   
+  group_by(calsim) |> 
+  mutate(accum_decay = cumsum(decay_acres_month)) |> 
+  ungroup()
+
+
+all_decays |>
+  ggplot(aes(date, accum_decay, color = calsim)) + geom_line() + 
+  labs(y = "Accumualted Decay")
+
+
 
 augmentations <- sac_aug_totals |> select(date, aug_acres=acres) 
 
@@ -279,21 +312,21 @@ total_scaledown <- domain_expert_additional_scaledown * sac_river_observation_sc
 MIN_flow_cfs_to_sed_cfd_final <- approxfun(
   x = rating_curve$flow_cfs, 
   y = rating_curve$sed_ft3_per_day_min * 
-    DSMhabitat::gravel_size_to_prop_of_movement$avg_fraction * 
+    gravel_size_to_prop_of_movement$avg_fraction * 
     total_scaledown
 )
 
 AVG_flow_cfs_to_sed_cfd_final <- approxfun(
   x = rating_curve$flow_cfs, 
   y = rating_curve$sed_ft3_per_day_avg * 
-    DSMhabitat::gravel_size_to_prop_of_movement$avg_fraction * 
+    gravel_size_to_prop_of_movement$avg_fraction * 
     total_scaledown
 )
 
 MAX_flow_cfs_to_sed_cfd_final <- approxfun(
   x = rating_curve$flow_cfs, 
   y = rating_curve$sed_ft3_per_day_max * 
-    DSMhabitat::gravel_size_to_prop_of_movement$avg_fraction * 
+    gravel_size_to_prop_of_movement$avg_fraction * 
     total_scaledown
 )
 
@@ -415,7 +448,7 @@ for (i in 1:31) {
   fr_spawning_decay_array[i, , ] <- fall_run_spawning_decay_mult[[i]]
 }
 
-spawning_decay_multiplier$fr <- fr_spawning_decay_array
+spawning_decay_multiplier <- fr_spawning_decay_array
 
 
 fall_run_spawning_decay_mult$`Upper Sacramento River`
