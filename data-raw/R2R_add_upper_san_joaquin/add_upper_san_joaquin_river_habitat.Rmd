@@ -4,7 +4,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, message = FALSE, out.width = '100%')
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, out.width = '100%', warnings = FALSE, messages = FALSE)
 # knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 options(usethis.quiet = TRUE)
 library(tidyverse)
@@ -14,14 +14,14 @@ library(scales)
 library(purrr)
 ```
 
-```{r include=FALSE}
+```{r message=FALSE, warning=FALSE, include=FALSE}
 # functions: 
 get_flow <- function(watershed, calsim_version, years = c(1980, 1999)) {
   
   # get the flow values at the dates
-  dplyr::pull(dplyr::filter(dplyr::select(DSMflow::flows_cfs[[calsim_version]], date, watershed),
+  suppressWarnings(dplyr::pull(dplyr::filter(dplyr::select(DSMflow::flows_cfs[[calsim_version]], date, watershed),
                             lubridate::year(date) >= years[1],
-                            lubridate::year(date) <= years[2]), 2)
+                            lubridate::year(date) <= years[2]), 2))
 }
 
 create_SIT_array <- function(input) {
@@ -130,7 +130,7 @@ all_ras_results <- all_reaches_sa_diff |>
 ```
 
 
-```{r}
+```{r, include = FALSE}
 # PLACEHOLDER eda for testing file processing. Will not be included in final output. 
 
 # These are the sa raw results for each reach and flow
@@ -174,19 +174,15 @@ yuba_suit <- suitability |>
   select(river, species, race, life_stage, suitability_metric, units_si_conv, 
          units_conv, suitability_index)
 
-# exploratory plot of suitability criteria: 
-# ggplot() +
-#   geom_line(data = yuba_suit |> 
-#               filter(units_si_conv < 100), aes(x = units_si_conv, y = suitability_index)) +
-#   facet_wrap(~suitability_metric + units_conv + life_stage)
-
 ```
+
+
 
 ## Instream Rearing Habitat
 
-The 1D Hec Ras model was run for for flows 100 through 4500 CFS at all nodes and reaches except 4B1. 4B1 was excluded because it is not currently part of migration corridor for salmonids. A suitability based on depth and velocity was applied all nodes and flows to get a suitable area for in-channel and floodplain rearing for the Upper San Joaquin River between Merced River and Friant Dam. 
+The 1D Hec Ras model was run for for flows 100 through 4500 CFS at all nodes of the bypasses (Chowchilla, Eastside, and Mariposa) and reaches 1, 1A, 2A, and 5. A suitability based on depth and velocity was applied all nodes and flows to get a suitable area for in-channel and floodplain rearing for the Upper San Joaquin River between Merced River and Friant Dam. 
 
-Suitability criteria was applied to the outputs of the Hec Ras model for suitable depth and velocoty for instream juvenile and fry rearing. The Yuba River depth and velocity criteria was used as a proxy for the Upper San Joaquin River using data provided by Mark Gard from the California Department of Fish and Wildlife. 
+Suitability criteria was applied to the outputs of the Hec Ras model for suitable depth and velocity for instream juvenile and fry rearing. The Yuba River depth and velocity criteria was used as a proxy for the Upper San Joaquin River using data provided by Mark Gard from the California Department of Fish and Wildlife. 
 
 **Data Source:**
 
@@ -195,7 +191,7 @@ Suitability criteria was applied to the outputs of the Hec Ras model for suitabl
 * Mark Gard - USFWS (2010a)
 
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 fry_depth <- yuba_suit |> filter(life_stage == "Fry" &  suitability_metric == "Depth") |> 
   filter(suitability_index > 0.1 & units_si_conv > 0) |> 
   summarise(min_depth = min(units_si_conv),
@@ -214,6 +210,11 @@ juv_velocity <- yuba_suit |> filter(life_stage == "Juvenile" &  suitability_metr
   summarise(min_vel = min(units_si_conv),
             max_vel = max(units_si_conv))
 
+# reaches to include in juve rearing: all bypasses 
+# TODO: placeholder
+# TODO: check about Connect, Upper, Middle
+# include: 1A, 1B, 2A, Chow, Eastside, Mariposa, 5
+reaches_to_include <- c('LESB', 'Maripsoa Bypass', 'Rch1_Simplified', 'Rch1A_Simplified', 'Rch2A', 'Reach_5', 'ChowchillaBypass')
 
 all_results_with_suitab <- all_ras_results |> 
   mutate(hydr_depth = as.numeric(hydr_depth),
@@ -231,7 +232,8 @@ all_results_with_suitab <- all_ras_results |>
          vel_suit_juv = case_when(vel_chnl < juv_velocity$min_vel ~ 0, 
                               vel_chnl > juv_velocity$max_vel ~ 0,
                               .default = as.numeric(1)),
-         area_suitable_juv_rearing = depth_suit_juv * vel_suit_juv)
+         area_suitable_juv_rearing = depth_suit_juv * vel_suit_juv) |> 
+  filter(reach %in% reaches_to_include) 
   
   
 fry_suitable_area <- all_results_with_suitab |> 
@@ -286,7 +288,7 @@ upper_san_joaquin_rearing <-
 
 # Floodplain Rearing
 
-Floodplain rearing is calculated from the surface area that extends past the channel of the HEC RAS 1D model outputs at flows from 100 to 4500 cfs. The suitability comes from Figure 39 of the Basso/La Grange Reach Floodplain and Spawning Habitat Restoration Project - 30% Basis of Design Report which provides HSI for depth and velocity for juvenile Chinook. We used the CBEC (2020) curve for floodplain rearing. 
+Floodplain rearing is calculated from the surface area that extends past the channel of the Hec Ras 1D model outputs at flows from 100 to 4500 cfs. The suitability comes from Figure 39 of the Basso/La Grange Reach Floodplain and Spawning Habitat Restoration Project - 30% Basis of Design Report which provides HSI for depth and velocity for juvenile Chinook. We used the CBEC (2020) curve for floodplain rearing. 
 
 **Data Sources:**
 
@@ -294,7 +296,7 @@ Floodplain rearing is calculated from the surface area that extends past the cha
 
 * Reclamation (2012). Hydraulic Studies for Fish Habitat Analysis, Technical Report No. SRH-2012-15. Prepared for San Joaquin River Restoration Project, Mid-Pacific Region, US Bureau of Reclamation, Technical Service Center, Denver, CO.
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 fp_suit <- readxl::read_excel('data-raw/hsc_floodplain.xlsx', sheet = "floodplain_suit")
 
 fp_vel <- fp_suit |> filter(suitability_metric == "Velocity") |> 
@@ -328,7 +330,8 @@ fp_sa <- all_ras_results |>
          area_suitable_fp_l = dep_suit_l * vel_suit_l) |> 
   mutate(total_fp_sa = (area_suitable_fp_r * sa_right_diff) + (area_suitable_fp_l * sa_left_diff)) |> 
   group_by(reach, q_total) |> 
-  summarise(sum_sa_area_fp = sum(total_fp_sa, na.rm = TRUE))
+  summarise(sum_sa_area_fp = sum(total_fp_sa, na.rm = TRUE)) |> 
+  filter(reach %in% reaches_to_include)
   
 # ggplot(fp_sa, aes(x = q_total, y = sum_sa_area_fp)) +
 #   geom_line() +
@@ -346,11 +349,29 @@ ggplot() +
                 x = flow_cfs, color = "Lower San Joaquin")) +
   theme_minimal() +
   labs(x = 'Flow (cfs)', y = 'Floodplain Rearing Acres') 
+
+knitr::kable(align = 'c', head(upper_san_joaquin_floodplain, 5), 
+             caption = "Header Descriptions: flow_cfs = flow in cubic feet per second,
+             SR_floodplain_acres = Spring Run Chinook floodplain acres, 
+             watershed = section of stream modeled for CVPIA SDM")
 ```
+*... with `r nrow(upper_san_joaquin_floodplain) - 5` more rows*
+
 
 ## Spawning Habitat
 
-```{r}
+The same 1D Hec Ras model was run for for flows 100 through 4500 CFS at reach 1A for spawning.  A suitability based on depth and velocity was applied all nodes and flows to get a suitable area for spawning in the Upper San Joaquin River between Merced River and Friant Dam. 
+
+Suitability criteria was applied to the outputs of the Hec Ras model for suitable depth and velocity for spawning. The Yuba River depth and velocity criteria was used as a proxy for the Upper San Joaquin River using data provided by Mark Gard from the California Department of Fish and Wildlife. 
+
+**Data Source:**
+
+* Reclamation (2012). Hydraulic Studies for Fish Habitat Analysis, Technical Report No. SRH-2012-15. Prepared for San Joaquin River Restoration Project, Mid-Pacific Region, US Bureau of Reclamation, Technical Service Center, Denver, CO.
+
+* Mark Gard - USFWS (2010a)
+
+
+```{r message=FALSE, warning=FALSE}
 spwn_depth <- yuba_suit |> filter(life_stage == "Spawning" &  suitability_metric == "Depth") |> 
   filter(suitability_index > 0.1 & units_si_conv > 0 ) |> 
    summarise(min_depth = min(units_si_conv),
@@ -370,7 +391,8 @@ all_results_with_suitab <- all_ras_results |>
          vel_suit = case_when(vel_chnl < spwn_vel$min_vel ~ 0, 
                               vel_chnl > spwn_vel$max_vel ~ 0,
                               .default = as.numeric(1)),
-         area_suitable_spwn = depth_suit * vel_suit)
+         area_suitable_spwn = depth_suit * vel_suit) |> 
+  filter(reach %in% c('Rch1A_Simplified')) # TODO: double check this reach 
   
 upper_san_joaquin_spawning <- all_results_with_suitab |> 
   filter(area_suitable_spwn > 0) |> 
@@ -388,12 +410,20 @@ ggplot() +
 
 ```
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 upper_san_joaquin_instream <- upper_san_joaquin_rearing |> 
   full_join(upper_san_joaquin_spawning) |> 
   mutate(watershed = "San Joaquin River") |> 
   select(watershed, everything())
+
+knitr::kable(align = "c", head(upper_san_joaquin_instream, 5), 
+             caption = "Header Descriptions: flow_cfs = flow in cubic feet per second,
+             SR_spawn_acres = Spring Run Chinook Spawning Acres, 
+             SR_fry_acres = Spring Run Chinook Fry Acres, 
+             SR_juv_acres = Spring Run Chinook Juvenile Acres, 
+             watershed = section of stream modeled for CVPIA SDM")
 ```
+*... with `r nrow(upper_san_joaquin_instream) - 5` more rows*
 
 <!-- ## Save New Spring Run Data Objects  -->
 
@@ -452,7 +482,7 @@ usethis::use_data(sr_spawn, overwrite = TRUE)
 
 <!-- ### Instream Rearing:  -->
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 # FRY: 
 # save new spawning data object 
 calsim_version = 'biop_itp_2018_2019'
@@ -548,7 +578,7 @@ usethis::use_data(sr_juv, overwrite = TRUE)
 
 <!-- # Floodplain: -->
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 # save new floodplain data object 
 calsim_version = 'biop_itp_2018_2019'
 years = 1980:2000
@@ -607,7 +637,7 @@ usethis::use_data(sr_fp, overwrite = TRUE)
 For Spring Run Chinook, the Upper San Joaquin habitat is added to the [existing San Joaquin habitat](http://cvpia-habitat-docs-markdown.s3-website-us-west-2.amazonaws.com/watershed/san_joaquin_river.html) within the DSM. The following plots show the existing habitat with the new Upper San Joaquin Habitat. where the blue lines represent the San Joaquin habitat data that will be used when running [SpringRunDSM](https://github.com/Reorienting-to-Recovery/springRunDSM) for Reorienting to Recovery. 
 
 ## Spawning Plot
-```{r}
+```{r message=FALSE, warning=FALSE}
 
 # spawn
 spawn <- expand_grid(
