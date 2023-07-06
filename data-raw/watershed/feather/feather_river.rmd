@@ -89,7 +89,7 @@ feather_river_instream %>%
   scale_color_manual(values = c('#d95f02', '#7570b3')) +
   theme(legend.justification = c(1, 0), legend.position = c(.9, .7))
 ```
- 
+
 ### Rearing WUA
 The following plot shows the rearing WUA in square feet per thousand feet for Fall Run Chinook Salmon fry and juvenile. These rates are multiplied by the total rearing reach length mapped by the SIT to estimate available habitat.  
 ```{r}
@@ -121,14 +121,14 @@ wetted_area_acres <- DSMhabitat::fr_wetted_channel_area %>%
   pull(channel_area_of_FR_rearing_extent)
 
 df <- read_excel('data-raw/mark_gard_data/Floodplainarea.xlsx', 
-                            sheet = "Feather", skip = 2, 
-                            col_names = c('trash', 'flow_cfs', 'trash2', 
-                                          'total_area_acres', 'trash3')) %>% 
+                 sheet = "Feather", skip = 2, 
+                 col_names = c('trash', 'flow_cfs', 'trash2', 
+                               'total_area_acres', 'trash3')) %>% 
   transmute(flow_cfs,
-         modeled_floodplain_area_acres = 
+            modeled_floodplain_area_acres = 
               pmax(total_area_acres - wetted_area_acres, 0))
 
-  feather_river_floodplain <- scale_fp_flow_area_partial_model(ws = "Feather River", df)
+feather_river_floodplain <- scale_fp_flow_area_partial_model(ws = "Feather River", df)
 
 knitr::kable(align = 'c', head(feather_river_floodplain, 5), 
              caption = "Header Descriptions: flow_cfs = flow in cubic feet per second,

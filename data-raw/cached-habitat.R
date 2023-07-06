@@ -178,8 +178,7 @@ get_spawn_hab_all <- function(watersheds, species, calsim_version, years = 1979:
                      `Lower Sacramento River` = rep(NA, total_obs)))
   
   if(species != "sr") {
-    print('in it...')
-    
+
     hab <- hab |> 
       bind_cols(tibble(`San Joaquin River` = rep(NA, total_obs)))
   }
