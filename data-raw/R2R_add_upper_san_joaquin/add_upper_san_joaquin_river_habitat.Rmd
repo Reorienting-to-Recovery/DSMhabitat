@@ -354,6 +354,8 @@ knitr::kable(align = 'c', head(upper_san_joaquin_floodplain, 5),
              caption = "Header Descriptions: flow_cfs = flow in cubic feet per second,
              SR_floodplain_acres = Spring Run Chinook floodplain acres, 
              watershed = section of stream modeled for CVPIA SDM")
+
+usethis::use_data(upper_san_joaquin_floodplain, overwrite = TRUE)
 ```
 *... with `r nrow(upper_san_joaquin_floodplain) - 5` more rows*
 
@@ -416,6 +418,8 @@ upper_san_joaquin_instream <- upper_san_joaquin_rearing |>
   mutate(watershed = "San Joaquin River") |> 
   select(watershed, everything())
 
+usethis::use_data(upper_san_joaquin_instream, overwrite = TRUE)
+
 knitr::kable(align = "c", head(upper_san_joaquin_instream, 5), 
              caption = "Header Descriptions: flow_cfs = flow in cubic feet per second,
              SR_spawn_acres = Spring Run Chinook Spawning Acres, 
@@ -425,212 +429,6 @@ knitr::kable(align = "c", head(upper_san_joaquin_instream, 5),
 ```
 *... with `r nrow(upper_san_joaquin_instream) - 5` more rows*
 
-<!-- ## Save New Spring Run Data Objects  -->
-
-<!-- ### Spawning:  -->
-```{r}
-# spawning: 
-# save new spawning data object 
-calsim_version = 'biop_itp_2018_2019'
-years = 1979:2000
-watersheds_order <- DSMhabitat::watershed_species_present %>% 
-  select(order, watershed = watershed_name)
-
-total_obs <- 12 * length(years)
-flows <- get_flow('San Joaquin River', calsim_version, range(years))
-
-hab_func <- approxfun(upper_san_joaquin_instream$flow_cfs, upper_san_joaquin_instream$SR_spawn_acres , rule = 2)
-habitat_area <- hab_func(flows)
-
-sj_hab <- tibble(
-  year = rep(years, each = 12),
-  month = rep(1:12, length(years)),
-  watershed = 'San Joaquin River',
-  hab_sq_m = acres_to_square_meters(habitat_area)
-)
-
-watershed = "San Joaquin River"
-
-hab <- sj_hab %>%
-  spread(watershed, hab_sq_m) %>% 
-  gather(watershed, habitat, -year, -month) %>%
-  mutate(date = lubridate::ymd(paste(year, month, 1, '-'))) %>%
-  select(date, watershed, habitat) %>%
-  spread(date, habitat) %>%
-  left_join(watersheds_order) %>%
-  arrange(order) %>%
-  select(-watershed, -order) %>%
-  create_SIT_array()
-
-dimnames(hab) <- list('San Joaquin River', month.abb, 1979:2000)
-hab[which(is.na(hab))] <- 0
-
-# add habitats together 
-r_to_r_add_sj_sr_spawn <- DSMhabitat::sr_spawn$r_to_r_baseline
-new_spawn_hab <- DSMhabitat::sr_spawn$r_to_r_baseline['San Joaquin River', , ] + hab['San Joaquin River', , ]
-r_to_r_add_sj_sr_spawn["San Joaquin River" , , ] <- new_spawn_hab 
-
-baseline_sr_spawn <- DSMhabitat::sr_spawn
-baseline_sr_spawn$r_to_r_baseline <- r_to_r_add_sj_sr_spawn
-sr_spawn <- baseline_sr_spawn
-
-# sr_spawn$r_to_r_baseline == DSMhabitat::sr_spawn$r_to_r_baseline
-
-usethis::use_data(sr_spawn, overwrite = TRUE)
-
-```
-
-<!-- ### Instream Rearing:  -->
-
-```{r message=FALSE, warning=FALSE}
-# FRY: 
-# save new spawning data object 
-calsim_version = 'biop_itp_2018_2019'
-years = 1980:2000
-watersheds_order <- DSMhabitat::watershed_species_present %>% 
-  select(order, watershed = watershed_name)
-
-total_obs <- 12 * length(years)
-flows <- get_flow('San Joaquin River', calsim_version, range(years))
-
-hab_func <- approxfun(upper_san_joaquin_instream$flow_cfs, upper_san_joaquin_instream$SR_fry_acres , rule = 2)
-habitat_area <- hab_func(flows)
-
-sj_hab <- tibble(
-  year = rep(years, each = 12),
-  month = rep(1:12, length(years)),
-  watershed = 'San Joaquin River',
-  hab_sq_m = acres_to_square_meters(habitat_area)
-)
-
-watershed = "San Joaquin River"
-
-hab <- sj_hab %>%
-  spread(watershed, hab_sq_m) %>% 
-  gather(watershed, habitat, -year, -month) %>%
-  mutate(date = lubridate::ymd(paste(year, month, 1, '-'))) %>%
-  select(date, watershed, habitat) %>%
-  spread(date, habitat) %>%
-  left_join(watersheds_order) %>%
-  arrange(order) %>%
-  select(-watershed, -order) %>%
-  create_SIT_array()
-
-dimnames(hab) <- list('San Joaquin River', month.abb, 1980:2000)
-hab[which(is.na(hab))] <- 0
-
-# add habitats together 
-sr_fry <- c(DSMhabitat::sr_fry, r_to_r_baseline = list(DSMhabitat::sr_fry$biop_itp_2018_2019))
-
-r_to_r_add_sj_sr_fry <- sr_fry$r_to_r_baseline
-new_fry_hab <- sr_fry$r_to_r_baseline['San Joaquin River', , ] + hab['San Joaquin River', , ]
-r_to_r_add_sj_sr_fry["San Joaquin River" , , ] <- new_fry_hab 
-
-baseline_sr_fry <- DSMhabitat::sr_fry
-baseline_sr_fry$r_to_r_baseline <- r_to_r_add_sj_sr_fry
-sr_fry <- baseline_sr_fry
-
-# sr_fry$r_to_r_baseline == DSMhabitat::sr_fry$r_to_r_baseline
-
-usethis::use_data(sr_fry, overwrite = TRUE)
-
-# JUVENILES: 
-hab_func <- approxfun(upper_san_joaquin_instream$flow_cfs, upper_san_joaquin_instream$SR_juv_acres , rule = 2)
-habitat_area <- hab_func(flows)
-
-sj_hab <- tibble(
-  year = rep(years, each = 12),
-  month = rep(1:12, length(years)),
-  watershed = 'San Joaquin River',
-  hab_sq_m = acres_to_square_meters(habitat_area)
-)
-
-watershed = "San Joaquin River"
-
-hab <- sj_hab %>%
-  spread(watershed, hab_sq_m) %>% 
-  gather(watershed, habitat, -year, -month) %>%
-  mutate(date = lubridate::ymd(paste(year, month, 1, '-'))) %>%
-  select(date, watershed, habitat) %>%
-  spread(date, habitat) %>%
-  left_join(watersheds_order) %>%
-  arrange(order) %>%
-  select(-watershed, -order) %>%
-  create_SIT_array()
-
-dimnames(hab) <- list('San Joaquin River', month.abb, 1980:2000)
-hab[which(is.na(hab))] <- 0
-
-# add habitats together 
-r_to_r_add_sj_sr_juv <- DSMhabitat::sr_juv$r_to_r_baseline
-new_juv_hab <- DSMhabitat::sr_juv$r_to_r_baseline['San Joaquin River', , ] + hab['San Joaquin River', , ]
-r_to_r_add_sj_sr_juv["San Joaquin River" , , ] <- new_juv_hab 
-
-baseline_sr_juv <- DSMhabitat::sr_juv
-baseline_sr_juv$r_to_r_baseline <- r_to_r_add_sj_sr_juv
-sr_juv <- baseline_sr_juv
-
-# sr_juv$r_to_r_baseline == DSMhabitat::sr_juv$r_to_r_baseline
-
-usethis::use_data(sr_juv, overwrite = TRUE)
-
-```
-
-<!-- # Floodplain: -->
-
-```{r message=FALSE, warning=FALSE}
-# save new floodplain data object 
-calsim_version = 'biop_itp_2018_2019'
-years = 1980:2000
-watersheds_order <- DSMhabitat::watershed_species_present %>% 
-  select(order, watershed = watershed_name)
-
-total_obs <- 12 * length(years)
-flows <- get_flow('San Joaquin River', calsim_version, range(years))
-
-hab_func <- approxfun(upper_san_joaquin_floodplain$flow_cfs, upper_san_joaquin_floodplain$SR_floodplain_acres , rule = 2)
-habitat_area <- hab_func(flows)
-
-sj_hab <- tibble(
-  year = rep(years, each = 12),
-  month = rep(1:12, length(years)),
-  watershed = 'San Joaquin River',
-  hab_sq_m = acres_to_square_meters(habitat_area)
-)
-
-watershed = "San Joaquin River"
-
-hab <- sj_hab %>%
-  spread(watershed, hab_sq_m) %>% 
-  gather(watershed, habitat, -year, -month) %>%
-  mutate(date = lubridate::ymd(paste(year, month, 1, '-'))) %>%
-  select(date, watershed, habitat) %>%
-  spread(date, habitat) %>%
-  left_join(watersheds_order) %>%
-  arrange(order) %>%
-  select(-watershed, -order) %>%
-  create_SIT_array()
-
-dimnames(hab) <- list('San Joaquin River', month.abb, 1980:2000)
-hab[which(is.na(hab))] <- 0
-
-# add habitats together 
-r_to_r_add_sj_sr_fp <- DSMhabitat::sr_fp$r_to_r_baseline
-new_fp_hab <- DSMhabitat::sr_fp$r_to_r_baseline['San Joaquin River', , ] + hab['San Joaquin River', , ]
-r_to_r_add_sj_sr_fp["San Joaquin River" , , ] <- new_fp_hab 
-
-# check to make sure it works 
-# r_to_r_add_sj_fr_fp['San Joaquin River' , , ] == DSMhabitat::fr_fp$r_to_r_baseline['San Joaquin River' , , ]
-
-baseline_sr_fp <- DSMhabitat::sr_fp
-baseline_sr_fp$r_to_r_baseline <- r_to_r_add_sj_sr_fp
-sr_fp <- baseline_sr_fp
-
-# sr_fp$r_to_r_baseline == DSMhabitat::sr_fp$r_to_r_baseline
-
-usethis::use_data(sr_fp, overwrite = TRUE)
-
-```
 
 # Plots
 

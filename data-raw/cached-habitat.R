@@ -41,15 +41,42 @@ get_rear_hab_all <- function(watersheds, species, life_stage, calsim_version, ye
   total_obs <- 12 * length(years)
   most <- map_df(watersheds, function(watershed) {
     flows <- get_flow(watershed, calsim_version, range(years))
-    habitat <- DSMhabitat::set_instream_habitat(watershed,
-                                                species = species,
-                                                life_stage = life_stage,
-                                                flow = flows)
-    tibble(
-      year = rep(years, each = 12),
-      month = rep(1:12, length(years)),
-      watershed = watershed,
-      hab_sq_m = habitat)
+    
+    # add upper san joaquin river to spring run
+    if(species == "sr" & watershed == "San Joaquin River") {
+      lower_sj <- as.data.frame(do.call(`::`, list(pkg = "DSMhabitat", name = 'san_joaquin_river_instream')))
+      upper_sj <- as.data.frame(do.call(`::`, list(pkg = "DSMhabitat", name = 'upper_san_joaquin_instream')))
+      
+      hab_func_lower <- approxfun(lower_sj$flow_cfs, lower_sj$SR_fry_acres , rule = 2)
+      habitat_area_lower <- hab_func(flows)
+      
+      hab_func_upper <- approxfun(upper_sj$flow_cfs, upper_sj$SR_fry_acres , rule = 2)
+      habitat_area_upper <- hab_func(flows)
+      
+      habitat_area <- habitat_area_upper + habitat_area_lower
+      
+      watershed = 'San Joaquin River'
+      
+      tibble(
+        year = rep(years, each = 12),
+        month = rep(1:12, length(years)),
+        watershed = watershed,
+        hab_sq_m = acres_to_square_meters(habitat_area)
+      )
+      
+    } else {
+      
+      habitat <- DSMhabitat::set_instream_habitat(watershed,
+                                                  species = species,
+                                                  life_stage = life_stage,
+                                                  flow = flows)
+  
+      tibble(
+        year = rep(years, each = 12),
+        month = rep(1:12, length(years)),
+        watershed = watershed,
+        hab_sq_m = habitat)
+    }
   })
   
   # deal with sacramento special cases
@@ -91,14 +118,39 @@ get_spawn_hab_all <- function(watersheds, species, calsim_version, years = 1979:
   total_obs <- 12 * length(years)
   most <- map_df(watersheds, function(watershed) {
     flows <- get_flow(watershed, calsim_version, years=range(years))
-    habitat <- DSMhabitat::set_spawning_habitat(watershed,
-                                                species = species,
-                                                flow = flows)
-    tibble(
-      year = rep(years, each = 12),
-      month = rep(1:12, length(years)),
-      watershed = watershed,
-      hab_sq_m = habitat)
+    
+    # add upper san joaquin river to spring run
+    if(species == "sr" & watershed == "San Joaquin River") {
+      upper_sj <- as.data.frame(do.call(`::`, list(pkg = "DSMhabitat", name = 'upper_san_joaquin_instream')))
+      
+      hab_func_upper <- approxfun(upper_sj$flow_cfs, upper_sj$SR_spawn_acres , rule = 2)
+      habitat_area_upper <- hab_func(flows)
+      
+      habitat_area <- habitat_area_upper 
+      
+      watershed = 'San Joaquin River'
+      
+      tibble(
+        year = rep(years, each = 12),
+        month = rep(1:12, length(years)),
+        watershed = watershed,
+        hab_sq_m = acres_to_square_meters(habitat_area)
+      )
+      
+    } else {
+      
+      if(watershed != "San Joaquin River") {
+        
+        habitat <- DSMhabitat::set_spawning_habitat(watershed,
+                                                    species = species,
+                                                    flow = flows)
+        tibble(
+          year = rep(years, each = 12),
+          month = rep(1:12, length(years)),
+          watershed = watershed,
+          hab_sq_m = habitat)
+      }
+    }
   })
   
   # deal with sacramento special cases
@@ -123,8 +175,16 @@ get_spawn_hab_all <- function(watersheds, species, calsim_version, years = 1979:
                      `Yolo Bypass` = rep(NA, total_obs),
                      `Upper-mid Sacramento River` = rep(NA, total_obs),
                      `Lower-mid Sacramento River` = rep(NA, total_obs),
-                     `Lower Sacramento River` = rep(NA, total_obs),
-                     `San Joaquin River` = rep(NA, total_obs))) %>%
+                     `Lower Sacramento River` = rep(NA, total_obs)))
+  
+  if(species != "sr") {
+    print('in it...')
+    
+    hab <- hab |> 
+      bind_cols(tibble(`San Joaquin River` = rep(NA, total_obs)))
+  }
+  
+  hab <- hab |> 
     gather(watershed, habitat, -year, -month) %>%
     mutate(date = lubridate::ymd(paste(year, month, 1, '-'))) %>%
     select(date, watershed, habitat) %>%
@@ -133,8 +193,7 @@ get_spawn_hab_all <- function(watersheds, species, calsim_version, years = 1979:
     arrange(order) %>%
     select(-watershed, -order) %>%
     create_SIT_array()
-  
-  
+
   return(hab)
 }
 
@@ -143,6 +202,30 @@ get_floodplain_hab_all <- function(watersheds, species, calsim_version, years = 
   total_obs <- 12 * length(years)
   most <- map_df(watersheds, function(watershed) {
     flows <- get_flow(watershed, calsim_version, range(years))
+    
+    if(species == "sr" & watershed == "San Joaquin River") {
+      lower_sj <- as.data.frame(do.call(`::`, list(pkg = "DSMhabitat", name = 'san_joaquin_river_floodplain')))
+      upper_sj <- as.data.frame(do.call(`::`, list(pkg = "DSMhabitat", name = 'upper_san_joaquin_floodplain')))
+      
+      hab_func_lower <- approxfun(lower_sj$flow_cfs, lower_sj$SR_floodplain_acres , rule = 2)
+      habitat_area_lower <- hab_func(flows)
+      
+      hab_func_upper <- approxfun(upper_sj$flow_cfs, upper_sj$SR_floodplain_acres , rule = 2)
+      habitat_area_upper <- hab_func(flows)
+      
+      habitat_area <- habitat_area_upper + habitat_area_lower
+      
+      watershed = 'San Joaquin River'
+      
+      tibble(
+        year = rep(years, each = 12),
+        month = rep(1:12, length(years)),
+        watershed = watershed,
+        hab_sq_m = acres_to_square_meters(habitat_area)
+      )
+      
+    } else {
+    
     habitat <- DSMhabitat::set_floodplain_habitat(watershed, species, flows)
     
     modeling_in_suitable_area <- c("Antelope Creek", "Battle Creek", "Bear Creek", 
@@ -159,6 +242,7 @@ get_floodplain_hab_all <- function(watersheds, species, calsim_version, years = 
       month = rep(1:12, length(years)),
       watershed = watershed,
       hab_sq_m = habitat)
+    }
   })
   
   # lower-mid sacramento
