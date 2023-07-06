@@ -52,49 +52,48 @@ run_of_river_tmh_delta <- delta_tmh_processing()
 # Save as data object to DSMhabitat
 ## FLOODPLAIN:
 ### Fall run:
-fr_fp <- c(DSMhabitat::fr_fp[1:4], run_of_river_tmh = list(run_of_river_tmh_fr_flood))
+fr_fp <- modifyList(DSMhabitat::fr_fp, list(run_of_river_tmh = run_of_river_tmh_fr_flood))
 usethis::use_data(fr_fp, overwrite = TRUE)
 ### Spring Run:
-sr_fp <- c(DSMhabitat::sr_fp[1:4], run_of_river_tmh = list(run_of_river_tmh_sr_flood))
+sr_fp <- modifyList(DSMhabitat::sr_fp, list(run_of_river_tmh = run_of_river_tmh_sr_flood))
 usethis::use_data(sr_fp, overwrite = TRUE)
 #### Winter Run:
-wr_fp <- c(DSMhabitat::wr_fp[1:4], run_of_river_tmh = list(run_of_river_tmh_wr_flood))
+wr_fp <- modifyList(DSMhabitat::wr_fp, list(run_of_river_tmh = run_of_river_tmh_wr_flood))
 usethis::use_data(wr_fp, overwrite = TRUE)
 
 ## IN CHANNEL REARING:
 ### Fall Run: 
-fr_fry <- c(DSMhabitat::fr_fry[1:4], run_of_river_tmh = list(run_of_river_tmh_fr_fry))
+fr_fry <- modifyList(DSMhabitat::fr_fry, list(run_of_river_tmh = run_of_river_tmh_fr_fry))
 usethis::use_data(fr_fry, overwrite = TRUE)
 
-fr_juv <- c(DSMhabitat::fr_juv[1:4], run_of_river_tmh = list(run_of_river_tmh_fr_juv))
+fr_juv <- modifyList(DSMhabitat::fr_juv, list(run_of_river_tmh = run_of_river_tmh_fr_juv))
 usethis::use_data(fr_juv, overwrite = TRUE)
 ### Spring Run: 
-sr_fry <- c(DSMhabitat::sr_fry[1:4], run_of_river_tmh = list(run_of_river_tmh_sr_fry))
+sr_fry <- modifyList(DSMhabitat::sr_fry, list(run_of_river_tmh = run_of_river_tmh_sr_fry))
 usethis::use_data(sr_fry, overwrite = TRUE)
 
-sr_juv <- c(DSMhabitat::sr_juv[1:4], run_of_river_tmh = list(run_of_river_tmh_sr_juv))
+sr_juv <- modifyList(DSMhabitat::sr_juv, list(run_of_river_tmh = run_of_river_tmh_sr_juv))
 usethis::use_data(sr_juv, overwrite = TRUE)
 ### Winter Run: 
-wr_fry <- c(DSMhabitat::wr_fry[1:4], run_of_river_tmh = list(run_of_river_tmh_wr_fry))
+wr_fry <- modifyList(DSMhabitat::wr_fry, list(run_of_river_tmh = run_of_river_tmh_wr_fry))
 usethis::use_data(wr_fry, overwrite = TRUE)
 
-wr_juv <- c(DSMhabitat::wr_juv[1:4], run_of_river_tmh = list(run_of_river_tmh_wr_juv))
+wr_juv <- modifyList(DSMhabitat::wr_juv, list(run_of_river_tmh = run_of_river_tmh_wr_juv))
 usethis::use_data(wr_juv, overwrite = TRUE)
 
 ## SPAWNING: 
 ### Fall run: 
-fr_spawn <- c(DSMhabitat::fr_spawn[1:4], run_of_river_tmh = list(run_of_river_tmh_fr_spawn))
+fr_spawn <- modifyList(DSMhabitat::fr_spawn, list(run_of_river_tmh = run_of_river_tmh_fr_spawn))
 usethis::use_data(fr_spawn, overwrite = TRUE)
 ### Spring Run: 
-sr_spawn <- c(DSMhabitat::sr_spawn[1:4], run_of_river_tmh = list(run_of_river_tmh_sr_spawn))
+sr_spawn <- modifyList(DSMhabitat::sr_spawn, list(run_of_river_tmh = run_of_river_tmh_sr_spawn))
 usethis::use_data(sr_spawn, overwrite = TRUE)
 ### Winter Run:
-wr_spawn <- c(DSMhabitat::wr_spawn[1:4], run_of_river_tmh = list(run_of_river_tmh_wr_spawn))
+wr_spawn <- modifyList(DSMhabitat::wr_spawn, list(run_of_river_tmh = run_of_river_tmh_wr_spawn))
 usethis::use_data(wr_spawn, overwrite = TRUE)
 
-delta_habitat <- c(DSMhabitat::delta_habitat[1:2], run_of_river_tmh = list(run_of_river_tmh_delta))
+delta_habitat <- modifyList(DSMhabitat::delta_habitat, list(run_of_river_tmh = run_of_river_tmh_delta))
 usethis::use_data(delta_habitat, overwrite = TRUE)
-
 # do some checks, but make sure you build library first 
 
 table(DSMhabitat::fr_spawn$run_of_river == DSMhabitat::fr_spawn$run_of_river_tmh)

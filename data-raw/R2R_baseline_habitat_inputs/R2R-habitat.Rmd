@@ -28,10 +28,29 @@ DRAFT
 
 Habitat inputs for the Reorienting to Recovery baseline model run include current DSMhabitat values:
 
+Fall Run Habitat
+
 -   [`DSMhabitat::fr_spawn`](https://cvpia-osc.github.io/DSMhabitat/reference/spawn.html)
 -   [`DSMhabitat::fr_juv`](https://cvpia-osc.github.io/DSMhabitat/reference/juvenile.html)
 -   [`DSMhabitat::fr_fry`](https://cvpia-osc.github.io/DSMhabitat/reference/fry.html)
 -   [`DSMhabitat::fr_fp`](https://cvpia-osc.github.io/DSMhabitat/reference/floodplain.html)
+
+Spring Run Habitat
+
+-   [`DSMhabitat::sr_spawn`](https://cvpia-osc.github.io/DSMhabitat/reference/spawn.html)
+-   [`DSMhabitat::sr_juv`](https://cvpia-osc.github.io/DSMhabitat/reference/juvenile.html)
+-   [`DSMhabitat::sr_fry`](https://cvpia-osc.github.io/DSMhabitat/reference/fry.html)
+-   [`DSMhabitat::sr_fp`](https://cvpia-osc.github.io/DSMhabitat/reference/floodplain.html)
+
+Winter Run Habitat
+
+-   [`DSMhabitat::wr_spawn`](https://cvpia-osc.github.io/DSMhabitat/reference/spawn.html)
+-   [`DSMhabitat::wr_juv`](https://cvpia-osc.github.io/DSMhabitat/reference/juvenile.html)
+-   [`DSMhabitat::wr_fry`](https://cvpia-osc.github.io/DSMhabitat/reference/fry.html)
+-   [`DSMhabitat::wr_fp`](https://cvpia-osc.github.io/DSMhabitat/reference/floodplain.html)
+
+Non Run Specific Habitat 
+
 -   [`DSMhabitat::delta_habitat`](https://cvpia-osc.github.io/DSMhabitat/reference/delta_habitat.html)
 
 Plus additional habitat acres from recently completed or in progress habitat restoration projects.
@@ -47,12 +66,12 @@ The Reorienting to Recovery Planning team solicited input for the project catalo
 -   The project is under construction
 -   The project or endeavor consists of a suite of management actions (e.g. re-operation of existing infrastructure) that are actively being considered by managers, have been approved, or are newly (within the last calendar year) being implemented
 
-#### Fall Run Project Catalog Summary
+#### Project Catalog Summary
 
 FlowWest summarized the project catalog by run, tributary, and habitat type to find total acres of habitat added to each Tributary. The following table shows summarized habitat added to each tributary:
 
 ```{r, echo = FALSE, message = FALSE}
-fall_summary <- read_csv("data-raw/R2R_baseline_habitat_inputs/R2R_project_catalog_fall_summary.csv") |> 
+fall_summary <- read_csv("data-raw/R2R_baseline_habitat_inputs/R2R_project_catalog_summary.csv") |> 
   select(Watershed = watershed, `Habitat Type` = habitat_type, 
          Run = run, `Proportion Suitable` = percent_suitable, `Total Acres` = total_acres) 
 
@@ -125,7 +144,11 @@ updated_habitat <- DSMhabitat::fr_juv$biop_itp_2018_2019["American River", , ] +
 
 ### Baseline Habitat Plots
 
-#### Spawning Habitat
+#### Spawning Habitat 
+
+Below are spawning plots displaying spawning habitat changes from CVPIA SIT habitat (blue) to baseline (red) for each run. 
+
+##### Fall Run 
 
 ```{r, echo = FALSE}
 # Exploratory plot 
@@ -157,12 +180,79 @@ spawn |>
   # geom_col(position = 'dodge') +
   facet_wrap(~watershed, scales = 'free_y') + 
   theme_minimal() + 
-  theme(legend.position = "bototm")
+  theme(legend.position = "bottom")
 
 
 ```
 
-#### Inchannel Rearing Fry Habitat
+##### Spring Run 
+```{r, echo = FALSE}
+r_to_r_baseline_habitat <- DSMhabitat::sr_spawn$r_to_r_baseline |> 
+  DSMhabitat::square_meters_to_acres()
+
+sit_habitat <- DSMhabitat::sr_spawn$biop_itp_2018_2019 |> DSMhabitat::square_meters_to_acres()
+
+spawn <- expand_grid(
+  watershed = factor(DSMscenario::watershed_labels, 
+                     levels = DSMscenario::watershed_labels),
+  month = 1:12,
+  year = 1979:2000) |> 
+  arrange(year, month, watershed) |> 
+  mutate(
+    sit_habitat = as.vector(sit_habitat),
+    r_to_r_baseline_habitat = as.vector(r_to_r_baseline_habitat)) |> 
+  filter(watershed %in% c("Cottonwood Creek", 
+                          "Upper Sacramento River", 
+                          "Deer Creek"))
+
+spawn |> 
+  transmute(watershed, date = ymd(paste(year, month, 1)), 
+            sit_habitat, r_to_r_baseline_habitat) |> 
+  gather(version, acres, -watershed, -date)  |> 
+  ggplot(aes(date, acres, color = version)) +
+  geom_line(alpha = .75) + 
+  # geom_col(position = 'dodge') +
+  facet_wrap(~watershed, scales = 'free_y') + 
+  theme_minimal()+ 
+  theme(legend.position = "bottom")
+```
+
+##### Winter Run 
+```{r, echo = FALSE}
+r_to_r_baseline_habitat <- DSMhabitat::wr_spawn$r_to_r_baseline |> 
+  DSMhabitat::square_meters_to_acres()
+
+sit_habitat <- DSMhabitat::wr_spawn$biop_itp_2018_2019 |> DSMhabitat::square_meters_to_acres()
+
+spawn <- expand_grid(
+  watershed = factor(DSMscenario::watershed_labels, 
+                     levels = DSMscenario::watershed_labels),
+  month = 1:12,
+  year = 1979:2000) |> 
+  arrange(year, month, watershed) |> 
+  mutate(
+    sit_habitat = as.vector(sit_habitat),
+    r_to_r_baseline_habitat = as.vector(r_to_r_baseline_habitat)) |> 
+  filter(watershed %in% c("Upper Sacramento River"))
+
+spawn |> 
+  transmute(watershed, date = ymd(paste(year, month, 1)), 
+            sit_habitat, r_to_r_baseline_habitat) |> 
+  gather(version, acres, -watershed, -date)  |> 
+  ggplot(aes(date, acres, color = version)) +
+  geom_line(alpha = .75) + 
+  # geom_col(position = 'dodge') +
+  facet_wrap(~watershed, scales = 'free_y') + 
+  theme_minimal() + 
+  theme(legend.position = "bottom")
+```
+
+#### Inchannel Rearing Fry Habitat 
+
+Below are inchannel fry rearing plots displaying rearing habitat changes from CVPIA SIT habitat (blue) to baseline (red) for each run. 
+
+
+##### Fall Run 
 
 ```{r, echo = FALSE}
 # Exploratory plot 
@@ -197,7 +287,74 @@ ic_fry|>
   theme(legend.position = "bototm")
 ```
 
-#### Inchannel Rearing Juvenile Habitat
+##### Spring Run 
+```{r, echo = FALSE}
+r_to_r_baseline_habitat <- DSMhabitat::sr_fry$r_to_r_baseline |> 
+  DSMhabitat::square_meters_to_acres()
+
+sit_habitat <- DSMhabitat::sr_fry$biop_itp_2018_2019 |> DSMhabitat::square_meters_to_acres()
+
+ic_fry <- expand_grid(
+  watershed = factor(DSMscenario::watershed_labels, 
+                     levels = DSMscenario::watershed_labels),
+  month = 1:12,
+  year = 1980:2000) |> 
+  arrange(year, month, watershed) |> 
+  mutate(
+    sit_habitat = as.vector(sit_habitat),
+    r_to_r_baseline_habitat = as.vector(r_to_r_baseline_habitat)) |> 
+  filter(watershed %in% c("Tuolumne River",
+                          "Upper Sacramento River",
+                          "Upper-mid Sacramento River"))
+
+ic_fry|> 
+  transmute(watershed, date = ymd(paste(year, month, 1)), 
+            sit_habitat, r_to_r_baseline_habitat) |> 
+  gather(version, acres, -watershed, -date)  |> 
+  ggplot(aes(date, acres, color = version)) +
+  geom_line(alpha = .75) + 
+  # geom_col(position = 'dodge') +
+  facet_wrap(~watershed, scales = 'free_y') + 
+  theme_minimal() + 
+  theme(legend.position = "bototm")
+```
+
+##### Winter Run 
+```{r, echo = FALSE}
+r_to_r_baseline_habitat <- DSMhabitat::wr_fry$r_to_r_baseline |> 
+  DSMhabitat::square_meters_to_acres()
+
+sit_habitat <- DSMhabitat::wr_fry$biop_itp_2018_2019 |> DSMhabitat::square_meters_to_acres()
+
+ic_fry <- expand_grid(
+  watershed = factor(DSMscenario::watershed_labels, 
+                     levels = DSMscenario::watershed_labels),
+  month = 1:12,
+  year = 1980:2000) |> 
+  arrange(year, month, watershed) |> 
+  mutate(
+    sit_habitat = as.vector(sit_habitat),
+    r_to_r_baseline_habitat = as.vector(r_to_r_baseline_habitat)) |> 
+  filter(watershed %in% c("Upper Sacramento River",
+                          "Upper-mid Sacramento River"))
+
+ic_fry|> 
+  transmute(watershed, date = ymd(paste(year, month, 1)), 
+            sit_habitat, r_to_r_baseline_habitat) |> 
+  gather(version, acres, -watershed, -date)  |> 
+  ggplot(aes(date, acres, color = version)) +
+  geom_line(alpha = .75) + 
+  # geom_col(position = 'dodge') +
+  facet_wrap(~watershed, scales = 'free_y') + 
+  theme_minimal() + 
+  theme(legend.position = "bototm")
+```
+
+#### Inchannel Rearing Juvenile Habitat 
+
+Below are inchannel juv rearing plots displaying inchannel rearing habitat changes from CVPIA SIT habitat (blue) to baseline (red) for each run.
+
+##### Fall Run 
 
 ```{r, echo = FALSE}
 r_to_r_baseline_habitat <- DSMhabitat::fr_juv$r_to_r_baseline |> 
@@ -229,10 +386,83 @@ ic_juv |>
   # geom_col(position = 'dodge') +
   facet_wrap(~watershed, scales = 'free_y') + 
   theme_minimal() + 
-  theme(legend.position = "bototm")
+  theme(legend.position = "bottom")
 ```
 
-#### Floodplain Rearing Habitat
+##### Spring Run 
+```{r, echo = FALSE}
+r_to_r_baseline_habitat <- DSMhabitat::sr_juv$r_to_r_baseline |> 
+  DSMhabitat::square_meters_to_acres()
+
+sit_habitat <- DSMhabitat::sr_juv$biop_itp_2018_2019 |> DSMhabitat::square_meters_to_acres()
+
+ic_juv <- expand_grid(
+  watershed = factor(DSMscenario::watershed_labels, 
+                     levels = DSMscenario::watershed_labels),
+  month = 1:12,
+  year = 1980:2000) |> 
+  arrange(year, month, watershed) |> 
+  mutate(
+    sit_habitat = as.vector(sit_habitat),
+    r_to_r_baseline_habitat = as.vector(r_to_r_baseline_habitat)) |> 
+  filter(watershed %in% c( "Tuolumne River",
+                          "Upper Sacramento River",
+                          "Upper-mid Sacramento River"
+  ))
+
+ic_juv |> 
+  transmute(watershed, date = ymd(paste(year, month, 1)), 
+            sit_habitat, r_to_r_baseline_habitat) |> 
+  gather(version, acres, -watershed, -date)  |> 
+  ggplot(aes(date, acres, color = version)) +
+  geom_line(alpha = .75) + 
+  # geom_col(position = 'dodge') +
+  facet_wrap(~watershed, scales = 'free_y') + 
+  theme_minimal() + 
+  theme(legend.position = "bottom")
+```
+
+
+##### Winter Run 
+```{r, echo = FALSE}
+r_to_r_baseline_habitat <- DSMhabitat::wr_juv$r_to_r_baseline |> 
+  DSMhabitat::square_meters_to_acres()
+
+sit_habitat <- DSMhabitat::wr_juv$biop_itp_2018_2019 |> DSMhabitat::square_meters_to_acres()
+
+ic_juv <- expand_grid(
+  watershed = factor(DSMscenario::watershed_labels, 
+                     levels = DSMscenario::watershed_labels),
+  month = 1:12,
+  year = 1980:2000) |> 
+  arrange(year, month, watershed) |> 
+  mutate(
+    sit_habitat = as.vector(sit_habitat),
+    r_to_r_baseline_habitat = as.vector(r_to_r_baseline_habitat)) |> 
+  filter(watershed %in% c( "Upper Sacramento River",
+                          "Upper-mid Sacramento River"
+  ))
+
+ic_juv |> 
+  transmute(watershed, date = ymd(paste(year, month, 1)), 
+            sit_habitat, r_to_r_baseline_habitat) |> 
+  gather(version, acres, -watershed, -date)  |> 
+  ggplot(aes(date, acres, color = version)) +
+  geom_line(alpha = .75) + 
+  # geom_col(position = 'dodge') +
+  facet_wrap(~watershed, scales = 'free_y') + 
+  theme_minimal() + 
+  theme(legend.position = "bottom")
+```
+
+
+
+#### Floodplain Rearing Habitat 
+
+Below are floodplain rearing plots displaying floodplain rearing habitat changes from CVPIA SIT habitat (blue) to baseline (red) for each run.
+
+
+##### Fall Run 
 
 ```{r, echo = FALSE}
 r_to_r_baseline_habitat <- DSMhabitat::fr_fp$r_to_r_baseline |> 
@@ -261,10 +491,78 @@ fp |>
   # geom_col(position = 'dodge') +
   facet_wrap(~watershed, scales = 'free_y') + 
   theme_minimal() + 
-  theme(legend.position = "bototm")
+  theme(legend.position = "bottom")
 ```
 
-#### Delta Habitat
+##### Spring Run
+```{r, echo = FALSE}
+r_to_r_baseline_habitat <- DSMhabitat::sr_fp$r_to_r_baseline |> 
+  DSMhabitat::square_meters_to_acres()
+
+sit_habitat <- DSMhabitat::sr_fp$biop_itp_2018_2019 |> DSMhabitat::square_meters_to_acres()
+
+fp <- expand_grid(
+  watershed = factor(DSMscenario::watershed_labels, 
+                     levels = DSMscenario::watershed_labels),
+  month = 1:12,
+  year = 1980:2000) |> 
+  arrange(year, month, watershed) |> 
+  mutate(
+    sit_habitat = as.vector(sit_habitat),
+    r_to_r_baseline_habitat = as.vector(r_to_r_baseline_habitat)) |> 
+  filter(watershed %in% c("Yuba River", "Lower-mid Sacramento River", "Tuolumne River"))
+
+fp |> 
+  transmute(watershed, date = ymd(paste(year, month, 1)), 
+            sit_habitat, r_to_r_baseline_habitat) |> 
+  filter(!(watershed %in% c('Sutter Bypass', 'Yolo Bypass'))) |> 
+  gather(version, acres, -watershed, -date)  |> 
+  ggplot(aes(date, acres, color = version)) +
+  geom_line() + 
+  # geom_col(position = 'dodge') +
+  facet_wrap(~watershed, scales = 'free_y') + 
+  theme_minimal() + 
+  theme(legend.position = "bottom")
+```
+
+
+##### Winter Run 
+
+```{r, echo = FALSE}
+r_to_r_baseline_habitat <- DSMhabitat::wr_fp$r_to_r_baseline |> 
+  DSMhabitat::square_meters_to_acres()
+
+sit_habitat <- DSMhabitat::wr_fp$biop_itp_2018_2019 |> DSMhabitat::square_meters_to_acres()
+
+fp <- expand_grid(
+  watershed = factor(DSMscenario::watershed_labels, 
+                     levels = DSMscenario::watershed_labels),
+  month = 1:12,
+  year = 1980:2000) |> 
+  arrange(year, month, watershed) |> 
+  mutate(
+    sit_habitat = as.vector(sit_habitat),
+    r_to_r_baseline_habitat = as.vector(r_to_r_baseline_habitat)) |> 
+  filter(watershed %in% c("Lower-mid Sacramento River"))
+
+fp |> 
+  transmute(watershed, date = ymd(paste(year, month, 1)), 
+            sit_habitat, r_to_r_baseline_habitat) |> 
+  filter(!(watershed %in% c('Sutter Bypass', 'Yolo Bypass'))) |> 
+  gather(version, acres, -watershed, -date)  |> 
+  ggplot(aes(date, acres, color = version)) +
+  geom_line() + 
+  # geom_col(position = 'dodge') +
+  facet_wrap(~watershed, scales = 'free_y') + 
+  theme_minimal() + 
+  theme(legend.position = "bottom")
+```
+
+
+#### Delta Habitat (all runs)
+
+Below is a delta rearing habiatat plots displaying delta rearing habitat changes from CVPIA SIT habitat (blue) to baseline (red) for each run.
+
 
 ```{r, echo = FALSE}
 r_to_r_baseline_habitat <- DSMhabitat::delta_habitat$r_to_r_baseline[,, "North Delta"] |> 

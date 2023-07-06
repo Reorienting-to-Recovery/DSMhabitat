@@ -1,0 +1,30 @@
+watershed,habitat_type,run,total_acres,gradient_class,percent_suitable 
+Upper Sacramento River,spawning,fall ,3.5,,0.12
+Upper Sacramento River,inchannel rearing ,fall ,12.1,0-1,0.1
+Upper-mid Sacramento River,inchannel rearing ,fall ,1.95,0-1,0.78
+Lower-mid Sacramento River,floodplain rearing,fall ,114,,0.9
+American River,spawning,fall ,13,,0.12
+American River,inchannel rearing ,fall ,2,0 - 1,0.78
+American River,inchannel rearing ,fall ,1,<.4,0.1
+American River,floodplain rearing ,fall ,2,,0.9
+Clear Creek ,spawning,fall ,9.5,,0.12
+North Delta ,floodplain rearing ,fall ,5589,,0.9
+Paynes Creek,spawning,fall,3,,0.12
+Tuolumne River,inchannel rearing ,fall,30,0-1,0.78
+Tuolumne River,floodplain rearing ,fall,90,,0.9
+Yuba River ,floodplain rearing ,fall,68,,0.9
+Cottonwood Creek,spawning,spring,1,,0.12
+Deer Creek ,spawning,spring,35.33,,0.12
+North Delta ,floodplain rearing ,spring,5589,,0.9
+Lower-mid Sacramento River,floodplain rearing,spring ,114,,0.9
+Tuolumne River,inchannel rearing ,spring ,30,0-1,0.78
+Tuolumne River,floodplain rearing ,spring ,90,,0.9
+Upper Sacramento River,inchannel rearing ,spring ,7,0-1,0.78
+Upper Sacramento River,spawning,spring,3.5,,0.12
+Upper-mid Sacramento River,inchannel rearing ,spring ,1.95,0-1,0.78
+Yuba River ,floodplain rearing ,spring,68,,0.9
+North Delta ,floodplain rearing ,winter,5589,,0.9
+Lower-mid Sacramento River,floodplain rearing,winter,114,,0.9
+Upper Sacramento River,inchannel rearing ,winter,199.88,0-1,0.78
+Upper Sacramento River,spawning,winter,190.28,,0.12
+Upper-mid Sacramento River,inchannel rearing ,winter,1.95,0-1,0.78

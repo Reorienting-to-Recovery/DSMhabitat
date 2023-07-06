@@ -74,7 +74,7 @@ set_instream_habitat <- function(watershed, species, life_stage, flow, ...) {
   if (!species_present) {
     return(NA)
   }
-  
+
   quantification_mode <- subset(DSMhabitat::watershed_methods, 
                                 watershed_name == watershed, instream, drop = TRUE)
   
