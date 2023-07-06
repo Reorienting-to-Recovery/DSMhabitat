@@ -48,10 +48,10 @@ get_rear_hab_all <- function(watersheds, species, life_stage, calsim_version, ye
       upper_sj <- as.data.frame(do.call(`::`, list(pkg = "DSMhabitat", name = 'upper_san_joaquin_instream')))
       
       hab_func_lower <- approxfun(lower_sj$flow_cfs, lower_sj$SR_fry_acres , rule = 2)
-      habitat_area_lower <- hab_func(flows)
+      habitat_area_lower <- hab_func_lower(flows)
       
       hab_func_upper <- approxfun(upper_sj$flow_cfs, upper_sj$SR_fry_acres , rule = 2)
-      habitat_area_upper <- hab_func(flows)
+      habitat_area_upper <- hab_func_upper(flows)
       
       habitat_area <- habitat_area_upper + habitat_area_lower
       
@@ -124,7 +124,7 @@ get_spawn_hab_all <- function(watersheds, species, calsim_version, years = 1979:
       upper_sj <- as.data.frame(do.call(`::`, list(pkg = "DSMhabitat", name = 'upper_san_joaquin_instream')))
       
       hab_func_upper <- approxfun(upper_sj$flow_cfs, upper_sj$SR_spawn_acres , rule = 2)
-      habitat_area_upper <- hab_func(flows)
+      habitat_area_upper <- hab_func_upper(flows)
       
       habitat_area <- habitat_area_upper 
       
@@ -208,10 +208,10 @@ get_floodplain_hab_all <- function(watersheds, species, calsim_version, years = 
       upper_sj <- as.data.frame(do.call(`::`, list(pkg = "DSMhabitat", name = 'upper_san_joaquin_floodplain')))
       
       hab_func_lower <- approxfun(lower_sj$flow_cfs, lower_sj$SR_floodplain_acres , rule = 2)
-      habitat_area_lower <- hab_func(flows)
+      habitat_area_lower <- hab_func_lower(flows)
       
       hab_func_upper <- approxfun(upper_sj$flow_cfs, upper_sj$SR_floodplain_acres , rule = 2)
-      habitat_area_upper <- hab_func(flows)
+      habitat_area_upper <- hab_func_upper(flows)
       
       habitat_area <- habitat_area_upper + habitat_area_lower
       
@@ -293,9 +293,9 @@ dimnames(fr_spawn_2018_2019) <- list(watersheds, month.abb, 1979:2000)
 fr_spawn_2018_2019[which(is.na(fr_spawn_2018_2019))] <- 0
 
 # list together both fr spawning versions
-fr_spawn <- list(biop_2008_2009 = fr_spawn_2008_2009,
-                 biop_itp_2018_2019 = fr_spawn_2018_2019
-)
+fr_spawn <- append(DSMhabitat::fr_spawn, list(biop_2008_2009 = fr_spawn_2008_2009,
+                                              biop_itp_2018_2019 = fr_spawn_2018_2019))
+
 usethis::use_data(fr_spawn, overwrite = TRUE)
 
 # steelhead spawning habitat -- 
@@ -310,9 +310,8 @@ st_spawn_2018_2019[which(is.na(st_spawn_2018_2019))] <- 0
 dimnames(st_spawn_2018_2019) <- list(watersheds, month.abb, 1979:2000)
 
 # list together both steelhead spawning versions
-st_spawn <- list(biop_2008_2009 = st_spawn_2008_2009,
-                 biop_itp_2018_2019 = st_spawn_2018_2019
-)
+st_spawn <- append(DSMhabitat::st_spawn, list(biop_2008_2009 = st_spawn_2008_2009,
+                                              biop_itp_2018_2019 = st_spawn_2018_2019))
 
 usethis::use_data(st_spawn, overwrite = TRUE)
 
@@ -340,9 +339,8 @@ sr_spawn_2018_2019["Cosumnes River", , ] <- fr_spawn$biop_itp_2018_2019["Cosumne
 sr_spawn_2018_2019["Merced River", , ] <- fr_spawn$biop_itp_2018_2019["Merced River", , ] 
 
 # Combine together 
-sr_spawn <- list(biop_2008_2009 = sr_spawn_2008_2009,
-                 biop_itp_2018_2019 = sr_spawn_2018_2019
-)
+sr_spawn <- append(DSMhabitat::sr_spawn, list(biop_2008_2009 = sr_spawn_2008_2009,
+                                              biop_itp_2018_2019 = sr_spawn_2018_2019))
 
 usethis::use_data(sr_spawn, overwrite = TRUE)
 
@@ -377,10 +375,8 @@ wr_spawn_2008_2009 <- generate_wr_spawn("biop_2008_2009")
 wr_spawn_2018_2019 <- generate_wr_spawn("biop_itp_2018_2019")
 
 # combine together
-wr_spawn <- list(biop_2008_2009 = wr_spawn_2008_2009,
-                 biop_itp_2018_2019 = wr_spawn_2018_2019
-)
-
+wr_spawn <- append(DSMhabitat::wr_spawn, list(biop_2008_2009 = wr_spawn_2008_2009,
+                                              biop_itp_2018_2019 = wr_spawn_2018_2019))
 
 usethis::use_data(wr_spawn, overwrite = TRUE)
 
@@ -430,10 +426,8 @@ lfr_spawn_2008_2009 <- generate_lfr_spawn("biop_2008_2009")
 lfr_spawn_2018_2019 <- generate_lfr_spawn("biop_itp_2018_2019")
 
 # combine together
-lfr_spawn <- list(biop_2008_2009 = lfr_spawn_2008_2009,
-                  biop_itp_2018_2019 = lfr_spawn_2018_2019
-)
-
+lfr_spawn <- append(DSMhabitat::lfr_spawn, list(biop_2008_2009 = lfr_spawn_2008_2009,
+                                                biop_itp_2018_2019 = lfr_spawn_2018_2019))
 
 usethis::use_data(lfr_spawn, overwrite = TRUE)
 
@@ -458,10 +452,8 @@ dimnames(fr_fry_2018_2019) <- list(watersheds, month.abb, 1980:2000)
 fr_fry_2018_2019[which(is.na(fr_fry_2018_2019))] <- 0
 
 # combine together
-fr_fry <- list(biop_2008_2009 = fr_fry_2008_2009,
-               biop_itp_2018_2019 = fr_fry_2018_2019
-)
-
+fr_fry <- append(DSMhabitat::fr_fry, list(biop_2008_2009 = fr_fry_2008_2009,
+                                          biop_itp_2018_2019 = fr_fry_2018_2019))
 
 usethis::use_data(fr_fry, overwrite = TRUE)
 
@@ -477,9 +469,8 @@ dimnames(st_fry_2018_2019) <- list(watersheds, month.abb, 1980:2000)
 st_fry_2018_2019[which(is.na(st_fry_2018_2019))] <- fr_fry_2018_2019[which(is.na(st_fry_2018_2019))]
 
 # combine together
-st_fry <- list(biop_2008_2009 = st_fry_2008_2009,
-               biop_itp_2018_2019 = st_fry_2018_2019
-)
+st_fry <- append(DSMhabitat::st_fry, list(biop_2008_2009 = st_fry_2008_2009,
+                                          biop_itp_2018_2019 = st_fry_2018_2019))
 
 usethis::use_data(st_fry, overwrite = TRUE)
 
@@ -495,9 +486,8 @@ dimnames(sr_fry_2018_2019) <- list(watersheds, month.abb, 1980:2000)
 sr_fry_2018_2019[which(is.na(sr_fry_2018_2019))] <- fr_fry_2018_2019[which(is.na(sr_fry_2018_2019))]
 
 # combine together
-sr_fry <- list(biop_2008_2009 = sr_fry_2008_2009,
-               biop_itp_2018_2019 = sr_fry_2018_2019
-)
+sr_fry <- append(DSMhabitat::sr_fry, list(biop_2008_2009 = sr_fry_2008_2009,
+                                          biop_itp_2018_2019 = sr_fry_2018_2019))
 
 usethis::use_data(sr_fry, overwrite = TRUE)
 
@@ -564,9 +554,8 @@ wr_fry_2018_2019 <- generate_wr_fry_or_juv(calsim_version = "biop_itp_2018_2019"
                                            lifestage = "fry")
 
 # combine together
-wr_fry <- list(biop_2008_2009 = wr_fry_2008_2009,
-               biop_itp_2018_2019 = wr_fry_2018_2019
-)
+wr_fry <- append(DSMhabitat::wr_fry, list(biop_2008_2009 = wr_fry_2008_2009,
+                                          biop_itp_2018_2019 = wr_fry_2018_2019))
 
 usethis::use_data(wr_fry, overwrite = TRUE)
 
@@ -637,9 +626,8 @@ lfr_fry_2018_2019 <- generate_lfr_juv_or_fry(calsim_version = "biop_itp_2018_201
                                              lifestage = "fry")
 
 # combine together
-lfr_fry <- list(biop_2008_2009 = lfr_fry_2008_2009,
-                biop_itp_2018_2019 = lfr_fry_2018_2019
-)
+lfr_fry <- append(DSMhabitat::lfr_fry, list(biop_2008_2009 = lfr_fry_2008_2009,
+                                            biop_itp_2018_2019 = lfr_fry_2018_2019))
 
 usethis::use_data(lfr_fry, overwrite = TRUE)
 
@@ -657,10 +645,8 @@ dimnames(fr_juv_2018_2019) <- list(watersheds, month.abb, 1980:2000)
 fr_juv_2018_2019[which(is.na(fr_juv_2018_2019))] <- 0
 
 # combine together
-fr_juv <- list(biop_2008_2009 = fr_juv_2008_2009,
-               biop_itp_2018_2019 = fr_juv_2018_2019
-)
-
+fr_juv <- append(DSMhabitat::fr_juv, list(biop_2008_2009 = fr_juv_2008_2009,
+                                          biop_itp_2018_2019 = fr_juv_2018_2019))
 
 usethis::use_data(fr_juv, overwrite = TRUE)
 
@@ -676,9 +662,8 @@ dimnames(st_juv_2018_2019) <- list(watersheds, month.abb, 1980:2000)
 st_juv_2018_2019[which(is.na(st_juv_2018_2019))] <- fr_juv_2018_2019[which(is.na(st_juv_2018_2019))]
 
 # combine together
-st_juv <- list(biop_2008_2009 = st_juv_2008_2009,
-               biop_itp_2018_2019 = st_juv_2018_2019
-)
+st_juv <- append(DSMhabitat::st_juv, list(biop_2008_2009 = st_juv_2008_2009,
+                                          biop_itp_2018_2019 = st_juv_2018_2019))
 
 usethis::use_data(st_juv, overwrite = TRUE)
 
@@ -694,9 +679,8 @@ dimnames(sr_juv_2018_2019) <- list(watersheds, month.abb, 1980:2000)
 sr_juv_2018_2019[which(is.na(sr_juv_2018_2019))] <- fr_juv_2018_2019[which(is.na(sr_juv_2018_2019))]
 
 # combine together
-sr_juv <- list(biop_2008_2009 = sr_juv_2008_2009,
-               biop_itp_2018_2019 = sr_juv_2018_2019
-)
+sr_juv <- append(DSMhabitat::sr_juv, list(biop_2008_2009 = sr_juv_2008_2009,
+                                          biop_itp_2018_2019 = sr_juv_2018_2019))
 
 usethis::use_data(sr_juv, overwrite = TRUE)
 
@@ -708,10 +692,8 @@ wr_juv_2018_2019 <- generate_wr_fry_or_juv(calsim_version = "biop_itp_2018_2019"
                                            lifestage = "juv")
 
 # combine together
-wr_juv <- list(biop_2008_2009 = wr_juv_2008_2009,
-               biop_itp_2018_2019 = wr_juv_2018_2019
-)
-
+wr_juv <- append(DSMhabitat::wr_juv, list(biop_2008_2009 = wr_juv_2008_2009,
+                                         biop_itp_2018_2019 = wr_juv_2018_2019)) 
 
 usethis::use_data(wr_juv, overwrite = TRUE)
 
@@ -723,9 +705,8 @@ lfr_juv_2018_2019 <- generate_lfr_juv_or_fry(calsim_version = "biop_itp_2018_201
                                              lifestage = "juv")
 
 # combine together
-lfr_juv <- list(biop_2008_2009 = lfr_juv_2008_2009,
-               biop_itp_2018_2019 = lfr_juv_2018_2019
-)
+lfr_juv <- append(DSMhabitat::lfr_juv, list(biop_2008_2009 = lfr_juv_2008_2009,
+                                            biop_itp_2018_2019 = lfr_juv_2018_2019))
 
 usethis::use_data(lfr_juv, overwrite = TRUE)
 
@@ -749,10 +730,9 @@ fr_fp_2018_2019 <- get_floodplain_hab_all(watersheds_fp, 'fr', 'biop_itp_2018_20
 dimnames(fr_fp_2018_2019) <- list(watersheds, month.abb, 1980:2000)
 fr_fp_2018_2019[which(is.na(fr_fp_2018_2019))] <- 0
 
+fr_fp <- append(DSMhabitat::fr_fp, list(biop_2008_2009 = fr_fp_2008_2009,
+                                        biop_itp_2018_2019 = fr_fp_2018_2019))
 
-fr_fp <- list(biop_2008_2009 = fr_fp_2008_2009,
-              biop_itp_2018_2019 = fr_fp_2018_2019
-)
 
 usethis::use_data(fr_fp, overwrite = TRUE)
 
@@ -767,9 +747,8 @@ st_fp_2018_2019 <- get_floodplain_hab_all(watersheds_fp, 'st', 'biop_itp_2018_20
 dimnames(st_fp_2018_2019) <- list(watersheds, month.abb, 1980:2000)
 st_fp_2018_2019[which(is.na(st_fp_2018_2019))] <- fr_fp_2018_2019[which(is.na(st_fp_2018_2019))]
 
-st_fp <- list(biop_2008_2009 = st_fp_2008_2009,
-              biop_itp_2018_2019 = st_fp_2018_2019
-)
+st_fp <- append(DSMhabitat::st_fp, list(biop_2008_2009 = st_fp_2008_2009,
+                                        biop_itp_2018_2019 = st_fp_2018_2019))
 
 usethis::use_data(st_fp, overwrite = TRUE)
 
@@ -784,9 +763,8 @@ sr_fp_2018_2019 <- get_floodplain_hab_all(watersheds_fp, 'sr', 'biop_itp_2018_20
 dimnames(sr_fp_2018_2019) <- list(watersheds, month.abb, 1980:2000)
 sr_fp_2018_2019[which(is.na(sr_fp_2018_2019))] <- fr_fp_2018_2019[which(is.na(sr_fp_2018_2019))]
 
-sr_fp <- list(biop_2008_2009 = sr_fp_2008_2009,
-              biop_itp_2018_2019 = sr_fp_2018_2019
-)
+sr_fp <- append(DSMhabitat::sr_fp, list(biop_2008_2009 = sr_fp_2008_2009,
+                                        biop_itp_2018_2019 = sr_fp_2018_2019))
 
 usethis::use_data(sr_fp, overwrite = TRUE)
 
@@ -822,9 +800,8 @@ wr_fp_2008_2009 <- generate_wr_floodplain("biop_2008_2009")
 wr_fp_2018_2019 <- generate_wr_floodplain("biop_itp_2018_2019")
 
 # combine 
-wr_fp <- list(biop_2008_2009 = wr_fp_2008_2009,
-              biop_itp_2018_2019 = wr_fp_2018_2019
-)
+wr_fp <- append(DSMhabitat::wr_fp, list(biop_2008_2009 = wr_fp_2008_2009,
+                                        biop_itp_2018_2019 = wr_fp_2018_2019))
 
 usethis::use_data(wr_fp, overwrite = TRUE)
 
@@ -860,9 +837,8 @@ lfr_fp_2008_2009 <- generate_lfr_floodplain("biop_2008_2009")
 lfr_fp_2018_2019 <- generate_lfr_floodplain("biop_itp_2018_2019")
 
 # combine 
-lfr_fp <- list(biop_2008_2009 = lfr_fp_2008_2009,
-              biop_itp_2018_2019 = lfr_fp_2018_2019
-)
+lfr_fp <- append(DSMhabitat::lfr_fp, list(biop_2008_2009 = lfr_fp_2008_2009,
+                                          biop_itp_2018_2019 = lfr_fp_2018_2019))
 
 usethis::use_data(lfr_fp, overwrite = TRUE)
 
@@ -895,9 +871,8 @@ sutter_habitat_2008_2009 <- generate_sutter_habitat("biop_2008_2009")
 sutter_habitat_2018_2019 <- generate_sutter_habitat("biop_itp_2018_2019")
 
 # combine 
-sutter_habitat <- list(biop_2008_2009 = sutter_habitat_2008_2009,
-                       biop_itp_2018_2019 = sutter_habitat_2018_2019
-)
+sutter_habitat <- append(DSMhabitat::sutter_habitat, list(biop_2008_2009 = sutter_habitat_2008_2009,
+                                                         biop_itp_2018_2019 = sutter_habitat_2018_2019))
 
 usethis::use_data(sutter_habitat, overwrite = TRUE)
 
@@ -927,9 +902,8 @@ yolo_habitat_2008_2009 <- generate_yolo_habitat("biop_2008_2009")
 yolo_habitat_2018_2019 <- generate_yolo_habitat("biop_itp_2018_2019")
 
 # combine 
-yolo_habitat <- list(biop_2008_2009 = yolo_habitat_2008_2009,
-                       biop_itp_2018_2019 = yolo_habitat_2018_2019
-)
+yolo_habitat <- append(DSMhabitat::yolo_habitat, list(biop_2008_2009 = yolo_habitat_2008_2009,
+                                                      biop_itp_2018_2019 = yolo_habitat_2018_2019))
 
 usethis::use_data(yolo_habitat, overwrite = TRUE)
 
@@ -945,10 +919,10 @@ generate_weeks_flooded <- function(calsim_version) {
     weeks_flooded[i,,] <- matrix(flooded_weeks, ncol = 12)
   }
   
-  flooded <- DSMhabitat::fr_fp > 0
+  flooded <- DSMhabitat::fr_fp[[calsim_version]] > 0
   weeks_flooded <- pmax(flooded*2, weeks_flooded)
   
-  not_flooded <- DSMhabitat::fr_fp == 0
+  not_flooded <- DSMhabitat::fr_fp[[calsim_version]] == 0
   weeks_flooded[not_flooded] <- 0
   dimnames(weeks_flooded) <- list(watersheds, month.abb, 1980:2000)
   return(weeks_flooded)
@@ -959,10 +933,8 @@ weeks_flooded_2008_2009 <- generate_weeks_flooded("biop_2008_2009")
 weeks_flooded_2018_2019 <- generate_weeks_flooded("biop_itp_2018_2019")
 
 # combine 
-weeks_flooded <- list(biop_2008_2009 = weeks_flooded_2008_2009,
-                      biop_itp_2018_2019 = weeks_flooded_2018_2019
-)
-
+weeks_flooded <- append(DSMhabitat::weeks_flooded, list(biop_2008_2009 = weeks_flooded_2008_2009,
+                                                        biop_itp_2018_2019 = weeks_flooded_2018_2019))
 
 usethis::use_data(weeks_flooded, overwrite = TRUE)
 
