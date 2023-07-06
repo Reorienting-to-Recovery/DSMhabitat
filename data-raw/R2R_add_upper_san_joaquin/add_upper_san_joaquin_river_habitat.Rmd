@@ -419,15 +419,15 @@ spawn <- expand_grid(
     year = 1979:2000) |> 
   arrange(year, month, watershed) |> 
   mutate(
-    low_sj = as.vector(DSMhabitat::sr_spawn$biop_itp_2018_2019['San Joaquin River' , , ] |> 
+    biop_itp_2018_2019 = as.vector(DSMhabitat::sr_spawn$biop_itp_2018_2019['San Joaquin River' , , ] |> 
                          DSMhabitat::square_meters_to_acres()),
-    upper_and_lower_sj = as.vector(sr_spawn$r_to_r_baseline['San Joaquin River', , ]) |>  
+    r_to_r_baseline = as.vector(sr_spawn$r_to_r_baseline['San Joaquin River', , ]) |>  
       DSMhabitat::square_meters_to_acres()
     )
 
 spawn |> 
   transmute(watershed, date = ymd(paste(year, month, 1)), 
-            low_sj, upper_and_lower_sj) |> 
+            biop_itp_2018_2019, r_to_r_baseline) |> 
   gather(reach, acres, -watershed, -date)  |> 
   ggplot(aes(date, acres, color = reach)) +
   geom_line(alpha = .75) + 
@@ -447,15 +447,15 @@ floodplain <- expand_grid(
     year = 1980:2000) |> 
   arrange(year, month, watershed) |> 
   mutate(
-    low_sj = as.vector(DSMhabitat::sr_fp$biop_itp_2018_2019['San Joaquin River' , , ] |> 
+    biop_itp_2018_2019 = as.vector(DSMhabitat::sr_fp$biop_itp_2018_2019['San Joaquin River' , , ] |> 
                          DSMhabitat::square_meters_to_acres()),
-    upper_and_lower_sj = as.vector(sr_fp$r_to_r_baseline['San Joaquin River', , ]) |>  
+    r_to_r_baseline = as.vector(sr_fp$r_to_r_baseline['San Joaquin River', , ]) |>  
       DSMhabitat::square_meters_to_acres()
     )
 
 floodplain |> 
   transmute(watershed, date = ymd(paste(year, month, 1)), 
-            low_sj, upper_and_lower_sj) |> 
+            biop_itp_2018_2019, r_to_r_baseline) |> 
   gather(reach, acres, -watershed, -date)  |> 
   ggplot(aes(date, acres, color = reach)) +
   geom_line(alpha = .75) + 
@@ -476,15 +476,15 @@ juv <- expand_grid(
     year = 1980:2000) |> 
   arrange(year, month, watershed) |> 
   mutate(
-    low_sj = as.vector(DSMhabitat::sr_juv$biop_itp_2018_2019['San Joaquin River' , , ] |> 
+    biop_itp_2018_2019 = as.vector(DSMhabitat::sr_juv$biop_itp_2018_2019['San Joaquin River' , , ] |> 
                          DSMhabitat::square_meters_to_acres()),
-    upper_and_lower_sj = as.vector(sr_juv$r_to_r_baseline['San Joaquin River', , ]) |>  
+    r_to_r_baseline = as.vector(sr_juv$r_to_r_baseline['San Joaquin River', , ]) |>  
       DSMhabitat::square_meters_to_acres()
     )
 
 juv |> 
   transmute(watershed, date = ymd(paste(year, month, 1)), 
-            low_sj, upper_and_lower_sj) |> 
+            biop_itp_2018_2019, r_to_r_baseline) |> 
   gather(reach, acres, -watershed, -date)  |> 
   ggplot(aes(date, acres, color = reach)) +
   geom_line(alpha = .75) + 
@@ -505,15 +505,15 @@ fry <- expand_grid(
     year = 1980:2000) |> 
   arrange(year, month, watershed) |> 
   mutate(
-    low_sj = as.vector(DSMhabitat::sr_fry$biop_itp_2018_2019['San Joaquin River' , , ] |> 
+    biop_itp_2018_2019 = as.vector(DSMhabitat::sr_fry$biop_itp_2018_2019['San Joaquin River' , , ] |> 
                          DSMhabitat::square_meters_to_acres()),
-    upper_and_lower_sj = as.vector(sr_fry$r_to_r_baseline['San Joaquin River', , ]) |>  
+    r_to_r_baseline = as.vector(sr_fry$r_to_r_baseline['San Joaquin River', , ]) |>  
       DSMhabitat::square_meters_to_acres()
     )
 
 fry |> 
   transmute(watershed, date = ymd(paste(year, month, 1)), 
-            low_sj, upper_and_lower_sj) |> 
+            biop_itp_2018_2019, r_to_r_baseline) |> 
   gather(reach, acres, -watershed, -date)  |> 
   ggplot(aes(date, acres, color = reach)) +
   geom_line(alpha = .75) + 
