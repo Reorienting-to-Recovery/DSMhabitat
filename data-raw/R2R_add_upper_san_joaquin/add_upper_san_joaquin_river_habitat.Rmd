@@ -14,31 +14,6 @@ library(scales)
 library(purrr)
 ```
 
-```{r message=FALSE, warning=FALSE, include=FALSE}
-# functions: 
-get_flow <- function(watershed, calsim_version, years = c(1980, 1999)) {
-  
-  # get the flow values at the dates
-  suppressWarnings(dplyr::pull(dplyr::filter(dplyr::select(DSMflow::flows_cfs[[calsim_version]], date, watershed),
-                            lubridate::year(date) >= years[1],
-                            lubridate::year(date) <= years[2]), 2))
-}
-
-create_SIT_array <- function(input) {
-  
-  output <- array(NA, dim = c(nrow(input), 12, ncol(input) / 12))
-  index <-  1
-  for (i in seq(1, ncol(input), 12)) {
-    output[ , , index] <- as.matrix(input[ , i:(i + 11)])
-    index <- index + 1
-  }
-  return(output)
-  
-}
-
-
-```
-
 ```{r include = FALSE}
 # load in files: 
 files <- list.files('/Volumes/flowwest/Shared/Active_Projects/002-01_San_Joaquin_River_Restoration/Modeling/DWR_2008_1D_models/results/data-raw/', pattern = "results")
