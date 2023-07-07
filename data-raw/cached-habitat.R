@@ -1069,6 +1069,12 @@ south_delta_routed_watersheds <- c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0
 names(south_delta_routed_watersheds) <- watersheds
 usethis::use_data(south_delta_routed_watersheds, overwrite = TRUE)
 
+# for spring run: 
+spring_south_delta_routed_watersheds <- c(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 
+                                   0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 1L, 1L, 1L, 1L, 1L, 1L, 1L)
+names(spring_south_delta_routed_watersheds) <- watersheds
+usethis::use_data(spring_south_delta_routed_watersheds, overwrite = TRUE)
+
 prop_high_predation <- c(0.3, 0.17, 0.1, 0.17, 0.07, 0.07, 1, 0.27, 0.17, 0.11, 0.27, 
                                    0.11, 0.17, 0, 0.27, 0.3, 0, 0.67, 0.72, 0.17, 1, 0, 0.2, 1, 
                                    0.5, 0.33, 0.33, 0.33, 0.83, 0.34, 0.83)
