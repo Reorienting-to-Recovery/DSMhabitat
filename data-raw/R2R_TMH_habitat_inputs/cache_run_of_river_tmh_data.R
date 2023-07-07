@@ -30,8 +30,8 @@ run_of_river_tmh_wr_juv <- rearing_tmh_processing(watersheds = watersheds_trunc,
 
 run_of_river_tmh_sr_fry <- rearing_tmh_processing(watersheds = watersheds_trunc, species = "sr", calsim_run = "run_of_river")$fry
 run_of_river_tmh_sr_juv <- rearing_tmh_processing(watersheds = watersheds_trunc, species = "sr", calsim_run = "run_of_river")$juv
-run_of_river_tmh_sr_fry[which(is.na(r_to_r_tmh_sr_fry))] <- run_of_river_tmh_fr_fry[which(is.na(run_of_river_tmh_sr_fry))]
-run_of_river_tmh_sr_juv[which(is.na(r_to_r_tmh_sr_juv))] <- run_of_river_tmh_fr_juv[which(is.na(run_of_river_tmh_sr_juv))]
+run_of_river_tmh_sr_fry[which(is.na(run_of_river_tmh_sr_fry))] <- run_of_river_tmh_fr_fry[which(is.na(run_of_river_tmh_sr_fry))]
+run_of_river_tmh_sr_juv[which(is.na(run_of_river_tmh_sr_juv))] <- run_of_river_tmh_fr_juv[which(is.na(run_of_river_tmh_sr_juv))]
 
 run_of_river_tmh_fr_fry == DSMhabitat::fr_fry$biop_itp_2018_2019 # test - should be different 
 run_of_river_tmh_fr_fry == DSMhabitat::fr_fry$run_of_river # test - should be different 

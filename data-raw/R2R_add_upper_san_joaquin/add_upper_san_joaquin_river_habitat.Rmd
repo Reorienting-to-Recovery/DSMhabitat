@@ -159,6 +159,9 @@ The 1D Hec Ras model was run for for flows 100 through 4500 CFS at all nodes of 
 
 Suitability criteria was applied to the outputs of the Hec Ras model for suitable depth and velocity for instream juvenile and fry rearing. The Yuba River depth and velocity criteria was used as a proxy for the Upper San Joaquin River using data provided by Mark Gard from the California Department of Fish and Wildlife. 
 
+**Future Improvements**
+Reaches used for instream and floodplain rearing can be updated to include mainstem (2B - 4B2) reaches. This dataset assumes flow primarily through the bypasses. 
+
 **Data Source:**
 
 * Reclamation (2012). Hydraulic Studies for Fish Habitat Analysis, Technical Report No. SRH-2012-15. Prepared for San Joaquin River Restoration Project, Mid-Pacific Region, US Bureau of Reclamation, Technical Service Center, Denver, CO.
@@ -337,7 +340,7 @@ usethis::use_data(upper_san_joaquin_floodplain, overwrite = TRUE)
 
 ## Spawning Habitat
 
-The same 1D Hec Ras model was run for for flows 100 through 4500 CFS at reach 1A for spawning.  A suitability based on depth and velocity was applied all nodes and flows to get a suitable area for spawning in the Upper San Joaquin River between Merced River and Friant Dam. 
+The same 1D Hec Ras model was run for for flows 100 through 4500 CFS at reaches 1A and 1B for spawning.  A suitability based on depth and velocity was applied all nodes and flows to get a suitable area for spawning in the Upper San Joaquin River between Merced River and Friant Dam. 
 
 Suitability criteria was applied to the outputs of the Hec Ras model for suitable depth and velocity for spawning. The Yuba River depth and velocity criteria was used as a proxy for the Upper San Joaquin River using data provided by Mark Gard from the California Department of Fish and Wildlife. 
 
@@ -369,7 +372,7 @@ all_results_with_suitab <- all_ras_results |>
                               vel_chnl > spwn_vel$max_vel ~ 0,
                               .default = as.numeric(1)),
          area_suitable_spwn = depth_suit * vel_suit) |> 
-  filter(reach %in% c('Rch1A_Simplified')) # TODO: double check this reach 
+  filter(reach %in% c('Rch1A_Simplified', 'Rch1_Simplified')) # spawning in reach 1 (1A and 1B) per Rene
   
 upper_san_joaquin_spawning <- all_results_with_suitab |> 
   filter(area_suitable_spwn > 0) |> 
