@@ -119,28 +119,6 @@ get_spawn_hab_all <- function(watersheds, species, calsim_version, years = 1979:
   most <- map_df(watersheds, function(watershed) {
     flows <- get_flow(watershed, calsim_version, years=range(years))
     
-    # add upper san joaquin river to spring run
-    if(species == "sr" & watershed == "San Joaquin River") {
-      upper_sj <- as.data.frame(do.call(`::`, list(pkg = "DSMhabitat", name = 'upper_san_joaquin_instream')))
-      
-      hab_func_upper <- approxfun(upper_sj$flow_cfs, upper_sj$SR_spawn_acres , rule = 2)
-      habitat_area_upper <- hab_func_upper(flows)
-      
-      habitat_area <- habitat_area_upper 
-      
-      watershed = 'San Joaquin River'
-      
-      tibble(
-        year = rep(years, each = 12),
-        month = rep(1:12, length(years)),
-        watershed = watershed,
-        hab_sq_m = acres_to_square_meters(habitat_area)
-      )
-      
-    } else {
-      
-      if(watershed != "San Joaquin River") {
-        
         habitat <- DSMhabitat::set_spawning_habitat(watershed,
                                                     species = species,
                                                     flow = flows)
@@ -149,8 +127,7 @@ get_spawn_hab_all <- function(watersheds, species, calsim_version, years = 1979:
           month = rep(1:12, length(years)),
           watershed = watershed,
           hab_sq_m = habitat)
-      }
-    }
+
   })
   
   # deal with sacramento special cases
@@ -328,7 +305,9 @@ usethis::use_data(st_spawn, overwrite = TRUE)
 
 # spring run spawning habitat -- 
 # sr spawn 2008 2009 
-sr_spawn_2008_2009 <- get_spawn_hab_all(spawning_watersheds, 'sr', "biop_2008_2009")
+spawning_watersheds_sr <- c(spawning_watersheds, "San Joaquin River")
+
+sr_spawn_2008_2009 <- get_spawn_hab_all(spawning_watersheds_sr, 'sr', "biop_2008_2009")
 sr_spawn_2008_2009[which(is.na(sr_spawn_2008_2009))] <- 0
 dimnames(sr_spawn_2008_2009) <- list(watersheds, month.abb, 1979:2000)
 
@@ -339,7 +318,7 @@ sr_spawn_2008_2009["Cosumnes River", , ] <- fr_spawn$biop_2008_2009["Cosumnes Ri
 sr_spawn_2008_2009["Merced River", , ] <- fr_spawn$biop_2008_2009["Merced River", , ] 
 
 # sr spawn 2018 2019 
-sr_spawn_2018_2019 <- get_spawn_hab_all(spawning_watersheds, 'sr', "biop_itp_2018_2019")
+sr_spawn_2018_2019 <- get_spawn_hab_all(spawning_watersheds_sr, 'sr', "biop_itp_2018_2019")
 sr_spawn_2018_2019[which(is.na(sr_spawn_2018_2019))] <- 0
 dimnames(sr_spawn_2018_2019) <- list(watersheds, month.abb, 1979:2000)
 
@@ -350,7 +329,8 @@ sr_spawn_2018_2019["Cosumnes River", , ] <- fr_spawn$biop_itp_2018_2019["Cosumne
 sr_spawn_2018_2019["Merced River", , ] <- fr_spawn$biop_itp_2018_2019["Merced River", , ] 
 
 # sr spawn run of river
-sr_spawn_run_of_river <- get_spawn_hab_all(spawning_watersheds, 'sr', "run_of_river")
+
+sr_spawn_run_of_river <- get_spawn_hab_all(spawning_watersheds_sr, 'sr', "run_of_river")
 sr_spawn_run_of_river[which(is.na(sr_spawn_run_of_river))] <- 0
 dimnames(sr_spawn_run_of_river) <- list(watersheds, month.abb, 1979:2000)
 
