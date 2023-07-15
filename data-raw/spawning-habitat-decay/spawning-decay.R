@@ -119,7 +119,6 @@ objective_func <- function(threshold) {
                                      length(rating_curve$flow_cfs)))
   
   # convert square meters to cubic feet, assume 2ft depth
-  # TODO what are thse hard-coded values?
   starting_volume <- (254690.3 * 10.764) * 2
   
   calib_kwk_sed_transport <- tibble(
@@ -152,8 +151,8 @@ sac_river_observation_scaledown <- result$minimum
 flow_cfs_to_sed_cfd_calibrated <- approxfun(
   x = rating_curve$flow_cfs, 
   y = rating_curve$sed_ft3_per_day_min * 
-    gravel_size_to_prop_of_movement$avg_fraction * # gravel scaledown
-    rep(sac_river_observation_scaledown,           # observation scale-down
+    gravel_size_to_prop_of_movement$avg_fraction * 
+    rep(sac_river_observation_scaledown, 
         length(rating_curve$flow_cfs))
 )
 
@@ -189,30 +188,13 @@ grid.arrange(p2, p1, nrow = 2)
 
 
 # apply to upper sac 
-upper_sac_flows_dsm_rr <- DSMflow::flows_cfs$run_of_river |> 
+upper_sac_flows_dsm <- DSMflow::flows_cfs$biop_2008_2009 |> 
   filter(year(date) >= 1979, year(date) <= 2000) |> 
   select(date, flow = `Upper Sacramento River`)
 
-upper_sac_decay_rr <- tibble(
-  date = upper_sac_flows_dsm_rr$date,
-  flow = upper_sac_flows_dsm_rr$flow,
-  decay_cfd = ifelse(is.na(
-    (x <- flow_cfs_to_sed_cfd_calibrated(flow))), 
-    0, x
-  ), 
-  decay_cfm = decay_cfd * days_in_month(month(date)),
-  decay_sqm = decay_cfm / 2, 
-  decay_acres_month = decay_sqm / 43560 
-)
-
-
-upper_sac_flows_dsm_09 <- DSMflow::flows_cfs$biop_2008_2009 |> 
-  filter(year(date) >= 1979, year(date) <= 2000) |> 
-  select(date, flow = `Upper Sacramento River`)
-
-upper_sac_decay_09 <- tibble(
-  date = upper_sac_flows_dsm_09$date,
-  flow = upper_sac_flows_dsm_09$flow,
+upper_sac_decay <- tibble(
+  date = upper_sac_flows_dsm$date,
+  flow = upper_sac_flows_dsm$flow,
   decay_cfd = ifelse(is.na(
     (x <- flow_cfs_to_sed_cfd_calibrated(flow))), 
     0, x
@@ -266,23 +248,8 @@ sac_aug_totals <-
 
 gt(sac_aug_totals |> select(-source))
 
-decays_rr <- upper_sac_decay_rr |> select(date, decay_acres_month, flow) |> 
-  mutate(scaled_decay = decay_acres_month * .03, calsim = "rr")
-
-decays <- upper_sac_decay_09 |> select(date, decay_acres_month, flow) |> 
-  mutate(scaled_decay = decay_acres_month * .03, calsim = "09")
-
-all_decays <- bind_rows(decays_rr, decays_09) |>   
-  group_by(calsim) |> 
-  mutate(accum_decay = cumsum(decay_acres_month)) |> 
-  ungroup()
-
-
-all_decays |>
-  ggplot(aes(date, accum_decay, color = calsim)) + geom_line() + 
-  labs(y = "Accumualted Decay")
-
-
+decays <- upper_sac_decay |> select(date, decay_acres_month, flow) |> 
+  mutate(scaled_decay = decay_acres_month * .18)
 
 augmentations <- sac_aug_totals |> select(date, aug_acres=acres) 
 
@@ -310,23 +277,23 @@ total_scaledown <- domain_expert_additional_scaledown * sac_river_observation_sc
 # Apply to all watersheds -----------------------------
 
 MIN_flow_cfs_to_sed_cfd_final <- approxfun(
-  x = rating_curve$flow_cfs, 
-  y = rating_curve$sed_ft3_per_day_min * 
-    gravel_size_to_prop_of_movement$avg_fraction * 
+  x = srh2d_upper_sac_rating_curves$flow_cfs, 
+  y = srh2d_upper_sac_rating_curves$sed_ft3_per_day_min * 
+    c(gravel_size_to_prop_of_movement$avg_fraction, 0) * 
     total_scaledown
 )
 
 AVG_flow_cfs_to_sed_cfd_final <- approxfun(
-  x = rating_curve$flow_cfs, 
-  y = rating_curve$sed_ft3_per_day_avg * 
-    gravel_size_to_prop_of_movement$avg_fraction * 
+  x = srh2d_upper_sac_rating_curves$flow_cfs, 
+  y = srh2d_upper_sac_rating_curves$sed_ft3_per_day_avg * 
+    c(gravel_size_to_prop_of_movement$avg_fraction, 0) * 
     total_scaledown
 )
 
 MAX_flow_cfs_to_sed_cfd_final <- approxfun(
-  x = rating_curve$flow_cfs, 
-  y = rating_curve$sed_ft3_per_day_max * 
-    gravel_size_to_prop_of_movement$avg_fraction * 
+  x = srh2d_upper_sac_rating_curves$flow_cfs, 
+  y = srh2d_upper_sac_rating_curves$sed_ft3_per_day_max * 
+    c(gravel_size_to_prop_of_movement$avg_fraction, 0) * 
     total_scaledown
 )
 
@@ -360,44 +327,85 @@ watershed_offsets <- map_dbl(fallRunDSM::watershed_labels, function(w) {
 
 # watershed_offsets["Upper Sacramento River"] <- 0
 
-watershed_spawning_decays <- map2(fallRunDSM::watershed_labels, watershed_offsets, function(w, x) {
+create_spawning_decays <- function(watersheds, dsm_flows) {
   
-  if (w %in% watersheds_with_decay) {
-    dsm_flows |>
-      filter(watershed == w, year(date) %in% 1979:2000) |> 
-      mutate(flow_adjusted = flow_cfs - x, 
-             decay_min = MIN_flow_cfs_to_sed_cfd_final(flow_adjusted), 
-             decay_avg = AVG_flow_cfs_to_sed_cfd_final(flow_adjusted), 
-             decay_max = MAX_flow_cfs_to_sed_cfd_final(flow_adjusted) 
-      ) |> 
-      pivot_longer(names_to = "decay_type", values_to = "decay_amount", -c(date, watershed, 
-                                                                           flow_cfs, flow_adjusted)) |> 
-      mutate(decay_cfd = ifelse(is.na(decay_amount), 0, decay_amount), 
-             decay_cfm = decay_cfd * days_in_month(month(date)),
-             decay_sqm = decay_cfm / 2, 
-             decay_acres_month = decay_sqm / 43560, 
-             decay_type = stringr::str_extract(decay_type, "min|avg|max")) |> 
-      select(date, watershed, flow_cfs, decay_type, decay_acres_month) 
-  } else {
-    dsm_flows |> 
-      filter(watershed == w, year(date) %in% 1979:2000) |> 
-      transmute(
-        date, watershed, flow_cfs, decay_type = "none", decay_acres_month = 0
-      )
-  }
-}) |> 
-  set_names(fallRunDSM::watershed_labels)
+  dsm_flows <- dsm_flows |> 
+    pivot_longer(cols = -date, names_to = "watershed", values_to = "flow_cfs")
+  
+  exceedance_curves <- map(watersheds, function(w) {
+    d <- dsm_flows |> filter(watershed == w) |> 
+      mutate(cume_dist = dplyr::cume_dist(-flow_cfs)) |> 
+      arrange(desc(cume_dist))
+    
+    approxfun(x = d$cume_dist, y = d$flow_cfs)
+  }) |> 
+    set_names(watersheds_with_decay)
+  
+  upper_sac_exceedance_at_18k <- 0.0569578
+  
+  watershed_offsets <- map_dbl(fallRunDSM::watershed_labels, function(w) {
+    if (w %in% watersheds) {
+      exceedance_curves[[w]](upper_sac_exceedance_at_18k)
+    } else {
+      NA_real_
+    }
+  }) |> set_names(fallRunDSM::watershed_labels)
+  
+  watershed_spawning_decays <- map2(fallRunDSM::watershed_labels, watershed_offsets, function(w, x) {
+    
+    if (w %in% watersheds_with_decay) {
+      dsm_flows |>
+        filter(watershed == w, year(date) %in% 1979:2000) |> 
+        mutate(flow_adjusted = flow_cfs - x, 
+               decay_min = MIN_flow_cfs_to_sed_cfd_final(flow_adjusted), 
+               decay_avg = AVG_flow_cfs_to_sed_cfd_final(flow_adjusted), 
+               decay_max = MAX_flow_cfs_to_sed_cfd_final(flow_adjusted) 
+        ) |> 
+        pivot_longer(names_to = "decay_type", values_to = "decay_amount", -c(date, watershed, 
+                                                                             flow_cfs, flow_adjusted)) |> 
+        mutate(decay_cfd = ifelse(is.na(decay_amount), 0, decay_amount), 
+               decay_cfm = decay_cfd * days_in_month(month(date)),
+               decay_sqm = decay_cfm / 2, 
+               decay_acres_month = decay_sqm / 43560, 
+               decay_type = stringr::str_extract(decay_type, "min|avg|max")) |> 
+        select(date, watershed, flow_cfs, decay_type, decay_acres_month) 
+    } else {
+      dsm_flows |> 
+        filter(watershed == w, year(date) %in% 1979:2000) |> 
+        transmute(
+          date, watershed, flow_cfs, decay_type = "none", decay_acres_month = 0
+        )
+    }
+  }) |> 
+    set_names(fallRunDSM::watershed_labels)
+
+  return(watershed_spawning_decays)  
+}
+
+
+watershed_spawning_decays_09 <- create_spawning_decays(watersheds_with_decay, dsm_flows = DSMflow::flows_cfs$biop_2008_2009)
+watershed_spawning_decays_19 <- create_spawning_decays(watersheds_with_decay, dsm_flows = DSMflow::flows_cfs$biop_itp_2018_2019)
+watershed_spawning_decays_rr <- create_spawning_decays(watersheds_with_decay, dsm_flows = DSMflow::flows_cfs$run_of_river)
+
+watershed_spawning_decays <- list(
+  "biop_2008_2009" = watershed_spawning_decays_09,
+  "biop_itp_2018_2019" = watershed_spawning_decays_19, 
+  "run_of_river" = watershed_spawning_decays_rr
+)
+
 
 usethis::use_data(watershed_spawning_decays, overwrite = TRUE)
 
-watershed_spawning_decays$`American River` |> 
+watershed_spawning_decays$biop_2008_2009$`American River` |> 
   ggplot(aes(date, decay_acres_month, color = decay_type)) + geom_line()
 
-watershed_spawning_decays$`American River` |> 
-  group_by(decay_type) |> 
-  mutate(agg_decay = cumsum(-decay_acres_month)) |> 
-  ggplot(aes(date, agg_decay, color = decay_type)) + geom_line()
+watershed_spawning_decays$biop_itp_2018_2019$`American River` |> 
+  ggplot(aes(date, decay_acres_month, color = decay_type)) + geom_line()
 
+watershed_spawning_decays$run_of_river$`American River` |> 
+  ggplot(aes(date, decay_acres_month, color = decay_type)) + geom_line()
+
+# adjust the curve to be used by each of the watersheds
 watershed_decay_level_lookups <- c(
   `Upper Sacramento River` = "min", `Antelope Creek` = "none", 
   `Battle Creek` = "none", `Bear Creek` = "none", `Big Chico Creek` = "none", 
@@ -417,41 +425,118 @@ watershed_decay_level_lookups <- c(
 spawning_decay_multiplier <- vector(mode = "list")
 
 
+
 watersheds_with_decay <- names(which(DSMhabitat::watershed_decay_status))
 
-fall_run_spawning_decay_mult <- purrr::map(names(watershed_decay_level_lookups), function(w) {
-  if (w %in% watersheds_with_decay) {
-    decay <- watershed_spawning_decays[[w]] |> 
-      dplyr::filter(decay_type == watershed_decay_level_lookups[w]) |> 
-      dplyr::mutate(decay_accum = cumsum(decay_acres_month), 
-                    decay_mult = 1 - (decay_accum / DSMhabitat::spawning_habitat_average$fr[w]), 
-                    year = lubridate::year(date),
-                    month = lubridate::month(date)) |> 
-      dplyr::select(year, month, decay_mult) |> 
-      tidyr::pivot_wider(names_from = "year", values_from = "decay_mult")
-    
-    matrix(unlist(decay[,-1]), nrow = 12, dimnames = list(month.abb, 1979:2000))
-    
-  } else {
-    matrix(1, nrow = 12, ncol = 22)
-  }
-}) |> 
-  setNames(names(watershed_decay_level_lookups))
-
-fr_spawning_decay_array <- array(data = NA, dim = c(31, 12, 22), 
-                                 dimnames = list(fallRunDSM::watershed_labels, 
-                                                 month.abb,
-                                                 1979:2000))
-
-# fill in the array 31(watersheds) X 22(years) X 12(months)
-for (i in 1:31) {
-  fr_spawning_decay_array[i, , ] <- fall_run_spawning_decay_mult[[i]]
+create_multiplier <- function(spawning_decays, decay_level_lookup, run) {
+  watersheds_with_decay <- names(which(DSMhabitat::watershed_decay_status))
+  spawning_decay_mult <- purrr::map(names(decay_level_lookup), function(w) {
+    if (w %in% watersheds_with_decay) {
+      decay <- spawning_decays[[w]] |> 
+        dplyr::filter(decay_type == decay_level_lookup[w]) |> 
+        dplyr::mutate(decay_accum = cumsum(decay_acres_month), 
+                      decay_mult = 1 - (decay_accum / DSMhabitat::spawning_habitat_average[[run]][w]), 
+                      year = lubridate::year(date),
+                      month = lubridate::month(date)) |> 
+        dplyr::select(year, month, decay_mult) |> 
+        tidyr::pivot_wider(names_from = "year", values_from = "decay_mult")
+      
+      matrix(unlist(decay[,-1]), nrow = 12, dimnames = list(month.abb, 1979:2000))
+      
+    } else {
+      matrix(1, nrow = 12, ncol = 22)
+    }
+  }) |> 
+    setNames(names(watershed_decay_level_lookups))
+  
+  return(spawning_decay_mult)
 }
 
-spawning_decay_multiplier <- fr_spawning_decay_array
+fr_m <- create_multiplier(watershed_spawning_decays$run_of_river, 
+                  decay_level_lookup = watershed_decay_level_lookups, 
+                  run = "fr")
+
+spawning_decay_mult_09_fr <- create_multiplier(watershed_spawning_decays$biop_2008_2009, 
+                                               watershed_decay_level_lookups,
+                                               run = "fr")
+
+spawning_decay_mult_09_sr <- create_multiplier(watershed_spawning_decays$biop_2008_2009, 
+                                               watershed_decay_level_lookups,
+                                               run = "sr")
 
 
-fall_run_spawning_decay_mult$`Upper Sacramento River`
+spawning_decay_mult_09_wr <- create_multiplier(watershed_spawning_decays$biop_2008_2009, 
+                                               watershed_decay_level_lookups,
+                                               run = "wr")
+
+spawning_decay_mult_19_fr <- create_multiplier(watershed_spawning_decays$biop_itp_2018_2019, 
+                                               watershed_decay_level_lookups,
+                                               run = "fr")
+
+spawning_decay_mult_19_sr <- create_multiplier(watershed_spawning_decays$biop_itp_2018_2019, 
+                                               watershed_decay_level_lookups,
+                                               run = "sr")
+
+
+spawning_decay_mult_19_wr <- create_multiplier(watershed_spawning_decays$biop_itp_2018_2019, 
+                                               watershed_decay_level_lookups,
+                                               run = "wr")
+
+
+spawning_decay_mult_rr_fr <- create_multiplier(watershed_spawning_decays$run_of_river, 
+                                            watershed_decay_level_lookups,
+                                            run = "fr")
+
+spawning_decay_mult_rr_sr <- create_multiplier(watershed_spawning_decays$run_of_river, 
+                                            watershed_decay_level_lookups,
+                                            run = "sr")
+
+
+spawning_decay_mult_rr_wr <- create_multiplier(watershed_spawning_decays$run_of_river, 
+                                            watershed_decay_level_lookups,
+                                            run = "wr")
+
+make_mult_array <- function(mult_list) {
+  out <- array(data = NA, dim = c(31, 12, 22), 
+                                   dimnames = list(fallRunDSM::watershed_labels, 
+                                                   month.abb,
+                                                   1979:2000))
+  
+  for (i in 1:31) {
+    out[i, , ] <- mult_list[[i]]
+  }
+  
+  return (out)
+}
+
+
+
+
+make_mult_array(mult_list = spawning_decay_mult_19_fr)
+make_mult_array(mult_list = spawning_decay_mult_19_sr)
+make_mult_array(mult_list = spawning_decay_mult_19_wr)
+make_mult_array(mult_list = spawning_decay_mult_rr_fr)
+make_mult_array(mult_list = spawning_decay_mult_rr_sr)
+make_mult_array(mult_list = spawning_decay_mult_rr_wr)
+
+
+spawning_decay_multiplier <- list(
+  "biop_2008_2009" = list(
+    "fr" = make_mult_array(mult_list = spawning_decay_mult_09_fr), 
+    "sr" = make_mult_array(mult_list = spawning_decay_mult_09_sr),
+    "wr" = make_mult_array(mult_list = spawning_decay_mult_09_wr)
+  ), 
+  "biop_itp_2018_2019" = list(
+    "fr" = make_mult_array(mult_list = spawning_decay_mult_19_fr), 
+    "sr" = make_mult_array(mult_list = spawning_decay_mult_19_sr),
+    "wr" = make_mult_array(mult_list = spawning_decay_mult_19_wr)
+  ), 
+  "run_of_river" = list(
+    "fr" = make_mult_array(mult_list = spawning_decay_mult_rr_fr), 
+    "sr" = make_mult_array(mult_list = spawning_decay_mult_rr_sr),
+    "wr" = make_mult_array(mult_list = spawning_decay_mult_rr_wr)
+  )
+)
 
 usethis::use_data(spawning_decay_multiplier, overwrite = TRUE)
 
