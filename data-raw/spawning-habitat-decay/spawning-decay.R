@@ -298,34 +298,6 @@ MAX_flow_cfs_to_sed_cfd_final <- approxfun(
 )
 
 # Exceedance probs --------------------------------------
-dsm_flows <- DSMflow::flows_cfs$biop_2008_2009 |> 
-  pivot_longer(cols = -date, names_to = "watershed", values_to = "flow_cfs")
-
-watersheds_with_decay <- names(which(DSMhabitat::watershed_decay_status))
-
-exceedance_curves <- map(watersheds_with_decay, function(w) {
-  d <- dsm_flows |> filter(watershed == w) |> 
-    mutate(cume_dist = dplyr::cume_dist(-flow_cfs)) |> 
-    arrange(desc(cume_dist))
-  
-  approxfun(x = d$cume_dist, y = d$flow_cfs)
-}) |> 
-  set_names(watersheds_with_decay)
-
-
-exceedance_curves$`Upper Sacramento River`(0.0569578) # ~18000
-
-upper_sac_exceedance_at_18k <- 0.0569578
-
-watershed_offsets <- map_dbl(fallRunDSM::watershed_labels, function(w) {
-  if (w %in% watersheds_with_decay) {
-    exceedance_curves[[w]](upper_sac_exceedance_at_18k)
-  } else {
-    NA_real_
-  }
-}) |> set_names(fallRunDSM::watershed_labels)
-
-# watershed_offsets["Upper Sacramento River"] <- 0
 
 create_spawning_decays <- function(watersheds, dsm_flows) {
   
@@ -396,6 +368,8 @@ watershed_spawning_decays <- list(
 
 usethis::use_data(watershed_spawning_decays, overwrite = TRUE)
 
+
+# Check here to see if they make sense!
 watershed_spawning_decays$biop_2008_2009$`American River` |> 
   ggplot(aes(date, decay_acres_month, color = decay_type)) + geom_line()
 
@@ -451,10 +425,6 @@ create_multiplier <- function(spawning_decays, decay_level_lookup, run) {
   
   return(spawning_decay_mult)
 }
-
-fr_m <- create_multiplier(watershed_spawning_decays$run_of_river, 
-                  decay_level_lookup = watershed_decay_level_lookups, 
-                  run = "fr")
 
 spawning_decay_mult_09_fr <- create_multiplier(watershed_spawning_decays$biop_2008_2009, 
                                                watershed_decay_level_lookups,
