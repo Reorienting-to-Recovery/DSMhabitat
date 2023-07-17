@@ -298,6 +298,10 @@ MAX_flow_cfs_to_sed_cfd_final <- approxfun(
 )
 
 # Exceedance probs --------------------------------------
+dsm_flows <- DSMflow::flows_cfs$biop_2008_2009 |> 
+  pivot_longer(cols = -date, names_to = "watershed", values_to = "flow_cfs")
+
+watersheds_with_decay <- names(which(DSMhabitat::watershed_decay_status))
 
 create_spawning_decays <- function(watersheds, dsm_flows) {
   
@@ -370,14 +374,20 @@ usethis::use_data(watershed_spawning_decays, overwrite = TRUE)
 
 
 # Check here to see if they make sense!
-watershed_spawning_decays$biop_2008_2009$`American River` |> 
-  ggplot(aes(date, decay_acres_month, color = decay_type)) + geom_line()
+p1 <- watershed_spawning_decays$biop_2008_2009$`Clear Creek` |> 
+  ggplot(aes(date, decay_acres_month, color = decay_type)) + geom_line() + 
+  labs(x = "", y = "Acres per Month", title = "Bio 2008-2009")
 
-watershed_spawning_decays$biop_itp_2018_2019$`American River` |> 
-  ggplot(aes(date, decay_acres_month, color = decay_type)) + geom_line()
+p2 <- watershed_spawning_decays$biop_itp_2018_2019$`Clear Creek` |> 
+  ggplot(aes(date, decay_acres_month, color = decay_type)) + geom_line()+ 
+  labs(x = "", y = "Acres per Month", title = "Bio 2018-2019")
 
-watershed_spawning_decays$run_of_river$`American River` |> 
-  ggplot(aes(date, decay_acres_month, color = decay_type)) + geom_line()
+p3 <- watershed_spawning_decays$run_of_river$`Clear Creek` |>  
+  ggplot(aes(date, decay_acres_month, color = decay_type)) + geom_line()+ 
+  labs(x = "", y = "Acres per Month", title = "Run of River")
+
+gridExtra::grid.arrange(p1, p2, p3, nrow = 1)
+
 
 # adjust the curve to be used by each of the watersheds
 watershed_decay_level_lookups <- c(
@@ -387,7 +397,7 @@ watershed_decay_level_lookups <- c(
   `Cow Creek` = "none", `Deer Creek` = "none", `Elder Creek` = "none", 
   `Mill Creek` = "none", `Paynes Creek` = "none", `Stony Creek` = "max", 
   `Thomes Creek` = "none", `Upper-mid Sacramento River` = "none", 
-  `Sutter Bypass` = "none", `Bear River` = "none", `Feather River` = "avg", 
+  `Sutter Bypass` = "none", `Bear River` = "none", `Feather River` = "min", 
   `Yuba River` = "min", `Lower-mid Sacramento River` = "none", `Yolo Bypass` = "none", 
   `American River` = "max", `Lower Sacramento River` = "none", `Calaveras River` = "min", 
   `Cosumnes River` = "none", `Mokelumne River` = "avg", `Merced River` = "avg", 
@@ -402,8 +412,12 @@ spawning_decay_multiplier <- vector(mode = "list")
 
 watersheds_with_decay <- names(which(DSMhabitat::watershed_decay_status))
 
+
 create_multiplier <- function(spawning_decays, decay_level_lookup, run) {
-  watersheds_with_decay <- names(which(DSMhabitat::watershed_decay_status))
+  species_present_and_decays <- 
+    DSMhabitat::watershed_decay_status & 
+    DSMhabitat::watershed_species_present[DSMhabitat::watershed_species_present$watershed_name != "Upper Mid Sac Region", ][[run]]
+  watersheds_with_decay <- names(which(species_present_and_decays))
   spawning_decay_mult <- purrr::map(names(decay_level_lookup), function(w) {
     if (w %in% watersheds_with_decay) {
       decay <- spawning_decays[[w]] |> 
@@ -476,18 +490,10 @@ make_mult_array <- function(mult_list) {
     out[i, , ] <- mult_list[[i]]
   }
   
+  out[out < 0] <- 0 # make zero be the min habitat
+  
   return (out)
 }
-
-
-
-
-make_mult_array(mult_list = spawning_decay_mult_19_fr)
-make_mult_array(mult_list = spawning_decay_mult_19_sr)
-make_mult_array(mult_list = spawning_decay_mult_19_wr)
-make_mult_array(mult_list = spawning_decay_mult_rr_fr)
-make_mult_array(mult_list = spawning_decay_mult_rr_sr)
-make_mult_array(mult_list = spawning_decay_mult_rr_wr)
 
 
 spawning_decay_multiplier <- list(
