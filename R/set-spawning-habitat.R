@@ -65,6 +65,10 @@ set_spawning_habitat <- function(watershed, species, flow, ...) {
                                 watershed_name == watershed,
                                 c(species, 'spawn'), drop = TRUE))
   
+  if(watershed == "San Joaquin River" & species == "sr") {
+    species_present = TRUE
+  }
+  
   if(watershed == "San Joaquin River" & species != "sr") {
     return(NA)
   }
