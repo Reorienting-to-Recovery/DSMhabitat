@@ -19,96 +19,36 @@ library(tidyverse)
 library(lubridate)
 ```
 
-```{r}
-# Fall Run Scales
-# SPAWN
-# 1 Upper Sac
-# 2 Butte
-# 3 Clear
-# 4 Deer
-# 5 Mill
-# 6 Feather
-# 7 Yuba
-# 8 American
-# 9 Cosumness
-# 10 Mokelumne
-# 11 Merced
-# 12 Stanislaus
-# 13 Tuolumne
-# REAR 
-# 1 Upper Sac
-# 2 Butte
-# 3 Clear
-# 4 Deer
-# 5 Mill
-# 6 Upper-mid Sac (corridor for above)
-# 7 Sutter (corridor for above) is changed below
-# 8 Feather 
-# 9 Yuba
-# 10 Lower-mid Sac (corridor for above)
-# 11 Yolo (corridor for above) is changed below
-# 12 American
-# 13 Lower Sac (corridor for above)
-# 14 Cosumness 
-# 15 Mokelumne 
-# 16 Merced
-# 17 Stanislaus 
-# 18 Tuolumne
-# 19 SJ (corridor for Merced, Stan, and Tuolumne)
-# here 1-13 are spawning scalars
-# 14-n are the rearing scalars
-fall_run_scales <- c(1.8615848, 0.5000000, 
-                     0.5000000, 1.4230370, 
-                     0.5887938, 2.0000000, 
-                     0.5034449, 0.5502821,
-                     1.6139332, 0.9551340, 
-                     1.6993421, 0.9627230, 
-                     0.9959632, 0.5000000, 
-                     1.8237525, 2.0000000,
-                     1.9999999, 2.0000000, 
-                     2.0000000, 0.9783833, 
-                     1.5406860, 0.6596480, 
-                     1.9999994, 1.9999994,
-                     0.5000423, 0.6147676, 
-                     0.6598354, 0.8103934, 
-                     1.2434156, 1.4492968, 
-                     0.9347787, 1.6509423,
-                     0.5000000, 1.9800862)
 
-spawn_scales <- tibble(watershed = factor(DSMscenario::watershed_labels[c(1, 6, 7, 10, 12, 19, 20, 
-                                            23, 26, 27, 28, 29, 30)], 
-                                          levels = DSMscenario::watershed_labels),
-                       scales = fall_run_scales[1:13])
-
-
-rear_scales <- tibble(watershed = factor(c(DSMscenario::watershed_labels[c(1, 6, 7, 10, 12, 16, 
-                                            19, 20, 21, 23, 24,
-                                            26, 27, 28, 29, 30, 31, 17, 22)], "North Delta", "South Delta"), 
-                     levels = DSMscenario::watershed_labels),
-                      scales = fall_run_scales[14:34])
-
-```
 ## Spawning Habitat 
 ```{r}
-old <- DSMhabitat::fr_spawn$r_to_r_baseline %>% DSMhabitat::square_meters_to_acres()
-new <- DSMhabitat::fr_spawn$max_flow_w_hab_projects %>% DSMhabitat::square_meters_to_acres()
+baseline <- DSMhabitat::fr_spawn$r_to_r_baseline %>% DSMhabitat::square_meters_to_acres()
+# run_river_without_proj_catalog_added <- DSMhabitat::fr_spawn$run_of_river %>% DSMhabitat::square_meters_to_acres()
+run_of_river <- DSMhabitat::fr_spawn$max_flow_w_hab_projects %>% DSMhabitat::square_meters_to_acres()
+tmh <- DSMhabitat::fr_spawn$r_to_r_tmh %>% DSMhabitat::square_meters_to_acres()
+ror_tmh <- DSMhabitat::fr_spawn$run_of_river_tmh %>% DSMhabitat::square_meters_to_acres()
+
 spawn <- expand_grid(
   watershed = factor(DSMscenario::watershed_labels, 
                      levels = DSMscenario::watershed_labels),
   month = 1:12,
   year = 1979:2000) %>% 
-  left_join(spawn_scales) %>%
   arrange(year, month, watershed) %>% 
   mutate(
-    old = as.vector(old),
-    new = as.vector(new))
+    baseline = as.vector(baseline),
+    # run_river_without_proj_catalog_added = as.vector(run_river_without_proj_catalog_added),
+    run_of_river = as.vector(run_of_river),
+    tmh = as.vector(tmh), 
+    ror_tmh = as.vector(ror_tmh)) |> glimpse()
+
 spawn %>% 
-  transmute(watershed, date = ymd(paste(year, month, 1)), old, new) %>% 
-  filter(!(watershed %in% c('Sutter Bypass', 'Yolo Bypass'))) %>% 
+  transmute(watershed, date = ymd(paste(year, month, 1)), baseline, run_of_river, tmh, ror_tmh) %>% 
+  filter(!(watershed %in% c('Sutter Bypass', 'Yolo Bypass', "Upper-mid Sacramento River", "Lower-mid Sacramento River", "Lower Sacramento River", "San Joaquin River"))) %>% 
   gather(version, acres, -watershed, -date)  %>% 
   ggplot(aes(date, acres, color = version)) +
-  geom_line() +
-  facet_wrap(~watershed, scales = 'free_y')
+  geom_line(alpha = .75) +
+  facet_wrap(~watershed, scales = 'free_y') + 
+  theme_minimal()
 ```
 
 **Summary Table**: All habitat measures are in acres and rounded to the nearest acre. 
@@ -129,23 +69,27 @@ DT::datatable(change, option=list(columnDefs=list(list(targets=3:5, class="dt-ri
   
 ## Fry Habitat 
 ```{r}
-new <- DSMhabitat::fr_fry$max_flow_w_hab_projects %>% DSMhabitat::square_meters_to_acres()
-old <- DSMhabitat::fr_fry$r_to_r_baseline %>% DSMhabitat::square_meters_to_acres()
-dimnames(old) <- dimnames(new)
+baseline <- DSMhabitat::fr_fry$r_to_r_baseline %>% DSMhabitat::square_meters_to_acres()
+# run_river_without_proj_catalog_added <- DSMhabitat::fr_spawn$run_of_river %>% DSMhabitat::square_meters_to_acres()
+run_of_river <- DSMhabitat::fr_fry$max_flow_w_hab_projects %>% DSMhabitat::square_meters_to_acres()
+tmh <- DSMhabitat::fr_fry$r_to_r_tmh %>% DSMhabitat::square_meters_to_acres()
+ror_tmh <- DSMhabitat::fr_fry$run_of_river_tmh %>% DSMhabitat::square_meters_to_acres()
+
 fry <- expand_grid(
   watershed = factor(DSMscenario::watershed_labels, 
                      levels = DSMscenario::watershed_labels),
   month = 1:12,
   year = 1980:2000) %>% 
-  left_join(rear_scales) %>%
   arrange(year, month, watershed) %>% 
   mutate(
-    old = as.vector(old),
-    new = as.vector(new)
-    )
+    baseline = as.vector(baseline),
+    # run_river_without_proj_catalog_added = as.vector(run_river_without_proj_catalog_added),
+    run_of_river = as.vector(run_of_river),
+    tmh = as.vector(tmh), 
+    ror_tmh = as.vector(ror_tmh)) |> glimpse()
 
 fry %>% 
-  transmute(watershed, date = ymd(paste(year, month, 1)), old, new) %>% 
+  transmute(watershed, date = ymd(paste(year, month, 1)), baseline, run_of_river, tmh, ror_tmh) %>% 
   filter(!(watershed %in% c('Sutter Bypass', 'Yolo Bypass'))) %>% 
   gather(version, acres, -watershed, -date)  %>% 
   ggplot(aes(date, acres, color = version)) +
@@ -170,28 +114,32 @@ DT::datatable(change, option=list(columnDefs=list(list(targets=3:5, class="dt-ri
 
 ## Juvenile Habitat
 ```{r}
-new <- DSMhabitat::fr_juv$max_flow_w_hab_projects %>% DSMhabitat::square_meters_to_acres()
-old <- DSMhabitat::fr_juv$r_to_r_baseline %>% DSMhabitat::square_meters_to_acres()
-dimnames(old) <- dimnames(new)
+baseline <- DSMhabitat::fr_juv$r_to_r_baseline %>% DSMhabitat::square_meters_to_acres()
+# run_river_without_proj_catalog_added <- DSMhabitat::fr_spawn$run_of_river %>% DSMhabitat::square_meters_to_acres()
+run_of_river <- DSMhabitat::fr_juv$max_flow_w_hab_projects %>% DSMhabitat::square_meters_to_acres()
+tmh <- DSMhabitat::fr_juv$r_to_r_tmh %>% DSMhabitat::square_meters_to_acres()
+ror_tmh <- DSMhabitat::fr_juv$run_of_river_tmh %>% DSMhabitat::square_meters_to_acres()
+
 juv <- expand_grid(
   watershed = factor(DSMscenario::watershed_labels, 
                      levels = DSMscenario::watershed_labels),
   month = 1:12,
   year = 1980:2000) %>% 
-  left_join(rear_scales) %>%
   arrange(year, month, watershed) %>% 
   mutate(
-    old = as.vector(old),
-    new = as.vector(new))
+    baseline = as.vector(baseline),
+    # run_river_without_proj_catalog_added = as.vector(run_river_without_proj_catalog_added),
+    run_of_river = as.vector(run_of_river),
+    tmh = as.vector(tmh), 
+    ror_tmh = as.vector(ror_tmh)) |> glimpse()
 
 juv %>% 
-  transmute(watershed, date = ymd(paste(year, month, 1)), old, new) %>% 
+  transmute(watershed, date = ymd(paste(year, month, 1)), baseline, run_of_river, tmh, ror_tmh) %>% 
   filter(!(watershed %in% c('Sutter Bypass', 'Yolo Bypass'))) %>% 
   gather(version, acres, -watershed, -date)  %>% 
   ggplot(aes(date, acres, color = version)) +
   geom_line() +
   facet_wrap(~watershed, scales = 'free_y')
-
 ```
 
 **Summary Table**: All habitat measures are in acres and rounded to the nearest acre. 
@@ -211,9 +159,12 @@ DT::datatable(change, option=list(columnDefs=list(list(targets=3:5, class="dt-ri
 
 ## Floodplain Habitat 
 ```{r}
-new <- DSMhabitat::fr_fp$max_flow_w_hab_projects %>% DSMhabitat::square_meters_to_acres()
-old <- DSMhabitat::fr_fp$r_to_r_baseline %>% DSMhabitat::square_meters_to_acres()
-dimnames(old) <- dimnames(new)
+baseline <- DSMhabitat::fr_fp$r_to_r_baseline %>% DSMhabitat::square_meters_to_acres()
+# run_river_without_proj_catalog_added <- DSMhabitat::fr_spawn$run_of_river %>% DSMhabitat::square_meters_to_acres()
+run_of_river <- DSMhabitat::fr_fp$max_flow_w_hab_projects %>% DSMhabitat::square_meters_to_acres()
+tmh <- DSMhabitat::fr_fp$r_to_r_tmh %>% DSMhabitat::square_meters_to_acres()
+ror_tmh <- run_of_river_tmh_fr_flood %>% DSMhabitat::square_meters_to_acres()
+
 fp <- expand_grid(
   watershed = factor(DSMscenario::watershed_labels, 
                      levels = DSMscenario::watershed_labels),
@@ -221,15 +172,21 @@ fp <- expand_grid(
   year = 1980:2000) %>% 
   arrange(year, month, watershed) %>% 
   mutate(
-    old = as.vector(old),
-    new = as.vector(new))
+    baseline = as.vector(baseline),
+    # run_river_without_proj_catalog_added = as.vector(run_river_without_proj_catalog_added),
+    run_of_river = as.vector(run_of_river),
+    tmh = as.vector(tmh), 
+    ror_tmh = as.vector(ror_tmh)) |> glimpse()
+
 fp %>% 
-  transmute(watershed, date = ymd(paste(year, month, 1)), old, new) %>% 
+  transmute(watershed, date = ymd(paste(year, month, 1)), baseline, run_of_river, tmh, ror_tmh) %>% 
   filter(!(watershed %in% c('Sutter Bypass', 'Yolo Bypass'))) %>% 
+  filter(watershed == "Lower-mid Sacramento River") |> 
   gather(version, acres, -watershed, -date)  %>% 
-  ggplot(aes(date, acres, fill = version)) +
-  geom_col(position = 'dodge') +
-  facet_wrap(~watershed, scales = 'free_y')
+  ggplot(aes(date, acres, color = version)) +
+  geom_line(alpha = .75) +
+  facet_wrap(~watershed, scales = 'free_y') + 
+  theme_minimal()
 ```
 
 **Summary Table**: All habitat measures are in acres and rounded to the nearest acre. 
