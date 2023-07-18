@@ -54,8 +54,10 @@ get_rear_hab_all <- function(watersheds, species, life_stage, calsim_version, ye
         hab_func_lower <- approxfun(lower_sj$flow_cfs, lower_sj$FR_juv_wua , rule = 2)
         hab_func_upper <- approxfun(upper_sj$flow_cfs, upper_sj$SR_juv_sqm , rule = 2)
       }
+      wua <- hab_func_lower(flows)
+      habitat_area_lower <- wua_to_area(wua = wua, watershed = 'San Joaquin River',
+                                        life_stage = "rearing", species_name = 'sr')
       
-      habitat_area_lower <- hab_func_lower(flows)
       habitat_area_upper <- hab_func_upper(flows)
       
       habitat_area <- habitat_area_upper + habitat_area_lower
@@ -66,7 +68,7 @@ get_rear_hab_all <- function(watersheds, species, life_stage, calsim_version, ye
         year = rep(years, each = 12),
         month = rep(1:12, length(years)),
         watershed = watershed,
-        hab_sq_m = acres_to_square_meters(habitat_area)
+        hab_sq_m = habitat_area
       )
       
     } else {
