@@ -51,20 +51,6 @@ spawn %>%
   theme_minimal()
 ```
 
-**Summary Table**: All habitat measures are in acres and rounded to the nearest acre. 
-```{r}
-change <- spawn %>% group_by(watershed) %>%
-  summarise(mean_old_habitat = round(mean(old)),
-            mean_new_habitat = round(mean(new)),
-            change_in_mean_habitat = round(mean_new_habitat - mean_old_habitat), 
-            percent_change = round(change_in_mean_habitat/mean_old_habitat * 100),
-            percent_change_in_mean_habitat = paste(percent_change, "%")
-            ) %>%
-  # filter(change_in_mean_habitat != 0) %>%
-  select(-percent_change)
-
-DT::datatable(change, option=list(columnDefs=list(list(targets=3:5, class="dt-right"))))
-```
 
   
 ## Fry Habitat 
@@ -97,20 +83,6 @@ fry %>%
   facet_wrap(~watershed, scales = 'free_y')
 ```
 
-**Summary Table**: All habitat measures are in acres and rounded to the nearest acre. 
-```{r}
-change <- fry %>% group_by(watershed) %>%
-  summarise(mean_old_habitat = round(mean(old)),
-            mean_new_habitat = round(mean(new)),
-            change_in_mean_habitat = round(mean_new_habitat - mean_old_habitat), 
-            percent_change = round(change_in_mean_habitat/mean_old_habitat * 100),
-            percent_change_in_mean_habitat = paste(percent_change, "%")
-            ) %>%
-  # filter(change_in_mean_habitat != 0, watershed != "Merced River") %>%
-  select(-percent_change)
-
-DT::datatable(change, option=list(columnDefs=list(list(targets=3:5, class="dt-right"))))
-```
 
 ## Juvenile Habitat
 ```{r}
@@ -142,20 +114,7 @@ juv %>%
   facet_wrap(~watershed, scales = 'free_y')
 ```
 
-**Summary Table**: All habitat measures are in acres and rounded to the nearest acre. 
-```{r}
-change <- juv %>% group_by(watershed) %>%
-  summarise(mean_old_habitat = round(mean(old)),
-            mean_new_habitat = round(mean(new)),
-            change_in_mean_habitat = round(mean_new_habitat - mean_old_habitat), 
-            percent_change = round(change_in_mean_habitat/mean_old_habitat * 100),
-            percent_change_in_mean_habitat = paste(percent_change, "%")
-            ) %>%
-  # filter(change_in_mean_habitat != 0, watershed != "Merced River") %>%
-  select(-percent_change)
 
-DT::datatable(change, option=list(columnDefs=list(list(targets=3:5, class="dt-right"))))
-```
 
 ## Floodplain Habitat 
 ```{r}
@@ -163,7 +122,7 @@ baseline <- DSMhabitat::fr_fp$r_to_r_baseline %>% DSMhabitat::square_meters_to_a
 # run_river_without_proj_catalog_added <- DSMhabitat::fr_spawn$run_of_river %>% DSMhabitat::square_meters_to_acres()
 run_of_river <- DSMhabitat::fr_fp$max_flow_w_hab_projects %>% DSMhabitat::square_meters_to_acres()
 tmh <- DSMhabitat::fr_fp$r_to_r_tmh %>% DSMhabitat::square_meters_to_acres()
-ror_tmh <- run_of_river_tmh_fr_flood %>% DSMhabitat::square_meters_to_acres()
+ror_tmh <-  DSMhabitat::fr_fp$run_of_river_tmh %>% DSMhabitat::square_meters_to_acres()
 
 fp <- expand_grid(
   watershed = factor(DSMscenario::watershed_labels, 
@@ -189,18 +148,34 @@ fp %>%
   theme_minimal()
 ```
 
-**Summary Table**: All habitat measures are in acres and rounded to the nearest acre. 
+Something funky going on with Lower-mid sac fp habitat
+
+
+## Delta Habitat 
 ```{r}
-change <- fp %>% group_by(watershed) %>%
-  summarise(mean_old_habitat = round(mean(old)),
-            mean_new_habitat = round(mean(new)),
-            change_in_mean_habitat = round(mean_new_habitat - mean_old_habitat), 
-            percent_change = round(change_in_mean_habitat/mean_old_habitat * 100),
-            percent_change_in_mean_habitat = paste(percent_change, "%")
-            ) %>%
-  # filter(change_in_mean_habitat != 0) %>%
-  select(-percent_change)
+sit_habitat <- DSMhabitat::delta_habitat$sit_habitat[,, "North Delta"] %>% DSMhabitat::square_meters_to_acres()
+baseline <- DSMhabitat::delta_habitat$r_to_r_baseline[,, "North Delta"] %>% DSMhabitat::square_meters_to_acres()
+run_of_river <- DSMhabitat::delta_habitat$max_flow_w_hab_projects[,, "North Delta"] %>% DSMhabitat::square_meters_to_acres()
+tmh <- DSMhabitat::delta_habitat$r_to_r_tmh[,, "North Delta"] %>% DSMhabitat::square_meters_to_acres()
+ror_tmh <- DSMhabitat::delta_habitat$run_of_river_tmh[,, "North Delta"] %>% DSMhabitat::square_meters_to_acres()
 
-DT::datatable(change, option=list(columnDefs=list(list(targets=3:5, class="dt-right"))))
+delta <- expand_grid(
+  watershed = c("North Delta"),
+  month = 1:12,
+  year = 1980:2000) %>% 
+  arrange(year, month, watershed) %>% 
+  mutate(
+    sit_habitat = as.vector(sit_habitat),
+    baseline = as.vector(baseline),
+    run_of_river = as.vector(run_of_river),
+    tmh = as.vector(tmh), 
+    ror_tmh = as.vector(ror_tmh)) |> glimpse()
+
+delta %>% 
+  transmute(watershed, date = ymd(paste(year, month, 1)), sit_habitat, baseline, run_of_river, tmh, ror_tmh) %>% 
+  gather(version, acres, -watershed, -date)  %>% 
+  ggplot(aes(date, acres, color = version, linetype = version)) +
+  geom_line(alpha = .75) +
+  facet_wrap(~watershed, scales = 'free_y') + 
+  theme_minimal()
 ```
-
