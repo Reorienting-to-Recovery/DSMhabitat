@@ -333,6 +333,9 @@ knitr::kable(align = 'c', head(upper_san_joaquin_floodplain, 5),
              SR_floodplain_acres = Spring Run Chinook floodplain acres, 
              watershed = section of stream modeled for CVPIA SDM")
 
+upper_san_joaquin_floodplain <- upper_san_joaquin_floodplain |> 
+  mutate(SR_floodplain_sqm = acres_to_square_meters(SR_floodplain_acres))
+
 usethis::use_data(upper_san_joaquin_floodplain, overwrite = TRUE)
 ```
 *... with `r nrow(upper_san_joaquin_floodplain) - 5` more rows*
@@ -391,6 +394,13 @@ ggplot() +
 ```
 
 ```{r message=FALSE, warning=FALSE}
+upper_san_joaquin_rearing <- upper_san_joaquin_rearing |> 
+  mutate(SR_fry_sqm = DSMhabitat::acres_to_square_meters(SR_fry_acres),
+         SR_juv_sqm = DSMhabitat::acres_to_square_meters(SR_juv_acres))
+
+upper_san_joaquin_spawning <- upper_san_joaquin_spawning |> 
+  mutate(SR_spawn_sqm = DSMhabitat::acres_to_square_meters(SR_spawn_acres))
+
 upper_san_joaquin_instream <- upper_san_joaquin_rearing |> 
   full_join(upper_san_joaquin_spawning) |> 
   mutate(watershed = "San Joaquin River") |> 

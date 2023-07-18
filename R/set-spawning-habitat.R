@@ -105,7 +105,7 @@ set_spawning_habitat <- function(watershed, species, flow, ...) {
     
     upper_sj <- as.data.frame(do.call(`::`, list(pkg = "DSMhabitat", name = 'upper_san_joaquin_instream')))
     
-    hab_func_upper <- approxfun(upper_sj$flow_cfs, upper_sj$SR_spawn_acres , rule = 2)
+    hab_func_upper <- approxfun(upper_sj$flow_cfs, upper_sj$SR_spawn_sqm , rule = 2)
     habitat_area_upper <- hab_func_upper(flow)
     
     habitat_area <- habitat_area_upper 

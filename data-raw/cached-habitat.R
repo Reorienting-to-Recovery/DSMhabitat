@@ -47,10 +47,15 @@ get_rear_hab_all <- function(watersheds, species, life_stage, calsim_version, ye
       lower_sj <- as.data.frame(do.call(`::`, list(pkg = "DSMhabitat", name = 'san_joaquin_river_instream')))
       upper_sj <- as.data.frame(do.call(`::`, list(pkg = "DSMhabitat", name = 'upper_san_joaquin_instream')))
       
-      hab_func_lower <- approxfun(lower_sj$flow_cfs, lower_sj$SR_fry_acres , rule = 2)
-      habitat_area_lower <- hab_func_lower(flows)
+      if(life_stage == 'fry') {
+        hab_func_lower <- approxfun(lower_sj$flow_cfs, lower_sj$FR_fry_wua , rule = 2)
+        hab_func_upper <- approxfun(upper_sj$flow_cfs, upper_sj$SR_fry_sqm , rule = 2)
+      } else {
+        hab_func_lower <- approxfun(lower_sj$flow_cfs, lower_sj$FR_juv_wua , rule = 2)
+        hab_func_upper <- approxfun(upper_sj$flow_cfs, upper_sj$SR_juv_sqm , rule = 2)
+      }
       
-      hab_func_upper <- approxfun(upper_sj$flow_cfs, upper_sj$SR_fry_acres , rule = 2)
+      habitat_area_lower <- hab_func_lower(flows)
       habitat_area_upper <- hab_func_upper(flows)
       
       habitat_area <- habitat_area_upper + habitat_area_lower
