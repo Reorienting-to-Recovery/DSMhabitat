@@ -444,7 +444,7 @@ spawn |>
   gather(reach, acres, -watershed, -date)  |> 
   ggplot(aes(date, acres, color = reach)) +
   geom_line(alpha = .75) + 
-  facet_wrap(~watershed, scales = 'free_y') + 
+  facet_wrap(~watershed) + 
   theme_minimal() + 
   theme(legend.position = "top") + 
   ggtitle('San Joaquin Spawning Habitat') 
