@@ -65,6 +65,14 @@ set_spawning_habitat <- function(watershed, species, flow, ...) {
                                 watershed_name == watershed,
                                 c(species, 'spawn'), drop = TRUE))
   
+  if(watershed == "San Joaquin River" & species == "sr") {
+    species_present = TRUE
+  }
+  
+  if(watershed == "San Joaquin River" & species != "sr") {
+    return(NA)
+  }
+  
 
   if (!species_present) {
     return(NA)
@@ -92,25 +100,36 @@ set_spawning_habitat <- function(watershed, species, flow, ...) {
     w <- watershed
     s <- species
   }
-  watershed_name <- tolower(gsub(pattern = "-| ", replacement = "_", x = w))
-
-  watershed_rda_name <- paste(watershed_name, "instream", sep = "_")
-  df <- as.data.frame(do.call(`::`, list(pkg = "DSMhabitat", name = watershed_rda_name)))
-
-  hab_column <- get_habitat_selector(names(df), s, "spawn", mode = quantification_mode)
-  df_na_rm <- df[!is.na(df[, hab_column]), ]
-  flows <- df_na_rm[ , "flow_cfs"]
-  habs <- df_na_rm[ , hab_column]
-  hab_func <- approxfun(flows, habs , rule = 2)
-
-
-  if (quantification_mode == "wua") {
-    wua <- hab_func(flow)
-    habitat_area <- wua_to_area(wua = wua, watershed = watershed,
-                                life_stage = "spawning", species_name = species)
+  
+  if(watershed == "San Joaquin River" & species == "sr") {
     
-  } else if (quantification_mode == "hsi") {
-    habitat_area <- hab_func(flow)
+    upper_sj <- as.data.frame(do.call(`::`, list(pkg = "DSMhabitat", name = 'upper_san_joaquin_instream')))
+    
+    hab_func_upper <- approxfun(upper_sj$flow_cfs, upper_sj$SR_spawn_sqm , rule = 2)
+    habitat_area_upper <- hab_func_upper(flow)
+    
+    habitat_area <- habitat_area_upper 
+  } else {
+    watershed_name <- tolower(gsub(pattern = "-| ", replacement = "_", x = w))
+    
+    watershed_rda_name <- paste(watershed_name, "instream", sep = "_")
+    df <- as.data.frame(do.call(`::`, list(pkg = "DSMhabitat", name = watershed_rda_name)))
+    
+    hab_column <- get_habitat_selector(names(df), s, "spawn", mode = quantification_mode)
+    df_na_rm <- df[!is.na(df[, hab_column]), ]
+    flows <- df_na_rm[ , "flow_cfs"]
+    habs <- df_na_rm[ , hab_column]
+    hab_func <- approxfun(flows, habs , rule = 2)
+    
+    if (quantification_mode == "wua") {
+      wua <- hab_func(flow)
+      habitat_area <- wua_to_area(wua = wua, watershed = watershed,
+                                  life_stage = "spawning", species_name = species)
+      
+    } else if (quantification_mode == "hsi") {
+      habitat_area <- hab_func(flow)
+    }
+    
   }
 
   return(habitat_area)

@@ -809,7 +809,7 @@ delta |>
   theme_minimal()
 
 # Save as data object to DSMhabitat
-delta_habitat <- c(sit_habitat = list(DSMhabitat::delta_habitat$sit_habitat), 
-                   r_to_r_baseline = list(r_to_r_baseline_delta),
-                   max_flow_w_hab_projects = list(r_to_r_baseline_delta)) # same as baseline 
+delta_habitat <- modifyList(DSMhabitat::delta_habitat, list(sit_habitat = DSMhabitat::delta_habitat$sit_habitat, 
+                                                            r_to_r_baseline = r_to_r_baseline_delta,
+                                                            max_flow_w_hab_projects = r_to_r_baseline_delta)) # same as ba
 usethis::use_data(delta_habitat, overwrite = TRUE)

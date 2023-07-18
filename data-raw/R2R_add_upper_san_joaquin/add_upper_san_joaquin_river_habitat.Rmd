@@ -1,0 +1,560 @@
+---
+title: "Upper San Joaquin Habitat"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, out.width = '100%', warnings = FALSE, messages = FALSE)
+# knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+options(usethis.quiet = TRUE)
+library(tidyverse)
+library(readxl)
+library(DSMhabitat)
+library(scales)
+library(purrr)
+```
+
+```{r include = FALSE}
+# load in files: 
+files <- list.files('/Volumes/flowwest/Shared/Active_Projects/002-01_San_Joaquin_River_Restoration/Modeling/DWR_2008_1D_models/results/data-raw/', pattern = "results")
+files_sa <- grep(x = files, pattern = "sa", value = TRUE)
+files_sa <- files_sa[files_sa != "mariposa_results.csv" ]
+files_depth <- setdiff(files, files_sa)
+
+all_files_sa <- map_df(files_sa, ~{
+  tmp <- read_csv(paste0('/Volumes/flowwest/Shared/Active_Projects/002-01_San_Joaquin_River_Restoration/Modeling/DWR_2008_1D_models/results/data-raw/', .x), skip_empty_rows = TRUE)|> 
+    janitor::clean_names() |> 
+    filter(q_total != "(cfs)") |> 
+    mutate(sa_chan = as.numeric(sa_chan),
+           sa_total = as.numeric(sa_total),
+           sa_left = as.numeric(sa_left),
+           sa_right = as.numeric(sa_right),
+           q_total = as.numeric(q_total),
+           river_sta = as.character(river_sta)) |> 
+    filter(!is.na(q_total)) |> 
+    group_by(reach) |> 
+    mutate(order = row_number()) 
+  
+  if(.x == "reach3_results_sa.csv") {
+    tmp <- tmp |> 
+      mutate(reach = "Rch3")
+  }
+  
+  tmp
+})
+
+all_files_depth <- map_df(files_depth, ~{
+  tmp <- read_csv(paste0('/Volumes/flowwest/Shared/Active_Projects/002-01_San_Joaquin_River_Restoration/Modeling/DWR_2008_1D_models/results/data-raw/', .x), skip_empty_rows = TRUE) |> 
+    janitor::clean_names() |> 
+    mutate(river_sta = as.character(river_sta),
+           q_total = as.numeric(q_total)) |> 
+    filter(q_total != "(cfs)")
+  
+  if(.x == "reach3_results_sa.csv") {
+    tmp <- tmp |> 
+      mutate(reach = "Rch3")
+  }
+  
+  tmp
+})
+
+## the surface area is supplied as a cumulative 
+## the following code back-calculates the cumulative 
+## surface area to get a single surface area value 
+## for each reach, station, and flow 
+lookup <- all_files_sa |> 
+  group_by(reach) |> 
+  summarise(max_order = max(order))
+  
+flows <- unique(all_files_sa$q_total)
+reaches <- unique(all_files_sa$reach)
+
+all_reaches_sa_diff <- map_df(reaches, ~{
+  
+  add_order <- all_files_sa |> 
+    left_join(lookup) |> 
+    filter(reach == .x) |> 
+    select(-order) |> 
+    rename(id = max_order) |> 
+    arrange(id) 
+  
+  all_diff <- map_df(flows, ~{
+    diff_tmp <- add_order |>
+      filter(q_total == .x) |> 
+      arrange(id) |> 
+      mutate(sa_chan_diff = sa_chan - lead(sa_chan),
+             sa_left_diff = sa_left - lead(sa_left),
+             sa_right_diff = sa_right - lead(sa_right),
+             sa_total_diff = sa_total - lead(sa_total)) 
+    
+    diff_tmp 
+    
+  }) |> 
+    arrange(reach, river_sta, q_total, id)
+  
+  all_diff
+})
+  
+# join by flow, reach and station with results containing depth and velocity
+all_ras_results <- all_reaches_sa_diff |> 
+  left_join(all_files_depth) |> 
+  # select(reach, river_sta, q_total, sa_chan_diff, sa_right_diff, sa_left_diff, sa_total_diff, hydr_depth, hydr_depth_l, hydr_depth_c, hydr_depth_r, vel_total, vel_left, vel_chnl, vel_right) |> 
+  filter(reach != "Reach4B1") 
+
+
+```
+
+
+```{r, include = FALSE}
+# PLACEHOLDER eda for testing file processing. Will not be included in final output. 
+
+# These are the sa raw results for each reach and flow
+raw_sa_results <- all_ras_results |> 
+  filter(reach != "4B1") |> 
+  group_by(reach, q_total) |> 
+  summarise(sa_chan_max = max(as.numeric(sa_chan), na.rm = TRUE),
+            sa_left_max = max(as.numeric(sa_left), na.rm = TRUE),
+            sa_right_max = max(as.numeric(sa_right), na.rm = TRUE)) 
+
+total_raw_sa <- raw_sa_results |> 
+  group_by(q_total) |> 
+  summarise(sa_chan_tot = sum(sa_chan_max))
+
+# these are the diff results 
+diff_sa_results <- all_ras_results |> 
+  filter(reach != "4B1") |> 
+  group_by(reach, q_total) |> 
+  summarise(sa_chan_diff_sum = sum(sa_chan_diff, na.rm = TRUE),
+            sa_left_diff_sum = sum(sa_left_diff, na.rm = TRUE),
+            sa_right_diff_sum = sum(sa_right_diff, na.rm = TRUE))
+
+# lines should be equal
+ggplot() + 
+  geom_line(data = raw_sa_results, aes(x = q_total, y = sa_chan_max, color = "raw")) + 
+   geom_line(data = diff_sa_results, aes(x = q_total, y = sa_chan_diff_sum, color = "diff")) + 
+  facet_wrap(~reach)
+
+```
+
+```{r}
+suitability <- readxl::read_excel('data-raw/HSC.xlsx', sheet = "flat") |> janitor::clean_names()
+
+#Use Yuba River as proxy for depth and velocity suitability: 
+yuba_suit <- suitability |> 
+  filter(river == "Yuba" & race %in%  c("Spring", "Fall.Spring") & suitability_metric %in% c('Depth', 'Velocity')) |> 
+  mutate(units_si_conv = case_when(units == "Meters" ~ units_si * 3.28084,
+                                   units == "Meters.per.Second" ~ units_si * 3.28084)) |> 
+  mutate(units_conv = case_when(units == "Meters" ~ "Feet",
+                                units == "Meters.per.Second" ~ "Feet per Second")) |> 
+  select(river, species, race, life_stage, suitability_metric, units_si_conv, 
+         units_conv, suitability_index)
+
+```
+
+
+
+## Instream Rearing Habitat
+
+The 1D Hec Ras model was run for for flows 100 through 4500 CFS at all nodes of the bypasses (Chowchilla, Eastside, and Mariposa) and reaches 1, 1A, 2A, and 5. A suitability based on depth and velocity was applied all nodes and flows to get a suitable area for in-channel and floodplain rearing for the Upper San Joaquin River between Merced River and Friant Dam. 
+
+Suitability criteria was applied to the outputs of the Hec Ras model for suitable depth and velocity for instream juvenile and fry rearing. The Yuba River depth and velocity criteria was used as a proxy for the Upper San Joaquin River using data provided by Mark Gard from the California Department of Fish and Wildlife. 
+
+**Future Improvements**
+Reaches used for instream and floodplain rearing can be updated to include mainstem (2B - 4B2) reaches. This dataset assumes flow primarily through the bypasses. 
+
+**Data Source:**
+
+* Reclamation (2012). Hydraulic Studies for Fish Habitat Analysis, Technical Report No. SRH-2012-15. Prepared for San Joaquin River Restoration Project, Mid-Pacific Region, US Bureau of Reclamation, Technical Service Center, Denver, CO.
+
+* Mark Gard - USFWS (2010a)
+
+
+```{r message=FALSE, warning=FALSE}
+fry_depth <- yuba_suit |> filter(life_stage == "Fry" &  suitability_metric == "Depth") |> 
+  filter(suitability_index > 0.1 & units_si_conv > 0) |> 
+  summarise(min_depth = min(units_si_conv),
+            max_depth = max(units_si_conv))
+fry_velocity <- yuba_suit |> filter(life_stage == "Fry" &  suitability_metric == "Velocity") |> 
+  filter(suitability_index > 0.1 & units_si_conv > 0) |> 
+   summarise(min_vel = min(units_si_conv),
+            max_vel = max(units_si_conv))
+
+juv_depth <- yuba_suit |> filter(life_stage == "Juvenile" &  suitability_metric == "Depth") |> 
+  filter(suitability_index > 0.1 & units_si_conv > 0 ) |> 
+   summarise(min_depth = min(units_si_conv),
+            max_depth = max(units_si_conv))
+juv_velocity <- yuba_suit |> filter(life_stage == "Juvenile" &  suitability_metric == "Velocity") |> 
+  filter(suitability_index > 0.1 & units_si_conv > 0 ) |> 
+  summarise(min_vel = min(units_si_conv),
+            max_vel = max(units_si_conv))
+
+# reaches to include in juve rearing: all bypasses 
+# TODO: placeholder
+# TODO: check about Connect, Upper, Middle
+# include: 1A, 1B, 2A, Chow, Eastside, Mariposa, 5
+reaches_to_include <- c('LESB', 'Maripsoa Bypass', 'Rch1_Simplified', 'Rch1A_Simplified', 'Rch2A', 'Reach_5', 'ChowchillaBypass')
+
+all_results_with_suitab <- all_ras_results |> 
+  mutate(hydr_depth = as.numeric(hydr_depth),
+         vel_chnl = as.numeric(vel_chnl)) |> 
+  mutate(depth_suit = case_when(hydr_depth < fry_depth$min_depth ~ 0,
+                                hydr_depth > fry_depth$max_depth ~ 0,
+                                .default = as.numeric(1)),
+         vel_suit = case_when(vel_chnl < fry_velocity$min_vel ~ 0, 
+                              vel_chnl > fry_velocity$max_vel ~ 0,
+                              .default = as.numeric(1)),
+         area_suitable_fry_rearing = depth_suit * vel_suit,
+         depth_suit_juv = case_when(hydr_depth < juv_depth$min_depth ~ 0,
+                                hydr_depth > juv_depth$max_depth ~ 0,
+                                .default = as.numeric(1)),
+         vel_suit_juv = case_when(vel_chnl < juv_velocity$min_vel ~ 0, 
+                              vel_chnl > juv_velocity$max_vel ~ 0,
+                              .default = as.numeric(1)),
+         area_suitable_juv_rearing = depth_suit_juv * vel_suit_juv) |> 
+  filter(reach %in% reaches_to_include) 
+  
+  
+fry_suitable_area <- all_results_with_suitab |> 
+  filter(area_suitable_fry_rearing > 0) |> 
+  group_by(reach, q_total) |> 
+  summarise(sum_sa_area_fry = sum(sa_chan_diff, na.rm = TRUE))
+
+juv_suitable_area <- all_results_with_suitab |> 
+  filter(area_suitable_juv_rearing > 0) |> 
+  group_by(reach, q_total) |> 
+  summarise(sum_sa_area_juv = sum(sa_chan_diff, na.rm = TRUE))
+
+# ggplot(juv_suitable_area, aes(x = q_total, y = sum_sa_area_juv)) + 
+#   geom_line() +
+#   facet_wrap(~reach, scales = "free_y")
+# 
+# ggplot(fry_suitable_area, aes(x = q_total, y = sum_sa_area_fry)) + 
+#   geom_line() +
+#   facet_wrap(~reach, scales = "free_y")
+
+upper_sj_fry_acres <- fry_suitable_area |> 
+  group_by(q_total) |> 
+  summarise(SR_fry_acres = sum(sum_sa_area_fry)) |> 
+  rename(flow_cfs = q_total) 
+  
+ggplot() +
+  geom_line(data = upper_sj_fry_acres, aes(y = SR_fry_acres, x = flow_cfs, color = "Upper San Joaquin")) +
+  geom_line(data = DSMhabitat::san_joaquin_river_instream, 
+            aes(y = DSMhabitat::wua_to_area(DSMhabitat::san_joaquin_river_instream$FR_fry_wua, "San Joaquin River", "rearing", "fr") * 0.000247105, 
+                x = flow_cfs, color = "Lower San Joaquin")) +
+  theme_minimal() +
+  labs(x = 'Flow (cfs)', y = 'Fry Rearing Acres') 
+
+
+upper_sj_juv_acres <- juv_suitable_area |> 
+  group_by(q_total) |> 
+  summarise(SR_juv_acres = sum(sum_sa_area_juv)) |> 
+  rename(flow_cfs = q_total) 
+  
+ggplot() +
+  geom_line(data = upper_sj_juv_acres, aes(y = SR_juv_acres, x = flow_cfs, color = "Upper San Joaquin")) +
+  geom_line(data = DSMhabitat::san_joaquin_river_instream, 
+            aes(y = DSMhabitat::wua_to_area(DSMhabitat::san_joaquin_river_instream$FR_juv_wua, "San Joaquin River", "rearing", "fr") * 0.000247105, 
+                x = flow_cfs, color = "Lower San Joaquin")) +
+  theme_minimal() +
+  labs(x = 'Flow (cfs)', y = 'Juv Rearing Acres') 
+
+upper_san_joaquin_rearing <- 
+  upper_sj_fry_acres |> left_join(upper_sj_juv_acres)
+
+```
+
+# Floodplain Rearing
+
+Floodplain rearing is calculated from the surface area that extends past the channel of the Hec Ras 1D model outputs at flows from 100 to 4500 cfs. The suitability comes from Figure 39 of the Basso/La Grange Reach Floodplain and Spawning Habitat Restoration Project - 30% Basis of Design Report which provides HSI for depth and velocity for juvenile Chinook. We used the CBEC (2020) curve for floodplain rearing. 
+
+**Data Sources:**
+
+* cbec. 2020. Lower Yuba River Temporal Habitat Evaluation, Yuba River Flow Effects Modeling Report, Lower Yuba River, California. Prepared for Trout Unlimited and U.S. Fish and Wildlife Service. July 2020. cbec project #: 19-1029.
+
+* Reclamation (2012). Hydraulic Studies for Fish Habitat Analysis, Technical Report No. SRH-2012-15. Prepared for San Joaquin River Restoration Project, Mid-Pacific Region, US Bureau of Reclamation, Technical Service Center, Denver, CO.
+
+```{r message=FALSE, warning=FALSE}
+fp_suit <- readxl::read_excel('data-raw/hsc_floodplain.xlsx', sheet = "floodplain_suit")
+
+fp_vel <- fp_suit |> filter(suitability_metric == "Velocity") |> 
+  filter(suitability_index > 0.1 & units_si_conv > 0 ) |> 
+  summarise(min_vel = min(units_si_conv),
+            max_vel = max(units_si_conv))
+
+fp_depth <- fp_suit |> filter(suitability_metric == "Depth") |> 
+  filter(suitability_index > 0.1 & units_si_conv > 0 ) |> 
+  summarise(min_depth = min(units_si_conv),
+            max_depth = max(units_si_conv))
+
+fp_sa <- all_ras_results |> 
+  mutate(hydr_depth_l = as.numeric(hydr_depth_l),
+         hydr_depth_r = as.numeric(hydr_depth_r),
+         vel_left = as.numeric(vel_left),
+         vel_right = as.numeric(vel_right)) |> 
+  mutate(vel_suit_l = case_when(vel_left < fp_vel$min_vel ~ 0,
+                              vel_left > fp_vel$max_vel ~ 0,
+                              .default = as.numeric(1)),
+         vel_suit_r = case_when(vel_right < fp_vel$min_vel ~ 0,
+                              vel_right > fp_vel$max_vel ~ 0,
+                              .default = as.numeric(1)),
+         dep_suit_r = case_when(hydr_depth_r < fp_depth$min_depth ~ 0,
+                                hydr_depth_r > fp_depth$max_depth ~ 0,
+                                .default = as.numeric(1)),
+         dep_suit_l = case_when(hydr_depth_l < fp_depth$min_depth ~ 0,
+                                hydr_depth_l > fp_depth$max_depth ~ 0,
+                                .default = as.numeric(1)),
+         area_suitable_fp_r = dep_suit_r * vel_suit_r,
+         area_suitable_fp_l = dep_suit_l * vel_suit_l) |> 
+  mutate(total_fp_sa = (area_suitable_fp_r * sa_right_diff) + (area_suitable_fp_l * sa_left_diff)) |> 
+  group_by(reach, q_total) |> 
+  summarise(sum_sa_area_fp = sum(total_fp_sa, na.rm = TRUE)) |> 
+  filter(reach %in% reaches_to_include)
+  
+# ggplot(fp_sa, aes(x = q_total, y = sum_sa_area_fp)) +
+#   geom_line() +
+#   facet_wrap(~reach, scales = "free_y")
+
+upper_san_joaquin_floodplain <-  fp_sa |> 
+  group_by(q_total) |> 
+  summarise(SR_floodplain_acres = sum(sum_sa_area_fp)) |> 
+  rename(flow_cfs = q_total) 
+  
+ggplot() +
+  geom_line(data = upper_san_joaquin_floodplain, aes(y = SR_floodplain_acres, x = flow_cfs, color = "Upper San Joaquin")) +
+  geom_line(data = DSMhabitat::san_joaquin_river_floodplain, 
+            aes(y = DSMhabitat::san_joaquin_river_floodplain$SR_floodplain_acres, 
+                x = flow_cfs, color = "Lower San Joaquin")) +
+  theme_minimal() +
+  labs(x = 'Flow (cfs)', y = 'Floodplain Rearing Acres') 
+
+knitr::kable(align = 'c', head(upper_san_joaquin_floodplain, 5), 
+             caption = "Header Descriptions: flow_cfs = flow in cubic feet per second,
+             SR_floodplain_acres = Spring Run Chinook floodplain acres, 
+             watershed = section of stream modeled for CVPIA SDM")
+
+upper_san_joaquin_floodplain <- upper_san_joaquin_floodplain |> 
+  mutate(SR_floodplain_sqm = acres_to_square_meters(SR_floodplain_acres))
+
+usethis::use_data(upper_san_joaquin_floodplain, overwrite = TRUE)
+```
+*... with `r nrow(upper_san_joaquin_floodplain) - 5` more rows*
+
+
+## Spawning Habitat
+
+The same 1D Hec Ras model was run for for flows 100 through 4500 CFS at reaches 1A and 1B for spawning.  A suitability based on depth and velocity was applied all nodes and flows to get a suitable area for spawning in the Upper San Joaquin River between Merced River and Friant Dam. 
+
+Suitability criteria was applied to the outputs of the Hec Ras model for suitable depth and velocity for spawning. The Yuba River depth and velocity criteria was used as a proxy for the Upper San Joaquin River using data provided by Mark Gard from the California Department of Fish and Wildlife. 
+
+**Data Source:**
+
+* Reclamation (2012). Hydraulic Studies for Fish Habitat Analysis, Technical Report No. SRH-2012-15. Prepared for San Joaquin River Restoration Project, Mid-Pacific Region, US Bureau of Reclamation, Technical Service Center, Denver, CO.
+
+* Mark Gard - USFWS (2010a)
+
+
+```{r message=FALSE, warning=FALSE}
+spwn_depth <- yuba_suit |> filter(life_stage == "Spawning" &  suitability_metric == "Depth") |> 
+  filter(suitability_index > 0.1 & units_si_conv > 0 ) |> 
+   summarise(min_depth = min(units_si_conv),
+            max_depth = max(units_si_conv))
+spwn_vel <- yuba_suit |> filter(life_stage == "Spawning" &  suitability_metric == "Velocity") |> 
+  filter(suitability_index > 0.1 & units_si_conv > 0 ) |> 
+  summarise(min_vel = min(units_si_conv),
+            max_vel = max(units_si_conv))
+
+
+all_results_with_suitab <- all_ras_results |> 
+  mutate(hydr_depth = as.numeric(hydr_depth),
+         vel_chnl = as.numeric(vel_chnl)) |> 
+  mutate(depth_suit = case_when(hydr_depth < spwn_depth$min_depth ~ 0,
+                                hydr_depth > spwn_depth$max_depth ~ 0,
+                                .default = as.numeric(1)),
+         vel_suit = case_when(vel_chnl < spwn_vel$min_vel ~ 0, 
+                              vel_chnl > spwn_vel$max_vel ~ 0,
+                              .default = as.numeric(1)),
+         area_suitable_spwn = depth_suit * vel_suit) |> 
+  filter(reach %in% c('Rch1A_Simplified', 'Rch1_Simplified')) # spawning in reach 1 (1A and 1B) per Rene
+  
+upper_san_joaquin_spawning <- all_results_with_suitab |> 
+  filter(area_suitable_spwn > 0) |> 
+  group_by(reach, q_total) |> 
+  summarise(sum_sa_area_spwn = sum(sa_chan_diff, na.rm = TRUE)) |> 
+  group_by(q_total) |> 
+  summarise(SR_spawn_acres = sum(sum_sa_area_spwn)) |> 
+  rename(flow_cfs = q_total) 
+  
+ggplot() +
+  geom_line(data = upper_san_joaquin_spawning, aes(y = SR_spawn_acres, x = flow_cfs, color = "Upper San Joaquin")) +
+  theme_minimal() +
+  labs(x = 'Flow (cfs)', y = 'Suitable Spawning Acres') 
+
+
+```
+
+```{r message=FALSE, warning=FALSE}
+upper_san_joaquin_rearing <- upper_san_joaquin_rearing |> 
+  mutate(SR_fry_sqm = DSMhabitat::acres_to_square_meters(SR_fry_acres),
+         SR_juv_sqm = DSMhabitat::acres_to_square_meters(SR_juv_acres))
+
+upper_san_joaquin_spawning <- upper_san_joaquin_spawning |> 
+  mutate(SR_spawn_sqm = DSMhabitat::acres_to_square_meters(SR_spawn_acres))
+
+upper_san_joaquin_instream <- upper_san_joaquin_rearing |> 
+  full_join(upper_san_joaquin_spawning) |> 
+  mutate(watershed = "San Joaquin River") |> 
+  select(watershed, everything())
+
+usethis::use_data(upper_san_joaquin_instream, overwrite = TRUE)
+
+knitr::kable(align = "c", head(upper_san_joaquin_instream, 5), 
+             caption = "Header Descriptions: flow_cfs = flow in cubic feet per second,
+             SR_spawn_acres = Spring Run Chinook Spawning Acres, 
+             SR_fry_acres = Spring Run Chinook Fry Acres, 
+             SR_juv_acres = Spring Run Chinook Juvenile Acres, 
+             watershed = section of stream modeled for CVPIA SDM")
+```
+*... with `r nrow(upper_san_joaquin_instream) - 5` more rows*
+
+
+# Plots
+
+For Spring Run Chinook, the Upper San Joaquin habitat is added to the [existing San Joaquin habitat](http://cvpia-habitat-docs-markdown.s3-website-us-west-2.amazonaws.com/watershed/san_joaquin_river.html) within the DSM. The following plots show the existing habitat with the new Upper San Joaquin Habitat. where the blue lines represent the San Joaquin habitat data that will be used when running [SpringRunDSM](https://github.com/Reorienting-to-Recovery/springRunDSM) for Reorienting to Recovery. 
+
+## Spawning Plot
+```{r message=FALSE, warning=FALSE}
+
+# spawn
+spawn <- expand_grid(
+    watershed = as.factor('San Joaquin River'),
+    month = 1:12,
+    year = 1979:2000) |> 
+  arrange(year, month, watershed) |> 
+  mutate(
+    biop_itp_2018_2019 = as.vector(DSMhabitat::sr_spawn$biop_itp_2018_2019['San Joaquin River' , , ] |> 
+                         DSMhabitat::square_meters_to_acres()),
+    r_to_r_baseline = as.vector(sr_spawn$r_to_r_baseline['San Joaquin River', , ]) |>  
+      DSMhabitat::square_meters_to_acres()
+    )
+
+spawn |> 
+  transmute(watershed, date = ymd(paste(year, month, 1)), 
+            biop_itp_2018_2019, r_to_r_baseline) |> 
+  gather(reach, acres, -watershed, -date)  |> 
+  ggplot(aes(date, acres, color = reach)) +
+  geom_line(alpha = .75) + 
+  facet_wrap(~watershed) + 
+  theme_minimal() + 
+  theme(legend.position = "top") + 
+  ggtitle('San Joaquin Spawning Habitat') 
+
+```
+
+## Floodplain Rearing Plot
+```{r}
+
+floodplain <- expand_grid(
+    watershed = as.factor('San Joaquin River'),
+    month = 1:12,
+    year = 1980:2000) |> 
+  arrange(year, month, watershed) |> 
+  mutate(
+    biop_itp_2018_2019 = as.vector(DSMhabitat::sr_fp$biop_itp_2018_2019['San Joaquin River' , , ] |> 
+                         DSMhabitat::square_meters_to_acres()),
+    r_to_r_baseline = as.vector(sr_fp$r_to_r_baseline['San Joaquin River', , ]) |>  
+      DSMhabitat::square_meters_to_acres()
+    )
+
+floodplain |> 
+  transmute(watershed, date = ymd(paste(year, month, 1)), 
+            biop_itp_2018_2019, r_to_r_baseline) |> 
+  gather(reach, acres, -watershed, -date)  |> 
+  ggplot(aes(date, acres, color = reach)) +
+  geom_line(alpha = .75) + 
+  facet_wrap(~watershed, scales = 'free_y') + 
+  theme_minimal() + 
+  theme(legend.position = "top") + 
+  ggtitle('San Joaquin Floodplain Habitat') 
+
+```
+
+## Instream Rearing - Juveniles:
+
+```{r}
+
+juv <- expand_grid(
+    watershed = as.factor('San Joaquin River'),
+    month = 1:12,
+    year = 1980:2000) |> 
+  arrange(year, month, watershed) |> 
+  mutate(
+    biop_itp_2018_2019 = as.vector(DSMhabitat::sr_juv$biop_itp_2018_2019['San Joaquin River' , , ] |> 
+                         DSMhabitat::square_meters_to_acres()),
+    r_to_r_baseline = as.vector(sr_juv$r_to_r_baseline['San Joaquin River', , ]) |>  
+      DSMhabitat::square_meters_to_acres()
+    )
+
+juv |> 
+  transmute(watershed, date = ymd(paste(year, month, 1)), 
+            biop_itp_2018_2019, r_to_r_baseline) |> 
+  gather(reach, acres, -watershed, -date)  |> 
+  ggplot(aes(date, acres, color = reach)) +
+  geom_line(alpha = .75) + 
+  facet_wrap(~watershed, scales = 'free_y') + 
+  theme_minimal() + 
+  theme(legend.position = "top") + 
+  ggtitle('San Joaquin Juvenile Rearing Habitat') 
+
+```
+
+## Instream Rearing - Fry
+
+```{r}
+
+fry <- expand_grid(
+    watershed = as.factor('San Joaquin River'),
+    month = 1:12,
+    year = 1980:2000) |> 
+  arrange(year, month, watershed) |> 
+  mutate(
+    biop_itp_2018_2019 = as.vector(DSMhabitat::sr_fry$biop_itp_2018_2019['San Joaquin River' , , ] |> 
+                         DSMhabitat::square_meters_to_acres()),
+    r_to_r_baseline = as.vector(sr_fry$r_to_r_baseline['San Joaquin River', , ]) |>  
+      DSMhabitat::square_meters_to_acres()
+    )
+
+fry |> 
+  transmute(watershed, date = ymd(paste(year, month, 1)), 
+            biop_itp_2018_2019, r_to_r_baseline) |> 
+  gather(reach, acres, -watershed, -date)  |> 
+  ggplot(aes(date, acres, color = reach)) +
+  geom_line(alpha = .75) + 
+  facet_wrap(~watershed, scales = 'free_y') + 
+  theme_minimal() + 
+  theme(legend.position = "top") + 
+  ggtitle('San Joaquin Fry Rearing Habitat') 
+
+```
+
+<!-- ### Compare -->
+
+```{r eval=FALSE, include=FALSE}
+source('../R2R_TMH_habitat_inputs/tmh_helper_functions.R')
+
+#floodplain: 
+floodplain_flow <- existing_flow_cfs("flood", 'San Joaquin River')
+flood_acres <- DSMhabitat::floodplain_approx('San Joaquin River', 'sr')(floodplain_flow) #SIT: 1007.886
+new_flood_acres = approxfun(upper_san_joaquin_floodplain$flow_cfs, upper_san_joaquin_floodplain$SR_floodplain_acres, yleft = 0, yright = max(upper_san_joaquin_floodplain$SR_floodplain_acres))(floodplain_flow) 
+
+# according to DSMhabitat::watershed_species_present species only present for floodplain in sr and fr, NOT wr and lfr
+subset(DSMhabitat::watershed_species_present, 
+        watershed_name == 'San Joaquin River', 'sr', drop = TRUE)
+    
+
+# spawning: 
+spawning_flow <- existing_flow_cfs("spawning", 'San Joaquin River')
+hab_func <- approxfun(upper_san_joaquin_spawning$flow_cfs, upper_san_joaquin_spawning$SR_spawn_acres , rule = 2)
+spawn_acres <- hab_func(spawning_flow)
+
+```
