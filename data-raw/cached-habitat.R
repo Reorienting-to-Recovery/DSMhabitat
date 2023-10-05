@@ -1176,19 +1176,28 @@ get_proportion <- function(selected_species, selected_lifestage) {
     right_join(below_dam) |> 
     full_join(DSMflow::watershed_ordering) |> 
     arrange(order) |> 
-    mutate(percent_above_dam = above_dam_length_feet / (above_dam_length_feet + feet),
-           percent_above_dam = ifelse(is.na(percent_above_dam), 0, percent_above_dam)) |> 
-    pull(percent_above_dam)
+    mutate(proportion_above_dam = above_dam_length_feet / (above_dam_length_feet + feet),
+           proportion_above_dam = ifelse(is.na(proportion_above_dam), 0, proportion_above_dam)) |> 
+    pull(proportion_above_dam)
   
   return(above_dam_hab_prop)
 }
 
 # TODO: should we use the entire reach length for below dam rather than the spawning/rearing subset in order to align with above dam? 
 # NOTE: WR rearing - use fall run as proxy except for Battle Creek 
-
+above_dam_spawn_hab_prop_wr <- get_proportion("wr", "spawning") 
 above_dam_spawn_hab_prop_sr <- get_proportion("sr", "spawning") 
-above_dam_rear_hab_prop_sr <- get_proportion("sr", "rearing") 
 
-usethis::use_data(above_dam_spawn_hab_prop_sr, overwrite = TRUE)
-usethis::use_data(above_dam_rear_hab_prop_sr, overwrite = TRUE)
+above_dam_rearing_hab_prop_wr <- get_proportion("wr", "rearing") 
+above_dam_rearing_hab_prop_sr <- get_proportion("sr", "rearing") 
+
+
+
+above_dam_spawn_proportion <- list("sr" = above_dam_spawn_hab_prop_sr,
+                             "wr" = above_dam_spawn_hab_prop_wr)
+above_dam_rearing_proportion <- list("sr" = above_dam_rearing_hab_prop_sr,
+                                   "wr" = above_dam_rearing_hab_prop_wr)
+
+usethis::use_data(above_dam_spawn_proportion, overwrite = TRUE)
+usethis::use_data(above_dam_rearing_proportion, overwrite = TRUE)
 
