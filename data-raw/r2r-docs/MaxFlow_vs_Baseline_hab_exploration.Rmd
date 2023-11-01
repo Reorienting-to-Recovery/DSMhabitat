@@ -140,7 +140,7 @@ fp <- expand_grid(
 fp %>% 
   transmute(watershed, date = ymd(paste(year, month, 1)), baseline, run_of_river, tmh, ror_tmh) %>% 
   filter(!(watershed %in% c('Sutter Bypass', 'Yolo Bypass'))) %>% 
-  filter(watershed == "Lower-mid Sacramento River") |> 
+  # filter(watershed == "Lower-mid Sacramento River") |> 
   gather(version, acres, -watershed, -date)  %>% 
   ggplot(aes(date, acres, color = version)) +
   geom_line(alpha = .75) +
