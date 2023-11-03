@@ -3,12 +3,12 @@ Type: Package
 Title: Estimate Spawning and Rearing Habitat
 Version: 1.0
 Authors@R: c(
-    person("Sadie", "Gill", email = "sgill@flowwest.com", role = c("aut", "cre")), 
+    person("Erin", "Cain", email = "ecain@flowwest.com", role = c("aut", "cre")), 
     person("Emanuel", "Rodriguez", email = "erodriguez@flowwest.com", role = "aut"),
     person("Mark", "Tompkins", email = "mtompkins@flowwest.com", role = "aut"))
 Maintainer: The package maintainer <yourself@somewhere.net>
 Description: This package is for estimating spawning and rearing (instream and floodplain) habitat 
-    within the Sacramento and San Joaquin river systems for use with the CVPIA salmon life cycle model.
+    within the Sacramento and San Joaquin river systems for use with the Reorienting to Recovery salmon life cycle model.
 License: CC0
 Encoding: UTF-8
 LazyData: true
@@ -17,7 +17,7 @@ Suggests: testthat,
     rmarkdown
 RoxygenNote: 7.2.3
 VignetteBuilder: knitr
-URL: https://cvpia-osc.github.io/DSMhabitat/
-BugReports: https://github.com/CVPIA-OSC/DSMhabitat/issues
+URL: https://reorienting-to-recovery.github.io/DSMhabitat/
+BugReports: https://github.com/reorienting-to-recovery/DSMhabitat/issues
 Depends: 
     R (>= 2.10)

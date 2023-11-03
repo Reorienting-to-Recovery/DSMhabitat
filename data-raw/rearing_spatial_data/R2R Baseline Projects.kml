@@ -1,0 +1,870 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+	<name>R2R Baseline Projects.kmz</name>
+	<Style id="failed">
+	</Style>
+	<Style id="failed0">
+	</Style>
+	<Style id="failed00">
+	</Style>
+	<StyleMap id="failed01">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#failed1</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#failed21</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="failed1">
+	</Style>
+	<Style id="failed10">
+	</Style>
+	<Style id="failed2">
+	</Style>
+	<StyleMap id="failed20">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#failed</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#failed7</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="failed21">
+	</Style>
+	<Style id="failed3">
+	</Style>
+	<StyleMap id="failed4">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#failed6</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#failed00</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="failed5">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#failed3</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#failed10</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="failed6">
+	</Style>
+	<Style id="failed7">
+	</Style>
+	<StyleMap id="m_ylw-pushpin">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#s_ylw-pushpin</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#s_ylw-pushpin_hl1</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="m_ylw-pushpin0">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#s_ylw-pushpin1</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#s_ylw-pushpin_hl0</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="m_ylw-pushpin00">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#s_ylw-pushpin0</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#s_ylw-pushpin_hl</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="m_ylw-pushpin18">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#failed0</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#failed2</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="msn_ylw-pushpin">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_ylw-pushpin1</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_ylw-pushpin0</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="msn_ylw-pushpin0">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_ylw-pushpin00</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_ylw-pushpin2</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="msn_ylw-pushpin04">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_ylw-pushpin1010</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_ylw-pushpin5101</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="msn_ylw-pushpin040">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_ylw-pushpin10100</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_ylw-pushpin51010</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="msn_ylw-pushpin1">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_ylw-pushpin0</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_ylw-pushpin1</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="msn_ylw-pushpin2">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_ylw-pushpin</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_ylw-pushpin</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="s_ylw-pushpin">
+		<IconStyle>
+			<scale>1.1</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+	</Style>
+	<Style id="s_ylw-pushpin0">
+		<IconStyle>
+			<scale>1.1</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+	</Style>
+	<Style id="s_ylw-pushpin1">
+		<IconStyle>
+			<scale>1.1</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+	</Style>
+	<Style id="s_ylw-pushpin_hl">
+		<IconStyle>
+			<scale>1.3</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+	</Style>
+	<Style id="s_ylw-pushpin_hl0">
+		<IconStyle>
+			<scale>1.3</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+	</Style>
+	<Style id="s_ylw-pushpin_hl1">
+		<IconStyle>
+			<scale>1.3</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+	</Style>
+	<Style id="sh_ylw-pushpin">
+		<IconStyle>
+			<scale>1.3</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>a8ffffff</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>5900ff00</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sh_ylw-pushpin0">
+		<IconStyle>
+			<scale>1.3</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+	</Style>
+	<Style id="sh_ylw-pushpin1">
+		<IconStyle>
+			<scale>1.3</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>7dffffff</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>5900ff00</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sh_ylw-pushpin2">
+		<IconStyle>
+			<scale>1.3</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+	</Style>
+	<Style id="sh_ylw-pushpin5101">
+		<IconStyle>
+			<scale>1.3</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>7dffffff</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>5900ff00</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sh_ylw-pushpin51010">
+		<IconStyle>
+			<scale>1.3</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>7dffffff</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>5900ff00</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sn_ylw-pushpin">
+		<IconStyle>
+			<scale>1.1</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>a8ffffff</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>5900ff00</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sn_ylw-pushpin0">
+		<IconStyle>
+			<scale>1.1</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>7dffffff</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>5900ff00</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sn_ylw-pushpin00">
+		<IconStyle>
+			<scale>1.1</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+	</Style>
+	<Style id="sn_ylw-pushpin1">
+		<IconStyle>
+			<scale>1.1</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+	</Style>
+	<Style id="sn_ylw-pushpin1010">
+		<IconStyle>
+			<scale>1.1</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>7dffffff</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>5900ff00</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sn_ylw-pushpin10100">
+		<IconStyle>
+			<scale>1.1</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>7dffffff</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>5900ff00</color>
+		</PolyStyle>
+	</Style>
+	<Folder>
+		<name>R2R Baseline Projects</name>
+		<open>1</open>
+		<Placemark>
+			<name>ID #1</name>
+			<description>Eco Restore - McCormack-Williamson Tract</description>
+			<styleUrl>#failed01</styleUrl>
+			<Point>
+				<coordinates>-121.4746666666667,38.26424444444444,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>ID #2</name>
+			<description>Implement McCloud Reintroduction (Pilot Plan)</description>
+			<LookAt>
+				<longitude>-122.1533800172491</longitude>
+				<latitude>40.89132444864693</latitude>
+				<altitude>0</altitude>
+				<heading>-0.04438180880425061</heading>
+				<tilt>0</tilt>
+				<range>79875.34470289121</range>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</LookAt>
+			<styleUrl>#m_ylw-pushpin00</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>-122.2277638888889,40.89125555555555,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>ID #3</name>
+			<description>Turtle Bay Island Side Channels and Gravel</description>
+			<LookAt>
+				<longitude>-122.3729958603676</longitude>
+				<latitude>40.59021549605634</latitude>
+				<altitude>14.59797646799766</altitude>
+				<heading>-2.832268373119878e-05</heading>
+				<tilt>26.08144276300401</tilt>
+				<range>1110.084321820758</range>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</LookAt>
+			<styleUrl>#msn_ylw-pushpin</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>-122.3686333333333,40.59069444444444,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>ID #3</name>
+			<description>Turtle Bay Side Channels, should be done in 2024 or 2025</description>
+			<styleUrl>#msn_ylw-pushpin04</styleUrl>
+			<Polygon>
+				<tessellate>1</tessellate>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							-122.3695041146334,40.59121241507232,0 -122.3692098884494,40.59108730174191,0 -122.3689752177048,40.59092986709992,0 -122.3688904526282,40.59081283972876,0 -122.3688248072551,40.59063701236737,0 -122.368851243617,40.59052227355776,0 -122.3688934715664,40.59042272602582,0 -122.36897367671,40.59029094481148,0 -122.3689622609428,40.59010108190756,0 -122.3689214280018,40.59001894614103,0 -122.3689638782549,40.58989001828908,0 -122.369013215519,40.58975575020364,0 -122.3690638168286,40.58958853548959,0 -122.3690418037657,40.5894496741859,0 -122.3690684940051,40.58933569225158,0 -122.3690533440163,40.58930539084611,0 -122.3689161529016,40.58921189555561,0 -122.3687931690282,40.58905887099323,0 -122.3687929307151,40.58895912803541,0 -122.3688193086794,40.58886345243575,0 -122.3688847458326,40.58873869852356,0 -122.3688629921254,40.58861499216722,0 -122.3688609018631,40.58846327618195,0 -122.3687333558695,40.588385100491,0 -122.3686918477927,40.58848521078106,0 -122.3687818970799,40.5885569113209,0 -122.3687470458509,40.58874353127742,0 -122.3687268084264,40.58895181247253,0 -122.3687681744889,40.58910871563643,0 -122.3688606612512,40.58927413496616,0 -122.3689167059851,40.58945639396992,0 -122.3689319964636,40.58959204462264,0 -122.3688967488585,40.58967714497882,0 -122.3688608481372,40.58982454820039,0 -122.3688248710148,40.58997570042544,0 -122.3688651869735,40.59013039032243,0 -122.3688496034272,40.59025397520042,0 -122.3688185380234,40.59040801460013,0 -122.3687385771352,40.59044939091601,0 -122.368564071738,40.59037963419988,0 -122.3684318965587,40.59025983046773,0 -122.3683241033325,40.59017763494268,0 -122.3682523383492,40.59008175608999,0 -122.3681151171015,40.58994922561813,0 -122.3680322239191,40.58981652772493,0 -122.3679078776023,40.58964895146117,0 -122.3677685018312,40.58945848498448,0 -122.3677081817378,40.58930141148904,0 -122.3676006981986,40.58915470995741,0 -122.3675368365344,40.5891137635683,0 -122.3675002952071,40.58923925884252,0 -122.3676196846128,40.58937253794564,0 -122.367741586689,40.58957236779572,0 -122.3678471247651,40.589781175408,0 -122.3679899396924,40.5899397953719,0 -122.3681329154569,40.59009467762493,0 -122.3682642721498,40.59022367732975,0 -122.3683302278082,40.59035247899246,0 -122.3683722585153,40.59045326672079,0 -122.3682161930827,40.59046291953282,0 -122.3680361058921,40.59043100249474,0 -122.3678501646855,40.59038506814604,0 -122.3677009705617,40.59028808853137,0 -122.3676420099623,40.59020942187047,0 -122.3674742431779,40.59009178785205,0 -122.3674026282344,40.59001451990918,0 -122.3672358199448,40.58995506674629,0 -122.3670592028475,40.58985852925372,0 -122.3669252571812,40.58978729089166,0 -122.3668405653719,40.58981033239817,0 -122.3670312002344,40.59000571725153,0 -122.3673542448253,40.59019187063553,0 -122.3675149599388,40.59028841586249,0 -122.3675743730463,40.59032556725954,0 -122.3678502392266,40.59048484658535,0 -122.3681980101443,40.59059780970937,0 -122.3684088158022,40.59074615333537,0 -122.3685659370725,40.59088560494445,0 -122.3687116298026,40.59101247693867,0 -122.3686571546902,40.59114513394046,0 -122.3683612502812,40.59111706055953,0 -122.3682883223302,40.59104732349239,0 -122.3680224573895,40.59095140573775,0 -122.3676908562741,40.59073899947899,0 -122.3673722179832,40.59065936611739,0 -122.3671877412569,40.59048772010902,0 -122.3670932009598,40.59036767784409,0 -122.3668414977592,40.59027172909798,0 -122.3666699315462,40.5901747452137,0 -122.3665096355666,40.59009681011526,0 -122.3663905870834,40.59003296361821,0 -122.3662921107596,40.59002493493816,0 -122.3662470965126,40.59011712012207,0 -122.36668025487,40.59030756475058,0 -122.3668818569964,40.59038680350554,0 -122.3669532861617,40.59045576757503,0 -122.3670540286755,40.59054845771934,0 -122.3672217040745,40.59063633692857,0 -122.3673412851887,40.59072458237193,0 -122.3675996533133,40.59079083235549,0 -122.3678294743634,40.59090426550608,0 -122.3679796778657,40.59099537258082,0 -122.3680636118141,40.59107082466452,0 -122.3681362625207,40.59115694771239,0 -122.3684161780422,40.59119427391805,0 -122.3686046873347,40.59123029247661,0 -122.3690819375793,40.59121756712319,0 -122.3692366759399,40.59129806304465,0 -122.3693003259426,40.59135465154457,0 -122.3695041146334,40.59121241507232,0 -122.3695041146334,40.59121241507232,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>ID #4</name>
+			<description>EcoRestore - Lookout Slough</description>
+			<LookAt>
+				<longitude>-121.7130399506534</longitude>
+				<latitude>38.29192994051019</latitude>
+				<altitude>0</altitude>
+				<heading>-0.0003285228468910089</heading>
+				<tilt>0</tilt>
+				<range>3225.626861500776</range>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</LookAt>
+			<styleUrl>#m_ylw-pushpin00</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>-121.7124222222222,38.293675,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>ID #5</name>
+			<description>Eco Restore - Prospect Island</description>
+			<LookAt>
+				<longitude>-121.6543999918495</longitude>
+				<latitude>38.26796905140785</latitude>
+				<altitude>0</altitude>
+				<heading>5.047896501606925e-09</heading>
+				<tilt>0</tilt>
+				<range>3224.281063676523</range>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</LookAt>
+			<styleUrl>#m_ylw-pushpin00</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>-121.6554166666667,38.27091388888888,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>ID #6</name>
+			<description>Lake California Side Channel Project</description>
+			<LookAt>
+				<longitude>-122.2058064283029</longitude>
+				<latitude>40.34048490627697</latitude>
+				<altitude>0</altitude>
+				<heading>5.376218800265041e-10</heading>
+				<tilt>44.99999507699666</tilt>
+				<range>1255.93814375259</range>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</LookAt>
+			<styleUrl>#m_ylw-pushpin</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>-122.2058064283029,40.34373333333333,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>ID #6</name>
+			<description>Lake California Side Channel</description>
+			<styleUrl>#msn_ylw-pushpin040</styleUrl>
+			<Polygon>
+				<tessellate>1</tessellate>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							-122.2010292300865,40.34343802664139,0 -122.2014307103581,40.3436468778028,0 -122.2019213208949,40.34394948078898,0 -122.2023339407744,40.34413287642744,0 -122.2028700674658,40.34407434820164,0 -122.2031943416434,40.34398851293513,0 -122.2034328998704,40.34377692913232,0 -122.2034798515149,40.34349780336547,0 -122.2040546865396,40.34348089342759,0 -122.2048797157619,40.34390859955674,0 -122.2057868638698,40.34407007292769,0 -122.2067715737612,40.34405767439885,0 -122.2072898922327,40.34351464727323,0 -122.2075233445736,40.34290665034384,0 -122.2078381152489,40.34242126107358,0 -122.2082675449397,40.3420936738172,0 -122.2084322556957,40.34179540549726,0 -122.208495148531,40.34139625101528,0 -122.208867067374,40.34103165997548,0 -122.2091357109914,40.34070206497124,0 -122.2095667304047,40.34033850438466,0 -122.2096918844373,40.3401111353784,0 -122.2095686187763,40.33983974167997,0 -122.2096277405442,40.33948785565741,0 -122.2097120410514,40.33929562130978,0 -122.2100429170262,40.33885812719867,0 -122.2103282679365,40.33807485487504,0 -122.2104925582204,40.33730912979404,0 -122.2105835374698,40.33686137777089,0 -122.210362479038,40.33683648592238,0 -122.2101499635518,40.33760652830701,0 -122.2098944300585,40.33858118493684,0 -122.2094700943792,40.33930899236487,0 -122.2093282863116,40.33978452017637,0 -122.2093950862274,40.34018087861009,0 -122.2088836750852,40.34067037376528,0 -122.2086519615996,40.34101254823127,0 -122.208207708711,40.34151714098609,0 -122.2080081187188,40.34203997083217,0 -122.2076717934274,40.34238090613567,0 -122.2074319237053,40.34249857743262,0 -122.2072761359837,40.34291062088199,0 -122.2070048926574,40.34347458707651,0 -122.2065714347369,40.34378697601714,0 -122.2055990022725,40.34389125726768,0 -122.2047149010022,40.34364621452493,0 -122.2041041840709,40.34332678430046,0 -122.2037950285438,40.34322642332273,0 -122.2033554814386,40.34333595352476,0 -122.2031283461868,40.3435754931754,0 -122.2028388124162,40.34394525603395,0 -122.2023713155137,40.34399241505267,0 -122.2020391106352,40.34383728441608,0 -122.2017777243088,40.34368741426336,0 -122.2016873977307,40.34348029381934,0 -122.2016558439046,40.34330772900848,0 -122.2010292300865,40.34343802664139,0 -122.2010292300865,40.34343802664139,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>ID #7</name>
+			<description>Kapusta 1a Side Channel</description>
+			<LookAt>
+				<longitude>-122.2906217131066</longitude>
+				<latitude>40.43557759557493</latitude>
+				<altitude>0</altitude>
+				<heading>0.004644366471987995</heading>
+				<tilt>0</tilt>
+				<range>21694.51453896135</range>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</LookAt>
+			<styleUrl>#msn_ylw-pushpin0</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>-122.3443611111111,40.49477777777778,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>ID #7 Kapusta 1A Side Channel</name>
+			<styleUrl>#msn_ylw-pushpin040</styleUrl>
+			<Polygon>
+				<tessellate>1</tessellate>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							-122.3445776998911,40.49482099703819,0 -122.344520273453,40.49470151193491,0 -122.3444649686395,40.49457780560137,0 -122.3444067429042,40.49442739370055,0 -122.3443433455455,40.49434056352402,0 -122.3441185020503,40.4942979026734,0 -122.3439245361535,40.4942731404817,0 -122.3437069455361,40.49425484397454,0 -122.343273935577,40.49429268543222,0 -122.3429166832602,40.49435467955072,0 -122.3426115802055,40.49440379840667,0 -122.3423667491584,40.4944492888692,0 -122.342158978541,40.49455373307263,0 -122.3420232830932,40.49467468926169,0 -122.341894093241,40.49479561147329,0 -122.3417747197826,40.49493725944713,0 -122.3419025835582,40.49492137204258,0 -122.3419938322004,40.49479677368672,0 -122.3420756086838,40.49471108107446,0 -122.3421757031857,40.49461992689255,0 -122.3423683876652,40.49451963557358,0 -122.3426536631504,40.49444831864948,0 -122.3428210600193,40.49444235056836,0 -122.3430039281842,40.49443817255294,0 -122.3430978552874,40.49439902469417,0 -122.343274764587,40.49436721697982,0 -122.3435133303233,40.49432223581444,0 -122.3437098415472,40.49432063753115,0 -122.3438150172758,40.49435663254751,0 -122.3438854142249,40.49438057997888,0 -122.3440102148968,40.49439717691484,0 -122.3441298723891,40.49440945462592,0 -122.3442293962158,40.49443928507245,0 -122.344322168888,40.49446370057088,0 -122.3443788594899,40.4945579838903,0 -122.3444094366995,40.4946295204908,0 -122.3444623136409,40.49472957141351,0 -122.3444850893064,40.49480435596948,0 -122.3444936116112,40.49484159810017,0 -122.3445776998911,40.49482099703819,0 -122.3445776998911,40.49482099703819,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>ID #8</name>
+			<description>Rio Vista Side Channel</description>
+			<LookAt>
+				<longitude>-121.6913436485005</longitude>
+				<latitude>38.15575033186152</latitude>
+				<altitude>0</altitude>
+				<heading>1.553766703960194e-07</heading>
+				<tilt>0</tilt>
+				<range>12912.14866646202</range>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</LookAt>
+			<styleUrl>#m_ylw-pushpin00</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>-121.6891666666667,38.15430833333333,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>ID #9</name>
+			<description>Kutras Lake project</description>
+			<LookAt>
+				<longitude>-122.3712712998392</longitude>
+				<latitude>40.5783718000706</latitude>
+				<altitude>0</altitude>
+				<heading>1.045861795905648e-10</heading>
+				<tilt>0</tilt>
+				<range>3119.3105951387</range>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</LookAt>
+			<styleUrl>#m_ylw-pushpin00</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>-122.3690055555555,40.57846944444445,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>ID #9</name>
+			<description>Kutras Lake Rearing Structures</description>
+			<styleUrl>#msn_ylw-pushpin040</styleUrl>
+			<Polygon>
+				<tessellate>1</tessellate>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							-122.3652668936055,40.57931183802066,0 -122.3653490164317,40.57937803972559,0 -122.3654911997776,40.5795557163182,0 -122.365702941619,40.57978034471815,0 -122.3659514715311,40.57990668158821,0 -122.3660437579254,40.57984796995962,0 -122.3660264799779,40.5796853721941,0 -122.3658555028165,40.57946432694263,0 -122.3655002893659,40.5791925250842,0 -122.3651800534455,40.57895715663331,0 -122.3650321116798,40.57879285134349,0 -122.3648770412732,40.57859601475837,0 -122.3648478781375,40.57826433744532,0 -122.3647656910924,40.57795292930111,0 -122.3648313654151,40.57753964211329,0 -122.3649044536811,40.5772096578999,0 -122.3650874607912,40.57698466486807,0 -122.3655000323997,40.57665856651391,0 -122.3659364226419,40.57645305113712,0 -122.366541410112,40.57622333157398,0 -122.3669758535731,40.57610902955275,0 -122.3673043068363,40.5759698768641,0 -122.3676149402903,40.57596957719821,0 -122.3679162895909,40.57591532465958,0 -122.3681927600778,40.57585444709279,0 -122.3685824756242,40.57587548760231,0 -122.3688372437175,40.57589917522459,0 -122.368949659921,40.57596828375758,0 -122.3691040739868,40.57607873968467,0 -122.3692040741458,40.57623134538251,0 -122.3691756107402,40.57627776331241,0 -122.3690859859162,40.57641222934718,0 -122.3691787296128,40.57657883786385,0 -122.3693899684864,40.5766534711185,0 -122.3695599510872,40.57685229710424,0 -122.369716956093,40.57715457087765,0 -122.3697866610352,40.57738794711351,0 -122.3695595637196,40.57759937538179,0 -122.3692802209569,40.57770196556879,0 -122.3690149912128,40.57781602329522,0 -122.3687936859334,40.57805744100009,0 -122.3686858238711,40.57836983543103,0 -122.3689004767385,40.57867415465655,0 -122.3690440389194,40.57883469011733,0 -122.3692948935634,40.57897958120809,0 -122.3695089277794,40.57915439249476,0 -122.3696228920862,40.57921403302255,0 -122.3696734003466,40.57921398153071,0 -122.3695072493481,40.57901819381113,0 -122.3691127716025,40.57875569138209,0 -122.3688206272762,40.57836597788749,0 -122.3688703324094,40.57809679379977,0 -122.3693491207993,40.57776290130188,0 -122.3697818965859,40.57761662090935,0 -122.3698857084722,40.577462088176,0 -122.3698281600302,40.57714724405925,0 -122.3696664652304,40.57687718856415,0 -122.3694858462505,40.57657527288089,0 -122.3692461692102,40.57649185633897,0 -122.3691388558858,40.57641961431358,0 -122.3692922740379,40.57627746281727,0 -122.3692570377902,40.57616535823436,0 -122.3690915589849,40.57599154521058,0 -122.3688312791899,40.57584749610148,0 -122.3681321385297,40.57582482900187,0 -122.3678966119641,40.57584790781996,0 -122.367607767247,40.57590417234506,0 -122.3671900623151,40.57588937069824,0 -122.366619689804,40.57612363542668,0 -122.3663262276324,40.57621605619334,0 -122.3658209380197,40.57634341248601,0 -122.3656128918902,40.57644850058377,0 -122.3653150813742,40.57661805176443,0 -122.3649402537605,40.57695473072288,0 -122.3646654311141,40.57716629155486,0 -122.3645897904794,40.57755118865407,0 -122.3646625027518,40.5777439402643,0 -122.3645919737674,40.57813686005809,0 -122.3646298020902,40.57833725363008,0 -122.3646550680567,40.57875257562139,0 -122.3646932276528,40.57898258271728,0 -122.3648831759886,40.57922820323231,0 -122.3651390833155,40.5793137927482,0 -122.3652668936055,40.57931183802066,0 -122.3652668936055,40.57931183802066,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>ID #10</name>
+			<description>Ancil Hoffman Gravel and Floodplain Project</description>
+			<LookAt>
+				<longitude>-121.3045816544147</longitude>
+				<latitude>38.61087914706039</latitude>
+				<altitude>0</altitude>
+				<heading>0.003873638332975623</heading>
+				<tilt>0</tilt>
+				<range>4165.026507744125</range>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</LookAt>
+			<styleUrl>#msn_ylw-pushpin0</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>-121.3065333333333,38.61706944444445,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>ID #11</name>
+			<description>Hallwood Project (Phase 1)</description>
+			<LookAt>
+				<longitude>-121.4520953833703</longitude>
+				<latitude>39.19875244462703</latitude>
+				<altitude>0</altitude>
+				<heading>-0.005053906884702627</heading>
+				<tilt>0</tilt>
+				<range>6433.611790930947</range>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</LookAt>
+			<styleUrl>#m_ylw-pushpin00</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>-121.4505027777778,39.20530833333333,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>ID #12</name>
+			<description>Market Street Gravel Project -- Phases 2 &amp; 3</description>
+			<LookAt>
+				<longitude>-122.3878143899867</longitude>
+				<latitude>40.59211205814903</latitude>
+				<altitude>0</altitude>
+				<heading>0.004477014533761293</heading>
+				<tilt>24.73201946485568</tilt>
+				<range>850.2066226390057</range>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</LookAt>
+			<styleUrl>#m_ylw-pushpin00</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>-122.391725,40.59156111111111,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>ID #12</name>
+			<description>2016 - Market Street Gravel</description>
+			<styleUrl>#msn_ylw-pushpin2</styleUrl>
+			<Polygon>
+				<tessellate>1</tessellate>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							-122.3927269701932,40.59174979535286,0 -122.392691898282,40.59170173661417,0 -122.3926011177302,40.59168854013789,0 -122.3924698133543,40.59164228403855,0 -122.3921498082972,40.59154302722241,0 -122.3920367084542,40.59151229068248,0 -122.3918686732325,40.59148976556701,0 -122.3916559667375,40.59139462412115,0 -122.3914817203606,40.59136067440082,0 -122.3913195664043,40.59130217827349,0 -122.3911975233703,40.59123722941648,0 -122.391144907809,40.59120650771161,0 -122.3910635135838,40.59115287655375,0 -122.3909550530965,40.59111413094066,0 -122.3908129935328,40.59113439942855,0 -122.3906656592957,40.59113087058815,0 -122.3905180690989,40.59114471677213,0 -122.3902106428829,40.59113415772825,0 -122.3898600650273,40.59113054672373,0 -122.3897487688726,40.59118295503394,0 -122.3896879609541,40.59123981432016,0 -122.3896727803001,40.59131230567956,0 -122.3897773884376,40.59144216006707,0 -122.389994830393,40.5915240807938,0 -122.3902434710987,40.59158711462662,0 -122.3905014321486,40.59164726193916,0 -122.3908207376155,40.59172494022259,0 -122.3910800231083,40.59180009545101,0 -122.3913714138032,40.59191195715931,0 -122.3916020220781,40.59200156411491,0 -122.3917307240007,40.59208061727939,0 -122.3919414393741,40.59208730513414,0 -122.3921717327663,40.59214934662298,0 -122.3923227274817,40.59211953871538,0 -122.3924918841244,40.59208383500849,0 -122.3925997298334,40.59204298523832,0 -122.392758884289,40.59203555372538,0 -122.3928328076185,40.59203558328838,0 -122.3928692976948,40.59200880572269,0 -122.3928510724965,40.59194693841233,0 -122.3928080857413,40.59186823456773,0 -122.3927625880275,40.59181859255609,0 -122.3927269701932,40.59174979535286,0 -122.3927269701932,40.59174979535286,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>ID #13</name>
+			<description>Lower Sailor Bar</description>
+			<LookAt>
+				<longitude>-121.2369888256702</longitude>
+				<latitude>38.63447422352221</latitude>
+				<altitude>0</altitude>
+				<heading>-0.001397653162565185</heading>
+				<tilt>11.04696809451498</tilt>
+				<range>1568.761576331236</range>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</LookAt>
+			<styleUrl>#msn_ylw-pushpin0</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>-121.2391888888889,38.63295,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>ID #14</name>
+			<description>Anderson River Park Side Channel - proposed</description>
+			<styleUrl>#msn_ylw-pushpin1</styleUrl>
+			<Polygon>
+				<tessellate>1</tessellate>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							-122.263211973416,40.47165666710625,0 -122.2631238752536,40.4711445087089,0 -122.2629567438534,40.47039392920024,0 -122.2626524650014,40.47001999290735,0 -122.2625819969994,40.46947906403113,0 -122.2624153341174,40.46929572353316,0 -122.2622346035902,40.4689780524787,0 -122.262213597645,40.46856488911166,0 -122.2621883538163,40.46813861242605,0 -122.2622874900489,40.46787802238602,0 -122.2620448566619,40.4676634735699,0 -122.2619309007494,40.46749273376746,0 -122.2617733516959,40.4669213272237,0 -122.2617562094088,40.46649208216891,0 -122.2616375877149,40.46613238675187,0 -122.2615851196851,40.46573415023656,0 -122.2612787538056,40.46533943920776,0 -122.2609035673585,40.4647875316024,0 -122.2607027954531,40.46445742845213,0 -122.2602867567075,40.46409176797726,0 -122.2595402054989,40.46359552570488,0 -122.2586421648641,40.46306994350147,0 -122.2568692007257,40.46235815306863,0 -122.2551105495077,40.46177263264921,0 -122.2535982268585,40.46151604212379,0 -122.2524031541078,40.46146227142593,0 -122.2525702648668,40.46178132240408,0 -122.2539691860072,40.46184017405411,0 -122.2550916788185,40.46201582004895,0 -122.255963243085,40.46231304982651,0 -122.2570092202871,40.46263804743635,0 -122.2580072180713,40.46305421312888,0 -122.2590008752884,40.46351656000063,0 -122.259667827269,40.46396889436399,0 -122.2602424249349,40.46451388233777,0 -122.2606574982978,40.4650299233401,0 -122.2605888564814,40.46512987984966,0 -122.2604133114399,40.46556594238106,0 -122.260092987646,40.46603646560207,0 -122.2594855223833,40.46647249624965,0 -122.2589554639943,40.46695970223894,0 -122.2584079673462,40.46757414880778,0 -122.2582749731547,40.46797187546184,0 -122.2582071436738,40.46832371034611,0 -122.2581237843004,40.46867879478436,0 -122.2580808203466,40.46901724430795,0 -122.2579444194535,40.46862075748832,0 -122.2575929260768,40.46821074939022,0 -122.25731790266,40.46777701117464,0 -122.2570922405722,40.46726942736696,0 -122.2568504315073,40.46681425923951,0 -122.2564627744922,40.46634661709592,0 -122.2562650153674,40.46587619514582,0 -122.2559318411435,40.46551414711168,0 -122.2556734266906,40.46510628770952,0 -122.2555028653991,40.46466837660178,0 -122.2551982806348,40.46426433850044,0 -122.254792226343,40.46394422022762,0 -122.2544499513125,40.46373819730442,0 -122.2540740633786,40.46355974461279,0 -122.253897448623,40.46348544556926,0 -122.253861075249,40.46374712252464,0 -122.2543434604921,40.46399449494315,0 -122.2547857117956,40.46434265324482,0 -122.2550701340668,40.46464922928872,0 -122.25539421325,40.46497101749714,0 -122.2554855007611,40.46526565191053,0 -122.2555565041935,40.46551338489682,0 -122.2559765309493,40.46588136343466,0 -122.2562223454404,40.46635483552231,0 -122.2564166840472,40.46671415075853,0 -122.2565836869837,40.46712433576171,0 -122.2568938832274,40.46761184391733,0 -122.2570889022947,40.46806832672259,0 -122.2573199170961,40.46846045076291,0 -122.2575963007061,40.46901890013278,0 -122.2577674499573,40.46926928360333,0 -122.257808901192,40.46945964546976,0 -122.2582957865476,40.46965852420259,0 -122.2585485078007,40.46976110243948,0 -122.2584993889312,40.46932304911642,0 -122.2584255436324,40.46900628329946,0 -122.2584224907373,40.46847673724789,0 -122.2584887132508,40.46784615002993,0 -122.2586929351969,40.46752510062002,0 -122.2589764290799,40.46724851160634,0 -122.2593248736059,40.46689011033178,0 -122.2596790423687,40.46660623514492,0 -122.2600990163153,40.46623331909592,0 -122.2604213167891,40.46603933738785,0 -122.2606408610293,40.46563860256206,0 -122.2607949209906,40.46522627801391,0 -122.2609447038849,40.46525306035051,0 -122.2611599947491,40.46563447725354,0 -122.2613163420981,40.46605089340925,0 -122.2614474343402,40.4665906452838,0 -122.261606051598,40.46711183407779,0 -122.261651426793,40.46743863904457,0 -122.2617947809226,40.4677174899961,0 -122.2619269356762,40.46791836587032,0 -122.2619488319937,40.46836667605509,0 -122.2619685828393,40.46883745788119,0 -122.2620995341777,40.46911948627571,0 -122.2624501618323,40.47002964509741,0 -122.2626769289616,40.47044599040665,0 -122.2628232971898,40.47093633496932,0 -122.2628529594004,40.47131748775529,0 -122.2629125899619,40.4715374848094,0 -122.2630782258656,40.47168985750788,0 -122.2631916171341,40.4718322061144,0 -122.2633289782132,40.47187142558836,0 -122.263211973416,40.47165666710625,0 -122.263211973416,40.47165666710625,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>ID #15</name>
+			<description>Deer Cr Hwy32 Bridge, approximatley half way of project point</description>
+			<LookAt>
+				<gx:TimeStamp><when>2020-06-29T17:40:09Z</when>
+</gx:TimeStamp>
+				<longitude>-121.5562932266481</longitude>
+				<latitude>40.17277626930574</latitude>
+				<altitude>0</altitude>
+				<heading>-0.4561745898972612</heading>
+				<tilt>31.18933633713217</tilt>
+				<range>164.732687683852</range>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</LookAt>
+			<styleUrl>#msn_ylw-pushpin</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>-121.5561388888889,40.17278888888889,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>ID #15 (upper end)</name>
+			<description>Deer Upper falls, upper end of project
+Current extent of anadromy; the ladder, which was originally installed as part of the &quot;mitigation&quot; for Shasta Dam installation, is permanently closed</description>
+			<LookAt>
+				<gx:TimeStamp><when>2020-06-29T17:40:09Z</when>
+</gx:TimeStamp>
+				<longitude>-121.5128806863107</longitude>
+				<latitude>40.20342227557517</latitude>
+				<altitude>0</altitude>
+				<heading>-0.0619861298421153</heading>
+				<tilt>48.45768615451648</tilt>
+				<range>1065.366815417996</range>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</LookAt>
+			<styleUrl>#msn_ylw-pushpin</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>-121.5132276944008,40.20200554027922,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>ID #15 (lower end)</name>
+			<description>Lower Deer Creek Falls-lower end
+  This is the current lowestmost location of the project, although we may end up working below it as well...</description>
+			<LookAt>
+				<gx:TimeStamp><when>2020-06-29T17:40:09Z</when>
+</gx:TimeStamp>
+				<longitude>-121.5814084966801</longitude>
+				<latitude>40.16849216256281</latitude>
+				<altitude>0</altitude>
+				<heading>-0.1061932830580414</heading>
+				<tilt>48.45409260554467</tilt>
+				<range>530.7309916858105</range>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</LookAt>
+			<styleUrl>#msn_ylw-pushpin</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>-121.5814375629956,40.16798767437492,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>ID #19</name>
+			<description>Basso-LaGrange Project - Tuolumne River-Riffle A3 Rehabilitation RM 50.4 to 50.6</description>
+			<styleUrl>#failed20</styleUrl>
+			<Point>
+				<coordinates>-120.4716666666667,37.66452777777778,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>ID #18</name>
+			<description>Bee Diversion NF Cottonwood</description>
+			<LookAt>
+				<longitude>-122.6519289345297</longitude>
+				<latitude>40.46916207408182</latitude>
+				<altitude>0</altitude>
+				<heading>-0.02133765841356591</heading>
+				<tilt>47.20264372406966</tilt>
+				<range>464.9465584488756</range>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</LookAt>
+			<styleUrl>#m_ylw-pushpin18</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>-122.6522472222222,40.46859722222222,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>ID #24</name>
+			<description>Side-channel -- Cypress Ave. Bridge North Project</description>
+			<LookAt>
+				<longitude>-122.3739911611402</longitude>
+				<latitude>40.57183919520712</latitude>
+				<altitude>0</altitude>
+				<heading>-0.00351716992179789</heading>
+				<tilt>45.00002311315749</tilt>
+				<range>1003.638761831604</range>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</LookAt>
+			<styleUrl>#failed5</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>-122.3721611111111,40.57155277777778,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>ID #24: 2016 - North Cypress Side Channel</name>
+			<styleUrl>#msn_ylw-pushpin1</styleUrl>
+			<Polygon>
+				<tessellate>1</tessellate>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							-122.3659043476599,40.57528864745692,0 -122.3660707827992,40.57521340300204,0 -122.366222648501,40.57513934185387,0 -122.3663656007388,40.57505482601228,0 -122.3664754603407,40.57499529000119,0 -122.3665207118521,40.57494646802227,0 -122.3666254594287,40.57489203956735,0 -122.3667489230145,40.57481978123376,0 -122.3668954572999,40.57476315019482,0 -122.3671165121241,40.57469919707899,0 -122.3672794342313,40.57465214177308,0 -122.3674137672703,40.57461319735258,0 -122.3675241490962,40.57460304947443,0 -122.367677099292,40.57450286032442,0 -122.3677556460958,40.57441493172841,0 -122.3677861918421,40.57433357332444,0 -122.3679193022363,40.57424236985098,0 -122.3680792154045,40.57416704455848,0 -122.3682826032079,40.57414816347991,0 -122.3684327840659,40.57406607899815,0 -122.3687190562258,40.57401635349523,0 -122.3689264813234,40.57398907244956,0 -122.3690663639462,40.57401417138649,0 -122.3691648515503,40.57408106114286,0 -122.370367726524,40.57332846690076,0 -122.3703712058361,40.57318774670357,0 -122.3704396283281,40.57303720248557,0 -122.3706230721784,40.57287304102341,0 -122.3707376381581,40.57269597228188,0 -122.3708333522723,40.57261689513635,0 -122.3709131984205,40.57243236401371,0 -122.3711186360768,40.57237358503406,0 -122.3713036517524,40.57230603434238,0 -122.3714024482192,40.57220097436641,0 -122.3715828443077,40.57215431130002,0 -122.371726364509,40.57214176503555,0 -122.3718139520462,40.57213817385588,0 -122.3719045770642,40.57216032650743,0 -122.3720097388381,40.57203300232173,0 -122.3719096259612,40.57204275248825,0 -122.3717323734148,40.57201381354495,0 -122.3715734260273,40.57197499816687,0 -122.3713419243568,40.57200850294981,0 -122.3711530841557,40.57213470837338,0 -122.3709186549092,40.57228637357468,0 -122.3706968319013,40.57246163379789,0 -122.3704963671311,40.57261533820255,0 -122.3703068448156,40.57272587900344,0 -122.3702051566978,40.57286118342792,0 -122.3702072648849,40.57291221387229,0 -122.3701945542952,40.57296455668085,0 -122.3700701539358,40.57305159038174,0 -122.3699093615114,40.57313685116186,0 -122.3698323609405,40.57323657022776,0 -122.3697785834808,40.57336094298401,0 -122.369751135758,40.57349829353183,0 -122.3696484280583,40.57354309235243,0 -122.3693413937948,40.57368773287277,0 -122.3689760102646,40.57371232839631,0 -122.3687531627339,40.57373030904719,0 -122.3684497216413,40.57380724313221,0 -122.3681397462164,40.57393663618102,0 -122.3677957854609,40.57402228143083,0 -122.3675202512774,40.5740902422465,0 -122.3673162650719,40.57417826963363,0 -122.3670740730238,40.57420516052252,0 -122.3669044984697,40.57416465279385,0 -122.3666889236671,40.5742155789241,0 -122.3665305150834,40.57435048564446,0 -122.3662900307288,40.57436373868958,0 -122.3660252748059,40.57443544476348,0 -122.365793270571,40.57451301385479,0 -122.3655740424275,40.57467989806652,0 -122.3655487371602,40.57479602312284,0 -122.3654459906313,40.57489010342036,0 -122.3653263469611,40.57503157189099,0 -122.3652538592405,40.57510315300264,0 -122.3651575673776,40.57519185618933,0 -122.3652581950385,40.57523117626645,0 -122.3654012668155,40.5751088193517,0 -122.3655151640973,40.57496759826129,0 -122.3656111292752,40.57482931793546,0 -122.3657241860755,40.57472212965494,0 -122.365836070106,40.57462102756283,0 -122.3659655509496,40.57453297095025,0 -122.3660943505937,40.57446730213343,0 -122.3663225457233,40.57447098824725,0 -122.3664428351656,40.5744317809401,0 -122.3666143740759,40.57439200691157,0 -122.3667707726221,40.57434321679413,0 -122.3669940754831,40.57431345005426,0 -122.3671463588801,40.5743267277638,0 -122.367287930736,40.57426872900217,0 -122.3674909476086,40.57421661285104,0 -122.3676452584191,40.5742048156435,0 -122.3676572115857,40.57428649314407,0 -122.3675741966587,40.57442275908243,0 -122.3674233820668,40.57454192272194,0 -122.3672201648205,40.57460526911972,0 -122.3670595065097,40.57464587624567,0 -122.367015632936,40.5745879941801,0 -122.3669024558482,40.57461866253508,0 -122.3667546154647,40.5747174769724,0 -122.3666277003271,40.5747903847628,0 -122.3665243045361,40.57478863876334,0 -122.3664769707479,40.57479245704427,0 -122.3664616103703,40.5748415689384,0 -122.3665105829973,40.57485364680102,0 -122.3664365856281,40.57492882273623,0 -122.3661838527576,40.57505543467673,0 -122.3659971263461,40.57515505167613,0 -122.3657403992697,40.57524456800579,0 -122.3658132120613,40.57533362645438,0 -122.366003335774,40.57526003446558,0 -122.3659043476599,40.57528864745692,0 -122.3659043476599,40.57528864745692,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>ID #24: South Cypress Side Channel - Proposed</name>
+			<styleUrl>#msn_ylw-pushpin1</styleUrl>
+			<Polygon>
+				<tessellate>1</tessellate>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							-122.3726355840411,40.57104568983447,0 -122.3727006186392,40.57092997904161,0 -122.3730196340475,40.57076363311717,0 -122.3733556234922,40.57064030274259,0 -122.3736393862071,40.5704949884085,0 -122.3740219072505,40.57036779652216,0 -122.3742128871539,40.57026865227643,0 -122.374319694084,40.57014442514013,0 -122.3743949300496,40.56998945088863,0 -122.3745646592105,40.57001718625053,0 -122.3747143624525,40.57009846542568,0 -122.3748238389355,40.56999086063362,0 -122.3747984739539,40.56991033288111,0 -122.3746522626123,40.56975633311019,0 -122.3745674511056,40.56974343089222,0 -122.3745162352857,40.56967430836551,0 -122.3746229937112,40.56954873445644,0 -122.374784076743,40.56941818396723,0 -122.3750433280484,40.56930202543267,0 -122.375329072689,40.56917621594294,0 -122.3753763855756,40.56892941005253,0 -122.3753334400175,40.56872356963309,0 -122.3752427633973,40.56866765752795,0 -122.3752294165586,40.56857407082779,0 -122.3754563935065,40.56842898449411,0 -122.3757032152861,40.56772051722578,0 -122.3763695886854,40.56756134398703,0 -122.3763666056663,40.56742282215085,0 -122.3754920191933,40.56766207001154,0 -122.3751051635043,40.56731736420553,0 -122.3750607411457,40.56700821597042,0 -122.3749933568251,40.56662883223737,0 -122.3749641835594,40.56633038805779,0 -122.3749652656871,40.56605047459693,0 -122.3750015726256,40.56563287025568,0 -122.3750055990169,40.56528291913797,0 -122.3750252052485,40.56493940212501,0 -122.3750307040893,40.5646914007538,0 -122.3750300713474,40.56431488281613,0 -122.3749053682441,40.56382058954618,0 -122.3748877174901,40.56341186921396,0 -122.3746824386588,40.56330691792449,0 -122.3746384245374,40.56347328137996,0 -122.3747071731944,40.56376300178037,0 -122.3748068297922,40.56417814291263,0 -122.3747539860495,40.56495427975526,0 -122.374799297256,40.56555735812508,0 -122.3747255481113,40.56628791217908,0 -122.3747839527146,40.56669790011799,0 -122.3747383190152,40.56714938434231,0 -122.3749169556544,40.56773588859662,0 -122.3749300900441,40.56804849824998,0 -122.3751205111843,40.56857519981589,0 -122.3750615721743,40.56875167493947,0 -122.3746459541561,40.5688920087576,0 -122.3745216808082,40.56940836163419,0 -122.3740659491603,40.57020731966751,0 -122.3734349803891,40.57053070879137,0 -122.3728200747484,40.57078203145404,0 -122.3724734124621,40.57095628249958,0 -122.3723791501901,40.57102099865785,0 -122.3726355840411,40.57104568983447,0 -122.3726355840411,40.57104568983447,0 
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>ID #25</name>
+			<description>Rockwad Placement</description>
+			<LookAt>
+				<longitude>-122.3586590998611</longitude>
+				<latitude>40.53816149995865</latitude>
+				<altitude>0</altitude>
+				<heading>9.027050296929751e-11</heading>
+				<tilt>0</tilt>
+				<range>1000.000003108444</range>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</LookAt>
+			<styleUrl>#m_ylw-pushpin0</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>-122.3570833333333,40.53883888888889,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>ID #26</name>
+			<description>Dye Creek Fish Passage</description>
+			<styleUrl>#failed4</styleUrl>
+			<Point>
+				<coordinates>-122.0910555555556,40.08797222222223,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>ID #14</name>
+			<LookAt>
+				<longitude>-122.2578660656099</longitude>
+				<latitude>40.46666684997836</latitude>
+				<altitude>0</altitude>
+				<heading>7.76252536667349e-10</heading>
+				<tilt>45.00000000147122</tilt>
+				<range>1784.77464592611</range>
+				<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+			</LookAt>
+			<styleUrl>#m_ylw-pushpin</styleUrl>
+			<Point>
+				<gx:drawOrder>1</gx:drawOrder>
+				<coordinates>-122.2581388888889,40.46894444444445,0</coordinates>
+			</Point>
+		</Placemark>
+	</Folder>
+</Document>
+</kml>

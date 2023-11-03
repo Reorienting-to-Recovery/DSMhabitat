@@ -23,6 +23,8 @@ The map below displays spawning and rearing habitat for Fall Run Chinook salmon,
 
 Click on the square in the top right of the map to add or hide layers showing the habitat for different species and life stages. Hover above a line on the map to see the name of the river and the name of the expert who provided habitat boundaries. 
 
+Blue lines show theoretical maximum habitat (TMH). Spring and Winter run benifit from above dam TMH and all runs benifit from below dam TMH. 
+
 [Download Habitat Shapefile](https://cvpiahabitat-r-package.s3.us-west-2.amazonaws.com/salmonid_habitat_extents.zip)
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE, results='asis'}
@@ -30,6 +32,8 @@ library(leaflet)
 library(rgdal)
 library(tidyverse)
 library(readxl)
+library(sf)
+
 
 salmonid_extents <- readOGR("../data-raw/rearing_spatial_data/salmonid_habitat_extents/salmonid_habitat_extents.shp", 
                             stringsAsFactors = FALSE, verbose = FALSE) %>%
@@ -43,6 +47,21 @@ lfs <- subset(salmonid_extents, Species == 'Late-Fall Run Chinook' & Habitat == 
 lfr <- subset(salmonid_extents, Species == 'Late-Fall Run Chinook' & Habitat == 'rearing')
 sts <- subset(salmonid_extents, Species == 'Steelhead' & Habitat == 'spawning')
 str <- subset(salmonid_extents, Species == 'Steelhead' & Habitat == 'rearing')
+
+baseline_projects <- readRDS('../data-raw/map_data/baseline_projects.RDS')
+baseline_proj_pts <- baseline_projects |> 
+      filter(st_is(geometry , "POINT"))
+    
+baseline_proj_poly <- baseline_projects |> 
+      filter(st_is(geometry , "MULTIPOLYGON"))
+hqt <- readRDS('../data-raw/map_data/hqt.RDS')
+
+tmh_reaches <- readRDS('../data-raw/map_data/TMH_reaches.rds') |> 
+  group_by(river) |> 
+  mutate(id = cur_group_id())
+
+rim_dams <- readRDS('../data-raw/map_data/rim_dams.RDS')
+dam_barriers <- readRDS('../data-raw/map_data/dam_barriers.RDS')
 ```
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE, results='asis'}
@@ -56,6 +75,9 @@ make_label <- function(data) {
 leaflet() %>% 
       addProviderTiles(providers$Esri.WorldTopoMap, group = "Map") %>% 
       addProviderTiles(providers$Esri.WorldImagery, group = "Satellite") %>%
+      addPolylines(data = tmh_reaches, group = 'TMH River Extent', 
+                  layerId = tmh_reaches$id, opacity = .5, weight = 3) |> 
+      addPolygons(data = rim_dams, group = 'Rim Dams', popup = rim_dams$NAME, color = "darkblue") |>
       addPolylines(data = str, group = 'Steelhead Rearing', label = make_label(str),
                    color = '#5e3c99', opacity = .8, weight = 3) %>%
       addPolylines(data = sts, group = 'Steelhead Spawning', label = make_label(sts),
@@ -72,9 +94,15 @@ leaflet() %>%
                    color = '#5e3c99', opacity = .8, weight = 3) %>% 
       addPolylines(data = lfs, group = 'Late-Fall Run Spawning', label = make_label(lfs),
                    color = '#e66101', opacity = 1, weight = 3) %>%
+      addCircleMarkers(data = baseline_proj_pts, group = 'Current Restoration Projects', popup = baseline_proj_pts$Description,
+                       color = 'darkred', opacity = .6, weight = 2, fillOpacity = 0.6, radius = 5) |>
+      addPolygons(data = hqt, group = "Valley Lowland (<0.04%)", popup = "Habitat Quantification Tool Boundary", color = "darkgrey",
+                  fillColor = "grey", fillOpacity = 0.5) |> 
       addLayersControl(
         baseGroups = c("Map", "Satellite"),
-        overlayGroups = c('Fall Run Rearing', 'Fall Run Spawning', 
+        overlayGroups = c('Current Restoration Projects',
+                          'TMH River Extent','Rim Dams', 
+                          'Fall Run Rearing', 'Fall Run Spawning', 
                           'Late-Fall Run Rearing', 'Late-Fall Run Spawning',
                           'Spring Run Rearing','Spring Run Spawning', 
                           'Steelhead Rearing', 'Steelhead Spawning')) %>% 
@@ -84,7 +112,8 @@ leaflet() %>%
       hideGroup('Late-Fall Run Rearing') %>%
       hideGroup('Steelhead Spawning') %>%
       hideGroup('Steelhead Rearing') %>%
-      addLegend(colors = c('#5e3c99', '#e66101'), labels = c('rearing', 'spawning'),
+      hideGroup("Valley Lowland (<0.04%)") |> 
+      addLegend(colors = c('#5e3c99', '#e66101', "blue"), labels = c('rearing', 'spawning', 'TMH'),
                 position = 'topleft', title = 'Habitat Type') %>% 
       setView(lat = 38.85, lng = -121.49, zoom = 7.5)
 
