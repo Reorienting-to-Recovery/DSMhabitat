@@ -170,26 +170,31 @@ Reaches used for instream and floodplain rearing can be updated to include mains
 
 
 ```{r message=FALSE, warning=FALSE}
+# TODO - add lengths to vignette documentation and gitbook site 
+# lower length - 45.7 miles
+# upper length - 153 miles 
+
+suit_index <- 0.3
+
 fry_depth <- yuba_suit |> filter(life_stage == "Fry" &  suitability_metric == "Depth") |> 
-  filter(suitability_index > 0.1 & units_si_conv > 0) |> 
+  filter(suitability_index > suit_index & units_si_conv > 0) |> 
   summarise(min_depth = min(units_si_conv),
             max_depth = max(units_si_conv))
 fry_velocity <- yuba_suit |> filter(life_stage == "Fry" &  suitability_metric == "Velocity") |> 
-  filter(suitability_index > 0.1 & units_si_conv > 0) |> 
+  filter(suitability_index > suit_index & units_si_conv > 0) |> 
    summarise(min_vel = min(units_si_conv),
             max_vel = max(units_si_conv))
 
 juv_depth <- yuba_suit |> filter(life_stage == "Juvenile" &  suitability_metric == "Depth") |> 
-  filter(suitability_index > 0.1 & units_si_conv > 0 ) |> 
+  filter(suitability_index > suit_index & units_si_conv > 0 ) |> 
    summarise(min_depth = min(units_si_conv),
             max_depth = max(units_si_conv))
 juv_velocity <- yuba_suit |> filter(life_stage == "Juvenile" &  suitability_metric == "Velocity") |> 
-  filter(suitability_index > 0.1 & units_si_conv > 0 ) |> 
+  filter(suitability_index > suit_index & units_si_conv > 0 ) |> 
   summarise(min_vel = min(units_si_conv),
             max_vel = max(units_si_conv))
 
 # reaches to include in juve rearing: all bypasses 
-# TODO: placeholder
 # TODO: check about Connect, Upper, Middle
 # include: 1A, 1B, 2A, Chow, Eastside, Mariposa, 5
 reaches_to_include <- c('LESB', 'Maripsoa Bypass', 'Rch1_Simplified', 'Rch1A_Simplified', 'Rch2A', 'Reach_5', 'ChowchillaBypass')
@@ -223,14 +228,6 @@ juv_suitable_area <- all_results_with_suitab |>
   filter(area_suitable_juv_rearing > 0) |> 
   group_by(reach, q_total) |> 
   summarise(sum_sa_area_juv = sum(sa_chan_diff, na.rm = TRUE))
-
-# ggplot(juv_suitable_area, aes(x = q_total, y = sum_sa_area_juv)) + 
-#   geom_line() +
-#   facet_wrap(~reach, scales = "free_y")
-# 
-# ggplot(fry_suitable_area, aes(x = q_total, y = sum_sa_area_fry)) + 
-#   geom_line() +
-#   facet_wrap(~reach, scales = "free_y")
 
 upper_sj_fry_acres <- fry_suitable_area |> 
   group_by(q_total) |> 
@@ -277,13 +274,15 @@ Floodplain rearing is calculated from the surface area that extends past the cha
 ```{r message=FALSE, warning=FALSE}
 fp_suit <- readxl::read_excel('data-raw/hsc_floodplain.xlsx', sheet = "floodplain_suit")
 
+suit_index <- 0.1
+
 fp_vel <- fp_suit |> filter(suitability_metric == "Velocity") |> 
-  filter(suitability_index > 0.1 & units_si_conv > 0 ) |> 
+  filter(suitability_index > suit_index & units_si_conv > 0 ) |> 
   summarise(min_vel = min(units_si_conv),
             max_vel = max(units_si_conv))
 
 fp_depth <- fp_suit |> filter(suitability_metric == "Depth") |> 
-  filter(suitability_index > 0.1 & units_si_conv > 0 ) |> 
+  filter(suitability_index > suit_index & units_si_conv > 0 ) |> 
   summarise(min_depth = min(units_si_conv),
             max_depth = max(units_si_conv))
 
