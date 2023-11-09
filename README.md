@@ -1,19 +1,17 @@
-<img src="man/figures/cvpia_logo.jpg" align="right" width="40%"/>
-
 ### Modeled Habitat Areas
 
-*This package is for estimating spawning and rearing (instream and floodplain) habitat within the Sacramento and San Joaquin river systems for use with the CVPIA salmon life cycle model.*
+*This package is for estimating spawning and rearing (instream and floodplain) habitat within the Sacramento and San Joaquin river systems for use with the Reorienting to Recovery salmon life cycle model.*
 
 #### Installation
 
 ``` r
 # install.packages("remotes")
-remotes::install_github("CVPIA-OSC/DSMhabitat")
+remotes::install_github("Reorienting-to-Recovery/DSMhabitat")
 ```
 
 #### Usage
 
-This package provides habitat related datasets to the [`fallRunDSM,`](https://github.com/CVPIA-OSC/fallRunDSM) [`springRunDSM,`](https://github.com/CVPIA-OSC/springRunDSM) [`winterRunDSM,`](https://github.com/CVPIA-OSC/winterRunDSM) and [`latefallRunDSM`](https://github.com/CVPIA-OSC/latefallRunDSM) packages.
+This package provides habitat related datasets to the [`fallRunDSM,`](https://github.com/Reorienting-to-Recovery/fallRunDSM) [`springRunDSM,`](https://github.com/Reorienting-to-Recovery/springRunDSM) and [`winterRunDSM,`](https://github.com/Reorienting-to-Recovery/winterRunDSM).
 
 ``` r
 # datasets within the package
@@ -28,9 +26,11 @@ Where available, results from Instream Flow Incremental Methodology (IFIM) studi
 
 Similarly, where available, results from floodplain hydraulic modeling studies were used to generate floodplain flow to suitable area relationships. Where no modeling studies were available, suitable floodplain area were scaled from nearby, geomorphically similar watersheds. Specific methods and supporting documents for instream and floodplain habitat inputs in every watershed are provided on the reference tab.
 
+Additional scaling is applied to existing habitat data to account for current and planned restoration projects and to produce theoretical maximum habitat data.  
+
 ### Dependencies
 
-The `DSMhabitat` package provides data for several other packages within the [CVPIA Open Science Collaborative](https://github.com/CVPIA-OSC). These relationships are visualized in the dependency graph below. <img src="man/figures/dependencyChain.svg" width="100%"/>
+The `DSMhabitat` package provides data for several other packages within the [Reorienting to Recovery Project](https://github.com/Reorienting-to-Recovery. These relationships are visualized in the dependency graph below. <img src="man/figures/dependencyChain.svg" width="100%"/>
 
 
 Data Assembled and Maintained by <a href = "http://www.flowwest.com/" target = "_blank"> <img src="man/figures/TransLogoTreb.png" width="150px"/>

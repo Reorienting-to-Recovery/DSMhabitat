@@ -1,15 +1,15 @@
 title: DSMhabitat
-url: https://CVPIA-OSC.github.io/DSMhabitat/
+url: https://reorienting-to-recovery.github.io/DSMhabitat/
 template:
   params:
-    bootswatch: yeti
+    bootswatch: flatly
 
 home:
   links:
-  - text: Fish and Wildlife Service's CVPIA website
-    href: https://www.fws.gov/lodi/anadromous_fish_restoration/
-  - text: Bureau of Reclamation's CVPIA website
-    href: https://www.usbr.gov/mp/cvpia/
+  - text: Reorienting to Recovery Project Website
+    href: https://csamp.baydeltalive.com/recovery/reorienting-to-recovery
+  - text: Reorienting to Recovery Modeling Overview Website
+    href: https://reorienting-to-recovery.gitbook.io/documentation-site/zCZ2Z2yqFYMUQrtZdTlg/
 
 reference:
 - title: Habitat Functions
@@ -32,6 +32,7 @@ reference:
   - habitat_data
   - sacramento_habitat
   - bypass_habitat
+  - delta_rearing_habitat
   
 - title: Miscellaneous Datasets
   desc: Datasets used as reference tables
@@ -41,6 +42,11 @@ reference:
   - weeks_inundated
   - inchannel_habitat_adult
   - pools
+  - spawning_decay_multiplier
+  - spawning_habitat_average 
+  - watershed_decay_status
+  - watershed_spawning_decays
+  
 - title: Model Input Data
   desc: Data used directly as inputs to the DSM model
   contents:
@@ -89,19 +95,18 @@ navbar:
     href: reference/index.html
   - text: 'Articles'
     menu: 
+      - text: 'Map of Spawning, Rearing, and Theoretical Max Habitat'
+        href: articles/habitat-extents-map.html
       - text: 'Floodplain Modeling Methodology'
         href: articles/floodplain-modeling.html
-      - text: 'Map of Spawning and Rearing Habitat'
-        href: articles/habitat-extents-map.html
       - text: 'Remotely Sensed Wetted Channel Areas'
         href: articles/total-wetted-area.html
-  - text: 'News'
-    href: news/index.html
+
 
 repo:
  url:
-  home: https://github.com/CVPIA-OSC/DSMhabitat
-  issue: https://github.com/CVPIA-OSC/DSMhabitat/issues/
+  home: https://github.com/reorienting-to-recovery/DSMhabitat
+  issue: https://github.com/reorienting-to-recovery/DSMhabitat/issues/
 
 
 

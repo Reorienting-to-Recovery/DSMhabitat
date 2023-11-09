@@ -151,11 +151,13 @@ yuba_suit <- suitability |>
 
 ```
 
+## Background
 
+This document describes the process of adding instream juvenile and fry rearing, spawning, and floodplain rearing to the Upper San Joaquin reach of the [SpringRunDSM](https://github.com/Reorienting-to-Recovery/springRunDSM) (from Merced River confluence to Friant Dam). The Lower San Joaquin reach is 45.7 miles long while the Upper San Joaquin Reach is 153 miles in length. Note that the available habitat is reflective of reach-specific flows but the the flows in the DSM are from the 2018/2019 CalSim BiOp for the Lower San Joaquin reach.  
 
 ## Instream Rearing Habitat
 
-The 1D Hec Ras model was run for for flows 100 through 4500 CFS at all nodes of the bypasses (Chowchilla, Eastside, and Mariposa) and reaches 1, 1A, 2A, and 5. A suitability based on depth and velocity was applied all nodes and flows to get a suitable area for in-channel and floodplain rearing for the Upper San Joaquin River between Merced River and Friant Dam. 
+The 1D Hec Ras model was run for for flows 100 through 4500 CFS at all nodes of the bypasses (Chowchilla, Eastside, and Mariposa) and reaches 1, 1A, 2A, and 5. A suitability criteria based on depth and velocity was applied to all nodes and flows to get a suitable area for in-channel and floodplain rearing for the Upper San Joaquin River between Merced River and Friant Dam. 
 
 Suitability criteria was applied to the outputs of the Hec Ras model for suitable depth and velocity for instream juvenile and fry rearing. The Yuba River depth and velocity criteria was used as a proxy for the Upper San Joaquin River using data provided by Mark Gard from the California Department of Fish and Wildlife. 
 
@@ -170,10 +172,6 @@ Reaches used for instream and floodplain rearing can be updated to include mains
 
 
 ```{r message=FALSE, warning=FALSE}
-# TODO - add lengths to vignette documentation and gitbook site 
-# lower length - 45.7 miles
-# upper length - 153 miles 
-
 suit_index <- 0.3
 
 fry_depth <- yuba_suit |> filter(life_stage == "Fry" &  suitability_metric == "Depth") |> 
@@ -423,6 +421,7 @@ For Spring Run Chinook, the Upper San Joaquin habitat is added to the [existing 
 
 ## Spawning Plot
 ```{r message=FALSE, warning=FALSE}
+library(cvpiaData)
 
 # spawn
 spawn <- expand_grid(
@@ -431,21 +430,22 @@ spawn <- expand_grid(
     year = 1979:2000) |> 
   arrange(year, month, watershed) |> 
   mutate(
-    biop_itp_2018_2019 = as.vector(DSMhabitat::sr_spawn$biop_itp_2018_2019['San Joaquin River' , , ] |> 
+    sit_habitat = as.vector(cvpiaData::sr_spawn[31 , , ] |> 
                          DSMhabitat::square_meters_to_acres()),
-    r_to_r_baseline = as.vector(sr_spawn$r_to_r_baseline['San Joaquin River', , ]) |>  
+    r_to_r_baseline = as.vector(DSMhabitat::sr_spawn$r_to_r_baseline['San Joaquin River', , ]) |>  
       DSMhabitat::square_meters_to_acres()
     )
 
 spawn |> 
   transmute(watershed, date = ymd(paste(year, month, 1)), 
-            biop_itp_2018_2019, r_to_r_baseline) |> 
+            sit_habitat, r_to_r_baseline) |> 
   gather(reach, acres, -watershed, -date)  |> 
   ggplot(aes(date, acres, color = reach)) +
   geom_line(alpha = .75) + 
   facet_wrap(~watershed) + 
   theme_minimal() + 
-  theme(legend.position = "top") + 
+  theme(legend.position = "top",
+        legend.title = element_blank()) + 
   ggtitle('San Joaquin Spawning Habitat') 
 
 ```
@@ -459,15 +459,15 @@ floodplain <- expand_grid(
     year = 1980:2000) |> 
   arrange(year, month, watershed) |> 
   mutate(
-    biop_itp_2018_2019 = as.vector(DSMhabitat::sr_fp$biop_itp_2018_2019['San Joaquin River' , , ] |> 
+    sit_habitat = as.vector(cvpiaData::sr_fp[31 , , ] |> 
                          DSMhabitat::square_meters_to_acres()),
-    r_to_r_baseline = as.vector(sr_fp$r_to_r_baseline['San Joaquin River', , ]) |>  
+    r_to_r_baseline = as.vector(DSMhabitat::sr_fp$r_to_r_baseline['San Joaquin River', , ]) |>  
       DSMhabitat::square_meters_to_acres()
     )
 
 floodplain |> 
   transmute(watershed, date = ymd(paste(year, month, 1)), 
-            biop_itp_2018_2019, r_to_r_baseline) |> 
+            sit_habitat, r_to_r_baseline) |> 
   gather(reach, acres, -watershed, -date)  |> 
   ggplot(aes(date, acres, color = reach)) +
   geom_line(alpha = .75) + 
@@ -488,15 +488,15 @@ juv <- expand_grid(
     year = 1980:2000) |> 
   arrange(year, month, watershed) |> 
   mutate(
-    biop_itp_2018_2019 = as.vector(DSMhabitat::sr_juv$biop_itp_2018_2019['San Joaquin River' , , ] |> 
+    sit_habitat = as.vector(cvpiaData::sr_juv[31 , , ] |> 
                          DSMhabitat::square_meters_to_acres()),
-    r_to_r_baseline = as.vector(sr_juv$r_to_r_baseline['San Joaquin River', , ]) |>  
+    r_to_r_baseline = as.vector(DSMhabitat::sr_juv$biop_itp_2018_2019['San Joaquin River', , ]) |>  
       DSMhabitat::square_meters_to_acres()
     )
 
 juv |> 
   transmute(watershed, date = ymd(paste(year, month, 1)), 
-            biop_itp_2018_2019, r_to_r_baseline) |> 
+            sit_habitat, r_to_r_baseline) |> 
   gather(reach, acres, -watershed, -date)  |> 
   ggplot(aes(date, acres, color = reach)) +
   geom_line(alpha = .75) + 
@@ -517,15 +517,15 @@ fry <- expand_grid(
     year = 1980:2000) |> 
   arrange(year, month, watershed) |> 
   mutate(
-    biop_itp_2018_2019 = as.vector(DSMhabitat::sr_fry$biop_itp_2018_2019['San Joaquin River' , , ] |> 
+    sit_habitat = as.vector(cvpiaData::sr_fry[31 , , ] |> 
                          DSMhabitat::square_meters_to_acres()),
-    r_to_r_baseline = as.vector(sr_fry$r_to_r_baseline['San Joaquin River', , ]) |>  
+    r_to_r_baseline = as.vector(DSMhabitat::sr_fry$r_to_r_baseline['San Joaquin River', , ]) |>  
       DSMhabitat::square_meters_to_acres()
     )
 
 fry |> 
   transmute(watershed, date = ymd(paste(year, month, 1)), 
-            biop_itp_2018_2019, r_to_r_baseline) |> 
+            sit_habitat, r_to_r_baseline) |> 
   gather(reach, acres, -watershed, -date)  |> 
   ggplot(aes(date, acres, color = reach)) +
   geom_line(alpha = .75) + 

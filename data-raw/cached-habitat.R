@@ -54,8 +54,10 @@ get_rear_hab_all <- function(watersheds, species, life_stage, calsim_version, ye
         hab_func_lower <- approxfun(lower_sj$flow_cfs, lower_sj$FR_juv_wua , rule = 2)
         hab_func_upper <- approxfun(upper_sj$flow_cfs, upper_sj$SR_juv_sqm , rule = 2)
       }
+      wua <- hab_func_lower(flows)
+      habitat_area_lower <- wua_to_area(wua = wua, watershed = 'San Joaquin River',
+                                        life_stage = "rearing", species_name = 'sr')
       
-      habitat_area_lower <- hab_func_lower(flows)
       habitat_area_upper <- hab_func_upper(flows)
       
       habitat_area <- habitat_area_upper + habitat_area_lower
@@ -66,7 +68,7 @@ get_rear_hab_all <- function(watersheds, species, life_stage, calsim_version, ye
         year = rep(years, each = 12),
         month = rep(1:12, length(years)),
         watershed = watershed,
-        hab_sq_m = acres_to_square_meters(habitat_area)
+        hab_sq_m = habitat_area
       )
       
     } else {
@@ -1095,4 +1097,107 @@ usethis::use_data(delta_contact_points, overwrite = TRUE)
 
 delta_prop_high_predation <- c("North Delta" = 1, "South Delta" = 1)
 usethis::use_data(delta_prop_high_predation, overwrite = TRUE)
+
+
+
+watershed_decay_status <- fallRunDSM::watershed_labels %in% c(
+  "Upper Sacramento River",
+  "Clear Creek",
+  "Feather River",
+  "Yuba River",
+  "American River",
+  "Stony Creek",
+  "Calaveras River",
+  "Mokelumne River",
+  "Merced River",
+  "Stanislaus River",
+  "Mokelumne River", 
+  "Tuolumne River"
+) |> setNames(fallRunDSM::watershed_labels)
+
+usethis::use_data(watershed_decay_status, overwrite = TRUE)
+
+
+# average spawning habitat
+spawning_habitat_average <-
+  list(
+    fr = DSMhabitat::square_meters_to_acres(apply(DSMhabitat::fr_spawn$biop_itp_2018_2019, MARGIN = 1, mean)), 
+    sr = DSMhabitat::square_meters_to_acres(apply(DSMhabitat::sr_spawn$biop_itp_2018_2019, MARGIN = 1, mean)), 
+    wr = DSMhabitat::square_meters_to_acres(apply(DSMhabitat::wr_spawn$biop_itp_2018_2019, MARGIN = 1, mean)),
+    lfr = DSMhabitat::square_meters_to_acres(apply(DSMhabitat::lfr_spawn$biop_itp_2018_2019, MARGIN = 1, mean))
+  )
+
+usethis::use_data(spawning_habitat_average, overwrite = TRUE)
+
+# above dam logic  --------------------------------------------------------
+# Calculate the percentage of spawning and rearing habitat that is above the dam in 
+# each tributary, and create a data object above_dam_spawn_hab_prop = 
+#   c(prop for each 31 watersheds, if no above dam habitat 0)
+
+# This script is built for winter run and spring run 
+# spawning and rearing
+get_proportion <- function(selected_species, selected_lifestage) {
+  above_dam <- readxl::read_excel('data-raw/R2R_TMH_habitat_inputs/Cleaned Floodplain Width Calculations.xlsx', 
+                                  sheet = "Above Dam") |> 
+    janitor::clean_names() |> 
+    group_by(river) |> 
+    summarise(above_dam_length_feet = sum(river_length_feet, na.rm = TRUE)) |> 
+    rename(watershed = river) 
+  
+  below_dam_abbr <- DSMhabitat::watershed_lengths |> 
+    select(watershed, feet, lifestage, species) |> 
+    filter(species == selected_species,
+           lifestage == selected_lifestage) 
+  
+  if(selected_species == "sr") {
+    below_dam <- below_dam_abbr |> bind_rows(DSMhabitat::watershed_lengths |> 
+                                               select(watershed, feet, lifestage, species) |> 
+                                               filter(species == 'fr',
+                                                      lifestage == selected_lifestage, 
+                                                      watershed  %in% c('Merced River', 'American River')) |> 
+                                               mutate(species = "sr")) 
+  } else if (selected_species == "wr") {
+    below_dam <-  below_dam_abbr |> 
+      bind_rows(DSMhabitat::watershed_lengths |> 
+                  select(watershed, feet, lifestage, species) |> 
+                  filter(lifestage == selected_lifestage,
+                         species == "fr", 
+                         watershed != "Battle Creek")) |> 
+      mutate(species = "wr") 
+    
+    if (selected_lifestage == "spawning") {
+      below_dam <- below_dam |> filter(watershed == "Upper Sacramento River")
+    }
+    
+    
+  }
+  
+  above_dam_hab_prop <- above_dam |> 
+    right_join(below_dam) |> 
+    full_join(DSMflow::watershed_ordering) |> 
+    arrange(order) |> 
+    mutate(proportion_above_dam = above_dam_length_feet / (above_dam_length_feet + feet),
+           proportion_above_dam = ifelse(is.na(proportion_above_dam), 0, proportion_above_dam)) |> 
+    pull(proportion_above_dam)
+  
+  return(above_dam_hab_prop)
+}
+
+# TODO: should we use the entire reach length for below dam rather than the spawning/rearing subset in order to align with above dam? 
+# NOTE: WR rearing - use fall run as proxy except for Battle Creek 
+above_dam_spawn_hab_prop_wr <- get_proportion("wr", "spawning") 
+above_dam_spawn_hab_prop_sr <- get_proportion("sr", "spawning") 
+
+above_dam_rearing_hab_prop_wr <- get_proportion("wr", "rearing") 
+above_dam_rearing_hab_prop_sr <- get_proportion("sr", "rearing") 
+
+
+
+above_dam_spawn_proportion <- list("sr" = above_dam_spawn_hab_prop_sr,
+                             "wr" = above_dam_spawn_hab_prop_wr)
+above_dam_rearing_proportion <- list("sr" = above_dam_rearing_hab_prop_sr,
+                                   "wr" = above_dam_rearing_hab_prop_wr)
+
+usethis::use_data(above_dam_spawn_proportion, overwrite = TRUE)
+usethis::use_data(above_dam_rearing_proportion, overwrite = TRUE)
 
