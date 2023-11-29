@@ -164,8 +164,7 @@ yuba_suit_for_table <- yuba_suit |>
 
 colnames(yuba_suit_for_table) <- c("River", "Species", "Race", "Life Stage", "Suitability Metric", "Value", "Unit", "Suitability Index")
 
-paged_table(yuba_suit_for_table |> 
-              filter(`Suitability Metric` >= 0.3))
+paged_table(yuba_suit_for_table)
 ```
 
 ## Instream Rearing Habitat
