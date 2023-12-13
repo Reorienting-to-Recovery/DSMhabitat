@@ -2,7 +2,7 @@
 title: "Interactive Map of Spawning and Rearing Habitat"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Interactive Floodplain Habitat Map}
+  %\VignetteIndexEntry{Interactive Map of Spawning and Rearing Habitat}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -33,9 +33,11 @@ library(rgdal)
 library(tidyverse)
 library(readxl)
 library(sf)
+library(leaflet.extras2)
 
 
-salmonid_extents <- readOGR("../data-raw/rearing_spatial_data/salmonid_habitat_extents/salmonid_habitat_extents.shp", 
+
+salmonid_extents <- readOGR("data-raw/rearing_spatial_data/salmonid_habitat_extents/salmonid_habitat_extents.shp", 
                             stringsAsFactors = FALSE, verbose = FALSE) %>%
   spTransform(CRS("+proj=longlat +datum=WGS84 +no_defs"))
 
@@ -48,23 +50,23 @@ lfr <- subset(salmonid_extents, Species == 'Late-Fall Run Chinook' & Habitat == 
 sts <- subset(salmonid_extents, Species == 'Steelhead' & Habitat == 'spawning')
 str <- subset(salmonid_extents, Species == 'Steelhead' & Habitat == 'rearing')
 
-baseline_projects <- readRDS('../data-raw/map_data/baseline_projects.RDS')
+baseline_projects <- readRDS('data-raw/map_data/baseline_projects.RDS')
 baseline_proj_pts <- baseline_projects |> 
       filter(st_is(geometry , "POINT"))
     
 baseline_proj_poly <- baseline_projects |> 
       filter(st_is(geometry , "MULTIPOLYGON"))
-hqt <- readRDS('../data-raw/map_data/hqt.RDS')
+hqt <- readRDS('data-raw/map_data/hqt.RDS')
 
-tmh_reaches <- readRDS('../data-raw/map_data/TMH_reaches.rds') |> 
+tmh_reaches <- readRDS('data-raw/map_data/TMH_reaches.rds') |> 
   group_by(river) |> 
   mutate(id = cur_group_id())
 
-rim_dams <- readRDS('../data-raw/map_data/rim_dams.RDS')
-dam_barriers <- readRDS('../data-raw/map_data/dam_barriers.RDS')
+rim_dams <- readRDS('data-raw/map_data/rim_dams.RDS')
+dam_barriers <- readRDS('data-raw/map_data/dam_barriers.RDS')
 ```
 
-```{r, echo = FALSE, warning = FALSE, message = FALSE, results='asis'}
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
 make_label <- function(data) {
   labels <- sprintf("<strong>%s</strong> <br/> %s: %s miles",
                   data$River, 
@@ -72,12 +74,12 @@ make_label <- function(data) {
                   round(data$miles, 1)) %>% lapply(htmltools::HTML)
 }
 
-leaflet() %>% 
+hab_map <- leaflet() %>% 
       addProviderTiles(providers$Esri.WorldTopoMap, group = "Map") %>% 
       addProviderTiles(providers$Esri.WorldImagery, group = "Satellite") %>%
-      addPolylines(data = tmh_reaches, group = 'TMH River Extent', 
-                  layerId = tmh_reaches$id, opacity = .5, weight = 3) |> 
-      addPolygons(data = rim_dams, group = 'Rim Dams', popup = rim_dams$NAME, color = "darkblue") |>
+      # addPolylines(data = tmh_reaches, group = 'TMH River Extent', 
+      #             layerId = tmh_reaches$id, opacity = .5, weight = 3) |> 
+      # addPolygons(data = rim_dams, group = 'Rim Dams', popup = rim_dams$NAME, color = "darkblue") |>
       addPolylines(data = str, group = 'Steelhead Rearing', label = make_label(str),
                    color = '#5e3c99', opacity = .8, weight = 3) %>%
       addPolylines(data = sts, group = 'Steelhead Spawning', label = make_label(sts),
@@ -101,7 +103,7 @@ leaflet() %>%
       addLayersControl(
         baseGroups = c("Map", "Satellite"),
         overlayGroups = c('Current Restoration Projects',
-                          'TMH River Extent','Rim Dams', 
+                          # 'TMH River Extent','Rim Dams', 
                           'Fall Run Rearing', 'Fall Run Spawning', 
                           'Late-Fall Run Rearing', 'Late-Fall Run Spawning',
                           'Spring Run Rearing','Spring Run Spawning', 
@@ -113,8 +115,11 @@ leaflet() %>%
       hideGroup('Steelhead Spawning') %>%
       hideGroup('Steelhead Rearing') %>%
       hideGroup("Valley Lowland (<0.04%)") |> 
+      # hideGroup('TMH River Extent') |> 
+      # hideGroup('Rim Dams') |> 
       addLegend(colors = c('#5e3c99', '#e66101', "blue"), labels = c('rearing', 'spawning', 'TMH'),
                 position = 'topleft', title = 'Habitat Type') %>% 
-      setView(lat = 38.85, lng = -121.49, zoom = 7.5)
+      setView(lat = 38.85, lng = -121.49, zoom = 7.5) 
+addSpinner(hab_map)
 
 ```
