@@ -129,7 +129,7 @@ To model these habitat benefit and food production periods as they would have oc
 * Sutter Bypass at Butte Slough (BSL)
 * Yolo Bypass at Woodland (YBY)
 
-The following figure illustrates the results of this analysis for each bypass. Dark blue bars indicate the number of days of rice field juvenile salmon rearing possible in each water year, while light blue bars indicate the number of days of fish food production. Estimates of the volume of fish food production are derived using the estimated rate of invertebrate growth on agricultural wetlands of 0.186 g per square meter per day, per Moss *et al.*, 2009.^[Moss, R.C., Blumenshine, S.C., Yee, J. & Fleskes, J.P. (2009). Emergent insect production in post-harvest flooded agricultural fields used by waterbirds. *Wetlands* 29(3) pp. 875-883. [doi:10.1672/07-169.1](https://doi.org/10.1672/07-169.1)]
+The following figure illustrates the results of this analysis for each bypass. Dark blue bars indicate the number of days of rice field juvenile salmon rearing possible in each water year, while light blue bars indicate the number of days of fish food production. Estimates of the volume of fish food production are derived using the estimated rate of invertebrate growth on agricultural wetlands of 0.186 g per square meter per day, per Moss *et al.*, 2009,^[Moss, R.C., Blumenshine, S.C., Yee, J. & Fleskes, J.P. (2009). Emergent insect production in post-harvest flooded agricultural fields used by waterbirds. *Wetlands* 29(3) pp. 875-883. [doi:10.1672/07-169.1](https://doi.org/10.1672/07-169.1)] and assume that growth continues linearly and is not subject to a carrying capacity.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 knitr::include_graphics("rice-field-rearing-scenario/plot-summary-v2-1.png")
