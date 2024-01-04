@@ -1,5 +1,5 @@
 ---
-title: "Explore DSM HabitatC hanges"
+title: "Explore DSM Habitat Changes"
 author: "Erin Cain"
 date: "7/23/2021"
 output: 
@@ -90,8 +90,8 @@ rear_scales <- tibble(watershed = factor(c(DSMscenario::watershed_labels[c(1, 6,
 ```
 ## Spawning Habitat 
 ```{r}
-new <- DSMhabitat::fr_spawn %>% DSMhabitat::square_meters_to_acres()
-old <- cvpiaData::fr_spawn %>% DSMhabitat::square_meters_to_acres()
+new <- DSMhabitat::fr_spawn$eff_sac %>% DSMhabitat::square_meters_to_acres()
+old <- DSMhabitat::fr_spawn$biop_itp_2018_2019 %>% DSMhabitat::square_meters_to_acres()
 spawn <- expand_grid(
   watershed = factor(DSMscenario::watershed_labels, 
                      levels = DSMscenario::watershed_labels),
@@ -101,14 +101,15 @@ spawn <- expand_grid(
   arrange(year, month, watershed) %>% 
   mutate(
     old = as.vector(old),
-    new = as.vector(new),
-    scaled = old * scales)
+    new = as.vector(new))
 spawn %>% 
-  transmute(watershed, date = ymd(paste(year, month, 1)), old, new, scaled) %>% 
+  filter(watershed == "Upper Sacramento River") |> 
+  filter(month %in% c(10, 11, 12), year == 1980) |> 
+  transmute(watershed, date = ymd(paste(year, month, 1)), old, new) %>% 
   filter(!(watershed %in% c('Sutter Bypass', 'Yolo Bypass'))) %>% 
   gather(version, acres, -watershed, -date)  %>% 
   ggplot(aes(date, acres, color = version)) +
-  geom_line() +
+  geom_point() + 
   facet_wrap(~watershed, scales = 'free_y')
 ```
 
