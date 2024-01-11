@@ -211,7 +211,7 @@ delta_tmh_processing <- function(watersheds = c('North Delta', 'South Delta')) {
   return(r_to_r_tmh_delta)
 }
 
-existing_flow_cfs <- function(habitat_type, watershed_input, bypass = FALSE, species, calsim_run) {
+existing_flow_cfs_old <- function(habitat_type, watershed_input, bypass = FALSE, species, life_stage, calsim_run) {
   
   flow_df <- if (bypass == FALSE) {DSMflow::flows_cfs[[calsim_run]]} else {DSMflow::bypass_flows[[calsim_run]]}
   
@@ -238,6 +238,81 @@ existing_flow_cfs <- function(habitat_type, watershed_input, bypass = FALSE, spe
     
   }
 }
+
+existing_flow_cfs <- function(habitat_type, watershed_input, bypass = FALSE, species, life_stage, calsim_run) {
+  flow_df <- if (bypass == FALSE) {DSMflow::flows_cfs[[calsim_run]]} else {DSMflow::bypass_flows[[calsim_run]]}
+  quantification_mode <- subset(DSMhabitat::watershed_methods, 
+                                watershed_name == watershed_input, instream, drop = TRUE)
+  if (watershed_input %in% c('Upper Sacramento River', 'Upper-mid Sacramento River',
+                       'Lower-mid Sacramento River1', 'Lower-mid Sacramento River2', 'Lower Sacramento River') & 
+      habitat_type %in% c("spawning", "rearing")) {
+    if (habitat_type == c("spawning")) {
+      if (species %in% c("fr", "sr")) {
+        # pull from flow table for now, should clean up
+        # use uper_sac_ACID_boards_in DF because that is majority of fr spawn season
+        flow = 4500
+      }
+      if (species == "wr") {
+        flow = 10000
+      }
+      if (species == "st") {
+        flow = 3750
+      }
+      if (species == "lfr") {
+        flow = 4250
+      }
+    } else if (habitat_type == "rearing") {
+      if (watershed_input %in% c('Lower-mid Sacramento River1', 'Lower-mid Sacramento River2')) {
+        flow = 2000
+      } else {
+      watershed_name <- tolower(gsub(pattern = "-| ", replacement = "_", x = watershed_input))
+      watershed_rda_name <- paste(watershed_name, "instream", sep = "_")
+      df <- as.data.frame(do.call(`::`, list(pkg = "DSMhabitat", name = watershed_rda_name)))
+      df_na_rm <- df[!is.na(df[, "rearing_sq_meters"]), ]
+      max_hab <- max(df_na_rm[, "rearing_sq_meters"])
+      df_na_rm[, "rearing_sq_meters"] <- round(df_na_rm[, "rearing_sq_meters"])
+      flow <- df_na_rm[df_na_rm[, "rearing_sq_meters"] == round(max_hab), ][, "flow_cfs"]
+      }
+    }
+  } else if (habitat_type %in% c("spawning", "rearing")) {
+    if (DSMhabitat::watershed_species_present$use_mid_sac_spawn_proxy[DSMhabitat::watershed_species_present$watershed_name == watershed_input]) {
+      if (watershed_input == "Deer Creek" & species != "sr") {
+        watershed_input <- watershed_input
+        species <- species  
+      } else {
+        watershed_input <- "Upper Mid Sac Region"
+        species <- "fr"
+        quantification_mode <- "wua"
+      }
+    } else {
+      watershed_input <- watershed_input
+      species <- species
+    }
+    watershed_name <- tolower(gsub(pattern = "-| ", replacement = "_", x = watershed_input))
+    watershed_rda_name <- paste(watershed_name, "instream", sep = "_")
+    df <- as.data.frame(do.call(`::`, list(pkg = "DSMhabitat", name = watershed_rda_name)))
+    life_stage = ifelse(life_stage == "spawning", "spawn", life_stage)
+    hab_column <- DSMhabitat::get_habitat_selector(names(df), species, life_stage, mode = quantification_mode)
+    df_na_rm <- df[!is.na(df[, hab_column]), ]
+    max_hab <- max(df_na_rm[, hab_column])
+    df_na_rm[, hab_column] <- round(df_na_rm[, hab_column])
+    flow <- df_na_rm[df_na_rm[, hab_column] == round(max_hab), ][, "flow_cfs"]
+    if (watershed_input == "Clear Creek") {
+      flow = 200
+    }
+  } else if(habitat_type == "flood") {
+    flood = flow_df |> 
+      filter(date >= as_date("1980-01-01")) |> 
+      select(watershed_input, date) |> 
+      rename(flow_cfs = watershed_input) 
+    
+    exceedance_probs_monthly_fun <- exceedance_probs_monthly(flood, roll_stat, annual_stat)
+    flow <- calsim_30_day(flood, exceedance_probs_monthly_fun)
+    
+  }
+  return(flow)
+}
+
 
 roll_stat = min
 annual_stat = max
@@ -286,7 +361,7 @@ existing_acres_fun <- function(watershed_input, habitat_type, selected_species, 
                                                                                         flow1, flow2)) # No spawn on lower-mid sac 
     )
   } else {
-    flow <- existing_flow_cfs(habitat_type, watershed_input, species = selected_species, calsim_run = calsim_run)
+    flow <- existing_flow_cfs(habitat_type, watershed_input, species = selected_species, life_stage = selected_life_stage, calsim_run = calsim_run)
     acres <- switch(habitat_type, 
                     "flood" = square_meters_to_acres(set_floodplain_habitat(watershed = watershed_input, 
                                                                             species = selected_species, 
@@ -305,7 +380,7 @@ existing_acres_fun <- function(watershed_input, habitat_type, selected_species, 
        !(watershed_input %in% c('Upper Sacramento River', 'Upper-mid Sacramento River',
                             'Lower-mid Sacramento River', 'Battle Creek')))) {
         # use fall run as proxy for most watersheds: 
-        flow <- existing_flow_cfs(habitat_type, watershed_input, species = "fr", calsim_run = calsim_run)
+        flow <- existing_flow_cfs(habitat_type, watershed_input, species = "fr", life_stage = selected_life_stage, calsim_run = calsim_run)
         acres <- switch(selected_life_stage, 
                       "juv" = square_meters_to_acres(DSMhabitat::set_instream_habitat(watershed = watershed_input, species = 'fr', life_stage = "juv", flow = flow)),
                       "fry" = square_meters_to_acres(DSMhabitat::set_instream_habitat(watershed = watershed_input, species = 'fr', life_stage = "fry", flow = flow))
