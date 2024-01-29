@@ -16,7 +16,7 @@ watersheds_trunc <- DSMscenario::watershed_labels[!(DSMscenario::watershed_label
 
 r_to_r_tmh_fr_spawn_eff <- spawn_tmh_processing(watersheds = watersheds_trunc, species = "fr", calsim_run = "eff_sac")
 r_to_r_tmh_wr_spawn_eff <- spawn_tmh_processing(watersheds = watersheds_trunc, species = "wr", calsim_run = "eff_sac")
-r_to_r_tmh_sr_spawn_eff <- spawn_tmh_processing(watersheds = watersheds_trunc, species = "sr", calsim_run = "eff_sac")
+r_to_r_tmh_sr_spawn_eff <- spawn_tmh_processing(watersheds = watersheds_trunc, species = "sr", calsim_run = "sac_eff")
 
 r_to_r_tmh_fr_spawn_eff - DSMhabitat::fr_spawn$r_to_r_tmh_eff # check, should be different 
 
