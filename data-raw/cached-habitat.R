@@ -4,7 +4,7 @@ library(purrr)
 library(lubridate)
 library(DSMhabitat)
 
-remotes::install_github("Reorienting-to-recovery/DSMflow@eff")
+# remotes::install_github("Reorienting-to-recovery/DSMflow@eff")
 
 library(DSMflow)
 watersheds <- DSMscenario::watershed_labels
