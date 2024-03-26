@@ -36,9 +36,9 @@ r_to_r_tmh_sr_juv_eff[which(is.na(r_to_r_tmh_sr_juv_eff))] <- r_to_r_tmh_fr_juv_
 r_to_r_tmh_fr_juv_eff - DSMhabitat::fr_juv$r_to_r_tmh_eff # test - should be different 
 
 ##floodplain: -------------------------------------------------------------
-r_to_r_tmh_fr_flood_eff <- floodplain_tmh_processing(watersheds = watersheds_trunc, species = "fr", calsim_run = "biop_itp_2018_2019")
-r_to_r_tmh_sr_flood_eff <- floodplain_tmh_processing(watersheds = watersheds_trunc, species = "sr", calsim_run = "biop_itp_2018_2019")
-r_to_r_tmh_wr_flood_eff <- floodplain_tmh_processing(watersheds = watersheds_trunc, species = "wr", calsim_run = "biop_itp_2018_2019")
+r_to_r_tmh_fr_flood_eff <- floodplain_tmh_processing(watersheds = watersheds_trunc, species = "fr", calsim_run = "eff_sac")
+r_to_r_tmh_sr_flood_eff <- floodplain_tmh_processing(watersheds = watersheds_trunc, species = "sr", calsim_run = "eff_sac")
+r_to_r_tmh_wr_flood_eff <- floodplain_tmh_processing(watersheds = watersheds_trunc, species = "wr", calsim_run = "eff_sac")
 
 r_to_r_tmh_fr_flood_eff == r_to_r_tmh_sr_flood_eff # test - should be different 
 
