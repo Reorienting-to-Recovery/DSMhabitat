@@ -362,11 +362,13 @@ create_spawning_decays <- function(watersheds, dsm_flows) {
 watershed_spawning_decays_09 <- create_spawning_decays(watersheds_with_decay, dsm_flows = DSMflow::flows_cfs$biop_2008_2009)
 watershed_spawning_decays_19 <- create_spawning_decays(watersheds_with_decay, dsm_flows = DSMflow::flows_cfs$biop_itp_2018_2019)
 watershed_spawning_decays_rr <- create_spawning_decays(watersheds_with_decay, dsm_flows = DSMflow::flows_cfs$run_of_river)
+watershed_spawning_decays_eff <- create_spawning_decays(watersheds_with_decay, dsm_flows = DSMflow::flows_cfs$eff_sac)
 
 watershed_spawning_decays <- list(
   "biop_2008_2009" = watershed_spawning_decays_09,
   "biop_itp_2018_2019" = watershed_spawning_decays_19, 
-  "run_of_river" = watershed_spawning_decays_rr
+  "run_of_river" = watershed_spawning_decays_rr,
+  "eff" = watershed_spawning_decays_eff
 )
 
 
@@ -386,7 +388,11 @@ p3 <- watershed_spawning_decays$run_of_river$`Clear Creek` |>
   ggplot(aes(date, decay_acres_month, color = decay_type)) + geom_line()+ 
   labs(x = "", y = "Acres per Month", title = "Run of River")
 
-gridExtra::grid.arrange(p1, p2, p3, nrow = 1)
+p4 <- watershed_spawning_decays$eff$`Clear Creek` |>  
+  ggplot(aes(date, decay_acres_month, color = decay_type)) + geom_line()+ 
+  labs(x = "", y = "Acres per Month", title = "EFF")
+
+gridExtra::grid.arrange(p1, p2, p3, p4, nrow = 1)
 
 
 # adjust the curve to be used by each of the watersheds
@@ -480,6 +486,19 @@ spawning_decay_mult_rr_wr <- create_multiplier(watershed_spawning_decays$run_of_
                                             watershed_decay_level_lookups,
                                             run = "wr")
 
+spawning_decay_mult_eff_fr <- create_multiplier(watershed_spawning_decays$eff, 
+                                               watershed_decay_level_lookups,
+                                               run = "fr")
+
+spawning_decay_mult_eff_sr <- create_multiplier(watershed_spawning_decays$eff, 
+                                               watershed_decay_level_lookups,
+                                               run = "sr")
+
+
+spawning_decay_mult_eff_wr <- create_multiplier(watershed_spawning_decays$eff, 
+                                               watershed_decay_level_lookups,
+                                               run = "wr")
+
 make_mult_array <- function(mult_list) {
   out <- array(data = NA, dim = c(31, 12, 22), 
                                    dimnames = list(fallRunDSM::watershed_labels, 
@@ -511,6 +530,11 @@ spawning_decay_multiplier <- list(
     "fr" = make_mult_array(mult_list = spawning_decay_mult_rr_fr), 
     "sr" = make_mult_array(mult_list = spawning_decay_mult_rr_sr),
     "wr" = make_mult_array(mult_list = spawning_decay_mult_rr_wr)
+  ),
+  "eff" = list(
+    "fr" = make_mult_array(mult_list = spawning_decay_mult_eff_fr), 
+    "sr" = make_mult_array(mult_list = spawning_decay_mult_eff_sr),
+    "wr" = make_mult_array(mult_list = spawning_decay_mult_eff_wr)
   )
 )
 
