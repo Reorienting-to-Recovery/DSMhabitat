@@ -180,7 +180,7 @@ american_river_floodplain |>
   geom_line() +
   theme_minimal() +
   scale_color_brewer(palette = 'Dark2') +
-  labs(x = 'Flow (cfs)', y = 'Total Inundated Acres') +
+  labs(x = 'Flow (cfs)', y = 'Suitable Acres') +
   scale_color_manual(values = c('#d95f02', '#7570b3')) +
   theme(legend.justification = c(1, 0), legend.position = c(1, .1))
 ```
