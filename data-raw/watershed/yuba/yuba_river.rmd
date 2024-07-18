@@ -15,17 +15,80 @@ library(scales)
 ```
 
 ## Future Data Improvements
-Update with new VA data. 
+None expected.
 
 ## Instream Spawning and Rearing Habitat
+
+#### Chinook
+
+**Data Source:** Updated spawning, in-channel rearing, and floodplain rearing were provided directly by [Morgan Neal](morgan.neal@hdrinc.com) (HDR, Inc.) as part of an analysis to account for projected suitable habitat created by Health Rivers and Landscapes (HRL) projects. These data were provided in an excel format stored in `data-raw/watershed/yuba/data/HydraulicHabFlow_LYR_7-15-2024.xlsx`.
+
+Water depths and water velocities in the lower Yuba River were simulated by using a TUFLOW HPC 2D hydrodynamic model of the lower Yuba River using a 2017 digital elevation model (DEM). The 2017 DEM was developed subsequent to high flows that occurred during Winter of 2017 using Airborne Light Detection and Ranging (LiDAR), boat-based multibeam and single beam echosounding, and ground-based topographic surveying with Real-time kinematic (RTK) Global Positioning System (GPS) and robotic total stationing. The 2D model was run with a 3’x3’ computation mesh for flows <= 30,000 cfs and a 10’x10’ mesh for flows > 30,000 to 110,400 cfs. Detailed discussion of the calibration, validation and deployment of the 2017 2D model of the lower Yuba River is provided in Pasternack (in prep) and the documentation of the methodologies employed to produce the 2017 DEM is provided in Silva and Pasternack (2018). 
+
+Rearing hydraulic criteria: 
+
+- Depth >= 0.5 and <= 4.0 ft
+- Velocity <= 3.0 ft/sec
+
+Spawning hydraulic criteria: 
+
+- Depth >= 1.0 and <= 2.5 ft
+- Velocity >= 1.0 and <= 4.0 ft/sec
+
+Spawning substrate criteria and data: 
+
+- Dominant substrate 2-10 cm
+- Mean diameter substrate data based on 2010-2011 and 2018-2020 surveys within the bankfull channel (5,000 cfs extent)
+
+Existing condition in-channel and floodplain rearing habitat:
+
+- Delineation of in-channel and floodplain based on 1,5000 cfs wetted extent below DPD (as modified by HAllwood As-Built condition) and 1,750 cfs wetted extent above DPD
+- Based on preliminary YWA analysis of flow that meets the intent of Meaningful Floodplain Event (MFE) criteria during 80% of years using modeled daily hydrology below DPD and below Deer Creek.
+
+#### Steelhead
+
 **Data Source:** [Spawning FWS 2010](https://www.fws.gov/lodi/instream-flow/Documents/Yuba%20River%20Spawning%20Final%20Report.pdf){target="_blank"} (pgs 59-61) and  [Rearing FWS 2010](https://www.fws.gov/lodi/instream-flow/Documents/Yuba%20River%20Rearing%20Final%20Report.pdf){target="_blank"} (pgs 74-76)
 
-The instream spawning and rearing habitat for Fall Run Chinook Salmon, Spring Run Chinook Salmon, and Steelhead in the Yuba River are based on data from the Fish and Wildlife Service (FWS) flow-habitat relationship final reports. A 2-dimensional hydraulic and habitat model called River2D was used to model available spawning and rearing habitat. The FWS instream spawning and rearing data were provided by [Mark Gard](mailto:Mark.Gard@Wildlife.ca.gov) from the California Department of Fish and Wildlife in a [spreadsheet](https://cvpiahabitat-r-package.s3-us-west-2.amazonaws.com/IFIMWUA.xlsx). Mark Gard instructed us to use cells A4:H33 and A39:H68 of the 'Yuba' tab within the spreadsheet, representing the Englebright to Daguerre Segment (12.7 miles) and the Daguerre to Feather Segment (11.4 miles), respectively. For adult Steelhead, Mark Gard instructed us to use cells A73:B100 of the 'Yuba' tab within the spreadsheet. 
+The instream spawning and rearing habitat for Steelhead in the Yuba River are based on data from the Fish and Wildlife Service (FWS) flow-habitat relationship final reports. A 2-dimensional hydraulic and habitat model called River2D was used to model available spawning and rearing habitat. The FWS instream spawning and rearing data were provided by [Mark Gard](mailto:Mark.Gard@Wildlife.ca.gov) from the California Department of Fish and Wildlife in a [spreadsheet](https://cvpiahabitat-r-package.s3-us-west-2.amazonaws.com/IFIMWUA.xlsx). Mark Gard instructed us to use cells A4:H33 and A39:H68 of the 'Yuba' tab within the spreadsheet, representing the Englebright to Daguerre Segment (12.7 miles) and the Daguerre to Feather Segment (11.4 miles), respectively. For adult Steelhead, Mark Gard instructed us to use cells A73:B100 of the 'Yuba' tab within the spreadsheet. 
+
 
 ### Spawning and Rearing Data
-The instream spawning and rearing habitat data described above for Fall Run Chinook Salmon (FR), Spring Run Chinook Salmon (SR), and Steelhead (ST) are combined for use in the Decision Support Model (DSM) in the following format. Units are in square feet per 1000 feet.
-```{r}
 
+#### Steelhead
+The instream spawning and rearing habitat data described above for Steelhead (ST) are combined for use in the Decision Support Model (DSM) in the following format. Units are in square feet per 1000 feet.
+
+#### Chinook
+Instream spawning and rearing habitat data provided for Chinook are provided in units of suitable acres. 
+
+```{r}
+# Chinook data
+chinook_ic_rear <- read_excel("data-raw/watershed/yuba/data/HydraulicHabFlow_LYR_7-15-2024.xlsx",
+                   sheet = "LYR_HabFlowRelationships",
+                   range = "A4:C40") |> 
+  janitor::clean_names() |> 
+  pivot_longer(below_dpd:above_dpd, 
+               names_to = "reach",
+               values_to = "FR_ic_juv")
+
+chinook_fp_rear <- read_excel("data-raw/watershed/yuba/data/HydraulicHabFlow_LYR_7-15-2024.xlsx",
+                   sheet = "LYR_HabFlowRelationships",
+                   range = "A4:G40") |> 
+  janitor::clean_names() |> 
+  select(flow_cfs, below_dpd = below_dpd_6, above_dpd = above_dpd_7) |> 
+  pivot_longer(below_dpd:above_dpd, 
+               names_to = "reach",
+               values_to = "FR_fp_juv")
+
+chinook_spawn <- read_excel("data-raw/watershed/yuba/data/HydraulicHabFlow_LYR_7-15-2024.xlsx",
+                   sheet = "LYR_HabFlowRelationships",
+                   range = "A4:K40") |> 
+  janitor::clean_names() |> 
+  select(flow_cfs, below_dpd = below_dpd_10, above_dpd = above_dpd_11) |> 
+  pivot_longer(below_dpd:above_dpd, 
+               names_to = "reach",
+               values_to = "FR_spawn") 
+
+# Steelhead
 eng_dag <- read_excel('data-raw/mark_gard_data/IFIMWUA.xlsx', 
                       sheet = 'Yuba', range = 'A4:H33', 
                       col_names = c('flow', 'SR_spawn', 'FR_spawn', 'ST_spawn', 
@@ -42,12 +105,12 @@ tot_study_len = 12.7 + 11.4
 
 eng_dag_approx <- tibble(
   flow_cfs = Flow,
-  SR_spawn_wua = approx(eng_dag$flow, eng_dag$SR_spawn, xout = Flow, rule = 1:2)$y,
-  FR_spawn_wua = approx(eng_dag$flow, eng_dag$FR_spawn, xout = Flow, rule = 1:2)$y,
+  #SR_spawn_wua = approx(eng_dag$flow, eng_dag$SR_spawn, xout = Flow, rule = 1:2)$y,
+  #FR_spawn_wua = approx(eng_dag$flow, eng_dag$FR_spawn, xout = Flow, rule = 1:2)$y,
   ST_spawn_wua = approx(eng_dag$flow, eng_dag$ST_spawn, xout = Flow, rule = 1:2)$y,
-  FR_fry_wua = approx(eng_dag$flow, eng_dag$FR_fry, xout = Flow, rule = 1:2)$y,
+  #FR_fry_wua = approx(eng_dag$flow, eng_dag$FR_fry, xout = Flow, rule = 1:2)$y,
   ST_fry_wua = approx(eng_dag$flow, eng_dag$ST_fry, xout = Flow, rule = 1:2)$y,
-  FR_juv_wua = approx(eng_dag$flow, eng_dag$FR_juv, xout = Flow, rule = 1:2)$y,
+  #FR_juv_wua = approx(eng_dag$flow, eng_dag$FR_juv, xout = Flow, rule = 1:2)$y,
   ST_juv_wua = approx(eng_dag$flow, eng_dag$ST_juv, xout = Flow, rule = 1:2)$y,
   mi = 12.7
 )
@@ -55,12 +118,12 @@ eng_dag_approx <- tibble(
 # convert from sqft to sqft/1000ft
 dag_fea_approx <- tibble(
   flow_cfs = Flow,
-  SR_spawn_wua = approx(dag_fea$flow, dag_fea$SR_spawn, xout = Flow, rule = 2)$y,
-  FR_spawn_wua = approx(dag_fea$flow, dag_fea$FR_spawn, xout = Flow, rule = 2)$y,
+  #SR_spawn_wua = approx(dag_fea$flow, dag_fea$SR_spawn, xout = Flow, rule = 2)$y,
+  #FR_spawn_wua = approx(dag_fea$flow, dag_fea$FR_spawn, xout = Flow, rule = 2)$y,
   ST_spawn_wua = approx(dag_fea$flow, dag_fea$ST_spawn, xout = Flow, rule = 2)$y,
-  FR_fry_wua = approx(dag_fea$flow, dag_fea$FR_fry, xout = Flow, rule = 2)$y,
+  #FR_fry_wua = approx(dag_fea$flow, dag_fea$FR_fry, xout = Flow, rule = 2)$y,
   ST_fry_wua = approx(dag_fea$flow, dag_fea$ST_fry, xout = Flow, rule = 2)$y,
-  FR_juv_wua = approx(dag_fea$flow, dag_fea$FR_juv, xout = Flow, rule = 2)$y,
+  #FR_juv_wua = approx(dag_fea$flow, dag_fea$FR_juv, xout = Flow, rule = 2)$y,
   ST_juv_wua = approx(dag_fea$flow, dag_fea$ST_juv, xout = Flow, rule = 2)$y,
   mi = 11.4
 )
@@ -73,9 +136,11 @@ rearing <- eng_dag_approx %>%
   summarise(wua = sum(sq_ft/mi/5.28 * mi/tot_study_len, na.rm = TRUE)) %>% 
   ungroup() %>% 
   spread(lifestage, wua) %>% 
-  select(flow_cfs, FR_spawn_wua, SR_spawn_wua, ST_spawn_wua,
-         FR_fry_wua, ST_fry_wua, FR_juv_wua, ST_juv_wua)
+  select(flow_cfs, ST_fry_wua, ST_juv_wua, ST_spawn_wua)
+        #FR_spawn_wua, SR_spawn_wua, 
+        #FR_fry_wua, FR_juv_wua)
 
+# TODO stopped here
 rear_len <- DSMhabitat::watershed_lengths %>% 
   filter(watershed == 'Yuba River', lifestage == 'rearing', species == 'fr') %>% 
   pull(miles)
@@ -89,8 +154,8 @@ adult_trout <- read_excel('data-raw/mark_gard_data/IFIMWUA.xlsx',
 yuba_river_instream <- rearing %>% 
   left_join(adult_trout) %>% 
   mutate(watershed = 'Yuba River') %>% 
-  select(flow_cfs, FR_spawn_wua, FR_fry_wua, FR_juv_wua, SR_spawn_wua,
-         ST_spawn_wua, ST_fry_wua, ST_juv_wua, ST_adult_wua, watershed)
+  select(flow_cfs, ST_spawn_wua, ST_fry_wua, ST_juv_wua, ST_adult_wua, watershed)
+        # FR_spawn_wua, FR_fry_wua, FR_juv_wua, SR_spawn_wua)
 
 knitr::kable(align = 'c', head(yuba_river_instream, 5), 
              caption = "Header Descriptions: flow_cfs = flow in cubic feet per second,
