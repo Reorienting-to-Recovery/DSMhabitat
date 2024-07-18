@@ -58,7 +58,7 @@ The instream spawning and rearing habitat for Steelhead in the Yuba River are ba
 The instream spawning and rearing habitat data described above for Steelhead (ST) are combined for use in the Decision Support Model (DSM) in the following format. Units are in square feet per 1000 feet.
 
 #### Chinook
-Instream spawning and rearing habitat data provided for Chinook are provided in units of suitable acres. 
+Instream spawning and rearing habitat data provided for Chinook are provided in units of suitable acres. They were converted to square meters.
 
 ```{r}
 # Chinook data
