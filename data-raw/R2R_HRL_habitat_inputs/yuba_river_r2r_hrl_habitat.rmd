@@ -1,0 +1,137 @@
+---
+title: "Yuba River HRL curves"
+author: "[Liz Stebbins](mailto:lstebbins@flowwest.com)" 
+date:  "July 2024" 
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, out.width = '100%')
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+options(usethis.quiet = TRUE)
+library(tidyverse)
+library(readxl)
+library(DSMhabitat)
+library(scales)
+```
+
+## Future Data Improvements
+
+TODO
+
+## HRL flow-to-habitat relationship
+
+**Data Source:** FlowWest coordinated with representatives for the Yuba River to determine the best scientific information available to quantify existing suitable habitat, and to describe the VA non-flow habitat as *suitable area that varies with flow*. Habitat data were provided to R2R for use in accounting for planned habitat projects by [Morgan Neal](mailto:morgan.neal@hrd.inc) and [Paul Bratovich](mailto:bratovich@robertson-bryan.com).
+
+**Methods:**
+
+NOTE: Habitat-flow relationships with HR&L projects in this workbook are based on rough approximations based on limited information that is currently available regarding projects that have not been fully designed, constructed, modeled and/or evaluated. The only way to actually estimate empirically-derived habitat suitability is to construct the habitat, create a new DEM, run a 2D hydraulic model and estimate the difference in area that conforms with the suitability criteria (depth and velocity, with the cover qualifying criterion for rearing and substrate for spawning) over the range of design flows. 
+
+2D Model and DEM: 
+• Water depths and water velocities in the lower Yuba River were simulated by using a TUFLOW HPC 2D hydrodynamic model of the lower Yuba River using a 2017 digital elevation model (DEM). The 2017 DEM was developed subsequent to high flows that occurred during Winter of 2017 using Airborne Light Detection and Ranging (LiDAR), boat-based multibeam and single beam echosounding, and ground-based topographic surveying with Real-time kinematic (RTK) Global Positioning System (GPS) and robotic total stationing. The 2D model was run with a 3’x3’ computation mesh for flows £ 30,000 cfs and a 10’x10’ mesh for flows >30,000 to 110,400 cfs. Detailed discussion of the calibration, validation and deployment of the 2017 2D model of the lower Yuba River is provided in Pasternack (in prep) and the documentation of the methodologies employed to produce the 2017 DEM is provided in Silva and Pasternack (2018). 
+
+Modeled Flows
+
+• Modeled flows and habitat identified for upstream of DPD and downstream of DPD
+• 300-110,400 cfs for Existing Conditions In-Channel and Rearing Habitat
+• 300-10,000 cfs for With HR&L In-Channel and Rearing Habitat. Insufficient information is available to provide rearing habitat with HR&L projects for flows above 10,000 cfs at this time.
+• 300-110,400 cfs for Existing Conditions Spawning Habitat. Estimated spawning habitat is limited to the geomorphic bankfull channel (5,000 cfs extent). Potential spawning habitat enhancement with HR&L projects has not been estimated.
+• Where interpolation was necessary to provide modeled existing or estimated enhanced habitat area for specific flows, linear interpolaton was applied.
+
+Rearing Hydraulic Criteria:
+
+• Depth >=0.5 and <= 4.0 ft
+• Velocity <=3.0 ft/sec
+
+Spawning Hydraulic Criteria:
+
+• Depth >=1.0 and <= 2.5 ft
+• Velocity >=1.0 and <= 4.0 ft ft/sec
+
+Spawning Substrate Criteria and Data:
+
+• Dominant substrate size 2-10 cm
+• Mean diameter substrate data based on 2010-2011 and 2018-2020 surveys within the bankfull channel (5,000 cfs extent).
+
+Existing Condition In-channel and Floodplain Rearing Habitat
+
+• Delineation of in-channel and floodplain based on 1,500 cfs wetted extent below DPD (as modified by Hallwood As-Built condition) and 1,750 cfs wetted extent above DPD.
+• Based on preliminary YWA analysis of flow that meets the intent of Meaningful Floodplain Event (MFE) criteria during 80% of years using modeled daily hydrology below DPD and below Deer Creek. 
+
+With HR&L In-channel and Floodplain Rearing Habitat
+
+•  HR&L Projects considered: Hallwood, Lower Long Bar, Upper Long Bar, Rose Bar Comprehensive
+• Using Hallwood rearing habitat-flow relationship (As-Built minus Existing), a rough estimate of habitat-flow relationships for the remaining HR&L habitat enhancement actions in the lower Yuba River were produced based on the following steps:
+"• Based on the Pre-Project and As-Built habitat-flow relationships for the Hallwood Project:
+   o Calculate the acres of habitat enhanced that meet the suitability criteria for each flow over the design flow range overall and for in-channel and floodplain habitat separately. 
+   o Add the Hallwood Project’s enhanced acres to the existing habitat-flow relationships for each flow over the design flow range. This provides an updated habitat-flow relationship for the Hallwood component of the HR&L suite of actions for the DPD HZ of the lower Yuba River.
+   o Calculate the proportionate difference (%) of total habitat enhanced (acreage) that conforms to the suitability criteria for each flow over the design flow range for the Hallwood Project. This difference is calculated as As-Built minus Existing habitat acreage at each   flow divided by the Hallwood grading extent area. This results in an estimate of the percentage of the entire grading extent that was enhanced (conforming to the suitability criteria) for each flow.
+   o For the remainder of the HR&L habitat enhancement projects in the lower Yuba River, multiply the Hallwood Project’s proportionate difference (%) of habitat enhanced (acreage that conforms to the suitability criteria) to the estimated project-specific grading extents (separately for estimated in-channel and floodplain grading extent) for each flow over the appropriate design flow range for those individual projects.
+   o Add the estimated enhanced acres for each HR&L Project to the appropriate existing habitat-flow relationship (Deer Creek HZ) for the remainder of the lower Yuba River for each flow over the appropriate design flow ranges. 
+   o These foregoing steps provide a rough estimate of updated habitat-flow relationships for the lower Yuba River incorporating the suite of HR&L habitat enhancement actions. 
+• Accurate empirically-derived updated habitat-flow relationships would be developed after all HR&L projects are completed, modeled and evaluated. "
+•  Estimated grading extents of indivudal HR&L Projects are based on: (1) the actual grading extent for Hallwood and Lower Long Bar; and (2) estimated grading extents for Upper Long Bar and Rose Bar Comp based on preliminary or conceptual designs.
+•  Estimated proportion of in-channel and floodplain habitat of individual H&L Projects are based on: (1) As-Built DEM and hydraulic modeling of Hallwood (cbec, pers. comm.); (2) estimated based on preliminary construction information for Lower Long Bar (C. Hammersmark, pers comm.); and (3) estimated based on conceptual designs or plans of Upper Long Bar and Rose Bar Comprehensive projects.
+
+```{r, echo=FALSE}
+col_names_yuba <- read_excel("data-raw/R2R_HRL_habitat_inputs/data/HydraulicHabFlow_LYR_7-15-2024.xlsx",
+                           sheet = "LYR_HabFlowRelationships",
+                           range = "A4:K4") |> 
+  janitor::clean_names() |> 
+  names()
+
+yuba_hrl <- read_excel("data-raw/R2R_HRL_habitat_inputs/data/HydraulicHabFlow_LYR_7-15-2024.xlsx",
+                           sheet = "LYR_HabFlowRelationships",
+                           range = "A5:K40",
+                           col_names = col_names_yuba) |> 
+  select(flow_cfs, 
+         below_dpd_hrl_ic_rear = below_dpd_4, 
+         above_dpd_hrl_ic_rear = above_dpd_5,
+         below_dpd_hrl_fp_rear = below_dpd_8,
+         above_dpd_hrl_fp_rear = above_dpd_9) |> 
+  mutate(across(below_dpd_hrl_ic_rear:above_dpd_hrl_fp_rear, as.numeric)) |> 
+  filter(!is.na(above_dpd_hrl_fp_rear)) |> 
+  pivot_longer(below_dpd_hrl_ic_rear:above_dpd_hrl_ic_rear,
+               names_to = "reach_ic",
+               values_to = "ic_suitable_acres") |> 
+  mutate(reach_ic = ifelse(str_detect(reach_ic, "below"), "below_dpd", "above_dpd")) |> 
+  pivot_longer(below_dpd_hrl_fp_rear:above_dpd_hrl_fp_rear,
+               names_to = "reach_fp",
+               values_to = "fp_suitable_acres") |> 
+  mutate(reach_fp = ifelse(str_detect(reach_ic, "below"), "below_dpd", "above_dpd"),
+         reach = ifelse(reach_fp == reach_ic, reach_fp, NA)) |> 
+  select(flow_cfs, reach, ic_suitable_acres, fp_suitable_acres) |> 
+  glimpse()
+
+knitr::kable(head(yuba_hrl))
+```
+
+### Plot comparison
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+# TODO do I sum across reaches?
+# TODO make sure this aligns when we update existing
+# TODO fix this
+existing_rear <- DSMhabitat::yuba_river_instream |> 
+  select(flow_cfs, FR_juv_wua) |>
+  glimpse()
+
+existing_fp <- DSMhabitat::yuba_river_floodplain |> 
+  select(flow_cfs, FR_floodplain_acres) |> 
+  glimpse()
+
+existing_and_HRL <- yuba_hrl |> 
+  full_join(existing_rear) |> 
+  full_join(existing_fp) |> 
+  glimpse()
+
+existing_and_HRL |> 
+  pivot_longer(ic_suitable_acres:FR_floodplain_acres,
+               names_to = "type",
+               values_to = "value") |> 
+  ggplot(aes(x = flow_cfs, y = value, color = type)) + 
+  geom_line() +
+  facet_wrap(~type, scales = "free") + 
+  theme_minimal()
+
+#usethis::use_data(american_river_instream, overwrite = TRUE)
+```

@@ -45,11 +45,6 @@ knitr::kable(head(american_hrl))
 - is floodplain cutoff `5200 cfs`?
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
-# TODO use functions to create existing flow
-# TODO what is the floodplain cutoff?
-# TODO add to additional acres
-# TODO then plot
-
 existing_rearing <- DSMhabitat::american_river_instream |> 
   filter(!is.na(FR_juv_wua)) |> 
   select(flow_cfs, FR_juv_wua)
