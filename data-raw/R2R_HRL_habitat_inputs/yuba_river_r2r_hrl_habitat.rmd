@@ -99,8 +99,22 @@ yuba_hrl <- read_excel("data-raw/R2R_HRL_habitat_inputs/data/HydraulicHabFlow_LY
                values_to = "fp_suitable_acres") |> 
   mutate(reach_fp = ifelse(str_detect(reach_ic, "below"), "below_dpd", "above_dpd"),
          reach = ifelse(reach_fp == reach_ic, reach_fp, NA)) |> 
-  select(flow_cfs, reach, ic_suitable_acres, fp_suitable_acres) |> 
-  glimpse()
+  select(flow_cfs, reach, ic_suitable_acres, fp_suitable_acres)
+
+# combine across reaches
+upper_reach_length = 12.7
+lower_reach_length = 11.
+
+# combine two reaches
+rearing <- eng_dag_approx |> 
+  bind_rows(dag_fea_approx) |> 
+  gather(lifestage, sq_ft, -flow_cfs, -mi) |> 
+  group_by(lifestage, flow_cfs) |> 
+  summarise(wua = sum(sq_ft/mi/5.28 * mi/tot_study_len, na.rm = TRUE)) |> 
+  ungroup() |> 
+  spread(lifestage, wua) |> 
+  select(flow_cfs, ST_fry_wua, ST_juv_wua, ST_spawn_wua,
+         SR_spawn_wua, FR_spawn_wua, FR_fry_wua, FR_juv_wua)
 
 knitr::kable(head(yuba_hrl))
 ```
@@ -111,6 +125,7 @@ knitr::kable(head(yuba_hrl))
 # TODO do I sum across reaches?
 # TODO make sure this aligns when we update existing
 # TODO fix this
+
 existing_rear <- DSMhabitat::yuba_river_instream |> 
   select(flow_cfs, FR_juv_wua) |>
   glimpse()
