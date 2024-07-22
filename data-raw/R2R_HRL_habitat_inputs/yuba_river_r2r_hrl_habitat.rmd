@@ -103,28 +103,26 @@ yuba_hrl <- read_excel("data-raw/R2R_HRL_habitat_inputs/data/HydraulicHabFlow_LY
 
 # combine across reaches
 upper_reach_length = 12.7
-lower_reach_length = 11.
+lower_reach_length = 11.4
+tot_study_len = upper_reach_length + lower_reach_length
 
 # combine two reaches
-rearing <- eng_dag_approx |> 
-  bind_rows(dag_fea_approx) |> 
-  gather(lifestage, sq_ft, -flow_cfs, -mi) |> 
-  group_by(lifestage, flow_cfs) |> 
-  summarise(wua = sum(sq_ft/mi/5.28 * mi/tot_study_len, na.rm = TRUE)) |> 
+yuba_hrl_combined <- yuba_hrl |> 
+  mutate(reach_length = ifelse(reach == "below_dpd", lower_reach_length, upper_reach_length)) |> 
+  group_by(flow_cfs) |> 
+  summarise(ic_hrl_acres = sum(ic_suitable_acres/reach_length * reach_length / tot_study_len, na.rm = T),
+            fp_hrl_acres = sum(fp_suitable_acres/reach_length * reach_length / tot_study_len, na.rm = T)) |> 
   ungroup() |> 
-  spread(lifestage, wua) |> 
-  select(flow_cfs, ST_fry_wua, ST_juv_wua, ST_spawn_wua,
-         SR_spawn_wua, FR_spawn_wua, FR_fry_wua, FR_juv_wua)
+  glimpse()
 
-knitr::kable(head(yuba_hrl))
+knitr::kable(head(yuba_hrl_combined))
 ```
 
 ### Plot comparison
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
-# TODO do I sum across reaches?
+# TODO check technique for averaging over reach length
 # TODO make sure this aligns when we update existing
-# TODO fix this
 
 existing_rear <- DSMhabitat::yuba_river_instream |> 
   select(flow_cfs, FR_juv_wua) |>
@@ -134,19 +132,20 @@ existing_fp <- DSMhabitat::yuba_river_floodplain |>
   select(flow_cfs, FR_floodplain_acres) |> 
   glimpse()
 
-existing_and_HRL <- yuba_hrl |> 
+existing_and_HRL <- yuba_hrl_combined |> 
   full_join(existing_rear) |> 
   full_join(existing_fp) |> 
   glimpse()
 
 existing_and_HRL |> 
-  pivot_longer(ic_suitable_acres:FR_floodplain_acres,
+  pivot_longer(ic_hrl_acres:FR_floodplain_acres,
                names_to = "type",
                values_to = "value") |> 
   ggplot(aes(x = flow_cfs, y = value, color = type)) + 
   geom_line() +
   facet_wrap(~type, scales = "free") + 
-  theme_minimal()
+  theme_minimal() +
+  theme(legend.position = "bottom")
 
 #usethis::use_data(american_river_instream, overwrite = TRUE)
 ```
