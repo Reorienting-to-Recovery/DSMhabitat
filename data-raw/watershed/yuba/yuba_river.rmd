@@ -15,6 +15,7 @@ library(scales)
 ```
 
 ## Future Data Improvements
+
 None expected.
 
 ## Instream Spawning and Rearing Habitat
@@ -58,6 +59,7 @@ The instream spawning and rearing habitat for Steelhead in the Yuba River are ba
 The instream spawning and rearing habitat data described above for Steelhead (ST) are combined for use in the Decision Support Model (DSM) in the following format. Units are in square feet per 1000 feet.
 
 #### Chinook
+
 Instream spawning and rearing habitat data provided for Chinook are provided in units of suitable acres. They were converted to square feet per 1000 feet to align with previous versions. Floodplain habitat were kept in acres.
 
 ```{r}
@@ -90,7 +92,7 @@ chinook <- left_join(chinook_ic_rear, chinook_spawn) |>
 chinook_eng_dag <- chinook |> filter(reach == "eng_dag")
 chinook_dag_fea <- chinook |> filter(reach == "dag_fea")
 
-# Steelhead
+# Old data (for steelhead), in square feet
 eng_dag <- read_excel('data-raw/mark_gard_data/IFIMWUA.xlsx', 
                       sheet = 'Yuba', range = 'A4:H33', 
                       col_names = c('flow', 'SR_spawn', 'FR_spawn', 'ST_spawn', 
@@ -105,51 +107,47 @@ Flow <- sort(unique(c(eng_dag$flow,
                       dag_fea$flow,
                       chinook$flow_cfs)))
 
-tot_study_len = 12.7 + 11.4
+tot_study_len = 12.7 + 11.4 # miles
 
 eng_dag_approx <- tibble(
   flow_cfs = Flow,
   SR_spawn_wua = approx(eng_dag$flow, eng_dag$SR_spawn, xout = Flow, rule = 1:2)$y,
   FR_spawn_wua = approx(chinook_eng_dag$flow_cfs, chinook_eng_dag$FR_spawn_sqft, xout = Flow, rule = 1:2)$y,
-  #FR_spawn_wua = approx(eng_dag$flow, eng_dag$FR_spawn, xout = Flow, rule = 1:2)$y,
   ST_spawn_wua = approx(eng_dag$flow, eng_dag$ST_spawn, xout = Flow, rule = 1:2)$y,
   FR_fry_wua = approx(chinook_eng_dag$flow_cfs, chinook_eng_dag$FR_fry_sqft, xout = Flow, rule = 1:2)$y,
-  #FR_fry_wua = approx(eng_dag$flow, eng_dag$FR_fry, xout = Flow, rule = 1:2)$y,
   ST_fry_wua = approx(eng_dag$flow, eng_dag$ST_fry, xout = Flow, rule = 1:2)$y,
   FR_juv_wua = approx(chinook_eng_dag$flow_cfs, chinook_eng_dag$FR_juv_sqft, xout = Flow, rule = 1:2)$y,
-  #FR_juv_wua = approx(eng_dag$flow, eng_dag$FR_juv, xout = Flow, rule = 1:2)$y,
   ST_juv_wua = approx(eng_dag$flow, eng_dag$ST_juv, xout = Flow, rule = 1:2)$y,
   mi = 12.7
 )
 
-# convert from sqft to sqft/1000ft
 dag_fea_approx <- tibble(
   flow_cfs = Flow,
   SR_spawn_wua = approx(dag_fea$flow, dag_fea$SR_spawn, xout = Flow, rule = 2)$y,
   FR_spawn_wua = approx(chinook_dag_fea$flow_cfs, chinook_dag_fea$FR_spawn_sqft, xout = Flow, rule = 2)$y,
-  #FR_spawn_wua = approx(dag_fea$flow, dag_fea$FR_spawn, xout = Flow, rule = 2)$y,
   ST_spawn_wua = approx(dag_fea$flow, dag_fea$ST_spawn, xout = Flow, rule = 2)$y,
   FR_fry_wua = approx(chinook_dag_fea$flow_cfs, chinook_dag_fea$FR_fry_sqft, xout = Flow, rule = 2)$y,
-  #FR_fry_wua = approx(dag_fea$flow, dag_fea$FR_fry, xout = Flow, rule = 2)$y,
   ST_fry_wua = approx(dag_fea$flow, dag_fea$ST_fry, xout = Flow, rule = 2)$y,
   FR_juv_wua = approx(chinook_dag_fea$flow_cfs, chinook_dag_fea$FR_juv_sqft, xout = Flow, rule = 2)$y,
-  #FR_juv_wua = approx(dag_fea$flow, dag_fea$FR_juv, xout = Flow, rule = 2)$y,
   ST_juv_wua = approx(dag_fea$flow, dag_fea$ST_juv, xout = Flow, rule = 2)$y,
   mi = 11.4
 )
 
 # combine two reaches
+# convert from sqft to sqft/1000ft
 rearing <- eng_dag_approx |> 
   bind_rows(dag_fea_approx) |> 
   gather(lifestage, sq_ft, -flow_cfs, -mi) |> 
   group_by(lifestage, flow_cfs) |> 
+  # convert to sqft to sqft/1000ft 
+  # 5.28 is conversion rate of 1000 ft / mile
+  # so diving mi (reach length in miles) by 5.28 converts it to units of 1000 ft
   summarise(wua = sum(sq_ft/mi/5.28 * mi/tot_study_len, na.rm = TRUE)) |> 
   ungroup() |> 
   spread(lifestage, wua) |> 
   select(flow_cfs, ST_fry_wua, ST_juv_wua, ST_spawn_wua,
          SR_spawn_wua, FR_spawn_wua, FR_fry_wua, FR_juv_wua)
 
-# TODO stopped here
 rear_len <- DSMhabitat::watershed_lengths |> 
   filter(watershed == 'Yuba River', lifestage == 'rearing', species == 'fr') |> 
   pull(miles)
@@ -243,10 +241,18 @@ yuba_fp_new <- read_excel("data-raw/watershed/yuba/data/HydraulicHabFlow_LYR_7-1
     janitor::clean_names() |> 
   select(flow_cfs, below_dpd = below_dpd_6,
          above_dpd = above_dpd_7) |> 
-  # TODO confirm we can just add together? 
-  mutate(FR_floodplain_acres = below_dpd + above_dpd,
-         watershed = "Yuba River") |>
-  select(-c(below_dpd, above_dpd))
+  pivot_longer(below_dpd:above_dpd,
+               names_to = "reach",
+               values_to = "acres") |> 
+  mutate(mi = ifelse(reach == "below_dpd", 11.4, 12.7),
+         prop_total_length = mi / (11.4 + 12.7)) |> 
+  group_by(flow_cfs) |> 
+  # multiply total acres by proportion of reach length
+  # then sum
+  summarise(wua = sum(acres * prop_total_length, na.rm = TRUE)) |> 
+  ungroup() |> 
+  rename(FR_floodplain_acres = wua) |> 
+  mutate(watershed = "Yuba River") |> glimpse()
 
 yuba_fp <- read_excel('data-raw/mark_gard_data/Floodplainarea.xlsx',
                       sheet = 'Yuba', skip = 2,
@@ -257,7 +263,8 @@ yuba_fp <- read_excel('data-raw/mark_gard_data/Floodplainarea.xlsx',
          ST_floodplain_acres = FR_floodplain_acres,
          watershed = 'Yuba River')
 
-yuba_river_floodplain <- left_join(yuba_fp_new, yuba_fp)
+yuba_river_floodplain <- full_join(yuba_fp_new, yuba_fp) |> 
+  arrange(flow_cfs)
 
 threshold <- yuba_fp_new$flow_cfs[min(which(yuba_fp_new$FR_floodplain_acres > 0) - 1)]
 
