@@ -360,7 +360,167 @@ display: none;
 <p>DRAFT</p>
 <div id="read-in-healthy-rivers-and-landscapes-habitat-data" class="section level3">
 <h3>Read in Healthy Rivers and Landscapes habitat data</h3>
-<pre class="r"><code>all_existing_and_hrl_data &lt;- readRDS(here::here(&#39;data-raw&#39;, &quot;R2R_HRL_habitat_inputs&quot;, &quot;all_habitat_data_for_hrl_inputs_all_runs.rdata&quot;))</code></pre>
+<pre class="r"><code>all_existing_and_hrl_data &lt;- readRDS(here::here(&#39;data-raw&#39;, &quot;R2R_HRL_habitat_inputs&quot;, &quot;all_habitat_data_for_hrl_inputs_all_runs.rdata&quot;)) 
+
+knitr::kable(all_existing_and_hrl_data)</code></pre>
+<table>
+<colgroup>
+<col width="10%" />
+<col width="8%" />
+<col width="3%" />
+<col width="5%" />
+<col width="65%" />
+<col width="7%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">watershed</th>
+<th align="left">habitat_type</th>
+<th align="left">run</th>
+<th align="right">total_acres</th>
+<th align="left">source</th>
+<th align="right">percent_suitable</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">American River</td>
+<td align="left">spawning</td>
+<td align="left">unknown</td>
+<td align="right">25.00</td>
+<td align="left">MOU appendix 2: <a href="https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf" class="uri">https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf</a></td>
+<td align="right">0.12</td>
+</tr>
+<tr class="even">
+<td align="left">American River</td>
+<td align="left">inchannel rearing</td>
+<td align="left">unknown</td>
+<td align="right">75.00</td>
+<td align="left">MOU appendix 2: <a href="https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf" class="uri">https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf</a></td>
+<td align="right">0.10</td>
+</tr>
+<tr class="odd">
+<td align="left">North Delta</td>
+<td align="left">floodplain rearing</td>
+<td align="left">fall</td>
+<td align="right">5227.50</td>
+<td align="left">MOU appendix 2: <a href="https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf" class="uri">https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf</a></td>
+<td align="right">0.90</td>
+</tr>
+<tr class="even">
+<td align="left">North Delta</td>
+<td align="left">floodplain rearing</td>
+<td align="left">winter</td>
+<td align="right">5227.50</td>
+<td align="left">MOU appendix 2: <a href="https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf" class="uri">https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf</a></td>
+<td align="right">0.90</td>
+</tr>
+<tr class="odd">
+<td align="left">North Delta</td>
+<td align="left">floodplain rearing</td>
+<td align="left">spring</td>
+<td align="right">5227.50</td>
+<td align="left">MOU appendix 2: <a href="https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf" class="uri">https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf</a></td>
+<td align="right">0.90</td>
+</tr>
+<tr class="even">
+<td align="left">Sacramento River</td>
+<td align="left">inchannel rearing</td>
+<td align="left">unknown</td>
+<td align="right">137.50</td>
+<td align="left">MOU appendix 2: <a href="https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf" class="uri">https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf</a></td>
+<td align="right">0.10</td>
+</tr>
+<tr class="odd">
+<td align="left">Upper Sacramento River</td>
+<td align="left">spawning</td>
+<td align="left">unknown</td>
+<td align="right">113.50</td>
+<td align="left">MOU appendix 2: <a href="https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf" class="uri">https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf</a></td>
+<td align="right">0.12</td>
+</tr>
+<tr class="even">
+<td align="left">Yuba River</td>
+<td align="left">floodplain rearing</td>
+<td align="left">fall</td>
+<td align="right">100.00</td>
+<td align="left">MOU appendix 2: <a href="https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf" class="uri">https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf</a></td>
+<td align="right">0.90</td>
+</tr>
+<tr class="odd">
+<td align="left">Yuba River</td>
+<td align="left">floodplain rearing</td>
+<td align="left">spring</td>
+<td align="right">100.00</td>
+<td align="left">MOU appendix 2: <a href="https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf" class="uri">https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf</a></td>
+<td align="right">0.90</td>
+</tr>
+<tr class="even">
+<td align="left">Yuba River</td>
+<td align="left">inchannel rearing</td>
+<td align="left">fall</td>
+<td align="right">50.00</td>
+<td align="left">MOU appendix 2: <a href="https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf" class="uri">https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf</a></td>
+<td align="right">0.10</td>
+</tr>
+<tr class="odd">
+<td align="left">Yuba River</td>
+<td align="left">inchannel rearing</td>
+<td align="left">spring</td>
+<td align="right">50.00</td>
+<td align="left">MOU appendix 2: <a href="https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf" class="uri">https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf</a></td>
+<td align="right">0.10</td>
+</tr>
+<tr class="even">
+<td align="left">Sutter Bypass</td>
+<td align="left">floodplain rearing</td>
+<td align="left">unknown</td>
+<td align="right">20000.00</td>
+<td align="left">MOU appendix 2: <a href="https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf" class="uri">https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf</a></td>
+<td align="right">0.90</td>
+</tr>
+<tr class="odd">
+<td align="left">Mokelumne</td>
+<td align="left">inchannel rearing</td>
+<td align="left">unknown</td>
+<td align="right">1.00</td>
+<td align="left">MOU appendix 2: <a href="https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf" class="uri">https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf</a></td>
+<td align="right">0.10</td>
+</tr>
+<tr class="even">
+<td align="left">Mokelumne</td>
+<td align="left">floodplain rearing</td>
+<td align="left">unknown</td>
+<td align="right">25.00</td>
+<td align="left">MOU appendix 2: <a href="https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf" class="uri">https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf</a></td>
+<td align="right">0.90</td>
+</tr>
+<tr class="odd">
+<td align="left">Feather River</td>
+<td align="left">spawning</td>
+<td align="left">unknown</td>
+<td align="right">15.00</td>
+<td align="left">MOU appendix 2: <a href="https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf" class="uri">https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf</a></td>
+<td align="right">0.12</td>
+</tr>
+<tr class="even">
+<td align="left">Feather River</td>
+<td align="left">inchannel rearing</td>
+<td align="left">unknown</td>
+<td align="right">5.25</td>
+<td align="left">MOU appendix 2: <a href="https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf" class="uri">https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf</a></td>
+<td align="right">0.10</td>
+</tr>
+<tr class="odd">
+<td align="left">Feather River</td>
+<td align="left">floodplain rearing</td>
+<td align="left">unknown</td>
+<td align="right">1655.00</td>
+<td align="left">MOU appendix 2: <a href="https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf" class="uri">https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf</a></td>
+<td align="right">0.90</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="methodology-for-integrating-habitat-projects-into-model-sit-dsm-inputs" class="section level3">
 <h3>Methodology for integrating habitat projects into model SIT DSM

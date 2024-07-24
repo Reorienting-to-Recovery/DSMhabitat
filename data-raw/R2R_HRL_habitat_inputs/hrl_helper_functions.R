@@ -499,7 +499,7 @@ hab_prop_change_from_projects <- function(habitat_type, watershed, species, life
   selected_run <- switch(species,
                          "fr" = "fall",
                          "sr" = "spring",
-                         "wr" = "winter")
+                         "wr" = "winter") 
 
   # pull project hab out of hrl
   project_hab_added <- readRDS(here::here('data-raw', 'R2R_HRL_habitat_inputs', 'all_habitat_data_for_hrl_inputs_all_runs.rdata')) |>

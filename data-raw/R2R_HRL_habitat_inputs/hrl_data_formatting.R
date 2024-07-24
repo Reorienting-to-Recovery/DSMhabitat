@@ -16,7 +16,7 @@ all_habitat_data_for_hrl_inputs_all_runs <- read_csv(here::here("data-raw", "R2R
   rename(total_acres = total_acres_HRL) |> 
   mutate(run = case_when(run == "fall + spring" ~ "Fall and Spring",
                          run == "all" ~ "Fall and Winter and Spring",
-                         run == "unknown" ~ "Unknown",
+                         run == "unknown" ~ "Fall and Winter and Spring", # TODO: assumption, need to get clarification from tech team
                          TRUE ~ NA)) |> 
   separate_rows(run, sep = " and ") |>  
   mutate(run = tolower(run)) |> 
