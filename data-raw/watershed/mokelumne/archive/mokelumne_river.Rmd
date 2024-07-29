@@ -34,7 +34,7 @@ moke_spawn_len <- DSMhabitat::watershed_lengths %>%
 
 # 'LMR_habitat__s_v2mw_to_MT.xlsx'
 # spawning: 'Spawning WUA' tab A4:C8 
-spawning_moke <- read_excel('data-raw/watershed/mokelumne/data/LMR_habitat__s_v2mw_to_MT.xlsx', 
+spawning_moke <- read_excel('data-raw/watershed/mokelumne/data/archive/LMR_habitat__s_v2mw_to_MT.xlsx', 
                             sheet = 'Spawning WUA', range = 'A4:C8', 
                             col_names = c('flow_cfs', 'FR_spawn_sqft', 'ST_spawn_sqft')) %>% 
   mutate(FR_spawn_wua = FR_spawn_sqft/(moke_spawn_len / 1000), #sqft_per_1000ft
@@ -52,11 +52,11 @@ moke_rear_len <- DSMhabitat::watershed_lengths %>%
 # rearing: 'Instream WUA' tab A2:C8 and A11:C14 and A17:C27 weighted average
 total_modeled_len <- 1.1 + 9.4 + 24.7
 
-rearing1 <- read_excel('data-raw/watershed/mokelumne/data/LMR_habitat__s_v2mw_to_MT.xlsx', 
+rearing1 <- read_excel('data-raw/watershed/mokelumne/data/archive/LMR_habitat__s_v2mw_to_MT.xlsx', 
                        sheet = 'Instream WUA', range = 'A2:C8') 
-rearing2 <- read_excel('data-raw/watershed/mokelumne/data/LMR_habitat__s_v2mw_to_MT.xlsx', 
+rearing2 <- read_excel('data-raw/watershed/mokelumne/data/archive/LMR_habitat__s_v2mw_to_MT.xlsx', 
                        sheet = 'Instream WUA', range = 'A11:C14')
-rearing3 <- read_excel('data-raw/watershed/mokelumne/data/LMR_habitat__s_v2mw_to_MT.xlsx', 
+rearing3 <- read_excel('data-raw/watershed/mokelumne/data/archive/LMR_habitat__s_v2mw_to_MT.xlsx', 
                        sheet = 'Instream WUA', range = 'A17:C27')
 
 Flow <- unique(sort(c(rearing1$Flow, rearing2$Flow, rearing3$Flow)))
@@ -106,7 +106,7 @@ mokelumne_river_instream <- spawning_moke %>%
   arrange(flow_cfs) %>% 
   mutate(watershed = 'Mokelumne River') %>% 
   filter(flow_cfs > 0) %>% 
-  select(flow_cfs, FR_spawn_wua, FR_fry_wua, FR_juv_wua, ST_spawn_wua, watershed)
+  select(flow_cfs, FR_spawn_wua, FR_fry_wua, FR_juv_wua, ST_spawn_wua, watershed) 
 
 knitr::kable(align = 'c' , head(mokelumne_river_instream, 5), 
              caption = "Header Descriptions: flow_cfs = flow in cubic feet per second,
@@ -163,7 +163,7 @@ The flow : floodplain area relationship for the Mokelumne River is based on high
 # 'LMR_habitat__s_v2mw_to_MT.xlsx', 'Floodplain (new flows)' tab C21:D26 Camanche to tidal #low estimate
 # 400 cfs = 0 acres 
 
-mokelumne_river_floodplain <- read_excel('data-raw/watershed/mokelumne/data/LMR_habitat__s_v2mw_to_MT.xlsx', 
+mokelumne_river_floodplain <- read_excel('data-raw/watershed/mokelumne/data/archive/LMR_habitat__s_v2mw_to_MT.xlsx', 
                                          sheet = 'Floodplain (new flows)', range = 'C21:D26',
                                          col_names = c('flow_cfs', 'FR_floodplain_acres')) %>% 
   bind_rows(tibble(flow_cfs = 400, FR_floodplain_acres = 0)) %>% 
@@ -171,7 +171,7 @@ mokelumne_river_floodplain <- read_excel('data-raw/watershed/mokelumne/data/LMR_
   mutate(FR_floodplain_acres = round(FR_floodplain_acres, 2),
          SR_floodplain_acres = FR_floodplain_acres,
          ST_floodplain_acres = FR_floodplain_acres,
-         watershed = "Mokelumne River")
+         watershed = "Mokelumne River") 
 
 knitr::kable(align = 'c', head(mokelumne_river_floodplain, 5), 
              caption = "Header Descriptions: flow_cfs = flow in cubic feet per second,
