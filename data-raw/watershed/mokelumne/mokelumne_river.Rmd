@@ -135,6 +135,8 @@ mokelumne_river_floodplain <- read_excel(here::here('data-raw', 'watershed', 'mo
   mutate(flow_cfs = as.numeric(flow_cfs)) |> 
  filter(!is.na(flow_cfs)) |> 
   mutate(FR_floodplain_acres = round(FR_floodplain_acres, 2),
+         SR_floodplain_acres = FR_floodplain_acres, 
+         ST_floodplain_acres = FR_floodplain_acres,
          watershed = "Mokelumne River")
 
 knitr::kable(align = 'c', head(mokelumne_river_floodplain, 5), 
