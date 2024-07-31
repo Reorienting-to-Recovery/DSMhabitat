@@ -18,6 +18,10 @@ library(scales)
 
 None expected.
 
+## Notes
+
+Updated spawning, in-channel rearing, and floodplain rearing were provided for fall run and were derived from Habitat Suitability Indices (HSI). Earlier data, which we are still using for spring run chinook and steelhead, were derived as weighted usable habitat (WUA). We took the updated fall run (HSI derived) and transformed it to a habitat rate of suitable area per length of river, which is converted to suitable area in the structure of the model logic. We needed to do this to align data for all runs.
+
 ## Instream Spawning and Rearing Habitat
 
 #### Chinook
