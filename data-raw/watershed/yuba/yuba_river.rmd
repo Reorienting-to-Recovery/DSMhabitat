@@ -1,6 +1,6 @@
 ---
 title: "Yuba River"
-author: "[Sadie Gill](mailto:sgill@flowwest.com), [Mark Tompkins](mailto:mtompkins@flowwest.com)"
+author: "[Mark Tompkins](mailto:mtompkins@flowwest.com)"
 date: "July 2024"
 output: html_document
 ---
@@ -26,25 +26,22 @@ None expected.
 
 Water depths and water velocities in the lower Yuba River were simulated by using a TUFLOW HPC 2D hydrodynamic model of the lower Yuba River using a 2017 digital elevation model (DEM). The 2017 DEM was developed subsequent to high flows that occurred during Winter of 2017 using Airborne Light Detection and Ranging (LiDAR), boat-based multibeam and single beam echosounding, and ground-based topographic surveying with Real-time kinematic (RTK) Global Positioning System (GPS) and robotic total stationing. The 2D model was run with a 3’x3’ computation mesh for flows <= 30,000 cfs and a 10’x10’ mesh for flows > 30,000 to 110,400 cfs. Detailed discussion of the calibration, validation and deployment of the 2017 2D model of the lower Yuba River is provided in Pasternack (in prep) and the documentation of the methodologies employed to produce the 2017 DEM is provided in Silva and Pasternack (2018). 
 
-Rearing hydraulic criteria: 
+Hydraulic criteria applied to spawning, in channel rearing, and floodplain rearing to get the total suitable habitat area relationships:
 
-- Depth >= 0.5 and <= 4.0 ft
-- Velocity <= 3.0 ft/sec
-
-Spawning hydraulic criteria: 
-
-- Depth >= 1.0 and <= 2.5 ft
-- Velocity >= 1.0 and <= 4.0 ft/sec
+|                   | Spawning  | Instream Rearing |
+|:-----------------:|:---------:|:----------------:|
+|   Depth (feet)    | 1.0 - 2.5 |    0.5 - 4.0     |
+| Velocity (feet/s) | 1.0 - 4.0 |    0.0 - 3.0     |
 
 Spawning substrate criteria and data: 
 
-- Dominant substrate 2-10 cm
-- Mean diameter substrate data based on 2010-2011 and 2018-2020 surveys within the bankfull channel (5,000 cfs extent)
+- Dominant substrate `2-10` cm
+- Mean diameter substrate data based on 2010-2011 and 2018-2020 surveys within the bankfull channel (`5,000` cfs extent)
 
 Existing condition in-channel and floodplain rearing habitat:
 
-- Delineation of in-channel and floodplain based on 1,5000 cfs wetted extent below DPD (as modified by HAllwood As-Built condition) and 1,750 cfs wetted extent above DPD
-- Based on preliminary YWA analysis of flow that meets the intent of Meaningful Floodplain Event (MFE) criteria during 80% of years using modeled daily hydrology below DPD and below Deer Creek.
+- Delineation of in-channel and floodplain based on `1,500` cfs wetted extent below DPD (as modified by Hallwood As-Built condition) and `1,750` cfs wetted extent above DPD
+- Based on preliminary YWA analysis of flow that meets the intent of Meaningful Floodplain Event (MFE) criteria during `80%` of years using modeled daily hydrology below DPD and below Deer Creek.
 
 #### Steelhead
 
@@ -222,20 +219,16 @@ source('data-raw/watershed/floodplain_utils.R')
 
 ## Floodplain Rearing Habitat 
 
-#### Steelhead and Spring run
-**Data Source:** [SRH-2D hydraulic model developed by Dr. Greg Pasternack at the University of California, Davis](https://s3-us-west-2.amazonaws.com/cvpiahabitat-r-package/cvpia-sit-model-inputs/CVPIA_Annual_Progress_Report_Fiscal_Year_2014_Yuba_SRH2D_Page18.pdf){target="_blank"}
-
-`r print_model_details('Yuba River', 'fr')`
-
-#### Fall run
-Updated data from Morgan Neal (HDR Inc)
+Updated data for Fall Run floodplain rearing habitat were received from Morgan Neal (HDR Inc.). 
+Spring Run and Steelhead were updated to use the same floodplain rearing habitat to flow relationship as fall run. This methodology is consistent with how Yuba River floodplain rearing habitat was modeled in CVPIA DSMhabitat.
 
 ## Floodplain Data
 
 The areas represent total inundated area in acres.    
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
 # read in updated data
-yuba_fp_new <- read_excel("data-raw/watershed/yuba/data/HydraulicHabFlow_LYR_7-15-2024.xlsx",
+# assign spring run and steelhead to fall run
+yuba_river_floodplain <- read_excel("data-raw/watershed/yuba/data/HydraulicHabFlow_LYR_7-15-2024.xlsx",
                               sheet = "LYR_HabFlowRelationships",
                               range = "A4:G40") |> 
     janitor::clean_names() |> 
@@ -252,21 +245,24 @@ yuba_fp_new <- read_excel("data-raw/watershed/yuba/data/HydraulicHabFlow_LYR_7-1
   summarise(wua = sum(acres * prop_total_length, na.rm = TRUE)) |> 
   ungroup() |> 
   rename(FR_floodplain_acres = wua) |> 
-  mutate(watershed = "Yuba River")
-
-yuba_fp <- read_excel('data-raw/mark_gard_data/Floodplainarea.xlsx',
-                      sheet = 'Yuba', skip = 2,
-                      col_names = c('flow_cfs', 'FR_floodplain_acres')) |>
-  transmute(flow_cfs,
-         # FR_floodplain_acres = round(FR_floodplain_acres, 2),
+  mutate(watershed = "Yuba River",
          SR_floodplain_acres = FR_floodplain_acres,
-         ST_floodplain_acres = FR_floodplain_acres,
-         watershed = 'Yuba River')
+         ST_floodplain_acres = FR_floodplain_acres)
 
-yuba_river_floodplain <- full_join(yuba_fp_new, yuba_fp) |> 
-  arrange(flow_cfs)
+# old data, if needed
+# yuba_fp <- read_excel('data-raw/mark_gard_data/Floodplainarea.xlsx',
+#                       sheet = 'Yuba', skip = 2,
+#                       col_names = c('flow_cfs', 'FR_floodplain_acres')) |>
+#   transmute(flow_cfs,
+#          # FR_floodplain_acres = round(FR_floodplain_acres, 2),
+#          SR_floodplain_acres = FR_floodplain_acres,
+#          ST_floodplain_acres = FR_floodplain_acres,
+#          watershed = 'Yuba River')
+# 
+# yuba_river_floodplain <- full_join(yuba_fp_new, yuba_fp) |> 
+#   arrange(flow_cfs)
 
-threshold <- yuba_fp_new$flow_cfs[min(which(yuba_fp_new$FR_floodplain_acres > 0) - 1)]
+threshold <- yuba_river_floodplain$flow_cfs[min(which(yuba_river_floodplain$FR_floodplain_acres > 0) - 1)]
 
 yuba_river_floodplain <- yuba_river_floodplain |> 
   filter(flow_cfs >= threshold) |> 
