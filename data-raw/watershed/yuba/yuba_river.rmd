@@ -20,7 +20,7 @@ None expected.
 
 ## Notes
 
-Updated spawning, in-channel rearing, and floodplain rearing were provided for fall run and were derived from Habitat Suitability Indices (HSI). Earlier data, which we are still using for spring run chinook and steelhead, were derived as weighted usable habitat (WUA). We took the updated fall run (HSI derived) and transformed it to a habitat rate of suitable area per length of river, which is converted to suitable area in the structure of the model logic. We needed to do this to align data for all runs.
+Updated spawning, in-channel rearing, and floodplain rearing were provided for fall and spring run and were derived from Habitat Suitability Indices (HSI). Earlier data, which we are still using for steelhead, were derived as weighted usable habitat (WUA). We took the updated fall and spring run (HSI derived) and transformed it to a habitat rate of suitable area per length of river, which is converted to suitable area in the structure of the model logic. We needed to do this to align data for all runs.
 
 ## Instream Spawning and Rearing Habitat
 
@@ -71,7 +71,8 @@ chinook_ic_rear <- read_excel("data-raw/watershed/yuba/data/HydraulicHabFlow_LYR
   janitor::clean_names() |> 
   pivot_longer(below_dpd:above_dpd, 
                names_to = "reach",
-               values_to = "FR_ic_juv")
+               values_to = "FR_ic_juv") |> 
+  mutate(SR_ic_juv = FR_ic_juv)
 
 chinook_spawn <- read_excel("data-raw/watershed/yuba/data/HydraulicHabFlow_LYR_7-15-2024.xlsx",
                    sheet = "LYR_HabFlowRelationships",
@@ -80,7 +81,8 @@ chinook_spawn <- read_excel("data-raw/watershed/yuba/data/HydraulicHabFlow_LYR_7
   select(flow_cfs, below_dpd = below_dpd_10, above_dpd = above_dpd_11) |> 
   pivot_longer(below_dpd:above_dpd, 
                names_to = "reach",
-               values_to = "FR_spawn")
+               values_to = "FR_spawn") |> 
+  mutate(SR_spawn = FR_spawn)
 
 chinook <- left_join(chinook_ic_rear, chinook_spawn) |> 
   # TODO confirm this assumption that two reaches are the same
@@ -88,7 +90,10 @@ chinook <- left_join(chinook_ic_rear, chinook_spawn) |>
   # convert to square feet
   mutate(FR_fry_sqft = FR_ic_juv * 43560,
          FR_juv_sqft = FR_ic_juv * 43560,
-         FR_spawn_sqft = FR_spawn * 43560)
+         FR_spawn_sqft = FR_spawn * 43560,
+         SR_fry_sqft = SR_ic_juv * 43560,
+         SR_juv_sqft = SR_ic_juv * 43560,
+         SR_spawn_sqft = SR_spawn * 43560)
 
 chinook_eng_dag <- chinook |> filter(reach == "eng_dag")
 chinook_dag_fea <- chinook |> filter(reach == "dag_fea")
@@ -108,37 +113,50 @@ Flow <- sort(unique(c(eng_dag$flow,
                       dag_fea$flow,
                       chinook$flow_cfs)))
 
-tot_study_len = 12.7 + 11.4 # miles
+tot_study_len_steelhead = 12.7 + 11.4 # miles
+tot_study_len_chinook = 12 + 11.3 # miles
 
 eng_dag_approx <- tibble(
   flow_cfs = Flow,
-  SR_spawn_wua = approx(eng_dag$flow, eng_dag$SR_spawn, xout = Flow, rule = 1:2)$y,
+  # use updated for spring run and fall run
+  SR_spawn_wua = approx(chinook_eng_dag$flow_cfs, chinook_eng_dag$SR_spawn_sqft, xout = Flow, rule = 1:2)$y,
   FR_spawn_wua = approx(chinook_eng_dag$flow_cfs, chinook_eng_dag$FR_spawn_sqft, xout = Flow, rule = 1:2)$y,
+  # use older data for steelhead
   ST_spawn_wua = approx(eng_dag$flow, eng_dag$ST_spawn, xout = Flow, rule = 1:2)$y,
   FR_fry_wua = approx(chinook_eng_dag$flow_cfs, chinook_eng_dag$FR_fry_sqft, xout = Flow, rule = 1:2)$y,
   ST_fry_wua = approx(eng_dag$flow, eng_dag$ST_fry, xout = Flow, rule = 1:2)$y,
   FR_juv_wua = approx(chinook_eng_dag$flow_cfs, chinook_eng_dag$FR_juv_sqft, xout = Flow, rule = 1:2)$y,
-  ST_juv_wua = approx(eng_dag$flow, eng_dag$ST_juv, xout = Flow, rule = 1:2)$y,
-  mi = 12.7
-)
+  ST_juv_wua = approx(eng_dag$flow, eng_dag$ST_juv, xout = Flow, rule = 1:2)$y) #|> 
+  #mi = 12.7
+#)
 
 dag_fea_approx <- tibble(
   flow_cfs = Flow,
-  SR_spawn_wua = approx(dag_fea$flow, dag_fea$SR_spawn, xout = Flow, rule = 2)$y,
+  SR_spawn_wua = approx(chinook_dag_fea$flow_cfs, chinook_dag_fea$FR_spawn_sqft, xout = Flow, rule = 2)$y,
   FR_spawn_wua = approx(chinook_dag_fea$flow_cfs, chinook_dag_fea$FR_spawn_sqft, xout = Flow, rule = 2)$y,
   ST_spawn_wua = approx(dag_fea$flow, dag_fea$ST_spawn, xout = Flow, rule = 2)$y,
   FR_fry_wua = approx(chinook_dag_fea$flow_cfs, chinook_dag_fea$FR_fry_sqft, xout = Flow, rule = 2)$y,
   ST_fry_wua = approx(dag_fea$flow, dag_fea$ST_fry, xout = Flow, rule = 2)$y,
   FR_juv_wua = approx(chinook_dag_fea$flow_cfs, chinook_dag_fea$FR_juv_sqft, xout = Flow, rule = 2)$y,
-  ST_juv_wua = approx(dag_fea$flow, dag_fea$ST_juv, xout = Flow, rule = 2)$y,
-  mi = 11.4
-)
+  ST_juv_wua = approx(dag_fea$flow, dag_fea$ST_juv, xout = Flow, rule = 2)$y)#,
+  #mi = 11.4
+#)
 
 # combine two reaches
 # convert from sqft to sqft/1000ft
 rearing <- eng_dag_approx |> 
-  bind_rows(dag_fea_approx) |> 
-  gather(lifestage, sq_ft, -flow_cfs, -mi) |> 
+  pivot_longer(SR_spawn_wua:ST_juv_wua,
+               names_to = "lifestage",
+               values_to = "sq_ft") |> 
+  # assign river miles if older data (12.7) or newer data (12)
+  mutate(mi = ifelse(str_detect(lifestage, "ST"), 12.7, 12)) |> 
+  bind_rows(dag_fea_approx |> 
+              pivot_longer(SR_spawn_wua:ST_juv_wua,
+               names_to = "lifestage",
+               values_to = "sq_ft") |> 
+  # assign river miles if older data (11.4) or newer data (11.3)
+  mutate(mi = ifelse(str_detect(lifestage, "ST"), 11.4, 11.3))) |>
+  mutate(tot_study_len = ifelse(str_detect(lifestage, "ST"), tot_study_len_steelhead, tot_study_len_chinook)) |>
   group_by(lifestage, flow_cfs) |> 
   # convert to sqft to sqft/1000ft 
   # 5.28 is conversion rate of 1000 ft / mile
