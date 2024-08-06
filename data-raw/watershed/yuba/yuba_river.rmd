@@ -256,40 +256,25 @@ yuba_river_floodplain <- read_excel("data-raw/watershed/yuba/data/HydraulicHabFl
     janitor::clean_names() |> 
   select(flow_cfs, below_dpd = below_dpd_6,
          above_dpd = above_dpd_7) |> 
-  pivot_longer(below_dpd:above_dpd,
-               names_to = "reach",
-               values_to = "acres") |> 
-  mutate(mi = ifelse(reach == "below_dpd", 11.4, 12.7),
-         prop_total_length = mi / (11.4 + 12.7)) |> 
-  group_by(flow_cfs) |> 
-  # multiply total acres by proportion of reach length
-  # then sum
-  summarise(wua = sum(acres * prop_total_length, na.rm = TRUE)) |> 
-  ungroup() |> 
-  rename(FR_floodplain_acres = wua) |> 
-  mutate(watershed = "Yuba River",
+  # sum reaches
+  mutate(total = above_dpd + below_dpd,
+         watershed = "Yuba River",
+         FR_floodplain_acres = total,
          SR_floodplain_acres = FR_floodplain_acres,
-         ST_floodplain_acres = FR_floodplain_acres)
+         ST_floodplain_acres = FR_floodplain_acres) |> 
+  select(-c(below_dpd, above_dpd, total)) |> 
+  relocate(watershed, .after = ST_floodplain_acres)
 
 # old data, if needed
 # yuba_fp <- read_excel('data-raw/mark_gard_data/Floodplainarea.xlsx',
 #                       sheet = 'Yuba', skip = 2,
 #                       col_names = c('flow_cfs', 'FR_floodplain_acres')) |>
 #   transmute(flow_cfs,
-#          # FR_floodplain_acres = round(FR_floodplain_acres, 2),
+#          FR_floodplain_acres = round(FR_floodplain_acres, 2),
 #          SR_floodplain_acres = FR_floodplain_acres,
 #          ST_floodplain_acres = FR_floodplain_acres,
 #          watershed = 'Yuba River')
 # 
-# yuba_river_floodplain <- full_join(yuba_fp_new, yuba_fp) |> 
-#   arrange(flow_cfs)
-
-# threshold <- yuba_river_floodplain$flow_cfs[min(which(yuba_river_floodplain$FR_floodplain_acres > 0) - 1)]
-
-yuba_river_floodplain <- yuba_river_floodplain |> 
-  #filter(flow_cfs >= threshold) |> 
-  relocate(watershed, .after = ST_floodplain_acres)
-
 knitr::kable(align = 'c', head(yuba_river_floodplain, 5), 
              caption = "Header Descriptions: flow_cfs = flow in cubic feet per second,
              FR_floodplain_acres = Fall Run Chinook floodplain acres, 
