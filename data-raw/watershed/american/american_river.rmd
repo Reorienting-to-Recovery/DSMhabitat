@@ -19,9 +19,7 @@ library(scales)
 None planned. 
 
 ## Instream Spawning and Rearing Habitat
-**Data Source:** [ARWA 2017](https://s3-us-west-2.amazonaws.com/cvpiahabitat-r-package/cvpia-sit-model-inputs/ARWA-702.pdf){target="_blank"} (pgs. 91-107) and 
-
-TODO add link for rearing link
+**Data Source:** [ARWA 2017](https://s3-us-west-2.amazonaws.com/cvpiahabitat-r-package/cvpia-sit-model-inputs/ARWA-702.pdf){target="_blank"} (pgs. 91-107) and [CBEC Eco Engineering 2021](https://r2r-habitat-docs.s3.amazonaws.com/17-1005_LAR_Rearing_WUA_2021-11-08.pdf).
 
 The instream spawning habitat for Fall Run Chinook Salmon and Steelhead in the American River is based on a spawning habitat suitability and availability analysis performed by the Sacramento Water Forum. The Water Forum conducted the analysis as part of the Lower American River Biological Rationale Development and Performance of the Modified Flow Standard (ARWA 2017). 
 
