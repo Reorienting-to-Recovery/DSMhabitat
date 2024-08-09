@@ -4,7 +4,7 @@ library(purrr)
 library(lubridate)
 library(DSMhabitat)
 
-# remotes::install_github("Reorienting-to-recovery/DSMflow@eff")
+# remotes::install_github("Reorienting-to-recovery/DSMflow")
 
 library(DSMflow)
 watersheds <- DSMscenario::watershed_labels
@@ -288,11 +288,17 @@ fr_spawn_eff_sac <- get_spawn_hab_all(spawning_watersheds, 'fr', "eff_sac")
 dimnames(fr_spawn_eff_sac) <- list(watersheds, month.abb, 1979:2000)
 fr_spawn_eff_sac[which(is.na(fr_spawn_eff_sac))] <- 0
 
+# fr spawn lto_12a
+fr_spawn_lto_12a <- get_spawn_hab_all(spawning_watersheds, 'fr', "LTO_12a")
+dimnames(fr_spawn_lto_12a) <- list(watersheds, month.abb, 1979:2000)
+fr_spawn_lto_12a[which(is.na(fr_spawn_lto_12a))] <- 0
+
 # list together both fr spawning versions
 fr_spawn <- modifyList(DSMhabitat::fr_spawn, list(biop_2008_2009 = fr_spawn_2008_2009,
                                               biop_itp_2018_2019 = fr_spawn_2018_2019,
                                               run_of_river = fr_spawn_run_of_river,
-                                              eff_sac = fr_spawn_eff_sac))
+                                              eff_sac = fr_spawn_eff_sac,
+                                              lto_12a = fr_spawn_lto_12a))
 
 usethis::use_data(fr_spawn, overwrite = TRUE)
 
@@ -316,11 +322,17 @@ st_spawn_eff_sac <- get_spawn_hab_all(spawning_watersheds, 'st', "eff_sac")
 dimnames(st_spawn_eff_sac) <- list(watersheds, month.abb, 1979:2000)
 st_spawn_eff_sac[which(is.na(st_spawn_eff_sac))] <- 0
 
+# lto_12a
+st_spawn_lto_12a <- get_spawn_hab_all(spawning_watersheds, 'st', "LTO_12a")
+dimnames(st_spawn_lto_12a) <- list(watersheds, month.abb, 1979:2000)
+st_spawn_lto_12a[which(is.na(st_spawn_lto_12a))] <- 0
+
 # list together both steelhead spawning versions
 st_spawn <- modifyList(DSMhabitat::st_spawn, list(biop_2008_2009 = st_spawn_2008_2009,
                                               biop_itp_2018_2019 = st_spawn_2018_2019,
                                               run_of_river = st_spawn_run_of_river,
-                                              eff_sac = st_spawn_eff_sac))
+                                              eff_sac = st_spawn_eff_sac,
+                                              lto_12a = st_spawn_lto_12a))
 
 usethis::use_data(st_spawn, overwrite = TRUE)
 
@@ -363,11 +375,23 @@ sr_spawn_run_of_river["Merced River", , ] <- fr_spawn$run_of_river["Merced River
 
 sr_spawn_eff_sac <- sr_spawn_2018_2019
 sr_spawn_eff_sac["Upper Sacramento River",,] <- fr_spawn$eff_sac["Upper Sacramento River",, ]
+
+# LTO_12a
+sr_spawn_lto_12a <- get_spawn_hab_all(spawning_watersheds_sr, 'sr', "LTO_12a")
+sr_spawn_lto_12a[which(is.na(sr_spawn_lto_12a))] <- 0
+dimnames(sr_spawn_lto_12a) <- list(watersheds, month.abb, 1979:2000)
+
+sr_spawn_lto_12a["Thomes Creek", , ] <- st_spawn$lto_12a["Thomes Creek", , ] 
+sr_spawn_lto_12a["Calaveras River", , ] <- fr_spawn$lto_12a["Calaveras River", , ] 
+sr_spawn_lto_12a["Cosumnes River", , ] <- fr_spawn$lto_12a["Cosumnes River", , ] 
+sr_spawn_lto_12a["Merced River", , ] <- fr_spawn$lto_12a["Merced River", , ] 
+
 # Combine together 
 sr_spawn <- modifyList(DSMhabitat::sr_spawn, list(biop_2008_2009 = sr_spawn_2008_2009,
                                               biop_itp_2018_2019 = sr_spawn_2018_2019,
                                               run_of_river = sr_spawn_run_of_river,
-                                              sac_eff = sr_spawn_eff_sac))
+                                              sac_eff = sr_spawn_eff_sac,
+                                              lto_12a = sr_spawn_lto_12a))
 
 usethis::use_data(sr_spawn, overwrite = TRUE)
 
@@ -402,12 +426,14 @@ wr_spawn_2008_2009 <- generate_wr_spawn("biop_2008_2009")
 wr_spawn_2018_2019 <- generate_wr_spawn("biop_itp_2018_2019")
 wr_spawn_run_of_river <- generate_wr_spawn("run_of_river")
 wr_spawn_eff <- generate_wr_spawn("eff_sac")
+wr_spawn_lto_12a <- generate_wr_spawn("LTO_12a")
 # combine together
 
 wr_spawn <- modifyList(DSMhabitat::wr_spawn, list(biop_2008_2009 = wr_spawn_2008_2009,
                                               biop_itp_2018_2019 = wr_spawn_2018_2019,
                                               run_of_river = wr_spawn_run_of_river,
-                                              eff_sac = wr_spawn_eff))
+                                              eff_sac = wr_spawn_eff,
+                                              lto_12a = wr_spawn_lto_12a))
 
 usethis::use_data(wr_spawn, overwrite = TRUE)
 
@@ -457,12 +483,14 @@ lfr_spawn_2008_2009 <- generate_lfr_spawn("biop_2008_2009")
 lfr_spawn_2018_2019 <- generate_lfr_spawn("biop_itp_2018_2019")
 lfr_spawn_run_of_river <- generate_lfr_spawn("run_of_river")
 lfr_spawn_eff <- generate_lfr_spawn("eff_sac")
+lfr_spawn_lto_12a <- generate_lfr_spawn("LTO_12a")
 
 # combine together
 lfr_spawn <- modifyList(DSMhabitat::lfr_spawn, list(biop_2008_2009 = lfr_spawn_2008_2009,
                                                 biop_itp_2018_2019 = lfr_spawn_2018_2019,
                                                 run_of_river = lfr_spawn_run_of_river,
-                                                eff_sac = lfr_spawn_eff))
+                                                eff_sac = lfr_spawn_eff,
+                                                lto_12a = lfr_spawn_lto_12a))
 
 usethis::use_data(lfr_spawn, overwrite = TRUE)
 
@@ -496,11 +524,17 @@ fr_fry_eff <- get_rear_hab_all(watersheds_in_order, 'fr', 'fry', "eff_sac", 1980
 dimnames(fr_fry_eff) <- list(watersheds, month.abb, 1980:2000)
 fr_fry_eff[which(is.na(fr_fry_eff))] <- 0
 
+# LTO_12a
+fr_fry_lto_12a <- get_rear_hab_all(watersheds_in_order, 'fr', 'fry', "LTO_12a", 1980:2000)
+dimnames(fr_fry_lto_12a) <- list(watersheds, month.abb, 1980:2000)
+fr_fry_lto_12a[which(is.na(fr_fry_lto_12a))] <- 0
+
 # combine together
 fr_fry <- modifyList(DSMhabitat::fr_fry, list(biop_2008_2009 = fr_fry_2008_2009,
                                           biop_itp_2018_2019 = fr_fry_2018_2019,
                                           run_of_river = fr_fry_run_of_river, 
-                                          eff_sac = fr_fry_eff))
+                                          eff_sac = fr_fry_eff,
+                                          lto_12a = fr_fry_lto_12a))
 
 usethis::use_data(fr_fry, overwrite = TRUE)
 
@@ -525,12 +559,18 @@ st_fry_eff <- get_rear_hab_all(watersheds_in_order, 'st', 'fry', "eff_sac", 1980
 dimnames(st_fry_eff) <- list(watersheds, month.abb, 1980:2000)
 st_fry_eff[which(is.na(st_fry_eff))] <- fr_fry_eff[which(is.na(st_fry_eff))]
 
+# LTO_12a
+st_fry_lto_12a <- get_rear_hab_all(watersheds_in_order, 'st', 'fry', "LTO_12a", 1980:2000)
+dimnames(st_fry_lto_12a) <- list(watersheds, month.abb, 1980:2000)
+st_fry_lto_12a[which(is.na(st_fry_lto_12a))] <- fr_fry_lto_12a[which(is.na(st_fry_lto_12a))]
+
 
 # combine together
 st_fry <- modifyList(DSMhabitat::st_fry, list(biop_2008_2009 = st_fry_2008_2009,
                                           biop_itp_2018_2019 = st_fry_2018_2019,
                                           run_of_river = st_fry_run_of_river,
-                                          eff_sac = st_fry_eff))
+                                          eff_sac = st_fry_eff,
+                                          lto_12a = st_fry_lto_12a))
 
 usethis::use_data(st_fry, overwrite = TRUE)
 
@@ -555,22 +595,33 @@ sr_fry_eff <- get_rear_hab_all(watersheds_in_order, 'sr', 'fry', "eff_sac", year
 dimnames(sr_fry_eff) <- list(watersheds, month.abb, 1980:2000)
 sr_fry_eff[which(is.na(sr_fry_eff))] <- fr_fry_eff[which(is.na(sr_fry_eff))]
 
+# LTO_12a
+sr_fry_lto_12a <- get_rear_hab_all(watersheds_in_order, 'sr', 'fry', "LTO_12a", years = 1980:2000)
+dimnames(sr_fry_lto_12a) <- list(watersheds, month.abb, 1980:2000)
+sr_fry_lto_12a[which(is.na(sr_fry_lto_12a))] <- fr_fry_lto_12a[which(is.na(sr_fry_lto_12a))]
+
 # combine together
 sr_fry <- modifyList(DSMhabitat::sr_fry, list(biop_2008_2009 = sr_fry_2008_2009,
                                           biop_itp_2018_2019 = sr_fry_2018_2019,
                                           run_of_river = sr_fry_run_of_river,
-                                          eff_sac = sr_fry_eff))
+                                          eff_sac = sr_fry_eff,
+                                          lto_12a = sr_fry_lto_12a))
 
 usethis::use_data(sr_fry, overwrite = TRUE)
 
 # winter run rearing habitat -- 
 generate_wr_fry_or_juv <- function(calsim_version, lifestage = c("fry", "juv")) {
+  
+  if(calsim_version == "LTO_12a") {
+    calsim_version_tmp <- tolower(calsim_version)
+  }
+  
   # set default values to allow for straying 
   if (lifestage == "fry") {
-    wr_hab <- fr_fry[[calsim_version]]
+    wr_hab <- fr_fry[[calsim_version_tmp]]
   } 
   if (lifestage == "juv") {
-    wr_hab <- fr_juv[[calsim_version]]
+    wr_hab <- fr_juv[[calsim_version_tmp]]
   }
   wr_hab["Upper Sacramento River", , ] <- DSMhabitat::set_instream_habitat('Upper Sacramento River',
                                                     species = 'wr',
@@ -628,23 +679,30 @@ wr_fry_run_of_river <- generate_wr_fry_or_juv(calsim_version = "run_of_river",
                                            lifestage = "fry")
 wr_fry_eff <- generate_wr_fry_or_juv(calsim_version = "eff_sac", 
                                               lifestage = "fry")
+wr_fry_lto_12a <- generate_wr_fry_or_juv(calsim_version = "LTO_12a", 
+                                     lifestage = "fry")
 
 # combine together
 wr_fry <- modifyList(DSMhabitat::wr_fry, list(biop_2008_2009 = wr_fry_2008_2009,
                                           biop_itp_2018_2019 = wr_fry_2018_2019,
                                           run_of_river = wr_fry_run_of_river,
-                                          eff_sac = wr_fry_eff))
+                                          eff_sac = wr_fry_eff,
+                                          lto_12a = wr_fry_lto_12a))
 
 usethis::use_data(wr_fry, overwrite = TRUE)
 
 # Late fall run fry rearing habitat -- 
 generate_lfr_juv_or_fry <- function(calsim_version, lifestage = c("juv", "fry")) {
   # set default values to allow for straying 
+  if(calsim_version == "LTO_12a") {
+    calsim_version_tmp <- tolower(calsim_version)
+  }
+  
   if (lifestage == "fry") {
-    lfr_hab <- fr_fry[[calsim_version]]
+    lfr_hab <- fr_fry[[calsim_version_tmp]]
   } 
   if (lifestage == "juv") {
-    lfr_hab <- fr_juv[[calsim_version]]
+    lfr_hab <- fr_juv[[calsim_version_tmp]]
   }
   
   lfr_hab['Upper Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Upper Sacramento River',
@@ -706,12 +764,15 @@ lfr_fry_run_of_river <- generate_lfr_juv_or_fry(calsim_version = "run_of_river",
                                              lifestage = "fry")
 lfr_fry_eff <- generate_lfr_juv_or_fry(calsim_version = "eff_sac", 
                                                 lifestage = "fry")
+lfr_fry_lto_12a <- generate_lfr_juv_or_fry(calsim_version = "LTO_12a", 
+                                       lifestage = "fry")
 
 # combine together
 lfr_fry <- modifyList(DSMhabitat::lfr_fry, list(biop_2008_2009 = lfr_fry_2008_2009,
                                             biop_itp_2018_2019 = lfr_fry_2018_2019,
                                             run_of_river = lfr_fry_run_of_river,
-                                            eff_sac = lfr_fry_eff))
+                                            eff_sac = lfr_fry_eff,
+                                            lto_12a = lfr_fry_lto_12a))
 
 usethis::use_data(lfr_fry, overwrite = TRUE)
 
@@ -738,11 +799,17 @@ fr_juv_eff <- get_rear_hab_all(watersheds_in_order, 'fr', 'juv', 'eff_sac', 1980
 dimnames(fr_juv_eff) <- list(watersheds, month.abb, 1980:2000)
 fr_juv_eff[which(is.na(fr_juv_eff))] <- 0
 
+# fr juv eff
+fr_juv_lto_12a <- get_rear_hab_all(watersheds_in_order, 'fr', 'juv', 'LTO_12a', 1980:2000)
+dimnames(fr_juv_lto_12a) <- list(watersheds, month.abb, 1980:2000)
+fr_juv_lto_12a[which(is.na(fr_juv_lto_12a))] <- 0
+
 # combine together
 fr_juv <- modifyList(DSMhabitat::fr_juv, list(biop_2008_2009 = fr_juv_2008_2009,
                                           biop_itp_2018_2019 = fr_juv_2018_2019,
                                           run_of_river = fr_juv_run_of_river,
-                                          eff_sac = fr_juv_eff))
+                                          eff_sac = fr_juv_eff,
+                                          lto_12a = fr_juv_lto_12a))
 
 usethis::use_data(fr_juv, overwrite = TRUE)
 
@@ -767,11 +834,17 @@ st_juv_eff <- get_rear_hab_all(watersheds_in_order, 'st', 'juv', 'eff_sac', 1980
 dimnames(st_juv_eff) <- list(watersheds, month.abb, 1980:2000)
 st_juv_eff[which(is.na(st_juv_eff))] <- fr_juv_eff[which(is.na(st_juv_eff))]
 
+# LTO_12a
+st_juv_lto_12a <- get_rear_hab_all(watersheds_in_order, 'st', 'juv', 'LTO_12a', 1980:2000)
+dimnames(st_juv_lto_12a) <- list(watersheds, month.abb, 1980:2000)
+st_juv_lto_12a[which(is.na(st_juv_lto_12a))] <- fr_juv_lto_12a[which(is.na(st_juv_lto_12a))]
+
 # combine together
 st_juv <- modifyList(DSMhabitat::st_juv, list(biop_2008_2009 = st_juv_2008_2009,
                                           biop_itp_2018_2019 = st_juv_2018_2019,
                                           run_of_river = st_juv_run_of_river,
-                                          eff_sac = st_juv_eff))
+                                          eff_sac = st_juv_eff,
+                                          lto_12a = st_juv_lto_12a))
 
 usethis::use_data(st_juv, overwrite = TRUE)
 
@@ -796,11 +869,17 @@ sr_juv_eff <- get_rear_hab_all(watersheds_in_order, 'sr', 'juv', 'eff_sac', year
 dimnames(sr_juv_eff) <- list(watersheds, month.abb, 1980:2000)
 sr_juv_eff[which(is.na(sr_juv_eff))] <- fr_juv_eff[which(is.na(sr_juv_eff))]
 
+# sr juv LTO_12a
+sr_juv_lto_12a <- get_rear_hab_all(watersheds_in_order, 'sr', 'juv', 'LTO_12a', years = 1980:2000)
+dimnames(sr_juv_lto_12a) <- list(watersheds, month.abb, 1980:2000)
+sr_juv_lto_12a[which(is.na(sr_juv_lto_12a))] <- fr_juv_lto_12a[which(is.na(sr_juv_lto_12a))]
+
 # combine together
 sr_juv <- modifyList(DSMhabitat::sr_juv, list(biop_2008_2009 = sr_juv_2008_2009,
                                           biop_itp_2018_2019 = sr_juv_2018_2019,
                                           run_of_river = sr_juv_run_of_river,
-                                          eff_sac = sr_juv_eff))
+                                          eff_sac = sr_juv_eff,
+                                          lto_12a = sr_juv_lto_12a))
 
 usethis::use_data(sr_juv, overwrite = TRUE)
 
@@ -816,11 +895,15 @@ wr_juv_run_of_river <- generate_wr_fry_or_juv(calsim_version = "run_of_river",
 wr_juv_eff <- generate_wr_fry_or_juv(calsim_version = "eff_sac", 
                                               lifestage = "juv")
 
+wr_juv_lto_12a <- generate_wr_fry_or_juv(calsim_version = "LTO_12a",
+                                         lifestage = "juv")
+
 # combine together
 wr_juv <- modifyList(DSMhabitat::wr_juv, list(biop_2008_2009 = wr_juv_2008_2009,
                                          biop_itp_2018_2019 = wr_juv_2018_2019,
                                          run_of_river = wr_juv_run_of_river,
-                                         eff_sac = wr_juv_eff)) 
+                                         eff_sac = wr_juv_eff,
+                                         lto_12a = wr_juv_lto_12a)) 
 
 usethis::use_data(wr_juv, overwrite = TRUE)
 
@@ -834,11 +917,14 @@ lfr_juv_run_of_river <- generate_lfr_juv_or_fry(calsim_version = "run_of_river",
                                              lifestage = "juv")
 lfr_juv_eff <- generate_lfr_juv_or_fry(calsim_version = "eff_sac", 
                                                 lifestage = "juv")
+lfr_juv_lto_12a <- generate_lfr_juv_or_fry(calsim_version = "LTO_12a", 
+                                       lifestage = "juv")
 # combine together
 lfr_juv <- modifyList(DSMhabitat::lfr_juv, list(biop_2008_2009 = lfr_juv_2008_2009,
                                             biop_itp_2018_2019 = lfr_juv_2018_2019,
                                             run_of_river = lfr_juv_run_of_river,
-                                            eff_sac = lfr_juv_eff))
+                                            eff_sac = lfr_juv_eff, 
+                                            lto_12a = lfr_juv_lto_12a))
 
 usethis::use_data(lfr_juv, overwrite = TRUE)
 
@@ -871,10 +957,16 @@ fr_fp_eff <- get_floodplain_hab_all(watersheds_fp, 'fr', 'eff_sac', 1980:2000)
 dimnames(fr_fp_eff) <- list(watersheds, month.abb, 1980:2000)
 fr_fp_eff[which(is.na(fr_fp_eff))] <- 0
 
+# fr floodplain LTO_12a
+fr_fp_lto_12a <- get_floodplain_hab_all(watersheds_fp, 'fr', 'LTO_12a', 1980:2000)
+dimnames(fr_fp_lto_12a) <- list(watersheds, month.abb, 1980:2000)
+fr_fp_lto_12a[which(is.na(fr_fp_lto_12a))] <- 0
+
 fr_fp <- modifyList(DSMhabitat::fr_fp, list(biop_2008_2009 = fr_fp_2008_2009,
                                             biop_itp_2018_2019 = fr_fp_2018_2019,
                                             run_of_river = fr_fp_run_of_river,
-                                            eff_sac = fr_fp_eff))
+                                            eff_sac = fr_fp_eff,
+                                            lto_12a = fr_fp_lto_12a))
 
 usethis::use_data(fr_fp, overwrite = TRUE)
 
@@ -899,11 +991,17 @@ st_fp_eff <- get_floodplain_hab_all(watersheds_fp, 'st', 'eff_sac', 1980:2000)
 dimnames(st_fp_eff) <- list(watersheds, month.abb, 1980:2000)
 st_fp_eff[which(is.na(st_fp_eff))] <- fr_fp_eff[which(is.na(st_fp_eff))]
 
+# st fp lto_12a
+st_fp_lto_12a <- get_floodplain_hab_all(watersheds_fp, 'st', 'LTO_12a', 1980:2000)
+dimnames(st_fp_lto_12a) <- list(watersheds, month.abb, 1980:2000)
+st_fp_lto_12a[which(is.na(st_fp_lto_12a))] <- fr_fp_lto_12a[which(is.na(st_fp_lto_12a))]
+
 
 st_fp <- modifyList(DSMhabitat::st_fp, list(biop_2008_2009 = st_fp_2008_2009,
                                             biop_itp_2018_2019 = st_fp_2018_2019,
                                             run_of_river = st_fp_run_of_river,
-                                            eff_sac = st_fp_eff))
+                                            eff_sac = st_fp_eff,
+                                            lto_12a = st_fp_lto_12a))
 
 usethis::use_data(st_fp, overwrite = TRUE)
 
@@ -923,21 +1021,34 @@ sr_fp_run_of_river <- get_floodplain_hab_all(watersheds_fp, 'sr', 'run_of_river'
 dimnames(sr_fp_run_of_river) <- list(watersheds, month.abb, 1980:2000)
 sr_fp_run_of_river[which(is.na(sr_fp_run_of_river))] <- fr_fp_run_of_river[which(is.na(sr_fp_run_of_river))]
 
-# sr floodplain run of river
+# sr floodplain eff
 sr_fp_eff <- get_floodplain_hab_all(watersheds_fp, 'sr', 'eff_sac', years = 1980:2000)
 dimnames(sr_fp_eff) <- list(watersheds, month.abb, 1980:2000)
 sr_fp_eff[which(is.na(sr_fp_eff))] <- fr_fp_eff[which(is.na(sr_fp_eff))]
 
+# LTO_12a floodplain
+sr_fp_lto_12a <- get_floodplain_hab_all(watersheds_fp, 'sr', 'LTO_12a', years = 1980:2000)
+dimnames(sr_fp_lto_12a) <- list(watersheds, month.abb, 1980:2000)
+sr_fp_lto_12a[which(is.na(sr_fp_lto_12a))] <- fr_fp_lto_12a[which(is.na(sr_fp_lto_12a))]
+
 sr_fp <- modifyList(DSMhabitat::sr_fp, list(biop_2008_2009 = sr_fp_2008_2009,
                                             biop_itp_2018_2019 = sr_fp_2018_2019,
                                             run_of_river = sr_fp_run_of_river,
-                                            eff_sac = sr_fp_eff))
+                                            eff_sac = sr_fp_eff,
+                                            lto_12a = sr_fp_lto_12a))
 
 usethis::use_data(sr_fp, overwrite = TRUE)
 
 # winter run floodplain habitat -- 
 generate_wr_floodplain <- function(calsim_version) {
-  wr_fp <- fr_fp[[calsim_version]] # Set default values to fall run to allow for straying
+  if(calsim_version == "LTO_12a") {
+    calsim_version_tmp = tolower(calsim_version)
+    wr_fp <- fr_fp[[calsim_version_tmp]]
+  } else {
+    wr_fp <- fr_fp[[calsim_version]] # Set default values to fall run to allow for straying
+    
+  }
+  
   wr_fp['Upper Sacramento River', , ] <- DSMhabitat::set_floodplain_habitat('Upper Sacramento River', 'wr',
                                                    get_flow('Upper Sacramento River',
                                                             calsim_version, 
@@ -967,18 +1078,27 @@ wr_fp_2008_2009 <- generate_wr_floodplain("biop_2008_2009")
 wr_fp_2018_2019 <- generate_wr_floodplain("biop_itp_2018_2019")
 wr_fp_run_of_river <- generate_wr_floodplain("run_of_river")
 wr_fp_eff <- generate_wr_floodplain("eff_sac")
+wr_fp_lto_12a <- generate_wr_floodplain("LTO_12a")
+
 
 # combine 
 wr_fp <- modifyList(DSMhabitat::wr_fp, list(biop_2008_2009 = wr_fp_2008_2009,
                                         biop_itp_2018_2019 = wr_fp_2018_2019,
                                         run_of_river = wr_fp_run_of_river,
-                                        eff_sac = wr_fp_eff))
+                                        eff_sac = wr_fp_eff,
+                                        lto_12a = wr_fp_lto_12a))
 
 usethis::use_data(wr_fp, overwrite = TRUE)
 
 # Late fall run floodplain habitat -- 
 generate_lfr_floodplain <- function(calsim_version) {
-  lfr_fp <- fr_fp[[calsim_version]] # Set default values to fall run to allow for straying
+  if(calsim_version == "LTO_12a") {
+    calsim_version_tmp = tolower(calsim_version)
+    lfr_fp <- fr_fp[[calsim_version_tmp]]
+  } else {
+    lfr_fp <- fr_fp[[calsim_version]] # Set default values to fall run to allow for straying
+    
+  }
   lfr_fp['Upper Sacramento River',,] <- DSMhabitat::set_floodplain_habitat('Upper Sacramento River', 'lfr',
                                                    get_flow('Upper Sacramento River',
                                                             calsim_version, 
@@ -1008,19 +1128,27 @@ lfr_fp_2008_2009 <- generate_lfr_floodplain("biop_2008_2009")
 lfr_fp_2018_2019 <- generate_lfr_floodplain("biop_itp_2018_2019")
 lfr_fp_run_of_river <- generate_lfr_floodplain("run_of_river")
 lfr_fp_eff <- generate_lfr_floodplain("eff_sac")
+lfr_fp_lto_12a <- generate_lfr_floodplain("LTO_12a")
 # combine 
 lfr_fp <- modifyList(DSMhabitat::lfr_fp, list(biop_2008_2009 = lfr_fp_2008_2009,
                                           biop_itp_2018_2019 = lfr_fp_2018_2019,
                                           run_of_river = lfr_fp_run_of_river,
-                                          eff_sac = lfr_fp_eff))
+                                          eff_sac = lfr_fp_eff,
+                                          lto_12a = lfr_fp_lto_12a))
 
 usethis::use_data(lfr_fp, overwrite = TRUE)
 
 # bypass in stream -------------------------------------------------------------
 # sutter bypass habitat 
 generate_sutter_habitat <- function(calsim_version) {
-  bpf <- DSMflow::bypass_flows[[calsim_version]] %>%
-    filter(between(year(date), 1980, 2000))
+  
+  if(calsim_version == "LTO_12a") {
+    bpf <- DSMflow::bypass_flows[[calsim_version]] %>%
+      filter(between(year(date), 1980, 2000))
+  } else {
+    bpf <- DSMflow::bypass_flows[[tolower(calsim_version)]] %>%
+      filter(between(year(date), 1980, 2000))
+  }
   
   sutter_habitat <- bind_cols(
     'date' = pull(bpf, date),
@@ -1044,17 +1172,25 @@ generate_sutter_habitat <- function(calsim_version) {
 sutter_habitat_2008_2009 <- generate_sutter_habitat("biop_2008_2009")
 sutter_habitat_2018_2019 <- generate_sutter_habitat("biop_itp_2018_2019")
 sutter_habitat_run_of_river <- generate_sutter_habitat("run_of_river")
+sutter_habitat_lto_12a <- generate_sutter_habitat("LTO_12a")
+
 # combine 
 sutter_habitat <- modifyList(DSMhabitat::sutter_habitat, list(biop_2008_2009 = sutter_habitat_2008_2009,
                                                          biop_itp_2018_2019 = sutter_habitat_2018_2019,
-                                                         run_of_river = sutter_habitat_run_of_river))
+                                                         run_of_river = sutter_habitat_run_of_river,
+                                                         lto_12a = sutter_habitat_lto_12a))
 
 usethis::use_data(sutter_habitat, overwrite = TRUE)
 
 # yolo bypass habitat -- 
 generate_yolo_habitat <- function(calsim_version) {
-  bpf <- DSMflow::bypass_flows[[calsim_version]] %>%
-    filter(between(year(date), 1980, 2000))
+  if(calsim_version == "LTO_12a") {
+    bpf <- DSMflow::bypass_flows[[calsim_version]] %>%
+      filter(between(year(date), 1980, 2000))
+  } else {
+    bpf <- DSMflow::bypass_flows[[tolower(calsim_version)]] %>%
+      filter(between(year(date), 1980, 2000))
+  }
   
   yolo_habitat <- bind_cols(
     'date' = pull(bpf, date),
@@ -1076,11 +1212,13 @@ generate_yolo_habitat <- function(calsim_version) {
 yolo_habitat_2008_2009 <- generate_yolo_habitat("biop_2008_2009")
 yolo_habitat_2018_2019 <- generate_yolo_habitat("biop_itp_2018_2019")
 yolo_habitat_run_of_river <- generate_yolo_habitat("run_of_river")
+yolo_habitat_lto_12a <- generate_yolo_habitat("LTO_12a")
 
 # combine 
 yolo_habitat <- modifyList(DSMhabitat::yolo_habitat, list(biop_2008_2009 = yolo_habitat_2008_2009,
                                                       biop_itp_2018_2019 = yolo_habitat_2018_2019,
-                                                      run_of_river = yolo_habitat_run_of_river))
+                                                      run_of_river = yolo_habitat_run_of_river,
+                                                      lto_12a  = yolo_habitat_lto_12a))
 
 usethis::use_data(yolo_habitat, overwrite = TRUE)
 
@@ -1096,10 +1234,10 @@ generate_weeks_flooded <- function(calsim_version) {
     weeks_flooded[i,,] <- matrix(flooded_weeks, ncol = 12)
   }
   
-  flooded <- DSMhabitat::fr_fp[[calsim_version]] > 0
+  flooded <- DSMhabitat::fr_fp[[tolower(calsim_version)]] > 0
   weeks_flooded <- pmax(flooded*2, weeks_flooded)
   
-  not_flooded <- DSMhabitat::fr_fp[[calsim_version]] == 0
+  not_flooded <- DSMhabitat::fr_fp[[tolower(calsim_version)]] == 0
   weeks_flooded[not_flooded] <- 0
   dimnames(weeks_flooded) <- list(watersheds, month.abb, 1980:2000)
   return(weeks_flooded)
@@ -1110,11 +1248,14 @@ weeks_flooded_2008_2009 <- generate_weeks_flooded("biop_2008_2009")
 weeks_flooded_2018_2019 <- generate_weeks_flooded("biop_itp_2018_2019")
 weeks_flooded_run_of_river <- generate_weeks_flooded("run_of_river")
 weeks_flooded_eff <- generate_weeks_flooded("eff_sac")
+weeks_flooded_lto_12a <- generate_weeks_flooded("LTO_12a")
+
 # combine 
 weeks_flooded <- modifyList(DSMhabitat::weeks_flooded, list(biop_2008_2009 = weeks_flooded_2008_2009,
                                                         biop_itp_2018_2019 = weeks_flooded_2018_2019,
                                                         run_of_river = weeks_flooded_run_of_river,
-                                                        eff_sac = weeks_flooded_eff))
+                                                        eff_sac = weeks_flooded_eff,
+                                                        lto_12a = weeks_flooded_lto_12a))
 
 usethis::use_data(weeks_flooded, overwrite = TRUE)
 

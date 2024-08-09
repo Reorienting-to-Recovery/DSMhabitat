@@ -22,13 +22,8 @@ watershed_species_present <- read_csv('data-raw/watershed_species_present.csv')
 usethis::use_data(watershed_species_present, overwrite = TRUE)
 
 # habitat quant types
-watershed_methods <- read_csv("data-raw/habitat_quantification_types.csv") |> 
-  # update watershed method for American River
-  filter(watershed_name != "American River") |> 
-  bind_rows(tibble("watershed_name" = "American River",
-                   "instream" = "hsi",
-                   "floodplain" = "hsi",
-                   "spawning" = "hsi"))
+watershed_methods <- read_csv("data-raw/habitat_quantification_types.csv") 
+
 usethis::use_data(watershed_methods, overwrite = TRUE)
 
 # floodplain modeling metadata
