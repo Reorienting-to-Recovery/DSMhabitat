@@ -455,34 +455,34 @@ ic_juv |>
   facet_wrap(~watershed, scales = 'free_y') + 
   theme_minimal()
 
-# Exploratory plot 
-r_to_r_baseline_habitat <- r_to_r_lto_12a_baseline_sr_fry |> 
-  DSMhabitat::square_meters_to_acres()
-
-sit_habitat <- DSMhabitat::sr_fry$lto_12a |> DSMhabitat::square_meters_to_acres()
-
-ic_fry <- expand_grid(
-  watershed = factor(DSMscenario::watershed_labels, 
-                     levels = DSMscenario::watershed_labels),
-  month = 1:12,
-  year = 1980:2000) |> 
-  arrange(year, month, watershed) |> 
-  mutate(
-    sit_habitat = as.vector(sit_habitat),
-    r_to_r_baseline_habitat = as.vector(r_to_r_baseline_habitat)) |> 
-  filter(watershed %in% c("Tuolumne River",
-                          "Upper Sacramento River",
-                          "Upper-mid Sacramento River"))
-
-ic_fry|> 
-  transmute(watershed, date = ymd(paste(year, month, 1)), 
-            sit_habitat, r_to_r_baseline_habitat) |> 
-  gather(version, acres, -watershed, -date)  |> 
-  ggplot(aes(date, acres, color = version)) +
-  geom_line(alpha = .75) + 
-  # geom_col(position = 'dodge') +
-  facet_wrap(~watershed, scales = 'free_y') + 
-  theme_minimal()
+# # Exploratory plot 
+# r_to_r_baseline_habitat <- r_to_r_lto_12a_baseline_sr_fry |> 
+#   DSMhabitat::square_meters_to_acres()
+# 
+# sit_habitat <- DSMhabitat::sr_fry$lto_12a |> DSMhabitat::square_meters_to_acres()
+# 
+# ic_fry <- expand_grid(
+#   watershed = factor(DSMscenario::watershed_labels, 
+#                      levels = DSMscenario::watershed_labels),
+#   month = 1:12,
+#   year = 1980:2000) |> 
+#   arrange(year, month, watershed) |> 
+#   mutate(
+#     sit_habitat = as.vector(sit_habitat),
+#     r_to_r_baseline_habitat = as.vector(r_to_r_baseline_habitat)) |> 
+#   filter(watershed %in% c("Tuolumne River",
+#                           "Upper Sacramento River",
+#                           "Upper-mid Sacramento River"))
+# 
+# ic_fry|> 
+#   transmute(watershed, date = ymd(paste(year, month, 1)), 
+#             sit_habitat, r_to_r_baseline_habitat) |> 
+#   gather(version, acres, -watershed, -date)  |> 
+#   ggplot(aes(date, acres, color = version)) +
+#   geom_line(alpha = .75) + 
+#   # geom_col(position = 'dodge') +
+#   facet_wrap(~watershed, scales = 'free_y') + 
+#   theme_minimal()
 
 
 
@@ -525,32 +525,32 @@ sr_fp <- current_sr_fp
 usethis::use_data(sr_fp, overwrite = TRUE)
 
 # Exploratory plot 
-r_to_r_baseline_habitat <- r_to_r_lto_12a_baseline_sr_fp |> 
-  DSMhabitat::square_meters_to_acres()
-
-sit_habitat <- DSMhabitat::sr_fp$lto_12a |> DSMhabitat::square_meters_to_acres()
-
-fp <- expand_grid(
-  watershed = factor(DSMscenario::watershed_labels, 
-                     levels = DSMscenario::watershed_labels),
-  month = 1:12,
-  year = 1980:2000) |> 
-  arrange(year, month, watershed) |> 
-  mutate(
-    sit_habitat = as.vector(sit_habitat),
-    r_to_r_baseline_habitat = as.vector(r_to_r_baseline_habitat)) |> 
-  filter(watershed %in% c("Yuba River", "Lower-mid Sacramento River", "Tuolumne River"))
-
-fp |> 
-  transmute(watershed, date = ymd(paste(year, month, 1)), 
-            sit_habitat, r_to_r_baseline_habitat) |> 
-  filter(!(watershed %in% c('Sutter Bypass', 'Yolo Bypass'))) |> 
-  gather(version, acres, -watershed, -date)  |> 
-  ggplot(aes(date, acres, color = version)) +
-  geom_line() + 
-  # geom_col(position = 'dodge') +
-  facet_wrap(~watershed, scales = 'free_y') + 
-  theme_minimal()
+# r_to_r_baseline_habitat <- r_to_r_lto_12a_baseline_sr_fp |> 
+#   DSMhabitat::square_meters_to_acres()
+# 
+# sit_habitat <- DSMhabitat::sr_fp$lto_12a |> DSMhabitat::square_meters_to_acres()
+# 
+# fp <- expand_grid(
+#   watershed = factor(DSMscenario::watershed_labels, 
+#                      levels = DSMscenario::watershed_labels),
+#   month = 1:12,
+#   year = 1980:2000) |> 
+#   arrange(year, month, watershed) |> 
+#   mutate(
+#     sit_habitat = as.vector(sit_habitat),
+#     r_to_r_baseline_habitat = as.vector(r_to_r_baseline_habitat)) |> 
+#   filter(watershed %in% c("Yuba River", "Lower-mid Sacramento River", "Tuolumne River"))
+# 
+# fp |> 
+#   transmute(watershed, date = ymd(paste(year, month, 1)), 
+#             sit_habitat, r_to_r_baseline_habitat) |> 
+#   filter(!(watershed %in% c('Sutter Bypass', 'Yolo Bypass'))) |> 
+#   gather(version, acres, -watershed, -date)  |> 
+#   ggplot(aes(date, acres, color = version)) +
+#   geom_line() + 
+#   # geom_col(position = 'dodge') +
+#   facet_wrap(~watershed, scales = 'free_y') + 
+#   theme_minimal()
 
 # WINTER RUN ---------------------------------------------------------------------
 # Update DSMhabitat values 
@@ -575,31 +575,31 @@ wr_spawn <- current_wr_spawn
 usethis::use_data(wr_spawn, overwrite = TRUE)
 
 # Exploratory plot 
-r_to_r_baseline_habitat <- r_to_r_lto_12a_baseline_wr_spawn |> 
-  DSMhabitat::square_meters_to_acres()
-
-sit_habitat <- DSMhabitat::wr_spawn$lto_12a |> DSMhabitat::square_meters_to_acres()
-
-spawn <- expand_grid(
-  watershed = factor(DSMscenario::watershed_labels, 
-                     levels = DSMscenario::watershed_labels),
-  month = 1:12,
-  year = 1979:2000) |> 
-  arrange(year, month, watershed) |> 
-  mutate(
-    sit_habitat = as.vector(sit_habitat),
-    r_to_r_baseline_habitat = as.vector(r_to_r_baseline_habitat)) |> 
-  filter(watershed %in% c("Upper Sacramento River"))
-
-spawn |> 
-  transmute(watershed, date = ymd(paste(year, month, 1)), 
-            sit_habitat, r_to_r_baseline_habitat) |> 
-  gather(version, acres, -watershed, -date)  |> 
-  ggplot(aes(date, acres, color = version)) +
-  geom_line(alpha = .75) + 
-  # geom_col(position = 'dodge') +
-  facet_wrap(~watershed, scales = 'free_y') + 
-  theme_minimal()
+# r_to_r_baseline_habitat <- r_to_r_lto_12a_baseline_wr_spawn |> 
+#   DSMhabitat::square_meters_to_acres()
+# 
+# sit_habitat <- DSMhabitat::wr_spawn$lto_12a |> DSMhabitat::square_meters_to_acres()
+# 
+# spawn <- expand_grid(
+#   watershed = factor(DSMscenario::watershed_labels, 
+#                      levels = DSMscenario::watershed_labels),
+#   month = 1:12,
+#   year = 1979:2000) |> 
+#   arrange(year, month, watershed) |> 
+#   mutate(
+#     sit_habitat = as.vector(sit_habitat),
+#     r_to_r_baseline_habitat = as.vector(r_to_r_baseline_habitat)) |> 
+#   filter(watershed %in% c("Upper Sacramento River"))
+# 
+# spawn |> 
+#   transmute(watershed, date = ymd(paste(year, month, 1)), 
+#             sit_habitat, r_to_r_baseline_habitat) |> 
+#   gather(version, acres, -watershed, -date)  |> 
+#   ggplot(aes(date, acres, color = version)) +
+#   geom_line(alpha = .75) + 
+#   # geom_col(position = 'dodge') +
+#   facet_wrap(~watershed, scales = 'free_y') + 
+#   theme_minimal()
 
 # Add inchannel habitat to both fry and juvenile habitat objects ---------------
 # set r_to_r_baseline_fr_juv and fry 
@@ -657,61 +657,61 @@ wr_fry <- current_wr_fry
 usethis::use_data(wr_fry, overwrite = TRUE)
 
 # Exploratory plot 
-r_to_r_baseline_habitat <- r_to_r_lto_12a_baseline_wr_juv |> 
-  DSMhabitat::square_meters_to_acres()
-
-sit_habitat <- DSMhabitat::wr_juv$lto_12a |> DSMhabitat::square_meters_to_acres()
-
-ic_juv <- expand_grid(
-  watershed = factor(DSMscenario::watershed_labels, 
-                     levels = DSMscenario::watershed_labels),
-  month = 1:12,
-  year = 1980:2000) |> 
-  arrange(year, month, watershed) |> 
-  mutate(
-    sit_habitat = as.vector(sit_habitat),
-    r_to_r_baseline_habitat = as.vector(r_to_r_baseline_habitat)) |> 
-  filter(watershed %in% c( "Upper Sacramento River",
-                           "Upper-mid Sacramento River"
-  ))
-
-ic_juv |> 
-  transmute(watershed, date = ymd(paste(year, month, 1)), 
-            sit_habitat, r_to_r_baseline_habitat) |> 
-  gather(version, acres, -watershed, -date)  |> 
-  ggplot(aes(date, acres, color = version)) +
-  geom_line(alpha = .75) + 
-  # geom_col(position = 'dodge') +
-  facet_wrap(~watershed, scales = 'free_y') + 
-  theme_minimal()
-
-# Exploratory plot 
-r_to_r_baseline_habitat <- r_to_r_lto_12a_baseline_wr_fry |> 
-  DSMhabitat::square_meters_to_acres()
-
-sit_habitat <- DSMhabitat::wr_fry$lto_12a |> DSMhabitat::square_meters_to_acres()
-
-ic_fry <- expand_grid(
-  watershed = factor(DSMscenario::watershed_labels, 
-                     levels = DSMscenario::watershed_labels),
-  month = 1:12,
-  year = 1980:2000) |> 
-  arrange(year, month, watershed) |> 
-  mutate(
-    sit_habitat = as.vector(sit_habitat),
-    r_to_r_baseline_habitat = as.vector(r_to_r_baseline_habitat)) |> 
-  filter(watershed %in% c("Upper Sacramento River",
-                          "Upper-mid Sacramento River"))
-
-ic_fry|> 
-  transmute(watershed, date = ymd(paste(year, month, 1)), 
-            sit_habitat, r_to_r_baseline_habitat) |> 
-  gather(version, acres, -watershed, -date)  |> 
-  ggplot(aes(date, acres, color = version)) +
-  geom_line(alpha = .75) + 
-  # geom_col(position = 'dodge') +
-  facet_wrap(~watershed, scales = 'free_y') + 
-  theme_minimal()
+# # r_to_r_baseline_habitat <- r_to_r_lto_12a_baseline_wr_juv |> 
+# #   DSMhabitat::square_meters_to_acres()
+# # 
+# # sit_habitat <- DSMhabitat::wr_juv$lto_12a |> DSMhabitat::square_meters_to_acres()
+# # 
+# # ic_juv <- expand_grid(
+# #   watershed = factor(DSMscenario::watershed_labels, 
+# #                      levels = DSMscenario::watershed_labels),
+# #   month = 1:12,
+# #   year = 1980:2000) |> 
+# #   arrange(year, month, watershed) |> 
+# #   mutate(
+# #     sit_habitat = as.vector(sit_habitat),
+# #     r_to_r_baseline_habitat = as.vector(r_to_r_baseline_habitat)) |> 
+# #   filter(watershed %in% c( "Upper Sacramento River",
+# #                            "Upper-mid Sacramento River"
+# #   ))
+# # 
+# # ic_juv |> 
+# #   transmute(watershed, date = ymd(paste(year, month, 1)), 
+# #             sit_habitat, r_to_r_baseline_habitat) |> 
+# #   gather(version, acres, -watershed, -date)  |> 
+# #   ggplot(aes(date, acres, color = version)) +
+# #   geom_line(alpha = .75) + 
+# #   # geom_col(position = 'dodge') +
+# #   facet_wrap(~watershed, scales = 'free_y') + 
+# #   theme_minimal()
+# 
+# # Exploratory plot 
+# r_to_r_baseline_habitat <- r_to_r_lto_12a_baseline_wr_fry |> 
+#   DSMhabitat::square_meters_to_acres()
+# 
+# sit_habitat <- DSMhabitat::wr_fry$lto_12a |> DSMhabitat::square_meters_to_acres()
+# 
+# ic_fry <- expand_grid(
+#   watershed = factor(DSMscenario::watershed_labels, 
+#                      levels = DSMscenario::watershed_labels),
+#   month = 1:12,
+#   year = 1980:2000) |> 
+#   arrange(year, month, watershed) |> 
+#   mutate(
+#     sit_habitat = as.vector(sit_habitat),
+#     r_to_r_baseline_habitat = as.vector(r_to_r_baseline_habitat)) |> 
+#   filter(watershed %in% c("Upper Sacramento River",
+#                           "Upper-mid Sacramento River"))
+# 
+# ic_fry|> 
+#   transmute(watershed, date = ymd(paste(year, month, 1)), 
+#             sit_habitat, r_to_r_baseline_habitat) |> 
+#   gather(version, acres, -watershed, -date)  |> 
+#   ggplot(aes(date, acres, color = version)) +
+#   geom_line(alpha = .75) + 
+#   # geom_col(position = 'dodge') +
+#   facet_wrap(~watershed, scales = 'free_y') + 
+#   theme_minimal()
 
 
 
@@ -737,32 +737,32 @@ wr_fp <- current_wr_fp
 usethis::use_data(wr_fp, overwrite = TRUE)
 
 # Exploratory plot 
-r_to_r_baseline_habitat <- r_to_r_lto_12a_baseline_wr_fp |> 
-  DSMhabitat::square_meters_to_acres()
-
-sit_habitat <- DSMhabitat::wr_fp$lto_12a |> DSMhabitat::square_meters_to_acres()
-
-fp <- expand_grid(
-  watershed = factor(DSMscenario::watershed_labels, 
-                     levels = DSMscenario::watershed_labels),
-  month = 1:12,
-  year = 1980:2000) |> 
-  arrange(year, month, watershed) |> 
-  mutate(
-    sit_habitat = as.vector(sit_habitat),
-    r_to_r_baseline_habitat = as.vector(r_to_r_baseline_habitat)) |> 
-  filter(watershed %in% c("Lower-mid Sacramento River"))
-
-fp |> 
-  transmute(watershed, date = ymd(paste(year, month, 1)), 
-            sit_habitat, r_to_r_baseline_habitat) |> 
-  filter(!(watershed %in% c('Sutter Bypass', 'Yolo Bypass'))) |> 
-  gather(version, acres, -watershed, -date)  |> 
-  ggplot(aes(date, acres, color = version)) +
-  geom_line() + 
-  # geom_col(position = 'dodge') +
-  facet_wrap(~watershed, scales = 'free_y') + 
-  theme_minimal()
+# r_to_r_baseline_habitat <- r_to_r_lto_12a_baseline_wr_fp |> 
+#   DSMhabitat::square_meters_to_acres()
+# 
+# sit_habitat <- DSMhabitat::wr_fp$lto_12a |> DSMhabitat::square_meters_to_acres()
+# 
+# fp <- expand_grid(
+#   watershed = factor(DSMscenario::watershed_labels, 
+#                      levels = DSMscenario::watershed_labels),
+#   month = 1:12,
+#   year = 1980:2000) |> 
+#   arrange(year, month, watershed) |> 
+#   mutate(
+#     sit_habitat = as.vector(sit_habitat),
+#     r_to_r_baseline_habitat = as.vector(r_to_r_baseline_habitat)) |> 
+#   filter(watershed %in% c("Lower-mid Sacramento River"))
+# 
+# fp |> 
+#   transmute(watershed, date = ymd(paste(year, month, 1)), 
+#             sit_habitat, r_to_r_baseline_habitat) |> 
+#   filter(!(watershed %in% c('Sutter Bypass', 'Yolo Bypass'))) |> 
+#   gather(version, acres, -watershed, -date)  |> 
+#   ggplot(aes(date, acres, color = version)) +
+#   geom_line() + 
+#   # geom_col(position = 'dodge') +
+#   facet_wrap(~watershed, scales = 'free_y') + 
+#   theme_minimal()
 
 # all runs - delta 
 # 
@@ -781,8 +781,6 @@ r_to_r_baseline_delta_lto_12a == DSMhabitat::delta_habitat$sit_habitat
 r_to_r_baseline_delta_lto_12a == DSMhabitat::delta_habitat$r_to_r_baseline # the same values
 # TODO: do we need to have a different object if the values are the same? 
 # TODO: double check that the delta flows are the same for eff and LTO_12a
-
-
 
 # Exploratory plot 
 baseline_habitat_lto_12a <- r_to_r_baseline_delta_lto_12a[,, "North Delta"] |> 
@@ -811,6 +809,6 @@ delta |>
   theme_minimal()
 
 # Save as data object to DSMhabitat
-delta_habitat = modifyList(DSMhabitat::delta_habitat, list(sit_habitat = DSMhabitat::delta_habitat$sit_habitat,
-                                                           r_to_r_baseline = r_to_r_baseline_delta))
-usethis::use_data(delta_habitat, overwrite = TRUE)
+# delta_habitat = modifyList(DSMhabitat::delta_habitat, list(sit_habitat = DSMhabitat::delta_habitat$sit_habitat,
+#                                                            r_to_r_baseline = r_to_r_baseline_delta))
+# usethis::use_data(delta_habitat, overwrite = TRUE)
