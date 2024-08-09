@@ -1,6 +1,7 @@
 library(tidyverse)
 library(DSMhabitat)
 library(lubridate)
+library(DSMflow)
 
 spawning_months <- function(species) {
   switch(species, 

@@ -17,6 +17,7 @@ knitr::opts_chunk$set(
 library(DSMhabitat)
 library(tidyverse)
 library(lubridate)
+library(DSMflow)
 
 ```
 
@@ -32,24 +33,11 @@ knitr::kable(all_existing_and_hrl_data)
 
 ```
 
-### Methodology for integrating habitat projects into model SIT DSM inputs
+### Methodology for integrating habitat projects into R2R baseline habitat
 
-The first step was to convert total project acres into usable area given the following assumptions:
+Using the table above as inputs for new suitable habitat for each of the watersheds outlined, we will add the acreage to the existing R2R baseline habitat. This method assumes that each of the total acreages can be considered suitable habitat and does not need a suitability index applied. 
 
--   Floodplain use 90% suitable
-
--   In channel suitability depends on gradient ([Stillwater Sciences. 2012](http://www.ycwa-relicensing.com/Technical%20References/07%20-%20Threatened%20Endangered%20and%20Fully%20Protected%20Species/2012%20-%200221%20-%20Stillwater%20Sciences%20RIPPLE%20Report.pdf))
-
-    | Gradient | Percent Suitable |
-    |----------|------------------|
-    | \< 0.04% | 0.1              |
-    | 0 - 2    | 0.78             |
-    | 2 - 4    | 0.585            |
-    | 4 - 8    | 0.195            |
-
--   Spawning use 12% suitable
-
-Habitat values for projects were not given for specific flows. To combine project acres with existing habitat we used a scaling approach (figure 1).
+Habitat acreage is added at a representative flow to scale the R2R baseline DSMhabitat for each of the watersheds identified (figure 1).
 
 ![](images/Project%20Hab%20Scaling.png)
 
@@ -59,7 +47,7 @@ We generated two helper functions to calculate flow reference points for adding 
 
 ##### Inchannel Point of Reference
 
-For inchannel habitat we use the median flow over the entire modeled period 1980 - 2000. Flow inputs come from CalSim II benchmark from the 2019 Itp and 2020 BiOp. `existing_cfs_median_comparison_plot` takes in `habitat_type`, `watershed`, `species`, and a `calsim_version` and returns the median flow.
+For inchannel habitat we use the median flow over the entire modeled period 1980 - 2000. Flow inputs come from CalSim III benchmark. `existing_cfs_median_comparison_plot` takes in `habitat_type`, `watershed`, `species`, and a `calsim_version` and returns the median flow.
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 
@@ -71,7 +59,7 @@ Example: Median flow for American River fall run inchannel rearing
 
 ```{r}
 existing_cfs_median_comparison_point("inchannel rearing", "Yuba River", 
-                                     "fr", 'biop_itp_2018_2019')
+                                     "fr", 'LTO_12a')
 ```
 
 ##### Floodplain Point of Reference
@@ -80,65 +68,65 @@ For floodplain habitat we use the 2 year 30 day exceedence value.
 
 ```{r}
 existing_cfs_median_comparison_point("floodplain rearing", "Yuba River", 
-                                     "fr", 'biop_itp_2018_2019')
+                                     "fr", 'LTO_12a')
 ```
 
 #### 2) Calculation proportion increase of habitat at flow point of reference
 ```{r}
 hab_prop_change_from_projects("inchannel rearing", "Yuba River", 
-                              "fr", "juv", "biop_itp_2018_2019")
+                              "fr", "juv", "LTO_12a")
 ```
 
 #### 3) Scale existing habitat up by proportion increase
 ```{r}
-add_project_habitat <- DSMhabitat::fr_juv$biop_itp_2018_2019["Yuba River" , , ] * 
-  hab_prop_change_from_projects("inchannel rearing", "Yuba River", "fr", "juv", "biop_itp_2018_2019")
+add_project_habitat <- DSMhabitat::fr_juv$r_to_r_baseline["Yuba River" , , ] * # needs to change to LTO_12a
+  hab_prop_change_from_projects("inchannel rearing", "Yuba River", "fr", "juv", "LTO_12a")
 
-updated_habitat <- DSMhabitat::fr_juv$biop_itp_2018_2019["Yuba River", , ] + add_project_habitat
+updated_habitat <- DSMhabitat::fr_juv$r_to_r_baseline["Yuba River", , ] + add_project_habitat # needs to change to LTO_12a
 ```
 
-<!-- ### Baseline Habitat Plots -->
+### Baseline Habitat Plots
 
-<!-- #### Spawning Habitat  -->
+#### Spawning Habitat
 
-<!-- Below are spawning plots displaying spawning habitat changes from CVPIA SIT habitat (blue) to baseline (red) for each run.  -->
+Below are spawning plots displaying spawning habitat changes from CVPIA SIT habitat (blue) to baseline (red) for each run.
 
-<!-- ##### Fall Run  -->
+##### Fall Run
 
-<!-- ```{r, echo = FALSE} -->
-<!-- # Exploratory plot  -->
-<!-- r_to_r_baseline_habitat <- DSMhabitat::fr_spawn$r_to_r_baseline |>  -->
-<!--   DSMhabitat::square_meters_to_acres() -->
+```{r, echo = FALSE}
+# Exploratory plot
+r_to_r_baseline_habitat <- DSMhabitat::fr_spawn$r_to_r_baseline |>
+  DSMhabitat::square_meters_to_acres()
 
-<!-- sit_habitat <- DSMhabitat::fr_spawn$biop_itp_2018_2019 |> DSMhabitat::square_meters_to_acres() -->
+sit_habitat <- DSMhabitat::fr_spawn$biop_itp_2018_2019 |> DSMhabitat::square_meters_to_acres()
 
-<!-- spawn <- expand_grid( -->
-<!--   watershed = factor(DSMscenario::watershed_labels,  -->
-<!--                      levels = DSMscenario::watershed_labels), -->
-<!--   month = 1:12, -->
-<!--   year = 1979:2000) |>  -->
-<!--   arrange(year, month, watershed) |>  -->
-<!--   mutate( -->
-<!--     sit_habitat = as.vector(sit_habitat), -->
-<!--     r_to_r_baseline_habitat = as.vector(r_to_r_baseline_habitat)) |>  -->
-<!--   filter(watershed %in% c("American River",  -->
-<!--                           "Upper Sacramento River",  -->
-<!--                           "Paynes Creek",  -->
-<!--                           "Clear Creek")) -->
+spawn <- expand_grid(
+  watershed = factor(DSMscenario::watershed_labels,
+                     levels = DSMscenario::watershed_labels),
+  month = 1:12,
+  year = 1979:2000) |>
+  arrange(year, month, watershed) |>
+  mutate(
+    sit_habitat = as.vector(sit_habitat),
+    r_to_r_baseline_habitat = as.vector(r_to_r_baseline_habitat)) |>
+  filter(watershed %in% c("American River",
+                          "Upper Sacramento River",
+                          "Paynes Creek",
+                          "Clear Creek"))
 
-<!-- spawn |>  -->
-<!--   transmute(watershed, date = ymd(paste(year, month, 1)),  -->
-<!--             sit_habitat, r_to_r_baseline_habitat) |>  -->
-<!--   gather(version, acres, -watershed, -date)  |>  -->
-<!--   ggplot(aes(date, acres, color = version)) + -->
-<!--   geom_line(alpha = .75) +  -->
-<!--   # geom_col(position = 'dodge') + -->
-<!--   facet_wrap(~watershed, scales = 'free_y') +  -->
-<!--   theme_minimal() +  -->
-<!--   theme(legend.position = "bottom") -->
+spawn |>
+  transmute(watershed, date = ymd(paste(year, month, 1)),
+            sit_habitat, r_to_r_baseline_habitat) |>
+  gather(version, acres, -watershed, -date)  |>
+  ggplot(aes(date, acres, color = version)) +
+  geom_line(alpha = .75) +
+  # geom_col(position = 'dodge') +
+  facet_wrap(~watershed, scales = 'free_y') +
+  theme_minimal() +
+  theme(legend.position = "bottom")
 
 
-<!-- ``` -->
+```
 
 <!-- ##### Spring Run  -->
 <!-- ```{r, echo = FALSE} -->
