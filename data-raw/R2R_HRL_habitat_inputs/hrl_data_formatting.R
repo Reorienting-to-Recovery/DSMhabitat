@@ -22,11 +22,13 @@ all_habitat_data_for_hrl_inputs_all_runs <- read_csv(here::here("data-raw", "R2R
   mutate(run = tolower(run)) |> 
   filter(proposed_approach_for_incorporation == "Scale existing flow-area curve") |> 
   select(-c(total_acres_R2R_baseline, questions, proposed_approach_for_incorporation)) |> 
-  mutate(percent_suitable = case_when(habitat_type == "spawning" ~ 0.12,
-                                      habitat_type == "inchannel rearing" ~ 0.1,
-                                      habitat_type == "floodplain rearing" ~ 0.9)) |> # TODO update gradient class component for in channel rearing 
-  glimpse()
+  mutate(watershed = case_when(watershed == "Mokelumne" ~"Mokelumne River", 
+                               watershed == "Sacramento River" ~ "Upper Sacramento River", # TODO: flagging this as we aren't 100% 
+                                                                                           # sure we want to add all acreage to Upper Sac 
+                               .default = as.character(watershed)))  
 
+
+View(all_habitat_data_for_hrl_inputs_all_runs)
 # TODO assign runs
 
 saveRDS(all_habitat_data_for_hrl_inputs_all_runs,
