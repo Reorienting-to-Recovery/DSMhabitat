@@ -50,7 +50,7 @@ knitr::kable(all_existing_and_hrl_data)
 
 Using the table above as inputs for new suitable habitat for each of the watersheds outlined, we will add the acreage to the existing R2R baseline habitat. This method assumes that each of the total acreages can be considered suitable habitat and does not need a suitability index applied.
 
-Habitat acreage is added at a representative flow to scale the R2R baseline DSMhabitat for each of the watersheds identified (figure 1).
+Habitat acreage is added at a representative flow to scale the R2R baseline DSMhabitat for each of the watersheds identified (figure 1). TODO: update figure.
 
 ![](../R2R_baseline_habitat_inputs/images/Project%20Hab%20Scaling.png)
 

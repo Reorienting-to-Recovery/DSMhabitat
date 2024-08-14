@@ -296,11 +296,11 @@ all_existing_and_hrl_data |> filter(habitat_type == "inchannel rearing" & run ==
 r_to_r_lto_12a_baseline_sr_juv <- DSMhabitat::sr_juv$r_to_r_lto_12a_baseline
 
 # American river
-# TODO: commenting out for now... why does set_instream_habitat return NA??
-# add_project_habitat <- DSMhabitat::sr_juv$r_to_r_lto_12a_baseline["American River" , , ] * 
-#   hab_prop_change_from_projects("inchannel rearing", "American River", "sr", "juv", "LTO_12a")
-# updated_habitat <- DSMhabitat::sr_juv$r_to_r_lto_12a_baseline["American River", , ] + add_project_habitat 
-# r_to_r_lto_12a_baseline_sr_juv["American River", , ] <- updated_habitat 
+# Note: that it is scaled off of Fall Run similar to how cache-habitat is done. Otherwise, American River SR will be all NAs 
+add_project_habitat <- DSMhabitat::sr_juv$r_to_r_lto_12a_baseline["American River" , , ] *
+  hab_prop_change_from_projects("inchannel rearing", "American River", "fr", "juv", "LTO_12a")
+updated_habitat <- DSMhabitat::sr_juv$r_to_r_lto_12a_baseline["American River", , ] + add_project_habitat
+r_to_r_lto_12a_baseline_sr_juv["American River", , ] <- updated_habitat
 
 # Sacramento 
 # TODO: flagging since Sacramento was changed to Upper Sacramento
@@ -349,11 +349,11 @@ usethis::use_data(sr_juv, overwrite = TRUE)
 r_to_r_lto_12a_baseline_sr_fry <- DSMhabitat::sr_fry$r_to_r_lto_12a_baseline
 
 # American river
-# TODO: need to look into Spring Run American River 
-# add_project_habitat <- DSMhabitat::sr_fry$r_to_r_lto_12a_baseline["American River" , , ] * 
-#   hab_prop_change_from_projects("inchannel rearing", "American River", "sr", "fry", "LTO_12a")
-# updated_habitat <- DSMhabitat::sr_fry$r_to_r_lto_12a_baseline["American River", , ] + add_project_habitat 
-# r_to_r_lto_12a_baseline_sr_fry["American River", , ] <- updated_habitat 
+# Using Fall Run as scaling
+add_project_habitat <- DSMhabitat::sr_fry$r_to_r_lto_12a_baseline["American River" , , ] *
+  hab_prop_change_from_projects("inchannel rearing", "American River", "fr", "fry", "LTO_12a")
+updated_habitat <- DSMhabitat::sr_fry$r_to_r_lto_12a_baseline["American River", , ] + add_project_habitat
+r_to_r_lto_12a_baseline_sr_fry["American River", , ] <- updated_habitat
 
 # Sacramento 
 # TODO: flagging since Sacramento was changed to Upper Sacramento
@@ -484,11 +484,11 @@ all_existing_and_hrl_data |> filter(habitat_type == "inchannel rearing" & run ==
 r_to_r_lto_12a_baseline_wr_juv <- DSMhabitat::wr_juv$r_to_r_lto_12a_baseline
 
 # American river
-# TODO: commenting out for now... why does set_instream_habitat return NA??
-# add_project_habitat <- DSMhabitat::wr_juv$r_to_r_lto_12a_baseline["American River" , , ] *
-#   hab_prop_change_from_projects("inchannel rearing", "American River", "wr", "juv", "LTO_12a")
-# updated_habitat <- DSMhabitat::wr_juv$r_to_r_lto_12a_baseline["American River", , ] + add_project_habitat
-# r_to_r_lto_12a_baseline_wr_juv["American River", , ] <- updated_habitat
+# scaling off of Fall Run 
+add_project_habitat <- DSMhabitat::wr_juv$r_to_r_lto_12a_baseline["American River" , , ] *
+  hab_prop_change_from_projects("inchannel rearing", "American River", "fr", "juv", "LTO_12a")
+updated_habitat <- DSMhabitat::wr_juv$r_to_r_lto_12a_baseline["American River", , ] + add_project_habitat
+r_to_r_lto_12a_baseline_wr_juv["American River", , ] <- updated_habitat
 
 # Sacramento 
 # TODO: flagging since Sacramento was changed to Upper Sacramento
@@ -498,18 +498,18 @@ updated_habitat <- DSMhabitat::wr_juv$r_to_r_lto_12a_baseline["Upper Sacramento 
 r_to_r_lto_12a_baseline_wr_juv["Upper Sacramento River", , ] <- updated_habitat 
 
 # Mokelumne 
-# TODO: returning all NAs... 
-# add_project_habitat <- DSMhabitat::wr_juv$r_to_r_lto_12a_baseline["Mokelumne River" , , ] * 
-#   hab_prop_change_from_projects("inchannel rearing", "Mokelumne River", "wr", "juv", "LTO_12a")
-# updated_habitat <- DSMhabitat::wr_juv$r_to_r_lto_12a_baseline["Mokelumne River", , ] + add_project_habitat 
-# r_to_r_lto_12a_baseline_wr_juv["Mokelumne River", , ] <- updated_habitat 
+# scaling off of FR
+add_project_habitat <- DSMhabitat::wr_juv$r_to_r_lto_12a_baseline["Mokelumne River" , , ] *
+  hab_prop_change_from_projects("inchannel rearing", "Mokelumne River", "fr", "juv", "LTO_12a")
+updated_habitat <- DSMhabitat::wr_juv$r_to_r_lto_12a_baseline["Mokelumne River", , ] + add_project_habitat
+r_to_r_lto_12a_baseline_wr_juv["Mokelumne River", , ] <- updated_habitat
 
 # Feather 
-# TODO: returning all NAs
-# add_project_habitat <- DSMhabitat::wr_juv$r_to_r_lto_12a_baseline["Feather River" , , ] * 
-#   hab_prop_change_from_projects("inchannel rearing", "Feather River", "wr", "juv", "LTO_12a")
-# updated_habitat <- DSMhabitat::wr_juv$r_to_r_lto_12a_baseline["Feather River", , ] + add_project_habitat 
-# r_to_r_lto_12a_baseline_wr_juv["Feather River", , ] <- updated_habitat 
+# scaling off of FR
+add_project_habitat <- DSMhabitat::wr_juv$r_to_r_lto_12a_baseline["Feather River" , , ] *
+  hab_prop_change_from_projects("inchannel rearing", "Feather River", "fr", "juv", "LTO_12a")
+updated_habitat <- DSMhabitat::wr_juv$r_to_r_lto_12a_baseline["Feather River", , ] + add_project_habitat
+r_to_r_lto_12a_baseline_wr_juv["Feather River", , ] <- updated_habitat
 
 # compare: 
 r_to_r_lto_12a_baseline_wr_juv == DSMhabitat::wr_juv$r_to_r_lto_12a_baseline
@@ -533,11 +533,11 @@ usethis::use_data(wr_juv, overwrite = TRUE)
 r_to_r_lto_12a_baseline_wr_fry <- DSMhabitat::wr_fry$r_to_r_lto_12a_baseline
 
 # American river
-# TODO: need to look into Spring Run American River 
-# add_project_habitat <- DSMhabitat::wr_fry$r_to_r_lto_12a_baseline["American River" , , ] *
-#   hab_prop_change_from_projects("inchannel rearing", "American River", "wr", "fry", "LTO_12a")
-# updated_habitat <- DSMhabitat::wr_fry$r_to_r_lto_12a_baseline["American River", , ] + add_project_habitat
-# r_to_r_lto_12a_baseline_wr_fry["American River", , ] <- updated_habitat
+# using fall run for scaling 
+add_project_habitat <- DSMhabitat::wr_fry$r_to_r_lto_12a_baseline["American River" , , ] *
+  hab_prop_change_from_projects("inchannel rearing", "American River", "fr", "fry", "LTO_12a")
+updated_habitat <- DSMhabitat::wr_fry$r_to_r_lto_12a_baseline["American River", , ] + add_project_habitat
+r_to_r_lto_12a_baseline_wr_fry["American River", , ] <- updated_habitat
 
 # Sacramento 
 # TODO: flagging since Sacramento was changed to Upper Sacramento
@@ -547,18 +547,18 @@ updated_habitat <- DSMhabitat::wr_fry$r_to_r_lto_12a_baseline["Upper Sacramento 
 r_to_r_lto_12a_baseline_wr_fry["Upper Sacramento River", , ] <- updated_habitat 
 
 # Mokelumne 
-# TODO: all NAs... 
-# add_project_habitat <- DSMhabitat::wr_fry$r_to_r_lto_12a_baseline["Mokelumne River" , , ] * 
-#   hab_prop_change_from_projects("inchannel rearing", "Mokelumne River", "wr", "fry", "LTO_12a")
-# updated_habitat <- DSMhabitat::wr_fry$r_to_r_lto_12a_baseline["Mokelumne River", , ] + add_project_habitat 
-# r_to_r_lto_12a_baseline_wr_fry["Mokelumne River", , ] <- updated_habitat 
+# using fall run as scaling
+add_project_habitat <- DSMhabitat::wr_fry$r_to_r_lto_12a_baseline["Mokelumne River" , , ] *
+  hab_prop_change_from_projects("inchannel rearing", "Mokelumne River", "fr", "fry", "LTO_12a")
+updated_habitat <- DSMhabitat::wr_fry$r_to_r_lto_12a_baseline["Mokelumne River", , ] + add_project_habitat
+r_to_r_lto_12a_baseline_wr_fry["Mokelumne River", , ] <- updated_habitat
 
 # Feather 
-# TODO: al NAs... 
-# add_project_habitat <- DSMhabitat::wr_fry$r_to_r_lto_12a_baseline["Feather River" , , ] * 
-#   hab_prop_change_from_projects("inchannel rearing", "Feather River", "wr", "fry", "LTO_12a")
-# updated_habitat <- DSMhabitat::wr_fry$r_to_r_lto_12a_baseline["Feather River", , ] + add_project_habitat 
-# r_to_r_lto_12a_baseline_wr_fry["Feather River", , ] <- updated_habitat 
+# using fall run as scaling 
+add_project_habitat <- DSMhabitat::wr_fry$r_to_r_lto_12a_baseline["Feather River" , , ] *
+  hab_prop_change_from_projects("inchannel rearing", "Feather River", "fr", "fry", "LTO_12a")
+updated_habitat <- DSMhabitat::wr_fry$r_to_r_lto_12a_baseline["Feather River", , ] + add_project_habitat
+r_to_r_lto_12a_baseline_wr_fry["Feather River", , ] <- updated_habitat
 
 # compare: 
 r_to_r_lto_12a_baseline_wr_fry == DSMhabitat::wr_fry$r_to_r_lto_12a_baseline
@@ -585,18 +585,18 @@ all_existing_and_hrl_data |> filter(habitat_type == "floodplain rearing" & run =
 r_to_r_lto_12a_baseline_wr_fp <- DSMhabitat::wr_fp$r_to_r_lto_12a_baseline
 
 # Mokelumne River 
-# TODO: All NAs... 
-# add_project_habitat <- DSMhabitat::wr_fp$r_to_r_lto_12a_baseline["Mokelumne River" , , ] * 
-#   hab_prop_change_from_projects("floodplain rearing", "Mokelumne River", "wr", "fp", "LTO_12a")
-# updated_habitat <- DSMhabitat::wr_fp$r_to_r_lto_12a_baseline["Mokelumne River", , ] + add_project_habitat 
-# r_to_r_lto_12a_baseline_wr_fp["Mokelumne River", , ] <- updated_habitat 
+# using fall run as scaling
+add_project_habitat <- DSMhabitat::wr_fp$r_to_r_lto_12a_baseline["Mokelumne River" , , ] *
+  hab_prop_change_from_projects("floodplain rearing", "Mokelumne River", "fr", "fp", "LTO_12a")
+updated_habitat <- DSMhabitat::wr_fp$r_to_r_lto_12a_baseline["Mokelumne River", , ] + add_project_habitat
+r_to_r_lto_12a_baseline_wr_fp["Mokelumne River", , ] <- updated_habitat
 
 # Feather River
 # TODO: all NAs..
-# add_project_habitat <- DSMhabitat::wr_fp$r_to_r_lto_12a_baseline["Feather River" , , ] * 
-#   hab_prop_change_from_projects("floodplain rearing", "Feather River", "wr", "fp", "LTO_12a")
-# updated_habitat <- DSMhabitat::wr_fp$r_to_r_lto_12a_baseline["Feather River", , ] + add_project_habitat 
-# r_to_r_lto_12a_baseline_wr_fp["Feather River", , ] <- updated_habitat 
+add_project_habitat <- DSMhabitat::wr_fp$r_to_r_lto_12a_baseline["Feather River" , , ] *
+  hab_prop_change_from_projects("floodplain rearing", "Feather River", "fr", "fp", "LTO_12a")
+updated_habitat <- DSMhabitat::wr_fp$r_to_r_lto_12a_baseline["Feather River", , ] + add_project_habitat
+r_to_r_lto_12a_baseline_wr_fp["Feather River", , ] <- updated_habitat
 
 # Sutter Bypass
 # Note: all Sutter Bypass values are zero so there is no proportional change with the new HRL data 

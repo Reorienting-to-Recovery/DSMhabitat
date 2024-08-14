@@ -614,14 +614,21 @@ generate_wr_fry_or_juv <- function(calsim_version, lifestage = c("fry", "juv")) 
   
   if(calsim_version == "LTO_12a") {
     calsim_version_tmp <- tolower(calsim_version)
-  }
-  
-  # set default values to allow for straying 
-  if (lifestage == "fry") {
-    wr_hab <- fr_fry[[calsim_version_tmp]]
-  } 
-  if (lifestage == "juv") {
-    wr_hab <- fr_juv[[calsim_version_tmp]]
+    # set default values to allow for straying 
+    if (lifestage == "fry") {
+      wr_hab <- fr_fry[[calsim_version_tmp]]
+    } 
+    if (lifestage == "juv") {
+      wr_hab <- fr_juv[[calsim_version_tmp]]
+    }
+  } else {
+    # set default values to allow for straying 
+    if (lifestage == "fry") {
+      wr_hab <- fr_fry[[calsim_version]]
+    } 
+    if (lifestage == "juv") {
+      wr_hab <- fr_juv[[calsim_version]]
+    }
   }
   wr_hab["Upper Sacramento River", , ] <- DSMhabitat::set_instream_habitat('Upper Sacramento River',
                                                     species = 'wr',
