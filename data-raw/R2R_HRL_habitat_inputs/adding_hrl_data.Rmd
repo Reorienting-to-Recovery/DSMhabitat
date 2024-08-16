@@ -31,7 +31,7 @@ library(DSMflow)
 
 -   HRL acreage is assumed to already have the suitability criteria applied and considered suitable acres
 
--   When the HRL acreage has an unknown run type, the acreage was added to fall, winter, and spring
+-   When the HRL acreage has an unknown run type, the acreage was added to fall, winter, and spring. However, if `DSMhabitat::watershed_species_present` is `FALSE` for any given watershed and run, there was no HRL acreage added.
 
 -   Sutter Bypass has increased floodplain acres but the values for floodplain are currently zero resulting in no change when multiplying by the percent increase. A new methodology should be considered.
 
