@@ -1,0 +1,75 @@
+---
+title: "Tuolumne River HRL curves"
+author: "[Liz Stebbins](mailto:lstebbins@flowwest.com)" 
+date:  "August 2024" 
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, out.width = '100%')
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+options(usethis.quiet = TRUE)
+library(tidyverse)
+library(readxl)
+library(DSMhabitat)
+library(scales)
+```
+
+## Future Data Improvements
+
+None expected.
+
+## HRL flow-to-habitat relationship
+
+**Data Source:** Existing and existing + VA habitat curves for the Tuolumne river were provided by William Sears and Tuolumne parties. The TUFlow modeling report from the FERC relicensing, which describes the process for developing the 1D/2D surface from which rasters of depth and velocity were derived for the entire 50 mile reach of the lower Tuolumne, can be accessed [here](https://va-hrl-docs.s3.amazonaws.com/tuolumne/Tuolumne+River+VA+Habitat+Modeling+for+SBR+final+revision+20240802.pdf).
+
+
+```{r, echo=FALSE}
+spawning_habitat_updated <- read_excel("data-raw/R2R_HRL_habitat_inputs/data/VA habitat summary 20240509[44][35].xlsx",
+                                       range = "A6:C34") |> 
+  janitor::clean_names() |> 
+  mutate(fr_spw_sqm_existing = DSMhabitat::acres_to_square_meters(existing),
+         fr_spw_sqm_va = DSMhabitat::acres_to_square_meters(existing_va)) |> 
+  select(flow_cfs = la_grange_flow_cfs, fr_spw_sqm_existing, fr_spw_sqm_va)
+
+rearing_habitat_updated <- read_excel("data-raw/R2R_HRL_habitat_inputs/data/VA habitat summary 20240509[44][35].xlsx",
+                                      range = "E6:G53") |> 
+  janitor::clean_names() |> 
+  mutate(fr_juv_sqm_existing = DSMhabitat::acres_to_square_meters(existing),
+         fr_juv_sqm_va = DSMhabitat::acres_to_square_meters(existing_va)) |> 
+  select(flow_cfs, fr_juv_sqm_existing, fr_juv_sqm_va)
+
+# spawning and rearing in this updated file are the same as in the file
+# from 2024-05-10. This file just has "wetted" habitat
+wetted_area <- read_excel("data-raw/R2R_HRL_habitat_inputs/data/VA habitat summary 20240603.xlsx",
+                          range = "I6:K53") |> 
+  janitor::clean_names() |> 
+  mutate(fp_acres_existing = existing,
+         fp_acres_va = existing_va) |> 
+  select(flow_cfs, fp_acres_existing, fp_acres_va)
+
+tuolumne_hrl <- full_join(spawning_habitat_updated, 
+                          rearing_habitat_updated,
+                          by = "flow_cfs") |> 
+  full_join(wetted_area)
+
+knitr::kable(head(tuolumne_hrl))
+```
+
+### Plot comparison
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+tuolumne_hrl |> 
+  pivot_longer(c(fr_spw_sqm_existing:fp_acres_va),
+               names_to = "scenario",
+               values_to = "value") |> 
+  mutate(lifestage = case_when(str_detect(scenario, "spw") ~ "spawn",
+                               str_detect(scenario, "juv") ~ "juv",
+                               str_detect(scenario, "fp") ~ "floodplain"),
+         scenario = ifelse(str_detect(scenario, "va"), "VA", "existing")) |> 
+  ggplot(aes(x = flow_cfs, y = value, color = scenario)) + 
+  geom_line() +
+  facet_wrap(~lifestage, scales = "free_y") +
+  theme_minimal()
+
+#usethis::use_data(tuolumne_river, overwrite = TRUE)
+```
