@@ -23,7 +23,7 @@ Instream spawning and rearing habitat for Fall Run Chinook Salmon in the Tuolumn
 William Sears and Tuolumne parties as part of the Healthy Rivers and Landscapes modeling effort. The TUFlow modeling report from the FERC relicensing, which describes the process for developing the 1D/2D surface from which rasters of depth and velocity were derived for the entire 50 mile reach of the lower Tuolumne River. These were provided in units of suitable acres.
 
 ### Steelhead
-The instream spawning and rearing habitat for Steelhead in the Tuolumne River are based on data from a California Department of Fish and Game site-specific study. These data consist of 10 sites spread over 9.2 miles of the dominant spawning reach of the Lower Tuolumne River. They were reviewed by Stillwater Sciences for use in their 2014 Flo2D model. The weighted usable area (WUA) results for Steelhead are provided in tables H-2 on pages 108-109 of the [Final Lower Tuolumne Instream Flow Study Report](https://s3-us-west-2.amazonaws.com/cvpiahabitat-r-package/cvpia-sit-model-inputs/Stillwater2010_Tuolumne_P-2299-075_71_DP_FLA_AttC_StudyRept_IFIM_AppA-H_140428.pdf){target="_blank}. The instream spawning and rearing habitat data were provided to us by [Mark Gard](mailto:Mark.Gard@Wildlife.ca.gov) from the California Department of Fish and Wildlife in a [spreadsheet](https://cvpiahabitat-r-package.s3-us-west-2.amazonaws.com/IFIMWUA.xlsx). Mark Gard instructed us to use cells A2:H32 in the 'Tuolumne' tab within the spreadsheet.
+Steelhead were assigned Fall Run Chinook values.
 
 ### Spawning and Rearing Data 
 The instream spawning and rearing habitat data described above for Fall Run Chinook Salmon (FR) were used for Steelhead (ST). Units are in suitable acres and converted to square meters.
