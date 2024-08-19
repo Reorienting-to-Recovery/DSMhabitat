@@ -1,0 +1,123 @@
+---
+title: "Add HRL Habitat Data"
+author: "Maddee Rubenson (FlowWest)"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>", 
+  fig.dim = c(8, 6)
+)
+```
+
+```{r setup, include = FALSE}
+library(DSMhabitat)
+library(tidyverse)
+library(lubridate)
+library(DSMflow)
+
+```
+
+*DRAFT*
+
+### Assumptions:
+
+-   HRL acreage listed as "Sacramento River" is only added to "Upper Sacramento River"
+
+-   In channel rearing HRL acreage is added to juveniles and fry
+
+-   HRL acreage is assumed to already have the suitability criteria applied and considered suitable acres
+
+-   When the HRL acreage has an unknown run type, the acreage was added to fall, winter, and spring. However, if `DSMhabitat::watershed_species_present` is `FALSE` for any given watershed and run, there was no HRL acreage added.
+
+-   Sutter Bypass has increased floodplain acres but the values for floodplain are currently zero resulting in no change when multiplying by the percent increase. A new methodology should be considered.
+
+    -   To get the proportion increase - took the means of sutter 1 through sutter 4 and calculated the 30 day exceedance from that - unsure if this is the correct method
+
+### Read in Healthy Rivers and Landscapes habitat data
+
+```{r}
+all_existing_and_hrl_data <- readRDS(here::here('data-raw', "R2R_HRL_habitat_inputs", "all_habitat_data_for_hrl_inputs_all_runs.rdata")) 
+
+knitr::kable(all_existing_and_hrl_data)
+
+```
+
+### Methodology for integrating habitat projects into R2R baseline habitat
+
+Using the table above as inputs for new suitable habitat for each of the watersheds outlined, we will add the acreage to the existing R2R baseline habitat. This method assumes that each of the total acreages can be considered suitable habitat and does not need a suitability index applied.
+
+Habitat acreage is added at a representative flow to scale the R2R baseline DSMhabitat for each of the watersheds identified (figure 1). TODO: update figure.
+
+![](../R2R_baseline_habitat_inputs/images/Project%20Hab%20Scaling.png)
+
+#### 1) Calculate flow point of reference
+
+We generated two helper functions to calculate flow reference points for adding inchannel and floodplain habitat.
+
+##### Inchannel Point of Reference
+
+For inchannel habitat we use the median flow over the entire modeled period 1980 - 2000. Flow inputs come from CalSim LTO 12a benchmark. `existing_cfs_median_comparison_plot` takes in `habitat_type`, `watershed`, `species`, and a `calsim_version` and returns the median flow.
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+source(here::here('data-raw', "R2R_HRL_habitat_inputs", "hrl_helper_functions.R"))
+                                      
+```
+
+Example: Median flow for Yuba River fall run inchannel rearing
+
+```{r}
+existing_cfs_median_comparison_point("inchannel rearing", "Yuba River", 
+                                     "fr", 'LTO_12a')
+```
+
+##### Floodplain Point of Reference
+
+For floodplain habitat we use the 2 year 30 day exceedence value.
+
+```{r}
+existing_cfs_median_comparison_point("floodplain rearing", "Yuba River", 
+                                     "fr", 'LTO_12a')
+```
+
+#### 2) Calculation proportion increase of habitat at flow point of reference
+
+```{r}
+hab_prop_change_from_projects("inchannel rearing", "Yuba River", 
+                              "fr", "juv", "LTO_12a")
+```
+
+#### 3) Scale existing habitat up by proportion increase
+
+```{r}
+r_to_r_lto_12a_baseline <- DSMhabitat::fr_juv$r_to_r_lto_12a_baseline
+
+add_project_habitat <- DSMhabitat::fr_juv$r_to_r_lto_12a_baseline["Yuba River" , , ] * 
+  hab_prop_change_from_projects("inchannel rearing", "Yuba River", "fr", "juv", "LTO_12a")
+
+updated_habitat <- DSMhabitat::fr_juv$r_to_r_lto_12a_baseline["Yuba River", , ] + add_project_habitat 
+
+r_to_r_lto_12a_baseline["Yuba River", , ] <- updated_habitat 
+```
+
+### Healthy Rivers and Landscapes Plots
+
+#### Juvenile Rearing
+
+##### Fall Run
+
+The following plot shows the scaled Yuba River HRL scenario where the habitat to flow relationship is scaled with the addition of 50 acres for juvenile in-channel rearing through the HRL program.
+
+```{r, echo = FALSE}
+r_to_r_hrl_habitat<- r_to_r_lto_12a_baseline |>
+  DSMhabitat::square_meters_to_acres()
+
+r_to_r_baseline_lto <- fr_juv$r_to_r_lto_12a_baseline |> DSMhabitat::square_meters_to_acres()
+
+hrl_comparison_plot(new_data = r_to_r_hrl_habitat, old_data = r_to_r_baseline_lto, hab_type = "juv" , watersheds = "Yuba River")
+
+```
