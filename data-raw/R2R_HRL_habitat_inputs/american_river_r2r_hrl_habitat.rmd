@@ -25,15 +25,16 @@ American River will have updated existing habitat curves in fall of 2024.
 ```{r, echo=FALSE}
 american_hrl <- read_excel("data-raw/R2R_HRL_habitat_inputs/data/HRL_habitat_commitments_for_R2R_American.xlsx",
                                range = "A1:G10") |> 
-  janitor::clean_names() |> 
+  janitor::clean_names() |>
   mutate(duration_inundated_days = ifelse(duration_inundated_days == "N/A", NA, duration_inundated_days),
          water_year_type = ifelse(water_year_type == "N/A", NA, water_year_type),
          run = ifelse(run == "fall run", "fall", run)) |> 
   mutate(flow_cfs = as.numeric(flow_to_inundate_suitable_acres),
          flow_cfs = ifelse(is.na(flow_cfs), 20000, flow_cfs), 
          scenario = "HRL", 
-         watershed = "American River") |> 
-  select(watershed, flow_cfs, FR_juv_wua_hrl = suitable_acres, scenario)
+         watershed = "American River",
+         FR_juv_sqm_hrl = DSMhabitat::acres_to_square_meters(suitable_acres)) |> 
+  select(watershed, flow_cfs, FR_juv_sqm_hrl, scenario)
 
 knitr::kable(head(american_hrl))
 ```
@@ -45,31 +46,35 @@ knitr::kable(head(american_hrl))
 - is floodplain cutoff `5200 cfs`?
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
-existing_rearing <- DSMhabitat::american_river_instream |> 
-  filter(!is.na(FR_juv_wua)) |> 
-  select(flow_cfs, FR_juv_wua)
+existing_rearing <- DSMhabitat::american_river_instream |>
+  filter(!is.na(FR_juv_sqm)) |> 
+  select(flow_cfs, FR_juv_sqm)
 
 existing_floodplain <- DSMhabitat::american_river_floodplain |> 
   filter(!is.na(FR_floodplain_acres)) |> 
   select(flow_cfs, FR_floodplain_acres)
 
-existing_rearing_fn <- approxfun(existing_rearing$flow_cfs, existing_rearing$FR_juv_wua, rule = 2)
+existing_rearing_fn <- approxfun(existing_rearing$flow_cfs, existing_rearing$FR_juv_sqm, rule = 2)
 
 existing_fp_fn <- approxfun(existing_floodplain$flow_cfs, existing_floodplain$FR_floodplain_acres, rule = 2)
 
 existing_and_HRL <- american_hrl |> 
   mutate(existing_rear = existing_rearing_fn(flow_cfs),
          existing_fp = existing_fp_fn(flow_cfs),
-         existing_and_HRL = ifelse(flow_cfs <= 5200, existing_rear + FR_juv_wua_hrl, existing_fp + FR_juv_wua_hrl)) |> 
+         fp_HRL = ifelse(flow_cfs <= 5200, NA, DSMhabitat::square_meters_to_acres(FR_juv_sqm_hrl)),
+         existing_and_HRL = ifelse(flow_cfs <= 5200, existing_rear + FR_juv_sqm_hrl, existing_fp + fp_HRL)) |> 
   select(-scenario)
 
+# juvenile
 existing_and_HRL |> 
-  pivot_longer(c(existing_rear, existing_fp, existing_and_HRL),
+  mutate(type = ifelse(flow_cfs <= 5200, "juv", "fp"),
+         existing = ifelse(flow_cfs <= 5200, existing_rear, existing_fp)) |> 
+  pivot_longer(c(existing, existing_and_HRL),
                names_to = "scenario",
                values_to = "value") |> 
-  ggplot(aes(x = flow_cfs, y = value)) + 
+  ggplot(aes(x = flow_cfs, y = value, color = scenario)) + 
   geom_line() +
-  facet_wrap(~scenario, scales = "free_y") +
+  facet_wrap(~type, scales = "free_y") +
   geom_vline(aes(xintercept = 5200), linetype = "dashed") +
   theme_minimal()
 
