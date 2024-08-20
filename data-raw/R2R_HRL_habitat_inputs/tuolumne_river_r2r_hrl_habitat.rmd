@@ -24,14 +24,14 @@ None expected.
 
 
 ```{r, echo=FALSE}
-spawning_habitat_updated <- read_excel("data-raw/R2R_HRL_habitat_inputs/data/VA habitat summary 20240509[44][35].xlsx",
+spawning_habitat_updated <- read_excel("data-raw/watershed/tuolumne/data/VA habitat summary 20240509[44][35].xlsx",
                                        range = "A6:C34") |> 
   janitor::clean_names() |> 
   mutate(fr_spw_sqm_existing = DSMhabitat::acres_to_square_meters(existing),
          fr_spw_sqm_va = DSMhabitat::acres_to_square_meters(existing_va)) |> 
   select(flow_cfs = la_grange_flow_cfs, fr_spw_sqm_existing, fr_spw_sqm_va)
 
-rearing_habitat_updated <- read_excel("data-raw/R2R_HRL_habitat_inputs/data/VA habitat summary 20240509[44][35].xlsx",
+rearing_habitat_updated <- read_excel("data-raw/watershed/tuolumne/data/VA habitat summary 20240509[44][35].xlsx",
                                       range = "E6:G53") |> 
   janitor::clean_names() |> 
   mutate(fr_juv_sqm_existing = DSMhabitat::acres_to_square_meters(existing),
@@ -40,7 +40,7 @@ rearing_habitat_updated <- read_excel("data-raw/R2R_HRL_habitat_inputs/data/VA h
 
 # spawning and rearing in this updated file are the same as in the file
 # from 2024-05-10. This file just has "wetted" habitat
-wetted_area <- read_excel("data-raw/R2R_HRL_habitat_inputs/data/VA habitat summary 20240603.xlsx",
+wetted_area <- read_excel("data-raw/watershed/tuolumne/data/VA habitat summary 20240603.xlsx",
                           range = "I6:K53") |> 
   janitor::clean_names() |> 
   mutate(fp_acres_existing = existing,
