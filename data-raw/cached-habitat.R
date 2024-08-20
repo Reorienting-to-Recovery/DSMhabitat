@@ -703,6 +703,8 @@ generate_lfr_juv_or_fry <- function(calsim_version, lifestage = c("juv", "fry"))
   # set default values to allow for straying 
   if(calsim_version == "LTO_12a") {
     calsim_version_tmp <- tolower(calsim_version)
+  } else {
+    calsim_version_tmp <- calsim_version
   }
   
   if (lifestage == "fry") {
