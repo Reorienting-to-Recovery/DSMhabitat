@@ -51,7 +51,7 @@ Instream and floodplain rearing habitat were provided. They are the same as thos
 
 **Data Source:** FlowWest coordinated with representatives for the American River to determine the best scientific information available to quantify existing suitable habitat, and to describe the VA non-flow habitat as *suitable area that varies with flow*. Habitat data were provided to R2R for use in accounting for planned habitat projects by [Erica Bishop](mailto:ebishop@waterforum.org) and [Chris Hammersmark](mailto:c.hammersmark@cbecoeng.com). Data provided represented the HRL commitments based on flow-to-habitat relationships borne out by recent EIP designs and constructed projects for the subject habitat type. 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, message = FALSE, warning = FALSE}
 american_hrl <- read_excel("data-raw/R2R_HRL_habitat_inputs/data/HRL_habitat_commitments_for_R2R_American.xlsx",
                                range = "A1:G10") |> 
   janitor::clean_names() |>
@@ -110,7 +110,7 @@ Spawning and instream rearing actions are only for the LFC.
 
 **Data Source:** Data came from the FERC relicensing spawning WUA/RSI and were provided for the SBR by Jason Kindopp. 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, message = FALSE, warning = FALSE}
 feather_hrl <- read_csv(here::here("data-raw", "R2R_HRL_habitat_inputs", "data", "feather_flow_habitat.csv")) |> 
   filter(scenario == "VA") |> 
   mutate(habitat_area_sqm = DSMhabitat::acres_to_square_meters(habitat_area_acres),
@@ -121,8 +121,7 @@ feather_hrl <- read_csv(here::here("data-raw", "R2R_HRL_habitat_inputs", "data",
               values_from = habitat_area_sqm) |> 
   rename(FR_spw_sqm_hrl = Spawning,
          FR_juv_ic_sqm_hrl = `Instream rearing`,
-         FR_juv_fp_sqm_hrl = `Floodplain rearing`) |> 
-  glimpse()
+         FR_juv_fp_sqm_hrl = `Floodplain rearing`)
 
 knitr::kable(head(feather_hrl))
 ```
@@ -146,7 +145,7 @@ Instream and floodplain rearing habitat were provided. They are the same as thos
 
 **Data Source:** Data were provided by Robyn Bilski for the SBR.
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, message = FALSE, warning = FALSE}
 spawning <- read_excel('data-raw/R2R_HRL_habitat_inputs/data/moke_flow_to_habitat_RB_edits.xlsx', 
                            sheet = 'spawning', 
                            range = 'A1:D5') |> 
@@ -245,28 +244,28 @@ yuba_fp_fn <- approxfun(tuolumne_hrl$flow_cfs,
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 flows <- DSMflow::flows_cfs$LTO_12a |>
-  filter(year(date) >= 1980 & year(date) <= 2000) |> 
+  filter(year(date) >= 1980 & year(date) <= 2000) |>
   pivot_longer(`Antelope Creek`:`San Joaquin River`,
                names_to = "watershed",
-               values_to = "flow_cfs") |> 
+               values_to = "flow_cfs") |>
   mutate(month = month(date),
-         year = year(date)) |> 
-  group_by(year, month, watershed) |> 
-  summarise(median_flow_cfs = median(flow_cfs)) |> 
+         year = year(date)) |>
+  group_by(year, month, watershed) |>
+  summarise(median_flow_cfs = median(flow_cfs)) |>
   ungroup()
 
 update_hrl_habitat_from_SBR <- function(flows, watershed_name, hab_fn) {
-  new_hab <- flows |> 
-    filter(watershed == watershed_name) |> 
-    mutate(new_hab = hab_fn(median_flow_cfs)) |> 
+  new_hab <- flows |>
+    filter(watershed == watershed_name) |>
+    mutate(new_hab = hab_fn(median_flow_cfs)) |>
     pivot_wider(id_cols = month, names_from = year, values_from = median_flow_cfs) |>
-    select(-month) |> 
+    select(-month) |>
     as.matrix()
-  
+
   rownames(new_hab) <- month.abb
-  
+
   return(new_hab)
-  
+
 }
 
 # update spawning
