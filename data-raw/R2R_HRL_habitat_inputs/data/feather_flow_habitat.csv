@@ -1,0 +1,381 @@
+watershed,location,scenario,flow_cfs,habitat_type,habitat_area_acres,method,interpolation_applied,project_type
+Feather River,LFC,Reference Condition,150,Spawning,3.36,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,200,Spawning,5.72,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,250,Spawning,8.31,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,300,Spawning,10.86,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,350,Spawning,13.28,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,400,Spawning,15.49,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,450,Spawning,17.47,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,500,Spawning,19.18,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,550,Spawning,20.63,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,600,Spawning,21.79,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,650,Spawning,22.71,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,700,Spawning,23.36,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,750,Spawning,23.78,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,800,Spawning,23.99,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,850,Spawning,23.99,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,900,Spawning,23.82,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,950,Spawning,23.51,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1000,Spawning,23.1,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1100,Spawning,21.97,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1200,Spawning,20.59,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1300,Spawning,19.07,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1400,Spawning,17.47,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1500,Spawning,15.92,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1600,Spawning,14.41,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1800,Spawning,11.64,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2000,Spawning,9.3,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2250,Spawning,6.96,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2500,Spawning,5.29,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2750,Spawning,4.13,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,3000,Spawning,3.42,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,500,Spawning,25.25,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,750,Spawning,31.98,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,1000,Spawning,36.7,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,1200,Spawning,39.72,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,1300,Spawning,40.92,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,1400,Spawning,41.77,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,1500,Spawning,42.37,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,1600,Spawning,42.69,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,1700,Spawning,42.76,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,1800,Spawning,42.59,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,1900,Spawning,42.22,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,2000,Spawning,41.65,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,2250,Spawning,39.57,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,2500,Spawning,36.94,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,2750,Spawning,34.08,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,3000,Spawning,31.29,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,3250,Spawning,28.8,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,3500,Spawning,26.66,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,3750,Spawning,24.87,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,4000,Spawning,23.34,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,4250,Spawning,22.04,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,4500,Spawning,20.84,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,4750,Spawning,19.75,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,5000,Spawning,18.76,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,5250,Spawning,17.83,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,5500,Spawning,16.96,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,5750,Spawning,16.14,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,6000,Spawning,15.34,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,6500,Spawning,13.81,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,7000,Spawning,12.42,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,VA,150,Spawning,3.36,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,200,Spawning,5.72,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,250,Spawning,8.31,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,300,Spawning,10.86,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,350,Spawning,13.28,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,400,Spawning,15.49,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,450,Spawning,17.47,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,500,Spawning,19.18,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,550,Spawning,20.63,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,600,Spawning,21.79,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,650,Spawning,33.455,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,VA,700,Spawning,34.8725,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,750,Spawning,36.06,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,800,Spawning,37.037499999999994,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,850,Spawning,37.805,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,VA,900,Spawning,37.328,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,950,Spawning,36.711,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,1000,Spawning,35.994,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,1100,Spawning,34.25,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,VA,1200,Spawning,32.870000000000005,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,1300,Spawning,31.35,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,1400,Spawning,29.75,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,1500,Spawning,28.200000000000003,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,1600,Spawning,26.69,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,1800,Spawning,23.92,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,2000,Spawning,21.580000000000002,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,2250,Spawning,19.240000000000002,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,2500,Spawning,17.57,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,2750,Spawning,16.41,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,3000,Spawning,15.700000000000001,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA additional acres,650,Spawning,10.745,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,VA additional acres,850,Spawning,13.815,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,VA additional acres,1100,Spawning,12.280000000000001,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,482,Instream rearing,32.38,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,716,Instream rearing,30.57,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,781,Instream rearing,30.49,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,912,Instream rearing,32.07,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,1004,Instream rearing,32.95,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,1185,Instream rearing,33.52,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,1374,Instream rearing,33.77,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,1518,Instream rearing,33.65,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,1744,Instream rearing,33.58,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,1872,Instream rearing,34.49,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,2091,Instream rearing,35.67,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,2248,Instream rearing,36.55,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,2396,Instream rearing,37,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,2535,Instream rearing,37.82,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,2969,Instream rearing,41.23,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,3136,Instream rearing,42.11,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,3265,Instream rearing,42.36,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,3767,Instream rearing,42.24,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,3885,Instream rearing,41.99,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,4199,Instream rearing,41.73,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,4587,Instream rearing,42.11,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,4758,Instream rearing,42.55,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,5013,Instream rearing,43.94,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,5253,Instream rearing,44.13,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,5466,Instream rearing,43.88,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,5789,Instream rearing,43.5,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,6067,Instream rearing,43.6,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,6358,Instream rearing,46.66,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,6436,Instream rearing,47.99,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,1997,Instream rearing,35.25,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,2753,Instream rearing,39.36,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,6253,Instream rearing,44.92,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,6506,Instream rearing,49.03,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,6758,Instream rearing,50.62,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,7000,Instream rearing,49.3,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,1609,Instream rearing,33.13,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,3510,Instream rearing,41.88,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,4014,Instream rearing,41.88,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,667,Instream rearing,150.18,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,775,Instream rearing,143.78,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,940,Instream rearing,136.97,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,1100,Instream rearing,131.77,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,1328,Instream rearing,126.87,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,1430,Instream rearing,123.77,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,1533,Instream rearing,122.97,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,1797,Instream rearing,118.96,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,2014,Instream rearing,116.56,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,2117,Instream rearing,114.56,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,2254,Instream rearing,113.31,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,2423,Instream rearing,110.76,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,2993,Instream rearing,108.56,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,3238,Instream rearing,105.35,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,3361,Instream rearing,106.56,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,3587,Instream rearing,106.96,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,4005,Instream rearing,107.09,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,4270,Instream rearing,107.56,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,4576,Instream rearing,107.76,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,5122,Instream rearing,107.36,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,5339,Instream rearing,107.96,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,5565,Instream rearing,108.16,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,5876,Instream rearing,107.16,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,6196,Instream rearing,107.76,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,6272,Instream rearing,106.96,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,6507,Instream rearing,106.96,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,6677,Instream rearing,110.36,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,7000,Instream rearing,115.71,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,4742,Instream rearing,107.33,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,5008,Instream rearing,107.33,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,2751,Instream rearing,108.58,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,3746,Instream rearing,107.33,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,503,Instream rearing,161.78,flow-habitat relationship provided,FALSE,NA
+Feather River,HFC,Reference Condition,6004,Instream rearing,106.49,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,154,Instream rearing,9.82,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,184,Instream rearing,9.44,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,210,Instream rearing,9.19,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,244,Instream rearing,8.8,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,272,Instream rearing,8.53,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,298,Instream rearing,8.24,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,326,Instream rearing,7.95,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,360,Instream rearing,7.69,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,404,Instream rearing,7.51,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,448,Instream rearing,7.37,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,496,Instream rearing,7.31,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,545,Instream rearing,7.28,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,587,Instream rearing,7.25,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,628,Instream rearing,7.25,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,671,Instream rearing,7.25,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,713,Instream rearing,7.22,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,760,Instream rearing,7.24,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,804,Instream rearing,7.25,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,848,Instream rearing,7.3,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,892,Instream rearing,7.4,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,940,Instream rearing,7.49,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,986,Instream rearing,7.55,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1030,Instream rearing,7.59,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1075,Instream rearing,7.62,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1116,Instream rearing,7.64,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1163,Instream rearing,7.67,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1204,Instream rearing,7.7,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1249,Instream rearing,7.71,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1293,Instream rearing,7.72,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1336,Instream rearing,7.75,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1381,Instream rearing,7.8,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1424,Instream rearing,7.84,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1468,Instream rearing,7.9,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1512,Instream rearing,7.95,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1556,Instream rearing,8.01,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1601,Instream rearing,8.09,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1644,Instream rearing,8.13,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1685,Instream rearing,8.18,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1729,Instream rearing,8.24,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1777,Instream rearing,8.31,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1820,Instream rearing,8.37,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1866,Instream rearing,8.48,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1914,Instream rearing,8.59,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1958,Instream rearing,8.7,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2003,Instream rearing,8.82,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2042,Instream rearing,8.89,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2087,Instream rearing,8.99,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2135,Instream rearing,9.09,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2175,Instream rearing,9.17,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2223,Instream rearing,9.28,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2264,Instream rearing,9.36,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2306,Instream rearing,9.37,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2350,Instream rearing,9.39,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2393,Instream rearing,9.42,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2437,Instream rearing,9.45,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2485,Instream rearing,9.49,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2525,Instream rearing,9.5,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2581,Instream rearing,9.52,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2635,Instream rearing,9.55,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2691,Instream rearing,9.58,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2748,Instream rearing,9.63,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2773,Instream rearing,9.61,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2838,Instream rearing,9.63,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2882,Instream rearing,9.63,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2958,Instream rearing,9.66,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2997,Instream rearing,9.7,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,189,Instream rearing,31.7,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,293,Instream rearing,30.28,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,369,Instream rearing,28.96,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,430,Instream rearing,27.58,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,479,Instream rearing,26.94,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,536,Instream rearing,26.05,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,648,Instream rearing,24.92,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,810,Instream rearing,23.22,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,871,Instream rearing,22.74,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1030,Instream rearing,21.61,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1122,Instream rearing,21.04,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1188,Instream rearing,20.67,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1308,Instream rearing,19.83,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1501,Instream rearing,19.01,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1577,Instream rearing,18.95,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1638,Instream rearing,18.87,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1740,Instream rearing,18.79,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1815,Instream rearing,18.71,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1996,Instream rearing,18.75,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2085,Instream rearing,18.72,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2180,Instream rearing,18.8,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2248,Instream rearing,18.83,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2515,Instream rearing,19.38,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2828,Instream rearing,20.04,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,3004,Instream rearing,20.2,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,2745,Instream rearing,19.84,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,1396,Instream rearing,19.47,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,694,Instream rearing,24.29,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,Reference Condition,946,Instream rearing,22.08,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,VA,189,Instream rearing,31.7,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,293,Instream rearing,30.28,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,369,Instream rearing,28.96,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,430,Instream rearing,27.58,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,479,Instream rearing,26.94,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,536,Instream rearing,26.05,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,648,Instream rearing,24.92,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,810,Instream rearing,27.86653846153846,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,871,Instream rearing,27.330230769230766,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,1030,Instream rearing,26.053461538461537,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,1122,Instream rearing,25.39853846153846,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,1188,Instream rearing,24.967615384615385,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,1308,Instream rearing,24.016846153846153,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,1501,Instream rearing,23.01869230769231,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,1577,Instream rearing,22.88853846153846,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,1638,Instream rearing,22.75223076923077,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,1740,Instream rearing,22.57807692307692,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,1815,Instream rearing,22.428846153846155,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,1996,Instream rearing,22.30176923076923,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,2085,Instream rearing,22.189615384615383,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,2180,Instream rearing,22.181923076923077,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,2248,Instream rearing,22.149153846153844,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,2515,Instream rearing,22.452692307692306,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,2828,Instream rearing,22.82376923076923,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,3004,Instream rearing,22.825,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,2745,Instream rearing,22.700384615384614,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,1396,Instream rearing,23.575615384615382,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,694,Instream rearing,28.798,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA,946,Instream rearing,26.601,flow-habitat relationship provided,TRUE,NA
+Feather River,LFC,VA additional acres,650,Instream rearing,4.2,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,VA additional acres,725,Instream rearing,4.7250000000000005,flow-habitat relationship provided,FALSE,NA
+Feather River,LFC,VA additional acres,3000,Instream rearing,2.625,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,1100,Floodplain rearing,0,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,2600,Floodplain rearing,127.3212,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,4056,Floodplain rearing,263.088,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,4100,Floodplain rearing,267.192,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,5600,Floodplain rearing,317.02320000000003,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,6983,Floodplain rearing,350.8245,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,7100,Floodplain rearing,353.6865,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,8600,Floodplain rearing,399.05730000000005,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,10100,Floodplain rearing,445.06530000000004,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,11600,Floodplain rearing,478.82340000000005,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,13100,Floodplain rearing,518.6619000000001,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,14600,Floodplain rearing,550.3167000000001,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,16100,Floodplain rearing,587.7333,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,17600,Floodplain rearing,613.9071,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,19100,Floodplain rearing,654.075,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,20600,Floodplain rearing,718.1352,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,22100,Floodplain rearing,784.7604,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,23600,Floodplain rearing,873.1935000000001,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,25100,Floodplain rearing,974.0304000000001,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,26600,Floodplain rearing,1056.6207,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,28100,Floodplain rearing,1130.5845000000002,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,29600,Floodplain rearing,1247.3919,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,31100,Floodplain rearing,1335.0204,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,32600,Floodplain rearing,1545.8283000000001,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,34100,Floodplain rearing,1687.5081,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,35600,Floodplain rearing,1784.4732000000001,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,37100,Floodplain rearing,1887.4242000000002,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,38600,Floodplain rearing,1987.3215,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,40100,Floodplain rearing,2143.0467000000003,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,41600,Floodplain rearing,2246.8914,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,43100,Floodplain rearing,2356.8975,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,44600,Floodplain rearing,2474.3394,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,46100,Floodplain rearing,2574.7470000000003,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,47600,Floodplain rearing,2680.6518,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,49100,Floodplain rearing,2775.6324000000004,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,50600,Floodplain rearing,2878.4592,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,52100,Floodplain rearing,2971.9737,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,53600,Floodplain rearing,3044.7819,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,55100,Floodplain rearing,3117.9195000000004,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,Reference Condition,56600,Floodplain rearing,3224.7720000000004,flow-habitat relationship provided,FALSE,NA
+Feather River,Feather River,VA,1100,Floodplain rearing,0,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,2600,Floodplain rearing,127.3212,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,4056,Floodplain rearing,742.0813333333333,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,4100,Floodplain rearing,745.394380952381,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,5600,Floodplain rearing,768.2612952380953,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,6983,Floodplain rearing,777.2015238095238,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,7100,Floodplain rearing,777.9603095238095,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,8600,Floodplain rearing,796.3668238095238,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,10100,Floodplain rearing,818.1605380952382,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,11600,Floodplain rearing,866.2043523809524,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,13100,Floodplain rearing,920.3285666666667,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,14600,Floodplain rearing,966.269080952381,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,16100,Floodplain rearing,1017.9713952380953,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,17600,Floodplain rearing,1058.4309095238095,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,19100,Floodplain rearing,1112.884523809524,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,20600,Floodplain rearing,1191.2304380952382,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,22100,Floodplain rearing,1272.1413523809524,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,23600,Floodplain rearing,1374.8601666666668,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,25100,Floodplain rearing,1489.0304,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,26600,Floodplain rearing,1571.6207,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,28100,Floodplain rearing,1645.5845000000002,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,29600,Floodplain rearing,1762.3919,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,31100,Floodplain rearing,2511.7304000000004,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,32600,Floodplain rearing,2746.6883000000003,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,34100,Floodplain rearing,2912.5181000000002,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,35600,Floodplain rearing,3011.0932000000003,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,37100,Floodplain rearing,3081.8442000000005,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,38600,Floodplain rearing,3149.5415000000003,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,40100,Floodplain rearing,3273.0667000000003,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,41600,Floodplain rearing,3344.7114,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,43100,Floodplain rearing,3422.5175,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,44600,Floodplain rearing,3507.7594,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,46100,Floodplain rearing,3575.9670000000006,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,47600,Floodplain rearing,3649.6718,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,49100,Floodplain rearing,3712.4524000000006,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,50600,Floodplain rearing,3795.9592,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,52100,Floodplain rearing,3889.4737,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,53600,Floodplain rearing,3962.2819,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,55100,Floodplain rearing,4035.4195000000004,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA,56600,Floodplain rearing,4142.272000000001,flow-habitat relationship provided,TRUE,NA
+Feather River,Feather River,VA additional acres,3000,Floodplain rearing,412.5,flow-habitat relationship provided,FALSE,inundation 3000
+Feather River,Feather River,VA additional acres,4000,Floodplain rearing,440,flow-habitat relationship provided,FALSE,inundation 3000
+Feather River,Feather River,VA additional acres,10000,Floodplain rearing,275,flow-habitat relationship provided,FALSE,inundation 3000
+Feather River,Feather River,VA additional acres,4000,Floodplain rearing,240,flow-habitat relationship provided,FALSE,inundation 4000
+Feather River,Feather River,VA additional acres,25000,Floodplain rearing,240,flow-habitat relationship provided,FALSE,inundation 4000
+Feather River,Feather River,VA additional acres,30000,Floodplain rearing,644,flow-habitat relationship provided,FALSE,inundation 30000
+Feather River,Feather River,VA additional acres,35000,Floodplain rearing,724.5,flow-habitat relationship provided,FALSE,inundation 30000
+Feather River,Feather River,VA additional acres,50000,Floodplain rearing,402.5,flow-habitat relationship provided,FALSE,inundation 30000

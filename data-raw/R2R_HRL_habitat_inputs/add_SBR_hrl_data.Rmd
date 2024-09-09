@@ -1,0 +1,301 @@
+---
+title: "Add HRL Habitat Data"
+author: "Liz Stebbins (FlowWest)"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>", 
+  fig.dim = c(8, 6)
+)
+```
+
+```{r setup, include = FALSE}
+library(DSMhabitat)
+library(tidyverse)
+library(lubridate)
+library(DSMflow)
+library(readxl)
+```
+
+# Overview
+
+As part of a R2R scenario, habitat commitments made under the Healthy Rivers and Landscapes (HRL) project were included for the following watersheds: 
+
+* American River
+* Feather River
+* Mokelumne River
+* Yuba River
+* Tuolumne River
+
+Staff from the Tuolumne River and Yuba River provided data directly for modeling anticipated flow-to-suitable area relationships under the HRL commitments. These streams developed methods to scale an existing habitat flow-to-suitable area relationship based on existing and proposed habitat projects and can be read about in more detail *here* (TODO).
+
+The Mokelumne, American, and Feather Rivers did not provided updated relationships, and for consistency across the basin R2R used the flow-to-suitable area relationships provided for the [Scientific Basis Report (SBR), Section 6](https://www.waterboards.ca.gov/waterrights/water_issues/programs/bay_delta/docs/2023/staff-report/app-g2.pdf). 
+
+# Methods
+
+For use in the R2R scenario, we implemented the following methods:
+
+1) Read in the flow-to-suitable area relationship used in the SBR
+2) Functionalize the relationship 
+3) Generate estimated habitat using flows in the HRL CalSim3 run for the model years (`1980-2000`)
+
+# American River
+
+## HRL flow-to-habitat relationship
+
+Instream and floodplain rearing habitat were provided. They are the same as those used in the SBR.
+
+**Data Source:** FlowWest coordinated with representatives for the American River to determine the best scientific information available to quantify existing suitable habitat, and to describe the VA non-flow habitat as *suitable area that varies with flow*. Habitat data were provided to R2R for use in accounting for planned habitat projects by [Erica Bishop](mailto:ebishop@waterforum.org) and [Chris Hammersmark](mailto:c.hammersmark@cbecoeng.com). Data provided represented the HRL commitments based on flow-to-habitat relationships borne out by recent EIP designs and constructed projects for the subject habitat type. 
+
+```{r, echo=FALSE}
+american_hrl <- read_excel("data-raw/R2R_HRL_habitat_inputs/data/HRL_habitat_commitments_for_R2R_American.xlsx",
+                               range = "A1:G10") |> 
+  janitor::clean_names() |>
+  mutate(duration_inundated_days = ifelse(duration_inundated_days == "N/A", NA, duration_inundated_days),
+         water_year_type = ifelse(water_year_type == "N/A", NA, water_year_type),
+         run = ifelse(run == "fall run", "fall", run)) |> 
+  mutate(flow_cfs = as.numeric(flow_to_inundate_suitable_acres),
+         flow_cfs = ifelse(is.na(flow_cfs), 20000, flow_cfs), 
+         scenario = "HRL", 
+         watershed = "American River",
+         FR_juv_sqm_hrl = DSMhabitat::acres_to_square_meters(suitable_acres)) |> 
+  select(watershed, flow_cfs, FR_juv_sqm_hrl, scenario)
+
+knitr::kable(head(american_hrl))
+```
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+existing_rearing <- DSMhabitat::american_river_instream |>
+  filter(!is.na(FR_juv_sqm)) |> 
+  select(flow_cfs, FR_juv_sqm)
+
+existing_floodplain <- DSMhabitat::american_river_floodplain |> 
+  filter(!is.na(FR_floodplain_acres)) |> 
+  select(flow_cfs, FR_floodplain_acres)
+
+existing_rearing_fn <- approxfun(existing_rearing$flow_cfs, existing_rearing$FR_juv_sqm, rule = 2)
+
+existing_fp_fn <- approxfun(existing_floodplain$flow_cfs, existing_floodplain$FR_floodplain_acres, rule = 2)
+
+existing_and_HRL <- american_hrl |> 
+  mutate(existing_rear = existing_rearing_fn(flow_cfs),
+         existing_fp = existing_fp_fn(flow_cfs),
+         fp_HRL = ifelse(flow_cfs <= 5200, NA, DSMhabitat::square_meters_to_acres(FR_juv_sqm_hrl)),
+         existing_and_HRL = ifelse(flow_cfs <= 5200, existing_rear + FR_juv_sqm_hrl, existing_fp + fp_HRL)) |> 
+  select(-scenario)
+
+# juvenile
+existing_and_HRL |> 
+  mutate(type = ifelse(flow_cfs <= 5200, "juv", "fp"),
+         existing = ifelse(flow_cfs <= 5200, existing_rear, existing_fp)) |> 
+  pivot_longer(c(existing, existing_and_HRL),
+               names_to = "scenario",
+               values_to = "value") |> 
+  ggplot(aes(x = flow_cfs, y = value, color = scenario)) + 
+  geom_line() +
+  facet_wrap(~type, scales = "free") +
+  geom_vline(aes(xintercept = 5200), linetype = "dashed") +
+  theme_minimal()
+```
+
+# Feather River
+
+## HRL flow-to-habitat relationship
+
+Spawning and instream rearing actions are only for the LFC.
+
+**Data Source:** Data came from the FERC relicensing spawning WUA/RSI and were provided for the SBR by Jason Kindopp. 
+
+```{r, echo=FALSE}
+feather_hrl <- read_csv(here::here("data-raw", "R2R_HRL_habitat_inputs", "data", "feather_flow_habitat.csv")) |> 
+  filter(scenario == "VA") |> 
+  mutate(habitat_area_sqm = DSMhabitat::acres_to_square_meters(habitat_area_acres),
+         scenario = "HRL") |> 
+  select(watershed, location, flow_cfs, habitat_type, habitat_area_sqm) |> 
+  pivot_wider(id_cols = c(watershed, location, flow_cfs), 
+              names_from = habitat_type,
+              values_from = habitat_area_sqm) |> 
+  rename(FR_spw_sqm_hrl = Spawning,
+         FR_juv_ic_sqm_hrl = `Instream rearing`,
+         FR_juv_fp_sqm_hrl = `Floodplain rearing`) |> 
+  glimpse()
+
+knitr::kable(head(feather_hrl))
+```
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+feather_hrl |> 
+  pivot_longer(FR_spw_sqm_hrl:FR_juv_fp_sqm_hrl,
+               names_to = "lifestage",
+               values_to = "value") |> 
+  ggplot(aes(x = flow_cfs, y = value, color = lifestage)) + 
+  geom_line() +
+  facet_wrap(~location, scales = "free") +
+  theme_minimal()
+```
+
+# Mokelumne River
+
+## HRL flow-to-habitat relationship
+
+Instream and floodplain rearing habitat were provided. They are the same as those used in the SBR.
+
+**Data Source:** Data were provided by Robyn Bilski for the SBR.
+
+```{r, echo=FALSE}
+spawning <- read_excel('data-raw/R2R_HRL_habitat_inputs/data/moke_flow_to_habitat_RB_edits.xlsx', 
+                           sheet = 'spawning', 
+                           range = 'A1:D5') |> 
+  mutate(FR_sqm_hrl = DSMhabitat::acres_to_square_meters(FR_spawn_acres_VA_enhanced),
+         lifestage = "Spawning") |> 
+  select(flow_cfs, FR_sqm_hrl, lifestage)
+
+rearing <- read_excel('data-raw/R2R_HRL_habitat_inputs/data/moke_flow_to_habitat_RB_edits.xlsx', 
+                      sheet = 'instream_rearing', 
+                      range = 'A1:G17') |> 
+  mutate(FR_juv_acres_VAadditional = 0.5*(FR_fry_acres_VA_enhanced),
+         FR_fry_acres_VA_enhanced = 0.5*(FR_fry_acres_VA_enhanced) + FR_fry_acres_existing,
+         FR_juv_acres_VA_enhanced = 0.5*(FR_juv_acres_VA_enhanced) + FR_juv_acres_existing) |> 
+  mutate(FR_juv_sqm_hrl = acres_to_square_meters(FR_juv_acres_VA_enhanced),
+         FR_fry_sqm_hrl = acres_to_square_meters(FR_fry_acres_VA_enhanced)) |> 
+  pivot_longer(FR_juv_sqm_hrl:FR_fry_sqm_hrl,
+               names_to = "lifestage",
+               values_to = "FR_sqm_hrl") |> 
+  select(flow_cfs, FR_sqm_hrl, lifestage) 
+
+mokelumne_hrl <- bind_rows(spawning, rearing) |> 
+  mutate(scenario = "HRL",
+         watershed = "Mokelumne") |> 
+  pivot_wider(id_cols = flow_cfs,
+              names_from = lifestage,
+              values_from = FR_sqm_hrl) |> 
+  rename(FR_spw_sqm_hrl = Spawning)
+
+knitr::kable(head(mokelumne_hrl))
+```
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+mokelumne_hrl |> 
+  pivot_longer(FR_spw_sqm_hrl:FR_fry_sqm_hrl,
+               names_to = "lifestage",
+               values_to = "value") |> 
+  ggplot(aes(x = flow_cfs, y = value)) + 
+  geom_line() +
+  facet_wrap(~lifestage, scales = "free") +
+  theme_minimal()
+```
+
+
+# Add to data objects
+
+* functionalize curves
+* use LTO_12a flows
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+# TODO check these methods. do we need to do something more nuanced? probably
+# american
+american_juv_fn <- approxfun(american_hrl$flow_cfs, spawning$FR_juv_sqm_hrl,
+                            rule = 2)
+
+# feather
+feather_spw_fn <- approxfun(feather_hrl$flow_cfs, feather_hrl$FR_spw_sqm_hrl,
+                            rule = 2)
+feather_juv_fn <- approxfun(feather_hrl$flow_cfs, feather_hrl$FR_juv_ic_sqm_hrl,
+                            rule = 2)
+feather_fp_fn <- approxfun(feather_hrl$flow_cfs, feather_hrl$FR_juv_fp_sqm_hrl,
+                            rule = 2)
+
+# mokelumne
+mokelumne_spw_fn <- approxfun(mokelumne_hrl$flow_cfs,
+                              mokelumne_hrl$FR_spw_sqm_hrl,
+                              rule = 2)
+mokelumne_juv_fn <- approxfun(mokelumne_hrl$flow_cfs,
+                              mokelumne_hrl$FR_juv_sqm_hrl,
+                              rule = 2)
+# TODO not doing fry for mokelumne
+
+# tuolumne
+tuolumne_hrl <- read_csv(here::here("data-raw", "R2R_HRL_habitat_inputs", "data", "tuolumne_hrl.csv")) |> 
+  mutate(fp_sqm_va = DSMhabitat::acres_to_square_meters(fp_acres_va))
+
+tuolumne_spw_fn <- approxfun(tuolumne_hrl$flow_cfs,
+                             tuolumne_hrl$fr_spw_sqm_va,
+                             rule = 2)
+tuolumne_juv_fn <- approxfun(tuolumne_hrl$flow_cfs,
+                             tuolumne_hrl$fr_juv_sqm_va,
+                             rule = 2)
+tuolumne_fp_fn <- approxfun(tuolumne_hrl$flow_cfs,
+                             tuolumne_hrl$fp_sqm_va,
+                             rule = 2)
+
+# yuba
+yuba_hrl <- read_csv(here::here("data-raw", "R2R_HRL_habitat_inputs", "data", "yuba_hrl.csv"))
+
+yuba_juv_fn <- approxfun(tuolumne_hrl$flow_cfs,
+                         tuolumne_hrl$fr_juv_ic_sqm,
+                         rule = 2)
+yuba_fp_fn <- approxfun(tuolumne_hrl$flow_cfs,
+                        tuolumne_hrl$fr_juv_fp_sqm,
+                        rule = 2)
+```
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+flows <- DSMflow::flows_cfs$LTO_12a |>
+  filter(year(date) >= 1980 & year(date) <= 2000) |> 
+  pivot_longer(`Antelope Creek`:`San Joaquin River`,
+               names_to = "watershed",
+               values_to = "flow_cfs") |> 
+  mutate(month = month(date),
+         year = year(date)) |> 
+  group_by(year, month, watershed) |> 
+  summarise(median_flow_cfs = median(flow_cfs)) |> 
+  ungroup()
+
+update_hrl_habitat_from_SBR <- function(flows, watershed_name, hab_fn) {
+  new_hab <- flows |> 
+    filter(watershed == watershed_name) |> 
+    mutate(new_hab = hab_fn(median_flow_cfs)) |> 
+    pivot_wider(id_cols = month, names_from = year, values_from = median_flow_cfs) |>
+    select(-month) |> 
+    as.matrix()
+  
+  rownames(new_hab) <- month.abb
+  
+  return(new_hab)
+  
+}
+
+# update spawning
+# TODO fix this, producing very low habitat
+DSMhabitat::fr_spawn$r_to_r_hrl["Feather River", , ] <- update_hrl_habitat_from_SBR(flows, "Feather River",
+                                                                                    feather_spw_fn)
+DSMhabitat::fr_spawn$r_to_r_hrl["Mokelumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Mokelumne River",
+                                                                                    mokelumne_spw_fn)
+DSMhabitat::fr_spawn$r_to_r_hrl["Tuolumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Tuolumne River",
+                                                                                    tuolumne_spw_fn)
+# update ic rearing
+DSMhabitat::fr_juv$r_to_r_hrl["American River", , ] <- update_hrl_habitat_from_SBR(flows, "American River",
+                                                                                    american_juv_fn)
+DSMhabitat::fr_juv$r_to_r_hrl["Feather River", , ] <- update_hrl_habitat_from_SBR(flows, "Feather River",
+                                                                                    feather_juv_fn)
+DSMhabitat::fr_juv$r_to_r_hrl["Mokelumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Mokelumne River",
+                                                                                    mokelumne_juv_fn)
+DSMhabitat::fr_juv$r_to_r_hrl["Tuolumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Tuolumne River",
+                                                                                    tuolumne_juv_fn)
+DSMhabitat::fr_juv$r_to_r_hrl["Yuba River", , ] <- update_hrl_habitat_from_SBR(flows, "Yuba River",
+                                                                                    feather_juv_fn)
+
+# update fp rearing
+DSMhabitat::fr_fp$r_to_r_hrl["Feather River", , ] <- update_hrl_habitat_from_SBR(flows, "Feather River",
+                                                                                    feather_fp_fn)
+DSMhabitat::fr_fp$r_to_r_hrl["Tuolumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Tuolumne River",
+                                                                                    tuolumne_fp_fn)
+DSMhabitat::fr_fp$r_to_r_hrl["Yuba River", , ] <- update_hrl_habitat_from_SBR(flows, "Yuba River",
+                                                                                    feather_fp_fn)
+
+# TODO add this script to update_data.R so it's run 
+```

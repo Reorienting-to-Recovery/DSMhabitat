@@ -71,5 +71,6 @@ tuolumne_hrl |>
   facet_wrap(~lifestage, scales = "free_y") +
   theme_minimal()
 
-#usethis::use_data(tuolumne_river, overwrite = TRUE)
+write_csv(tuolumne_hrl, here::here("data-raw", "R2R_HRL_habitat_inputs",
+                                     "data", "tuolumne_hrl.csv"))
 ```

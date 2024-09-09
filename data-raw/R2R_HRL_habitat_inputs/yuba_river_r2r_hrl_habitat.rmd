@@ -147,5 +147,10 @@ existing_and_HRL |>
   theme_minimal() +
   theme(legend.position = "bottom")
 
-#usethis::use_data(american_river_instream, overwrite = TRUE)
+yuba_hrl <- yuba_hrl_combined |> 
+  mutate(fr_juv_ic_sqm = DSMhabitat::acres_to_square_meters(ic_hrl_acres),
+         fr_juv_fp_sqm = DSMhabitat::acres_to_square_meters(fp_hrl_acres)) |> 
+  select(flow_cfs, fr_juv_ic_sqm, fr_juv_fp_sqm)
+
+write_csv(yuba_hrl, here::here("data-raw", "R2R_HRL_habitat_inputs", "data", "yuba_hrl.csv"))
 ```
