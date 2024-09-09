@@ -298,3 +298,9 @@ DSMhabitat::fr_fp$r_to_r_hrl["Yuba River", , ] <- update_hrl_habitat_from_SBR(fl
 
 # TODO add this script to update_data.R so it's run 
 ```
+# Other HRL commitments
+
+## Sacramento Floodplain improvements (Sutter, Colusa, Butte Sink)
+- TODO
+
+## 20,000 acres fish food
