@@ -19,29 +19,32 @@ library(tidyverse)
 library(lubridate)
 library(DSMflow)
 library(readxl)
+library(sf)
+#remotes::install_github("flowwest/riceflows4ff")
+library(riceflows4ff)
 ```
 
 # Overview
 
-As part of a R2R scenario, habitat commitments made under the Healthy Rivers and Landscapes (HRL) project were included for the following watersheds: 
+As part of a R2R scenario, habitat commitments made under the Healthy Rivers and Landscapes (HRL) project were included for the following watersheds:
 
-* American River
-* Feather River
-* Mokelumne River
-* Yuba River
-* Tuolumne River
+-   American River
+-   Feather River
+-   Mokelumne River
+-   Yuba River
+-   Tuolumne River
 
 Staff from the Tuolumne River and Yuba River provided data directly for modeling anticipated flow-to-suitable area relationships under the HRL commitments. These streams developed methods to scale an existing habitat flow-to-suitable area relationship based on existing and proposed habitat projects and can be read about in more detail *here* (TODO).
 
-The Mokelumne, American, and Feather Rivers did not provided updated relationships, and for consistency across the basin R2R used the flow-to-suitable area relationships provided for the [Scientific Basis Report (SBR), Section 6](https://www.waterboards.ca.gov/waterrights/water_issues/programs/bay_delta/docs/2023/staff-report/app-g2.pdf). 
+The Mokelumne, American, and Feather Rivers did not provided updated relationships, and for consistency across the basin R2R used the flow-to-suitable area relationships provided for the [Scientific Basis Report (SBR), Section 6](https://www.waterboards.ca.gov/waterrights/water_issues/programs/bay_delta/docs/2023/staff-report/app-g2.pdf).
 
 # Methods
 
 For use in the R2R scenario, we implemented the following methods:
 
-1) Read in the flow-to-suitable area relationship used in the SBR
-2) Functionalize the relationship 
-3) Generate estimated habitat using flows in the HRL CalSim3 run for the model years (`1980-2000`)
+1)  Read in the flow-to-suitable area relationship used in the SBR
+2)  Functionalize the relationship
+3)  Generate estimated habitat using flows in the HRL CalSim3 run for the model years (`1980-2000`)
 
 # American River
 
@@ -49,7 +52,7 @@ For use in the R2R scenario, we implemented the following methods:
 
 Instream and floodplain rearing habitat were provided. They are the same as those used in the SBR.
 
-**Data Source:** FlowWest coordinated with representatives for the American River to determine the best scientific information available to quantify existing suitable habitat, and to describe the VA non-flow habitat as *suitable area that varies with flow*. Habitat data were provided to R2R for use in accounting for planned habitat projects by [Erica Bishop](mailto:ebishop@waterforum.org) and [Chris Hammersmark](mailto:c.hammersmark@cbecoeng.com). Data provided represented the HRL commitments based on flow-to-habitat relationships borne out by recent EIP designs and constructed projects for the subject habitat type. 
+**Data Source:** FlowWest coordinated with representatives for the American River to determine the best scientific information available to quantify existing suitable habitat, and to describe the VA non-flow habitat as *suitable area that varies with flow*. Habitat data were provided to R2R for use in accounting for planned habitat projects by [Erica Bishop](mailto:ebishop@waterforum.org) and [Chris Hammersmark](mailto:c.hammersmark@cbecoeng.com). Data provided represented the HRL commitments based on flow-to-habitat relationships borne out by recent EIP designs and constructed projects for the subject habitat type.
 
 ```{r, echo=FALSE, message = FALSE, warning = FALSE}
 american_hrl <- read_excel("data-raw/R2R_HRL_habitat_inputs/data/HRL_habitat_commitments_for_R2R_American.xlsx",
@@ -108,7 +111,7 @@ existing_and_HRL |>
 
 Spawning and instream rearing actions are only for the LFC.
 
-**Data Source:** Data came from the FERC relicensing spawning WUA/RSI and were provided for the SBR by Jason Kindopp. 
+**Data Source:** Data came from the FERC relicensing spawning WUA/RSI and were provided for the SBR by Jason Kindopp.
 
 ```{r, echo=FALSE, message = FALSE, warning = FALSE}
 feather_hrl <- read_csv(here::here("data-raw", "R2R_HRL_habitat_inputs", "data", "feather_flow_habitat.csv")) |> 
@@ -188,11 +191,10 @@ mokelumne_hrl |>
   theme_minimal()
 ```
 
-
 # Add to data objects
 
-* functionalize curves
-* use LTO_12a flows
+-   functionalize curves
+-   use LTO_12a flows
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 # TODO check these methods. do we need to do something more nuanced? probably
@@ -298,9 +300,106 @@ DSMhabitat::fr_fp$r_to_r_hrl["Yuba River", , ] <- update_hrl_habitat_from_SBR(fl
 
 # TODO add this script to update_data.R so it's run 
 ```
+
 # Other HRL commitments
 
-## Sacramento Floodplain improvements (Sutter, Colusa, Butte Sink)
-- TODO
+We modeled additional commitments that were listed in the [Memorandum of Understanding, Appendix 2](https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf):
 
-## 20,000 acres fish food
+| Area                                        | Total acres                   |
+|---------------------------------------------|-------------------------------|
+| Sutter Bypass, Butte Sink, and Colusa Basin | 20,000 (floodplain)           |
+| Sutter Bypass, Butte Sink, and Colusa Basin | 20,000 (fish food production) |
+
+## Sacramento Floodplain improvements (Sutter, Colusa, Butte Sink)
+
+- 20,000 acres were added to the Sutter Bypass watershed **after** the existing flow-to-area relationship was modeled using HRL flows. 
+- From December 1st to March 15th, Sutter Bypass will be assumed to have 20,000 acres of suitable habitat in each year.
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+va_sutter_habitat_pre <- DSMhabitat::sutter_habitat$lto_12a |> 
+  as_tibble() |> 
+  mutate(month = month.abb) |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm") |> 
+  mutate(acres = DSMhabitat::square_meters_to_acres(sqm),
+         total_acres = ifelse(month %in% c("Dec", "Jan", "Feb") & 
+                                acres < 20000, 20000, acres),
+         sqm = DSMhabitat::acres_to_square_meters(total_acres)) |> 
+  pivot_wider(id_cols = month, 
+              values_from = sqm,
+              names_from = year) |> 
+  select(-c(month)) |> 
+  as.matrix() 
+
+rownames(va_sutter_habitat_pre) <- month.abb
+
+# plot
+va_sutter_habitat_pre |> 
+  as_tibble() |> 
+  mutate(month = month.abb) |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm") |> 
+  mutate(acres = DSMhabitat::square_meters_to_acres(sqm),
+         date = as.Date(paste0(year, "-", month, "-01"), format = "%Y-%b-%d")) |> 
+  ggplot(aes(x = date, y = acres)) + 
+  geom_line() +
+  theme_minimal()
+
+# TODO uncomment this
+#DSMhabitat::sutter_habitat$lto_12a <- va_sutter_habitat_pre
+  
+```
+
+## 20,000 acres fish food production
+
+- To model the effects of 20,000 acres of fish food production, we calculated the available acreage for dry side floodplain for Sutter and Colusa basins using [these data](https://urldefense.proofpoint.com/v2/url?u=https-3A__flowwest.shinyapps.io_riceflows4ff_&d=DwMGaQ&c=euGZstcaTDllvimEN8b7jXrwqOf-v5A_CdpgnVfiiMM&r=es1mYD_t8ssn_HUUEGOgPpeBoWf2_Iri3BC8scPyjqg&m=MPH46l1pSkkFUhwOq2afwCu7FQy9x-3ynNLgjT1FrFVENIGYvlHv77LDW2IA1HMx&s=gks_3V6uaP9BPa4q9vmFCDSgHkke0BCTa3QXxOITYfw&e=)
+- We then calculated the proportion of the committed 20,000 acres those acreages provide, and use that proportion to scale instream habitat for those watersheds.
+- This will occur in every year from Jan 1st to Feb 28th
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+watersheds <- 
+  riceflows4ff::ff_watersheds |> 
+  mutate(watershed_group = case_when(
+    watershed_name %in% c("Sutter Basin - Upper East", 
+                          "Sutter Basin - Lower East",
+                          "Gilsizer Slough-Snake River - Upper",
+                          "Gilsizer Slough-Snake River - Lower") ~ "Sutter Basin",
+    watershed_name %in% c("Colusa Basin Drainage Canal",
+                          "Colusa Trough - Lower", 
+                          "Colusa Trough - Middle",
+                          "Colusa Trough - Upper",
+                          "Sycamore Slough - Upper West", 
+                          "Freshwater Creek",
+                          "Stone Corral Creek", 
+                          "Logan Creek", 
+                          "Willow Creek", 
+                          "Walker Creek",
+                          "Colusa Drain") ~ "Colusa Basin")) |>
+  filter(!is.na(watershed_group)) |>
+  group_by(watershed_group) |>
+  summarize() |>
+  st_union(by_feature = TRUE)
+
+wet_dry_areas <- 
+  watersheds |>
+  st_intersection(riceflows4ff::ff_wetdry) |>
+  mutate(area_ac = st_area(geometry) |> 
+           units::set_units("acres") |>
+           units::drop_units()) |>
+  group_by(watershed_group, wet_dry) |>
+  summarize(area_ac = sum(area_ac)) |>
+  ungroup() |>
+  st_drop_geometry() |>
+  pivot_wider(names_from = wet_dry, values_from = area_ac) |> 
+  mutate(proportion = 20000 / Dry)
+
+knitr::kable(head(wet_dry_areas))
+```
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+# scale up habitat using methods of tmh / hrl round 1
+# TODO
+
+```
