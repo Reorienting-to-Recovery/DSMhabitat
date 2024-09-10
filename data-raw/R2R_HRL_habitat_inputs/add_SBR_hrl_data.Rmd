@@ -116,10 +116,11 @@ Spawning and instream rearing actions are only for the LFC.
 ```{r, echo=FALSE, message = FALSE, warning = FALSE}
 feather_hrl <- read_csv(here::here("data-raw", "R2R_HRL_habitat_inputs", "data", "feather_flow_habitat.csv")) |> 
   filter(scenario == "VA") |> 
+  select(-location) |> 
   mutate(habitat_area_sqm = DSMhabitat::acres_to_square_meters(habitat_area_acres),
          scenario = "HRL") |> 
-  select(watershed, location, flow_cfs, habitat_type, habitat_area_sqm) |> 
-  pivot_wider(id_cols = c(watershed, location, flow_cfs), 
+  select(watershed, flow_cfs, habitat_type, habitat_area_sqm) |> 
+  pivot_wider(id_cols = c(watershed, flow_cfs), 
               names_from = habitat_type,
               values_from = habitat_area_sqm) |> 
   rename(FR_spw_sqm_hrl = Spawning,
@@ -134,10 +135,12 @@ feather_hrl |>
   pivot_longer(FR_spw_sqm_hrl:FR_juv_fp_sqm_hrl,
                names_to = "lifestage",
                values_to = "value") |> 
-  ggplot(aes(x = flow_cfs, y = value, color = lifestage)) + 
+  mutate(acres = square_meters_to_acres(value)) |> 
+  filter(!is.na(acres)) |> 
+  ggplot(aes(x = flow_cfs, y = acres)) + 
   geom_line() +
-  facet_wrap(~location, scales = "free") +
-  theme_minimal()
+  theme_minimal() +
+  facet_wrap(~lifestage, scales = "free")
 ```
 
 # Mokelumne River
@@ -152,7 +155,8 @@ Instream and floodplain rearing habitat were provided. They are the same as thos
 spawning <- read_excel('data-raw/R2R_HRL_habitat_inputs/data/moke_flow_to_habitat_RB_edits.xlsx', 
                            sheet = 'spawning', 
                            range = 'A1:D5') |> 
-  mutate(FR_sqm_hrl = DSMhabitat::acres_to_square_meters(FR_spawn_acres_VA_enhanced),
+  mutate(FR_spawn_acres_VA_enhanced = FR_spawn_acres_VA_enhanced + FR_spawn_acres_existing,
+         FR_sqm_hrl = DSMhabitat::acres_to_square_meters(FR_spawn_acres_VA_enhanced),
          lifestage = "Spawning") |> 
   select(flow_cfs, FR_sqm_hrl, lifestage)
 
@@ -161,8 +165,8 @@ rearing <- read_excel('data-raw/R2R_HRL_habitat_inputs/data/moke_flow_to_habitat
                       range = 'A1:G17') |> 
   mutate(FR_juv_acres_VAadditional = 0.5*(FR_fry_acres_VA_enhanced),
          FR_fry_acres_VA_enhanced = 0.5*(FR_fry_acres_VA_enhanced) + FR_fry_acres_existing,
-         FR_juv_acres_VA_enhanced = 0.5*(FR_juv_acres_VA_enhanced) + FR_juv_acres_existing) |> 
-  mutate(FR_juv_sqm_hrl = acres_to_square_meters(FR_juv_acres_VA_enhanced),
+         FR_juv_acres_VA_enhanced = 0.5*(FR_juv_acres_VA_enhanced) + FR_juv_acres_existing,
+         FR_juv_sqm_hrl = acres_to_square_meters(FR_juv_acres_VA_enhanced),
          FR_fry_sqm_hrl = acres_to_square_meters(FR_fry_acres_VA_enhanced)) |> 
   pivot_longer(FR_juv_sqm_hrl:FR_fry_sqm_hrl,
                names_to = "lifestage",
@@ -185,7 +189,9 @@ mokelumne_hrl |>
   pivot_longer(FR_spw_sqm_hrl:FR_fry_sqm_hrl,
                names_to = "lifestage",
                values_to = "value") |> 
-  ggplot(aes(x = flow_cfs, y = value)) + 
+  filter(!is.na(value)) |> 
+  mutate(acres = square_meters_to_acres(value)) |> 
+  ggplot(aes(x = flow_cfs, y = acres)) + 
   geom_line() +
   facet_wrap(~lifestage, scales = "free") +
   theme_minimal()
@@ -197,10 +203,10 @@ mokelumne_hrl |>
 -   use LTO_12a flows
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
-# TODO check these methods. do we need to do something more nuanced? probably
 # american
-american_juv_fn <- approxfun(american_hrl$flow_cfs, spawning$FR_juv_sqm_hrl,
-                            rule = 2)
+american_juv_fn <- approxfun(american_hrl$flow_cfs,
+                             american_hrl$FR_juv_sqm_hrl,
+                             rule = 2)
 
 # feather
 feather_spw_fn <- approxfun(feather_hrl$flow_cfs, feather_hrl$FR_spw_sqm_hrl,
@@ -236,31 +242,31 @@ tuolumne_fp_fn <- approxfun(tuolumne_hrl$flow_cfs,
 # yuba
 yuba_hrl <- read_csv(here::here("data-raw", "R2R_HRL_habitat_inputs", "data", "yuba_hrl.csv"))
 
-yuba_juv_fn <- approxfun(tuolumne_hrl$flow_cfs,
-                         tuolumne_hrl$fr_juv_ic_sqm,
+yuba_juv_fn <- approxfun(yuba_hrl$flow_cfs,
+                         yuba_hrl$fr_juv_ic_sqm,
                          rule = 2)
-yuba_fp_fn <- approxfun(tuolumne_hrl$flow_cfs,
-                        tuolumne_hrl$fr_juv_fp_sqm,
+yuba_fp_fn <- approxfun(yuba_hrl$flow_cfs,
+                        yuba_hrl$fr_juv_fp_sqm,
                         rule = 2)
 ```
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
-flows <- DSMflow::flows_cfs$LTO_12a |>
+#flows <- DSMflow::flows_cfs$LTO_12a |>
+flows <- DSMflow::flows_cfs$biop_itp_2018_2019 |>
   filter(year(date) >= 1980 & year(date) <= 2000) |>
-  pivot_longer(`Antelope Creek`:`San Joaquin River`,
+  pivot_longer(`Upper Sacramento River`:`San Joaquin River`,
                names_to = "watershed",
                values_to = "flow_cfs") |>
   mutate(month = month(date),
-         year = year(date)) |>
-  group_by(year, month, watershed) |>
-  summarise(median_flow_cfs = median(flow_cfs)) |>
-  ungroup()
+         year = year(date))
 
 update_hrl_habitat_from_SBR <- function(flows, watershed_name, hab_fn) {
   new_hab <- flows |>
     filter(watershed == watershed_name) |>
-    mutate(new_hab = hab_fn(median_flow_cfs)) |>
-    pivot_wider(id_cols = month, names_from = year, values_from = median_flow_cfs) |>
+    mutate(new_hab = hab_fn(flow_cfs)) |>
+    pivot_wider(id_cols = month, 
+                names_from = year, 
+                values_from = new_hab) |>
     select(-month) |>
     as.matrix()
 
@@ -269,6 +275,23 @@ update_hrl_habitat_from_SBR <- function(flows, watershed_name, hab_fn) {
   return(new_hab)
 
 }
+
+comparison <- DSMhabitat::fr_juv$r_to_r_baseline["Tuolumne River",,] - 
+update_hrl_habitat_from_SBR(flows,
+                            "Tuolumne River",
+                            tuolumne_juv_fn) 
+
+comparison |> 
+  as_tibble() |> 
+  mutate(month = month.abb) |> 
+  pivot_longer(`1979`:`2000`,
+               values_to = "habitat",
+               names_to = "year") |> 
+  mutate(year = as.numeric(year),
+         habitat = DSMhabitat::square_meters_to_acres(habitat)) |> 
+  ggplot(aes(x = month, y = habitat, group = 1)) + 
+  geom_line() + 
+  facet_wrap(~year)
 
 # update spawning
 # TODO fix this, producing very low habitat
@@ -299,6 +322,12 @@ DSMhabitat::fr_fp$r_to_r_hrl["Yuba River", , ] <- update_hrl_habitat_from_SBR(fl
                                                                                     feather_fp_fn)
 
 # TODO add this script to update_data.R so it's run 
+```
+
+### Check
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+# spawning
+DSMhabitat::
 ```
 
 # Other HRL commitments
