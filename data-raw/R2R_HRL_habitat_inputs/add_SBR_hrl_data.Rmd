@@ -251,23 +251,32 @@ yuba_fp_fn <- approxfun(yuba_hrl$flow_cfs,
 ```
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
-#flows <- DSMflow::flows_cfs$LTO_12a |>
-flows <- DSMflow::flows_cfs$biop_itp_2018_2019 |>
-  filter(year(date) >= 1980 & year(date) <= 2000) |>
-  pivot_longer(`Upper Sacramento River`:`San Joaquin River`,
+flows <- DSMflow::flows_cfs$LTO_12a |>
+# flows <- DSMflow::flows_cfs$biop_itp_2018_2019 |>
+  filter(year(date) >= 1979 & year(date) <= 2000) |> 
+  pivot_longer(`Antelope Creek`:`San Joaquin River`,
                names_to = "watershed",
                values_to = "flow_cfs") |>
   mutate(month = month(date),
          year = year(date))
 
-update_hrl_habitat_from_SBR <- function(flows, watershed_name, hab_fn) {
-  new_hab <- flows |>
+update_hrl_habitat_from_SBR <- function(flows, watershed_name, hab_fn,
+                                        is_rearing) {
+  
+  if(is_rearing) {
+    filtered_flows <- flows |> 
+      filter(year != 1979)
+  } else {
+    filtered_flows <- flows
+  }
+
+  new_hab <- filtered_flows |>
     filter(watershed == watershed_name) |>
     mutate(new_hab = hab_fn(flow_cfs)) |>
     pivot_wider(id_cols = month, 
                 names_from = year, 
                 values_from = new_hab) |>
-    select(-month) |>
+    select(-month) |> 
     as.matrix()
 
   rownames(new_hab) <- month.abb
@@ -276,50 +285,49 @@ update_hrl_habitat_from_SBR <- function(flows, watershed_name, hab_fn) {
 
 }
 
-comparison <- DSMhabitat::fr_juv$r_to_r_baseline["Tuolumne River",,] - 
-update_hrl_habitat_from_SBR(flows,
-                            "Tuolumne River",
-                            tuolumne_juv_fn) 
-
-comparison |> 
-  as_tibble() |> 
-  mutate(month = month.abb) |> 
-  pivot_longer(`1979`:`2000`,
-               values_to = "habitat",
-               names_to = "year") |> 
-  mutate(year = as.numeric(year),
-         habitat = DSMhabitat::square_meters_to_acres(habitat)) |> 
-  ggplot(aes(x = month, y = habitat, group = 1)) + 
-  geom_line() + 
-  facet_wrap(~year)
-
 # update spawning
-# TODO fix this, producing very low habitat
-DSMhabitat::fr_spawn$r_to_r_hrl["Feather River", , ] <- update_hrl_habitat_from_SBR(flows, "Feather River",
-                                                                                    feather_spw_fn)
-DSMhabitat::fr_spawn$r_to_r_hrl["Mokelumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Mokelumne River",
-                                                                                    mokelumne_spw_fn)
-DSMhabitat::fr_spawn$r_to_r_hrl["Tuolumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Tuolumne River",
-                                                                                    tuolumne_spw_fn)
+# start with the baseline habitat run with HRL flows
+fr_spawn_update <- DSMhabitat::fr_spawn$r_to_r_lto_12a_baseline
+
+fr_spawn_update["Feather River", , ] <- update_hrl_habitat_from_SBR(flows, "Feather River",
+                                                                    feather_spw_fn, FALSE)
+fr_spawn_update["Mokelumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Mokelumne River",
+                                                                                    mokelumne_spw_fn, FALSE)
+fr_spawn_update["Tuolumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Tuolumne River",
+                                                                                    tuolumne_spw_fn, FALSE)
+fr_spawn <- DSMhabitat::fr_spawn
+fr_spawn$r_to_r_hrl <- fr_spawn_update
+
 # update ic rearing
-DSMhabitat::fr_juv$r_to_r_hrl["American River", , ] <- update_hrl_habitat_from_SBR(flows, "American River",
-                                                                                    american_juv_fn)
-DSMhabitat::fr_juv$r_to_r_hrl["Feather River", , ] <- update_hrl_habitat_from_SBR(flows, "Feather River",
-                                                                                    feather_juv_fn)
-DSMhabitat::fr_juv$r_to_r_hrl["Mokelumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Mokelumne River",
-                                                                                    mokelumne_juv_fn)
-DSMhabitat::fr_juv$r_to_r_hrl["Tuolumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Tuolumne River",
-                                                                                    tuolumne_juv_fn)
-DSMhabitat::fr_juv$r_to_r_hrl["Yuba River", , ] <- update_hrl_habitat_from_SBR(flows, "Yuba River",
-                                                                                    feather_juv_fn)
+fr_juv_update <- DSMhabitat::fr_juv$r_to_r_lto_12a_baseline
+fr_juv_update["American River", , ] <- update_hrl_habitat_from_SBR(flows, "American River",
+                                                                                    american_juv_fn, TRUE)
+fr_juv_update["Feather River", , ] <- update_hrl_habitat_from_SBR(flows, "Feather River",
+                                                                                    feather_juv_fn, TRUE)
+fr_juv_update["Mokelumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Mokelumne River",
+                                                                                    mokelumne_juv_fn, TRUE)
+fr_juv_update["Tuolumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Tuolumne River",
+                                                                                    tuolumne_juv_fn, TRUE)
+fr_juv_update["Yuba River", , ] <- update_hrl_habitat_from_SBR(flows, "Yuba River",
+                                                                                    feather_juv_fn, TRUE)
+fr_juv <- DSMhabitat::fr_juv
+fr_juv$r_to_r_hrl <- fr_juv_update
 
 # update fp rearing
-DSMhabitat::fr_fp$r_to_r_hrl["Feather River", , ] <- update_hrl_habitat_from_SBR(flows, "Feather River",
-                                                                                    feather_fp_fn)
-DSMhabitat::fr_fp$r_to_r_hrl["Tuolumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Tuolumne River",
-                                                                                    tuolumne_fp_fn)
-DSMhabitat::fr_fp$r_to_r_hrl["Yuba River", , ] <- update_hrl_habitat_from_SBR(flows, "Yuba River",
-                                                                                    feather_fp_fn)
+fr_fp_update <- DSMhabitat::fr_fp$r_to_r_lto_12a_baseline
+fr_fp_update["Feather River", , ] <- update_hrl_habitat_from_SBR(flows, "Feather River",
+                                                                                    feather_fp_fn, TRUE)
+fr_fp_update["Tuolumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Tuolumne River",
+                                                                                    tuolumne_fp_fn, TRUE)
+fr_fp_update["Yuba River", , ] <- update_hrl_habitat_from_SBR(flows, "Yuba River",
+                                                                                    feather_fp_fn, TRUE)
+fr_fp <- DSMhabitat::fr_fp
+fr_fp$r_to_r_hrl <- fr_fp_update
+
+# now update objects
+usethis::use_data(fr_spawn, overwrite = TRUE)
+usethis::use_data(fr_juv, overwrite = TRUE)
+usethis::use_data(fr_fp, overwrite = TRUE)
 
 # TODO add this script to update_data.R so it's run 
 ```
