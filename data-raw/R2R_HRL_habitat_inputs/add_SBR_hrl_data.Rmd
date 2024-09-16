@@ -22,6 +22,7 @@ library(readxl)
 library(sf)
 #remotes::install_github("flowwest/riceflows4ff")
 library(riceflows4ff)
+library(scales)
 ```
 
 # Overview
@@ -199,8 +200,7 @@ mokelumne_hrl |>
 
 # Add to data objects
 
--   functionalize curves
--   use LTO_12a flows
+Curves shown above are functionalized and take `flow` as an input. The curves were run using `LTO_12a` flows as an input to generate new habitat. 
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 # american
@@ -323,19 +323,36 @@ fr_fp_update["Yuba River", , ] <- update_hrl_habitat_from_SBR(flows, "Yuba River
                                                                                     feather_fp_fn, TRUE)
 fr_fp <- DSMhabitat::fr_fp
 fr_fp$r_to_r_hrl <- fr_fp_update
-
-# now update objects
-usethis::use_data(fr_spawn, overwrite = TRUE)
-usethis::use_data(fr_juv, overwrite = TRUE)
-usethis::use_data(fr_fp, overwrite = TRUE)
-
-# TODO add this script to update_data.R so it's run 
 ```
 
 ### Check
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
 # spawning
-DSMhabitat::
+DSMhabitat::fr_juv$r_to_r_lto_12a_baseline["Tuolumne River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb) |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year", 
+               values_to = "sqm") |> 
+  mutate(scenario = "baseline") |> 
+  bind_rows(fr_juv_update["Tuolumne River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb) |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year", 
+               values_to = "sqm") |> 
+  mutate(scenario = "HRL")) |>
+  mutate(acres = DSMhabitat::square_meters_to_acres(sqm),
+         date = as.Date(paste0("1970-", month, "-01"), format = "%Y-%b-%d")) |> 
+  ggplot(aes(x = date, y = acres, color = scenario)) + 
+  geom_line() +
+  facet_wrap(~year) +
+  scale_x_date(labels = date_format("%b")) +
+  labs(x = "Model Date",
+       y = "Suitable acres",
+       title = "Tuolumne River habitat inputs: baseline (LTO flows) vs. HRL (LTO flows)") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
 ```
 
 # Other HRL commitments
@@ -383,9 +400,6 @@ va_sutter_habitat_pre |>
   ggplot(aes(x = date, y = acres)) + 
   geom_line() +
   theme_minimal()
-
-# TODO uncomment this
-#DSMhabitat::sutter_habitat$lto_12a <- va_sutter_habitat_pre
   
 ```
 
@@ -436,7 +450,80 @@ knitr::kable(head(wet_dry_areas))
 ```
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
-# scale up habitat using methods of tmh / hrl round 1
-# TODO
+va_sutter_habitat_pre <- DSMhabitat::sutter_habitat$lto_12a |> 
+  as_tibble() |> 
+  mutate(month = month.abb) |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm") |> 
+  mutate(acres = DSMhabitat::square_meters_to_acres(sqm),
+         scenario = "LTO_12a_baseline")
 
+va_sutter_habitat_post <- DSMhabitat::sutter_habitat$r_to_r_hrl |> 
+  as_tibble() |> 
+  mutate(month = month.abb) |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm") |> 
+  mutate(acres = DSMhabitat::square_meters_to_acres(sqm),
+         scenario = "LTO_12a_HRL")
+
+# plot
+va_sutter_habitat_pre |> 
+  bind_rows(va_sutter_habitat_post) |> 
+  mutate(date = as.Date(paste0(year, "-", month, "-01"), format = "%Y-%b-%d")) |> 
+  ggplot(aes(x = date, y = acres, color = scenario)) + 
+  geom_line() +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  labs(y = "Floodplain habitat (acres)", 
+       x = "Model year",
+       title = "Sutter Basin habitat")
+  
+```
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+va_sac_fp_habitat_pre <- DSMhabitat::fr_fp$lto_12a["Lower-mid Sacramento River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb) |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm") |> 
+  bind_rows(DSMhabitat::fr_fp$lto_12a["Lower Sacramento River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb) |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm")) |> 
+  mutate(acres = DSMhabitat::square_meters_to_acres(sqm),
+         scenario = "LTO_12a_baseline")
+
+va_sac_fp_habitat_post <- DSMhabitat::fr_fp$r_to_r_hrl["Lower-mid Sacramento River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb) |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm") |> 
+  bind_rows(DSMhabitat::fr_fp$r_to_r_hrl["Lower Sacramento River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb) |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm")) |> 
+  mutate(acres = DSMhabitat::square_meters_to_acres(sqm),
+         scenario = "LTO_12a_HRL")
+
+# plot
+va_sac_fp_habitat_pre |> 
+  bind_rows(va_sac_fp_habitat_post) |> 
+  mutate(date = as.Date(paste0(year, "-", month, "-01"), format = "%Y-%b-%d")) |> 
+  ggplot(aes(x = date, y = acres, color = scenario)) + 
+  geom_line() +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  labs(y = "Floodplain habitat (acres)", 
+       x = "Model year",
+       title = "Sacramento floodplain (Colusa basin and Butte sink) habitat")
+  
+```
 ```

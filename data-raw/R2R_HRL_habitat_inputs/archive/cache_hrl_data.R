@@ -1,9 +1,9 @@
 # Cache HRL habitat 
 
-all_existing_and_hrl_data <- readRDS(here::here('data-raw', "R2R_HRL_habitat_inputs", "all_habitat_data_for_hrl_inputs_all_runs.rdata")) 
+all_existing_and_hrl_data <- readRDS(here::here('data-raw', "R2R_HRL_habitat_inputs", "archive", "all_habitat_data_for_hrl_inputs_all_runs.rdata")) 
 
 # source functions: 
-source(here::here('data-raw', "R2R_HRL_habitat_inputs", "hrl_helper_functions.R"))
+source(here::here("data-raw", "R2R_HRL_habitat_inputs", "hrl_helper_functions.R"))
 
 # FALL RUN ---------------------------------------------------------------------
 # spawning:  --------------------------------------------------------------

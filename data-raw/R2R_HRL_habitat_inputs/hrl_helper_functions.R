@@ -130,7 +130,7 @@ hab_prop_change_from_projects <- function(habitat_type, watershed, species, life
                          "wr" = "winter") 
 
   # pull project hab out of hrl
-  project_hab_added <- readRDS(here::here('data-raw', 'R2R_HRL_habitat_inputs', 'all_habitat_data_for_hrl_inputs_all_runs.rdata')) |>
+  project_hab_added <- readRDS(here::here('data-raw', 'R2R_HRL_habitat_inputs', "archive", 'all_habitat_data_for_hrl_inputs_all_runs.rdata')) |>
     #mutate(suitable_acres = total_acres * percent_suitable) |>
     group_by(watershed, habitat_type, run) |>
     summarize(suitable_acres = sum(total_acres)) |>
