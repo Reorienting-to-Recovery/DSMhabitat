@@ -744,7 +744,7 @@ va_fp_pre <- DSMhabitat::fr_fp$r_to_r_baseline["American River",,] |>
                names_to = "year",
                values_to = "sqm")) |> 
   mutate(acres = DSMhabitat::square_meters_to_acres(sqm),
-         scenario = "LTO_12a_baseline")
+         scenario = "r_to_r_baseline")
 
 va_fp_post <- DSMhabitat::fr_fp$r_to_r_hrl["American River",,] |> 
   as_tibble() |> 
@@ -838,7 +838,7 @@ va_spawn_pre <- DSMhabitat::fr_spawn$r_to_r_baseline["American River",,] |>
                names_to = "year",
                values_to = "sqm")) |> 
   mutate(acres = DSMhabitat::square_meters_to_acres(sqm),
-         scenario = "LTO_12a_baseline")
+         scenario = "r_to_r_baseline")
 
 va_spawn_post <- DSMhabitat::fr_spawn$r_to_r_hrl["American River",,] |> 
   as_tibble() |> 
@@ -931,7 +931,7 @@ va_rear_pre <- DSMhabitat::fr_juv$r_to_r_baseline["American River",,] |>
                names_to = "year",
                values_to = "sqm")) |> 
   mutate(acres = DSMhabitat::square_meters_to_acres(sqm),
-         scenario = "LTO_12a_baseline")
+         scenario = "r_to_r_baseline")
 
 va_rear_post <- DSMhabitat::fr_juv$r_to_r_hrl["American River",,] |> 
   as_tibble() |> 

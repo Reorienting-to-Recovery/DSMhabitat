@@ -47,18 +47,212 @@ existing_and_HRL <- american_hrl |>
 
 # Feather -----------------------------------------------------------------
 
-feather_hrl <- read_csv(here::here("data-raw", "R2R_HRL_habitat_inputs", "data", "feather_flow_habitat.csv")) |> 
-  filter(scenario == "VA") |> 
-  select(-location) |> 
-  mutate(habitat_area_sqm = DSMhabitat::acres_to_square_meters(habitat_area_acres),
-         scenario = "HRL") |> 
-  select(watershed, flow_cfs, habitat_type, habitat_area_sqm) |> 
-  pivot_wider(id_cols = c(watershed, flow_cfs), 
-              names_from = habitat_type,
-              values_from = habitat_area_sqm) |> 
-  rename(FR_spw_sqm_hrl = Spawning,
-         FR_juv_ic_sqm_hrl = `Instream rearing`,
-         FR_juv_fp_sqm_hrl = `Floodplain rearing`)
+# code ported directly from va-habitat/habitat-functions/Feather/feather.Rmd
+
+calsim <- read_excel(here::here("data-raw", "R2R_HRL_habitat_inputs", "data",
+                                'Feather_LFC_pulse_flow_DRAFT_051619.xlsm'), 
+                     sheet = 'Output')
+
+# existing spawning
+upper_spawning <- read_excel(here::here("data-raw", "R2R_HRL_habitat_inputs", "data", 'Feathe_River_Upper_and_Lower_Salmon_and_Steelhead_Spawning_RSI_for_FERC_relicensing.xlsx'),
+                             sheet = 'Upper', range = 'A2:B32') |> 
+  mutate(section = 'LFC')
+
+lower_spawning <- read_excel(here::here("data-raw", "R2R_HRL_habitat_inputs", "data", 'Feathe_River_Upper_and_Lower_Salmon_and_Steelhead_Spawning_RSI_for_FERC_relicensing.xlsx'),
+                             sheet = 'Lower', range = 'A2:B32') |> 
+  mutate(section = 'HFC')
+
+feather_spawn_length <- DSMhabitat::watershed_lengths |> 
+  filter(watershed == 'Feather River', species == 'fr', lifestage == 'spawning') |> 
+  pull(feet)
+
+lfc_spawn_length <- 42240
+hfc_spawn_length <- feather_spawn_length - lfc_spawn_length
+
+lfc_spawning <- upper_spawning |> 
+  mutate(suitable_acres = round(`Chinook RSI`/1000*lfc_spawn_length/43560, 2)) |> 
+  select(flow_cfs = `Flow (cfs)`, suitable_acres, section)
+
+hfc_spawning <- lower_spawning |> 
+  mutate(suitable_acres = round(`Chinook RSI`/1000*hfc_spawn_length/43560, 2)) |> 
+  select(flow_cfs = `Flow (cfs)`, suitable_acres, section)
+
+existing_spawn_lfc <- approxfun(lfc_spawning$flow_cfs, lfc_spawning$suitable_acres,
+                                rule = 2)
+
+existing_spawn_hfc <- approxfun(hfc_spawning$flow_cfs, hfc_spawning$suitable_acres,
+                                rule = 2)
+
+# existing ic rearing
+upper_fry <- read_excel(here::here("data-raw", "R2R_HRL_habitat_inputs", "data", 'fry_juv_rsi_addendum_2.xlsx'), sheet = 'upper_fry')
+lower_fry <- read_excel(here::here("data-raw", "R2R_HRL_habitat_inputs", "data", 'fry_juv_rsi_addendum_2.xlsx'), sheet = 'lower_fry')
+upper_juv <- read_excel(here::here("data-raw", "R2R_HRL_habitat_inputs", "data", 'fry_juv_rsi_addendum_2.xlsx'), sheet = 'upper_juv')
+lower_juv <- read_excel(here::here("data-raw", "R2R_HRL_habitat_inputs", "data", 'fry_juv_rsi_addendum_2.xlsx'), sheet = 'lower_juv')
+
+
+feather_length <- DSMhabitat::watershed_lengths |> 
+  filter(watershed == 'Feather River', species == 'fr', lifestage == 'rearing') |> 
+  pull(feet)
+
+# refactor to use just one variable 
+lfc_length <- 42240
+hfc_length <- feather_length - lfc_length
+
+# use low no cover instead of 0.0 no cover
+rearing_lfc <- bind_rows(upper_fry, upper_juv) |> 
+  filter(cover != 'No Cover 0.0') |> 
+  select(-cover) |> 
+  mutate(suitable_acres = round(rsi/1000*lfc_length/43560, 2), flow_cfs = round(flow_cfs)) |>
+  select(flow_cfs, suitable_acres, lifestage, section)
+
+rearing_hfc <- bind_rows(lower_fry, lower_juv) |> 
+  filter(cover != 'No Cover 0.0') |> 
+  select(-cover) |> 
+  mutate(suitable_acres = round(rsi/1000*hfc_length/43560, 2), flow_cfs = round(flow_cfs)) |>
+  select(flow_cfs, suitable_acres, lifestage, section)
+
+rearing_hfc_fry <- rearing_hfc |> 
+  filter(lifestage == 'fry')
+
+rearing_hfc_juv <- rearing_hfc |> 
+  filter(lifestage == 'juvenile')
+
+rearing_lfc_fry <- rearing_lfc |> 
+  filter(lifestage == 'fry')
+
+rearing_lfc_juv <- rearing_lfc |> 
+  filter(lifestage == 'juvenile')
+
+existing_rearing_hfc_fry <- approxfun(rearing_hfc_fry$flow_cfs, rearing_hfc_fry$suitable_acres,
+                                      rule = 2)
+existing_rearing_hfc_juv <- approxfun(rearing_hfc_juv$flow_cfs, rearing_hfc_juv$suitable_acres,
+                                      rule = 2)
+
+existing_rearing_lfc_fry <- approxfun(rearing_lfc_fry$flow_cfs, rearing_lfc_fry$suitable_acres,
+                                      rule = 2)
+existing_rearing_lfc_juv <- approxfun(rearing_lfc_juv$flow_cfs, rearing_lfc_juv$suitable_acres,
+                                      rule = 2)
+
+# existing fp
+existing_fp <- DSMhabitat::feather_river_floodplain |> 
+  mutate(suitable_acres = FR_floodplain_acres * .27) |> 
+  select(flow_cfs, suitable_acres)
+
+existing_fp_hab <- approxfun(existing_fp$flow_cfs, existing_fp$suitable_acres, rule = 2)
+
+# VA 
+va_proj <- read_excel(here::here("data-raw", "R2R_HRL_habitat_inputs", "data", 'VA_Habitat_value_of_FR_projects_updated_5-9-19.xlsx'), 
+                      sheet = 'sadie', range = 'A1:L12')
+
+# VA spawn
+new_spawning <- va_proj |>
+  filter(habitat_type == 'spawning') |>
+  select(reach:max_flow_suitability) |>
+  mutate(acres = 3.75 + 11.6) |>
+  unique()
+
+new_spawning_acres <- approxfun(x = c(new_spawning$min_flow, new_spawning$target_flow, new_spawning$max_flow),
+                                y = c(new_spawning$acres * new_spawning$min_flow_suitability, 
+                                      new_spawning$acres * new_spawning$target_flow_suitability,
+                                      new_spawning$acres * new_spawning$max_flow_suitability),
+                                yleft = 0, rule = 2)
+
+va_enhanced_spawn_lfc <- tibble(
+  flow_cfs = lfc_spawning$flow_cfs,
+  suitable_acres = existing_spawn_lfc(flow_cfs) + new_spawning_acres(flow_cfs)
+)
+
+va_spawn_lfc <- approxfun(va_enhanced_spawn_lfc$flow_cfs, va_enhanced_spawn_lfc$suitable_acres,
+                          rule = 2)
+
+# VA rear
+new_rearing <- va_proj |>
+  filter(habitat_type == 'rearing') |>
+  select(reach:max_flow_suitability) |>
+  mutate(acres = 2.25 + 3) |>
+  unique()
+
+new_rearing_acres <- approxfun(x = c(new_rearing$min_flow, new_rearing$target_flow, new_rearing$max_flow),
+                               y = c(new_rearing$acres * new_rearing$min_flow_suitability, 
+                                     new_rearing$acres * new_rearing$target_flow_suitability,
+                                     new_rearing$acres * new_rearing$max_flow_suitability),
+                               yleft = 0, rule = 2)
+
+va_enhanced_rearing_lfc_fry <- tibble(
+  flow_cfs = rearing_lfc_fry$flow_cfs,
+  suitable_acres = existing_rearing_lfc_fry(flow_cfs) + new_rearing_acres(flow_cfs),
+  lifestage = 'fry',
+  section = 'LFC'
+)
+
+va_enhanced_rearing_lfc_juv <- tibble(
+  flow_cfs = rearing_lfc_juv$flow_cfs,
+  suitable_acres = existing_rearing_lfc_juv(flow_cfs) + new_rearing_acres(flow_cfs),
+  lifestage = 'juvenile',
+  section = 'LFC'
+)
+
+va_rearing_lfc_fry <- approxfun(va_enhanced_rearing_lfc_fry$flow_cfs, 
+                                va_enhanced_rearing_lfc_fry$suitable_acres,
+                                rule = 2)
+va_rearing_lfc_juv <- approxfun(va_enhanced_rearing_lfc_juv$flow_cfs, 
+                                va_enhanced_rearing_lfc_juv$suitable_acres,
+                                rule = 2)
+
+# VA floodplain rearing
+fp <- va_proj |>
+  filter(habitat_type == 'floodplain rearing') |> 
+  select(reach:max_flow_suitability)
+
+fp_3000 <- fp |>
+  filter(min_flow == 3000) |>
+  mutate(acres = 550) |>
+  select(-reach) |>
+  unique()
+
+new_fp_3000_acres <- approxfun(x = c(fp_3000$min_flow, fp_3000$target_flow, fp_3000$max_flow),
+                               y = c(fp_3000$acres * fp_3000$min_flow_suitability, 
+                                     fp_3000$acres * fp_3000$target_flow_suitability,
+                                     fp_3000$acres * fp_3000$max_flow_suitability),
+                               yleft = 0, rule = 2)
+
+fp_30000 <- fp |>
+  filter(min_flow == 30000) |>
+  mutate(acres = 10 + 220 + 25 + 550) |>
+  unique()
+new_fp_30000_acres <- approxfun(x = c(fp_30000$min_flow, fp_30000$target_flow, fp_30000$max_flow),
+                                y = c(fp_30000$acres * fp_30000$min_flow_suitability, 
+                                      fp_30000$acres * fp_30000$target_flow_suitability,
+                                      fp_30000$acres * fp_30000$max_flow_suitability),
+                                yleft = 0, rule = 2)
+
+fp_4000 <- fp |>
+  filter(acres == '100-600') |>
+  separate(acres, c('min_acres', 'max_acres'), sep = '-') |>
+  mutate(min_acres = 50,
+         max_acres = 300,
+         min_suit_acres = as.numeric(min_acres) * min_flow_suitability,
+         max_suit_acres = as.numeric(max_acres) * max_flow_suitability)
+new_fp_4000_acres <- approxfun(x = c(fp_4000$min_flow, fp_4000$target_flow),
+                               y = c(fp_4000$min_suit_acres, fp_4000$max_suit_acres),
+                               yleft = 0, rule = 2)
+
+flows <- existing_fp$flow_cfs
+
+va_enhanced_fp <- tibble(
+  flow_cfs = flows,
+  suitable_acres = existing_fp$suitable_acres + new_fp_4000_acres(flows) + 
+    new_fp_30000_acres(flows) + new_fp_3000_acres(flows)
+)
+
+va_only_fp <- tibble(
+  flow_cfs = flows,
+  suitable_acres = new_fp_4000_acres(flows) + 
+    new_fp_30000_acres(flows) + new_fp_3000_acres(flows)
+)
+
+va_fp <- approxfun(va_enhanced_fp$flow_cfs, va_enhanced_fp$suitable_acres, rule = 2)
+
 
 # Mokelumne ---------------------------------------------------------------
 
@@ -189,8 +383,11 @@ update_hrl_habitat_from_SBR <- function(flows, watershed_name, hab_fn,
 # start with the baseline habitat run with HRL flows
 fr_spawn_update <- DSMhabitat::fr_spawn$r_to_r_lto_12a_baseline
 
-fr_spawn_update["Feather River", , ] <- update_hrl_habitat_from_SBR(flows, "Feather River",
-                                                                    feather_spw_fn, FALSE)
+# add together existing HFC and VA LFC for Feather
+fr_spawn_update["Feather River", , ] <- DSMhabitat::acres_to_square_meters(update_hrl_habitat_from_SBR(flows, "Feather River",
+                                                                                                       va_spawn_lfc, FALSE) + 
+                                                                             update_hrl_habitat_from_SBR(flows, "Feather River",
+                                                                                                         existing_spawn_hfc, FALSE))
 fr_spawn_update["Mokelumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Mokelumne River",
                                                                       mokelumne_spw_fn, FALSE)
 fr_spawn_update["Tuolumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Tuolumne River",
@@ -202,8 +399,11 @@ fr_spawn$r_to_r_hrl <- fr_spawn_update
 fr_juv_update <- DSMhabitat::fr_juv$r_to_r_lto_12a_baseline
 fr_juv_update["American River", , ] <- update_hrl_habitat_from_SBR(flows, "American River",
                                                                    american_juv_fn, TRUE)
-fr_juv_update["Feather River", , ] <- update_hrl_habitat_from_SBR(flows, "Feather River",
-                                                                  feather_juv_fn, TRUE)
+# feather add together existing hfc and VA lfc
+fr_juv_update["Feather River", , ] <- DSMhabitat::acres_to_square_meters(update_hrl_habitat_from_SBR(flows, "Feather River",
+                                                                                                     va_rearing_lfc_juv, TRUE) +
+                                                                           update_hrl_habitat_from_SBR(flows, "Feather River",
+                                                                                                       existing_rearing_hfc_juv, TRUE))
 fr_juv_update["Mokelumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Mokelumne River",
                                                                     mokelumne_juv_fn, TRUE)
 fr_juv_update["Tuolumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Tuolumne River",
@@ -215,8 +415,9 @@ fr_juv$r_to_r_hrl <- fr_juv_update
 
 # update fp rearing
 fr_fp_update <- DSMhabitat::fr_fp$r_to_r_lto_12a_baseline
-fr_fp_update["Feather River", , ] <- update_hrl_habitat_from_SBR(flows, "Feather River",
-                                                                 feather_fp_fn, TRUE)
+# feather fp function by itself is fine, not distinguished by HFC and LFC
+fr_fp_update["Feather River", , ] <- DSMhabitat::acres_to_square_meters(update_hrl_habitat_from_SBR(flows, "Feather River",
+                                                                                                    va_fp, TRUE))
 fr_fp_update["Tuolumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Tuolumne River",
                                                                   tuolumne_fp_fn, TRUE)
 fr_fp_update["Yuba River", , ] <- update_hrl_habitat_from_SBR(flows, "Yuba River",
