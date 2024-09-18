@@ -1,0 +1,1166 @@
+---
+title: "Add HRL Habitat Data"
+author: "Liz Stebbins (FlowWest)"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>", 
+  fig.dim = c(8, 6)
+)
+```
+
+```{r setup, include = FALSE}
+library(DSMhabitat)
+library(tidyverse)
+library(lubridate)
+library(DSMflow)
+library(readxl)
+library(sf)
+#remotes::install_github("flowwest/riceflows4ff")
+library(riceflows4ff)
+library(scales)
+```
+
+# Overview
+
+As part of a R2R scenario, habitat commitments made under the Healthy Rivers and Landscapes (HRL) project were included for the following watersheds:
+
+-   American River
+-   Feather River
+-   Mokelumne River
+-   Yuba River
+-   Tuolumne River
+
+Staff from the Tuolumne River and Yuba River provided data directly for modeling anticipated flow-to-suitable area relationships under the HRL commitments. These streams developed methods to scale an existing habitat flow-to-suitable area relationship based on existing and proposed habitat projects and can be read about in more detail *here* (TODO).
+
+The Mokelumne, American, and Feather Rivers did not provided updated relationships, and for consistency across the basin R2R used the flow-to-suitable area relationships provided for the [Scientific Basis Report (SBR), Section 6](https://www.waterboards.ca.gov/waterrights/water_issues/programs/bay_delta/docs/2023/staff-report/app-g2.pdf).
+
+# Methods
+
+For use in the R2R scenario, we implemented the following methods:
+
+1)  Read in the flow-to-suitable area relationship used in the SBR
+2)  Functionalize the relationship
+3)  Generate estimated habitat using flows in the HRL CalSim3 run for the model years (`1980-2000`)
+
+# American River
+
+## HRL flow-to-habitat relationship
+
+Instream and floodplain rearing habitat were provided. They are the same as those used in the SBR.
+
+**Data Source:** FlowWest coordinated with representatives for the American River to determine the best scientific information available to quantify existing suitable habitat, and to describe the VA non-flow habitat as *suitable area that varies with flow*. Habitat data were provided to R2R for use in accounting for planned habitat projects by [Erica Bishop](mailto:ebishop@waterforum.org) and [Chris Hammersmark](mailto:c.hammersmark@cbecoeng.com). Data provided represented the HRL commitments based on flow-to-habitat relationships borne out by recent EIP designs and constructed projects for the subject habitat type.
+
+```{r, echo=FALSE, message = FALSE, warning = FALSE}
+american_hrl <- read_excel("data-raw/R2R_HRL_habitat_inputs/data/HRL_habitat_commitments_for_R2R_American.xlsx",
+                               range = "A1:G10") |> 
+  janitor::clean_names() |>
+  mutate(duration_inundated_days = ifelse(duration_inundated_days == "N/A", NA, duration_inundated_days),
+         water_year_type = ifelse(water_year_type == "N/A", NA, water_year_type),
+         run = ifelse(run == "fall run", "fall", run)) |> 
+  mutate(flow_cfs = as.numeric(flow_to_inundate_suitable_acres),
+         flow_cfs = ifelse(is.na(flow_cfs), 20000, flow_cfs), 
+         scenario = "HRL", 
+         watershed = "American River",
+         FR_juv_sqm_hrl = DSMhabitat::acres_to_square_meters(suitable_acres)) |> 
+  select(watershed, flow_cfs, FR_juv_sqm_hrl, scenario)
+
+knitr::kable(head(american_hrl))
+```
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+existing_rearing <- DSMhabitat::american_river_instream |>
+  filter(!is.na(FR_juv_sqm)) |> 
+  select(flow_cfs, FR_juv_sqm)
+
+existing_floodplain <- DSMhabitat::american_river_floodplain |> 
+  filter(!is.na(FR_floodplain_acres)) |> 
+  select(flow_cfs, FR_floodplain_acres)
+
+existing_rearing_fn <- approxfun(existing_rearing$flow_cfs, existing_rearing$FR_juv_sqm, rule = 2)
+
+existing_fp_fn <- approxfun(existing_floodplain$flow_cfs, existing_floodplain$FR_floodplain_acres, rule = 2)
+
+existing_and_HRL <- american_hrl |> 
+  mutate(existing_rear = existing_rearing_fn(flow_cfs),
+         existing_fp = existing_fp_fn(flow_cfs),
+         fp_HRL = ifelse(flow_cfs <= 5200, NA, DSMhabitat::square_meters_to_acres(FR_juv_sqm_hrl)),
+         existing_and_HRL = ifelse(flow_cfs <= 5200, existing_rear + FR_juv_sqm_hrl, existing_fp + fp_HRL)) |> 
+  select(-scenario)
+
+# juvenile
+existing_and_HRL |> 
+  mutate(type = ifelse(flow_cfs <= 5200, "juv", "fp"),
+         existing = ifelse(flow_cfs <= 5200, existing_rear, existing_fp)) |> 
+  pivot_longer(c(existing, existing_and_HRL),
+               names_to = "scenario",
+               values_to = "value") |> 
+  ggplot(aes(x = flow_cfs, y = value, color = scenario)) + 
+  geom_line() +
+  facet_wrap(~type, scales = "free") +
+  geom_vline(aes(xintercept = 5200), linetype = "dashed") +
+  theme_minimal()
+```
+
+# Feather River
+
+## HRL flow-to-habitat relationship
+
+Spawning and instream rearing actions are only for the LFC.
+
+**Data Source:** Data came from the FERC relicensing spawning WUA/RSI and were provided for the SBR by Jason Kindopp.
+
+```{r, echo=FALSE, message = FALSE, warning = FALSE}
+# code ported directly from va-habitat/habitat-functions/Feather/feather.Rmd
+
+calsim <- read_excel(here::here("data-raw", "R2R_HRL_habitat_inputs", "data",
+                                'Feather_LFC_pulse_flow_DRAFT_051619.xlsm'), 
+                     sheet = 'Output')
+
+# existing spawning
+upper_spawning <- read_excel(here::here("data-raw", "R2R_HRL_habitat_inputs", "data", 'Feathe_River_Upper_and_Lower_Salmon_and_Steelhead_Spawning_RSI_for_FERC_relicensing.xlsx'),
+                             sheet = 'Upper', range = 'A2:B32') |> 
+  mutate(section = 'LFC')
+
+lower_spawning <- read_excel(here::here("data-raw", "R2R_HRL_habitat_inputs", "data", 'Feathe_River_Upper_and_Lower_Salmon_and_Steelhead_Spawning_RSI_for_FERC_relicensing.xlsx'),
+                             sheet = 'Lower', range = 'A2:B32') |> 
+  mutate(section = 'HFC')
+
+feather_spawn_length <- DSMhabitat::watershed_lengths |> 
+  filter(watershed == 'Feather River', species == 'fr', lifestage == 'spawning') |> 
+  pull(feet)
+
+lfc_spawn_length <- 42240
+hfc_spawn_length <- feather_spawn_length - lfc_spawn_length
+
+lfc_spawning <- upper_spawning |> 
+  mutate(suitable_acres = round(`Chinook RSI`/1000*lfc_spawn_length/43560, 2)) |> 
+  select(flow_cfs = `Flow (cfs)`, suitable_acres, section)
+
+hfc_spawning <- lower_spawning |> 
+  mutate(suitable_acres = round(`Chinook RSI`/1000*hfc_spawn_length/43560, 2)) |> 
+  select(flow_cfs = `Flow (cfs)`, suitable_acres, section)
+
+existing_spawn_lfc <- approxfun(lfc_spawning$flow_cfs, lfc_spawning$suitable_acres,
+                                rule = 2)
+
+existing_spawn_hfc <- approxfun(hfc_spawning$flow_cfs, hfc_spawning$suitable_acres,
+                                rule = 2)
+
+# existing ic rearing
+upper_fry <- read_excel(here::here("data-raw", "R2R_HRL_habitat_inputs", "data", 'fry_juv_rsi_addendum_2.xlsx'), sheet = 'upper_fry')
+lower_fry <- read_excel(here::here("data-raw", "R2R_HRL_habitat_inputs", "data", 'fry_juv_rsi_addendum_2.xlsx'), sheet = 'lower_fry')
+upper_juv <- read_excel(here::here("data-raw", "R2R_HRL_habitat_inputs", "data", 'fry_juv_rsi_addendum_2.xlsx'), sheet = 'upper_juv')
+lower_juv <- read_excel(here::here("data-raw", "R2R_HRL_habitat_inputs", "data", 'fry_juv_rsi_addendum_2.xlsx'), sheet = 'lower_juv')
+
+
+feather_length <- DSMhabitat::watershed_lengths |> 
+  filter(watershed == 'Feather River', species == 'fr', lifestage == 'rearing') |> 
+  pull(feet)
+
+# refactor to use just one variable 
+lfc_length <- 42240
+hfc_length <- feather_length - lfc_length
+
+# use low no cover instead of 0.0 no cover
+rearing_lfc <- bind_rows(upper_fry, upper_juv) |> 
+  filter(cover != 'No Cover 0.0') |> 
+  select(-cover) |> 
+  mutate(suitable_acres = round(rsi/1000*lfc_length/43560, 2), flow_cfs = round(flow_cfs)) |>
+  select(flow_cfs, suitable_acres, lifestage, section)
+
+rearing_hfc <- bind_rows(lower_fry, lower_juv) |> 
+  filter(cover != 'No Cover 0.0') |> 
+  select(-cover) |> 
+  mutate(suitable_acres = round(rsi/1000*hfc_length/43560, 2), flow_cfs = round(flow_cfs)) |>
+  select(flow_cfs, suitable_acres, lifestage, section)
+
+rearing_hfc_fry <- rearing_hfc |> 
+  filter(lifestage == 'fry')
+
+rearing_hfc_juv <- rearing_hfc |> 
+  filter(lifestage == 'juvenile')
+
+rearing_lfc_fry <- rearing_lfc |> 
+  filter(lifestage == 'fry')
+
+rearing_lfc_juv <- rearing_lfc |> 
+  filter(lifestage == 'juvenile')
+
+existing_rearing_hfc_fry <- approxfun(rearing_hfc_fry$flow_cfs, rearing_hfc_fry$suitable_acres,
+                                      rule = 2)
+existing_rearing_hfc_juv <- approxfun(rearing_hfc_juv$flow_cfs, rearing_hfc_juv$suitable_acres,
+                                      rule = 2)
+
+existing_rearing_lfc_fry <- approxfun(rearing_lfc_fry$flow_cfs, rearing_lfc_fry$suitable_acres,
+                                      rule = 2)
+existing_rearing_lfc_juv <- approxfun(rearing_lfc_juv$flow_cfs, rearing_lfc_juv$suitable_acres,
+                                      rule = 2)
+
+# existing fp
+existing_fp <- DSMhabitat::feather_river_floodplain |> 
+  mutate(suitable_acres = FR_floodplain_acres * .27) |> 
+  select(flow_cfs, suitable_acres)
+
+existing_fp_hab <- approxfun(existing_fp$flow_cfs, existing_fp$suitable_acres, rule = 2)
+
+# VA 
+va_proj <- read_excel(here::here("data-raw", "R2R_HRL_habitat_inputs", "data", 'VA_Habitat_value_of_FR_projects_updated_5-9-19.xlsx'), 
+                      sheet = 'sadie', range = 'A1:L12')
+
+# VA spawn
+new_spawning <- va_proj |>
+  filter(habitat_type == 'spawning') |>
+  select(reach:max_flow_suitability) |>
+  mutate(acres = 3.75 + 11.6) |>
+  unique()
+
+new_spawning_acres <- approxfun(x = c(new_spawning$min_flow, new_spawning$target_flow, new_spawning$max_flow),
+                                y = c(new_spawning$acres * new_spawning$min_flow_suitability, 
+                                      new_spawning$acres * new_spawning$target_flow_suitability,
+                                      new_spawning$acres * new_spawning$max_flow_suitability),
+                                yleft = 0, rule = 2)
+
+va_enhanced_spawn_lfc <- tibble(
+  flow_cfs = lfc_spawning$flow_cfs,
+  suitable_acres = existing_spawn_lfc(flow_cfs) + new_spawning_acres(flow_cfs)
+)
+
+bind_rows(
+  mutate(lfc_spawning, scenario = 'existing'),
+  mutate(va_enhanced_spawn_lfc, scenario = 'va enhanced')) |> 
+  ggplot(aes(flow_cfs, suitable_acres, color = scenario)) +
+  geom_line() +
+  theme_minimal() +
+  labs(y = 'suitable acres', x = 'flow (cfs)', title = "Spawning (LFC)") +
+  scale_color_manual(values = c('#e08214', '#542788')) +
+  theme(legend.justification = c(1,0), legend.position = c(.9,.7))
+
+va_spawn_lfc <- approxfun(va_enhanced_spawn_lfc$flow_cfs, va_enhanced_spawn_lfc$suitable_acres,
+                          rule = 2)
+
+# VA rear
+new_rearing <- va_proj |>
+  filter(habitat_type == 'rearing') |>
+  select(reach:max_flow_suitability) |>
+  mutate(acres = 2.25 + 3) |>
+  unique()
+
+new_rearing_acres <- approxfun(x = c(new_rearing$min_flow, new_rearing$target_flow, new_rearing$max_flow),
+                               y = c(new_rearing$acres * new_rearing$min_flow_suitability, 
+                                     new_rearing$acres * new_rearing$target_flow_suitability,
+                                     new_rearing$acres * new_rearing$max_flow_suitability),
+                               yleft = 0, rule = 2)
+
+va_enhanced_rearing_lfc_fry <- tibble(
+  flow_cfs = rearing_lfc_fry$flow_cfs,
+  suitable_acres = existing_rearing_lfc_fry(flow_cfs) + new_rearing_acres(flow_cfs),
+  lifestage = 'fry',
+  section = 'LFC'
+)
+
+va_enhanced_rearing_lfc_juv <- tibble(
+  flow_cfs = rearing_lfc_juv$flow_cfs,
+  suitable_acres = existing_rearing_lfc_juv(flow_cfs) + new_rearing_acres(flow_cfs),
+  lifestage = 'juvenile',
+  section = 'LFC'
+)
+
+va_rearing_lfc_fry <- approxfun(va_enhanced_rearing_lfc_fry$flow_cfs, 
+                                va_enhanced_rearing_lfc_fry$suitable_acres,
+                                rule = 2)
+va_rearing_lfc_juv <- approxfun(va_enhanced_rearing_lfc_juv$flow_cfs, 
+                                va_enhanced_rearing_lfc_juv$suitable_acres,
+                                rule = 2)
+
+bind_rows(
+  mutate(rearing_lfc_fry, scenario = 'existing'),
+  mutate(va_enhanced_rearing_lfc_fry, scenario = 'va enhanced')) |> 
+  ggplot(aes(flow_cfs, suitable_acres, color = scenario)) +
+  geom_line() +
+  theme_minimal() +
+  labs(y = 'suitable acres', x = 'flow (cfs)', title = "Fry Rearing (LFC)") +
+  scale_color_manual(values = c('#e08214', '#542788'))
+
+bind_rows(
+  mutate(rearing_lfc_juv, scenario = 'existing'),
+  mutate(va_enhanced_rearing_lfc_juv, scenario = 'va enhanced')) |> 
+  ggplot(aes(flow_cfs, suitable_acres, color = scenario)) +
+  geom_line() +
+  theme_minimal() +
+  labs(y = 'suitable acres', x = 'flow (cfs)', title = "Juvenile Rearing (LFC)") +
+  scale_color_manual(values = c('#e08214', '#542788'))
+
+
+# VA floodplain rearing
+fp <- va_proj |>
+  filter(habitat_type == 'floodplain rearing') |> 
+  select(reach:max_flow_suitability)
+
+fp_3000 <- fp |>
+  filter(min_flow == 3000) |>
+  mutate(acres = 550) |>
+  select(-reach) |>
+  unique()
+
+new_fp_3000_acres <- approxfun(x = c(fp_3000$min_flow, fp_3000$target_flow, fp_3000$max_flow),
+                               y = c(fp_3000$acres * fp_3000$min_flow_suitability, 
+                                     fp_3000$acres * fp_3000$target_flow_suitability,
+                                     fp_3000$acres * fp_3000$max_flow_suitability),
+                               yleft = 0, rule = 2)
+
+fp_30000 <- fp |>
+  filter(min_flow == 30000) |>
+  mutate(acres = 10 + 220 + 25 + 550) |>
+  unique()
+new_fp_30000_acres <- approxfun(x = c(fp_30000$min_flow, fp_30000$target_flow, fp_30000$max_flow),
+                                y = c(fp_30000$acres * fp_30000$min_flow_suitability, 
+                                      fp_30000$acres * fp_30000$target_flow_suitability,
+                                      fp_30000$acres * fp_30000$max_flow_suitability),
+                                yleft = 0, rule = 2)
+
+fp_4000 <- fp |>
+  filter(acres == '100-600') |>
+  separate(acres, c('min_acres', 'max_acres'), sep = '-') |>
+  mutate(min_acres = 50,
+         max_acres = 300,
+         min_suit_acres = as.numeric(min_acres) * min_flow_suitability,
+         max_suit_acres = as.numeric(max_acres) * max_flow_suitability)
+new_fp_4000_acres <- approxfun(x = c(fp_4000$min_flow, fp_4000$target_flow),
+                               y = c(fp_4000$min_suit_acres, fp_4000$max_suit_acres),
+                               yleft = 0, rule = 2)
+
+flows <- existing_fp$flow_cfs
+
+va_enhanced_fp <- tibble(
+  flow_cfs = flows,
+  suitable_acres = existing_fp$suitable_acres + new_fp_4000_acres(flows) + 
+    new_fp_30000_acres(flows) + new_fp_3000_acres(flows)
+)
+
+va_only_fp <- tibble(
+  flow_cfs = flows,
+  suitable_acres = new_fp_4000_acres(flows) + 
+    new_fp_30000_acres(flows) + new_fp_3000_acres(flows)
+)
+
+va_fp <- approxfun(va_enhanced_fp$flow_cfs, va_enhanced_fp$suitable_acres, rule = 2)
+
+bind_rows(
+  mutate(existing_fp, scenario = 'existing'),
+  mutate(va_enhanced_fp, scenario = 'va enhanced')) |> 
+  ggplot(aes(flow_cfs, suitable_acres, color = scenario)) +
+  geom_line() +
+  theme_minimal() +
+  labs(y = 'suitable acres', x = 'flow (cfs)', title = 'Floodplain rearing') +
+  scale_color_manual(values = c('#e08214', '#542788'))
+```
+
+
+```{r, echo=FALSE, message = FALSE, warning = FALSE}
+
+feather_spawning <- bind_rows(lfc_spawning,
+                              hfc_spawning) |> 
+  rename(habitat_area_acres = suitable_acres,
+         location = section) |> 
+  mutate(watershed = "Feather River",
+         habitat_type = "Spawning",
+         scenario = "Reference Condition",
+         method = "flow-habitat relationship provided",
+         interpolation_applied = F) |> 
+  select(watershed, location, scenario, flow_cfs, habitat_type, habitat_area_acres, method, interpolation_applied)
+
+flows_provided <- c(650,850,1100)
+feather_spawn_va <- va_enhanced_spawn_lfc |> 
+  rename(habitat_area_acres = suitable_acres) |> 
+  mutate(location = "LFC",
+         watershed = "Feather River",
+         habitat_type = "Spawning",
+         scenario = "VA",
+         method = "flow-habitat relationship provided",
+         interpolation_applied = ifelse(flow_cfs %in% flows_provided, F, T)) |> 
+  select(watershed, location, scenario, flow_cfs, habitat_type, habitat_area_acres, method, interpolation_applied)
+
+feather_spawn_va_only <- new_spawning |> 
+  pivot_longer(cols = c("min_flow", "target_flow",
+                        "max_flow"), values_to = "flow_cfs") |> 
+  mutate(habitat_area_acres = case_when(name == "min_flow" ~ acres*min_flow_suitability,
+                                        name == "target_flow" ~ acres*target_flow_suitability,
+                                        name == "max_flow" ~ acres*max_flow_suitability)) |> 
+  mutate(location = "LFC",
+         watershed = "Feather River",
+         habitat_type = "Spawning",
+         scenario = "VA additional acres",
+         method = "flow-habitat relationship provided",
+         interpolation_applied = F) |> 
+  select(watershed, location, scenario, flow_cfs, habitat_type, habitat_area_acres, method, interpolation_applied)
+
+## instream ----
+feather_rearing <- bind_rows(rearing_hfc,
+                             rearing_lfc) |> 
+  rename(habitat_area_acres = suitable_acres,
+         location = section) |> 
+  mutate(watershed = "Feather River",
+         habitat_type = "Instream rearing",
+         scenario = "Reference Condition",
+         method = "flow-habitat relationship provided",
+         interpolation_applied = F) |> 
+  select(watershed, location, scenario, flow_cfs, habitat_type, habitat_area_acres, method, interpolation_applied)
+
+flows_provided <- c(650, 725, 3000)
+feather_rear_va <- va_enhanced_rearing_lfc_juv |> 
+  rename(habitat_area_acres = suitable_acres) |> 
+  mutate(location = "LFC",
+         watershed = "Feather River",
+         habitat_type = "Instream rearing",
+         scenario = "VA",
+         method = "flow-habitat relationship provided",
+         interpolation_applied = ifelse(flow_cfs %in% flows_provided, F, T)) |> 
+  select(watershed, location, scenario, flow_cfs, habitat_type, habitat_area_acres, method, interpolation_applied)
+
+feather_rear_va_only <- new_rearing |> 
+  pivot_longer(cols = c("min_flow", "target_flow",
+                        "max_flow"), values_to = "flow_cfs") |> 
+  mutate(habitat_area_acres = case_when(name == "min_flow" ~ acres*min_flow_suitability,
+                                        name == "target_flow" ~ acres*target_flow_suitability,
+                                        name == "max_flow" ~ acres*max_flow_suitability)) |> 
+  mutate(location = "LFC",
+         watershed = "Feather River",
+         habitat_type = "Instream rearing",
+         scenario = "VA additional acres",
+         method = "flow-habitat relationship provided",
+         interpolation_applied = F) |> 
+  select(watershed, location, scenario, flow_cfs, habitat_type, habitat_area_acres, method, interpolation_applied)
+
+## floodplain ----
+feather_existing_fp <- existing_fp |> 
+  rename(habitat_area_acres = suitable_acres) |> 
+  mutate(location = "Feather River",
+         watershed = "Feather River",
+         habitat_type = "Floodplain rearing",
+         scenario = "Reference Condition",
+         method = "flow-habitat relationship provided",
+         interpolation_applied = F) |> 
+  select(watershed, location, scenario, flow_cfs, habitat_type, habitat_area_acres, method, interpolation_applied)
+
+flows_provided <- c(3000,4000, 10000,30000,35000,50000,25000)
+feather_va_enhanced_fp <- va_enhanced_fp |> 
+  rename(habitat_area_acres = suitable_acres) |> 
+  mutate(location = "Feather River",
+         watershed = "Feather River",
+         habitat_type = "Floodplain rearing",
+         scenario = "VA",
+         method = "flow-habitat relationship provided",
+         interpolation_applied = ifelse(flow_cfs %in% flows_provided, F, T)) |> 
+  select(watershed, location, scenario, flow_cfs, habitat_type, habitat_area_acres, method, interpolation_applied)
+
+feather_fp_va_only <- bind_rows(select(fp_3000, -habitat_type) |> 
+                                  mutate(project_type = "inundation 3000"),
+                                select(fp_4000, -c(reach,habitat_type, min_acres, max_acres, min_suit_acres, max_suit_acres)) |> 
+                                  mutate(acres = 300,
+                                         project_type = "inundation 4000"),
+                                select(fp_30000, -c(reach, habitat_type)) |> 
+                                  mutate(project_type = "inundation 30000")) |> 
+  pivot_longer(cols = 2:4, names_to = "type", values_to = "flow_cfs") |> 
+  mutate(habitat_area_acres = case_when(type == "min_flow" ~ acres*min_flow_suitability,
+                                        type == "target_flow" ~ acres*target_flow_suitability,
+                                        type == "max_flow" ~ acres*max_flow_suitability),
+         location = "Feather River",
+         watershed = "Feather River",
+         habitat_type = "Floodplain rearing",
+         scenario = "VA additional acres",
+         method = "flow-habitat relationship provided",
+         interpolation_applied = F) |> 
+  select(watershed, location, scenario, flow_cfs, habitat_type, project_type, habitat_area_acres, method, interpolation_applied) |> 
+  distinct()
+
+feather_hrl <- bind_rows(feather_spawning,
+                         feather_spawn_va,
+                         feather_spawn_va_only,
+                         feather_rearing,
+                         feather_rear_va,
+                         feather_rear_va_only,
+                         feather_existing_fp,
+                         feather_va_enhanced_fp,
+                         feather_fp_va_only)
+
+knitr::kable(head(feather_hrl))
+```
+
+# Mokelumne River
+
+## HRL flow-to-habitat relationship
+
+Instream and floodplain rearing habitat were provided. They are the same as those used in the SBR.
+
+**Data Source:** Data were provided by Robyn Bilski for the SBR.
+
+```{r, echo=FALSE, message = FALSE, warning = FALSE}
+spawning <- read_excel('data-raw/R2R_HRL_habitat_inputs/data/moke_flow_to_habitat_RB_edits.xlsx', 
+                           sheet = 'spawning', 
+                           range = 'A1:D5') |> 
+  mutate(FR_spawn_acres_VA_enhanced = FR_spawn_acres_VA_enhanced + FR_spawn_acres_existing,
+         FR_sqm_hrl = DSMhabitat::acres_to_square_meters(FR_spawn_acres_VA_enhanced),
+         lifestage = "Spawning") |> 
+  select(flow_cfs, FR_sqm_hrl, lifestage)
+
+rearing <- read_excel('data-raw/R2R_HRL_habitat_inputs/data/moke_flow_to_habitat_RB_edits.xlsx', 
+                      sheet = 'instream_rearing', 
+                      range = 'A1:G17') |> 
+  mutate(FR_juv_acres_VAadditional = 0.5*(FR_fry_acres_VA_enhanced),
+         FR_fry_acres_VA_enhanced = 0.5*(FR_fry_acres_VA_enhanced) + FR_fry_acres_existing,
+         FR_juv_acres_VA_enhanced = 0.5*(FR_juv_acres_VA_enhanced) + FR_juv_acres_existing,
+         FR_juv_sqm_hrl = acres_to_square_meters(FR_juv_acres_VA_enhanced),
+         FR_fry_sqm_hrl = acres_to_square_meters(FR_fry_acres_VA_enhanced)) |> 
+  pivot_longer(FR_juv_sqm_hrl:FR_fry_sqm_hrl,
+               names_to = "lifestage",
+               values_to = "FR_sqm_hrl") |> 
+  select(flow_cfs, FR_sqm_hrl, lifestage) 
+
+mokelumne_hrl <- bind_rows(spawning, rearing) |> 
+  mutate(scenario = "HRL",
+         watershed = "Mokelumne") |> 
+  pivot_wider(id_cols = flow_cfs,
+              names_from = lifestage,
+              values_from = FR_sqm_hrl) |> 
+  rename(FR_spw_sqm_hrl = Spawning)
+
+knitr::kable(head(mokelumne_hrl))
+```
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+mokelumne_hrl |> 
+  pivot_longer(FR_spw_sqm_hrl:FR_fry_sqm_hrl,
+               names_to = "lifestage",
+               values_to = "value") |> 
+  filter(!is.na(value)) |> 
+  mutate(acres = square_meters_to_acres(value)) |> 
+  ggplot(aes(x = flow_cfs, y = acres)) + 
+  geom_line() +
+  facet_wrap(~lifestage, scales = "free") +
+  theme_minimal()
+```
+
+# Add to data objects
+
+Curves shown above are functionalized and take `flow` as an input. The curves were run using `LTO_12a` flows as an input to generate new habitat. 
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+# american
+american_juv_fn <- approxfun(american_hrl$flow_cfs,
+                             american_hrl$FR_juv_sqm_hrl,
+                             rule = 2)
+
+# feather
+# we only need LFC VA and HFC existing
+
+
+# mokelumne
+mokelumne_spw_fn <- approxfun(mokelumne_hrl$flow_cfs,
+                              mokelumne_hrl$FR_spw_sqm_hrl,
+                              rule = 2)
+mokelumne_juv_fn <- approxfun(mokelumne_hrl$flow_cfs,
+                              mokelumne_hrl$FR_juv_sqm_hrl,
+                              rule = 2)
+# TODO not doing fry for mokelumne
+
+# tuolumne
+tuolumne_hrl <- read_csv(here::here("data-raw", "R2R_HRL_habitat_inputs", "data", "tuolumne_hrl.csv")) |> 
+  mutate(fp_sqm_va = DSMhabitat::acres_to_square_meters(fp_acres_va))
+
+tuolumne_spw_fn <- approxfun(tuolumne_hrl$flow_cfs,
+                             tuolumne_hrl$fr_spw_sqm_va,
+                             rule = 2)
+tuolumne_juv_fn <- approxfun(tuolumne_hrl$flow_cfs,
+                             tuolumne_hrl$fr_juv_sqm_va,
+                             rule = 2)
+tuolumne_fp_fn <- approxfun(tuolumne_hrl$flow_cfs,
+                             tuolumne_hrl$fp_sqm_va,
+                             rule = 2)
+
+# yuba
+yuba_hrl <- read_csv(here::here("data-raw", "R2R_HRL_habitat_inputs", "data", "yuba_hrl.csv"))
+
+yuba_juv_fn <- approxfun(yuba_hrl$flow_cfs,
+                         yuba_hrl$fr_juv_ic_sqm,
+                         rule = 2)
+yuba_fp_fn <- approxfun(yuba_hrl$flow_cfs,
+                        yuba_hrl$fr_juv_fp_sqm,
+                        rule = 2)
+```
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+flows <- DSMflow::flows_cfs$LTO_12a |>
+# flows <- DSMflow::flows_cfs$biop_itp_2018_2019 |>
+  filter(year(date) >= 1979 & year(date) <= 2000) |> 
+  pivot_longer(`Antelope Creek`:`San Joaquin River`,
+               names_to = "watershed",
+               values_to = "flow_cfs") |>
+  mutate(month = month(date),
+         year = year(date))
+
+update_hrl_habitat_from_SBR <- function(flows, watershed_name, hab_fn,
+                                        is_rearing) {
+  
+  if(is_rearing) {
+    filtered_flows <- flows |> 
+      filter(year != 1979)
+  } else {
+    filtered_flows <- flows
+  }
+
+  new_hab <- filtered_flows |>
+    filter(watershed == watershed_name) |>
+    mutate(new_hab = hab_fn(flow_cfs)) |>
+    pivot_wider(id_cols = month, 
+                names_from = year, 
+                values_from = new_hab) |>
+    select(-month) |> 
+    as.matrix()
+
+  rownames(new_hab) <- month.abb
+
+  return(new_hab)
+
+}
+
+# update spawning
+# start with the baseline habitat run with HRL flows
+fr_spawn_update <- DSMhabitat::fr_spawn$r_to_r_lto_12a_baseline
+
+# for feather, add together spawning acres lfc and existing acres hfc
+fr_spawn_update["Feather River", , ] <- DSMhabitat::acres_to_square_meters(update_hrl_habitat_from_SBR(flows, "Feather River",
+                                                                    va_spawn_lfc, FALSE) + update_hrl_habitat_from_SBR(flows, "Feather River",
+                                                                    existing_spawn_hfc, FALSE))
+
+fr_spawn_update["Mokelumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Mokelumne River",
+                                                                                    mokelumne_spw_fn, FALSE)
+fr_spawn_update["Tuolumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Tuolumne River",
+                                                                                    tuolumne_spw_fn, FALSE)
+fr_spawn <- DSMhabitat::fr_spawn
+fr_spawn$r_to_r_hrl <- fr_spawn_update
+
+# update ic rearing
+fr_juv_update <- DSMhabitat::fr_juv$r_to_r_lto_12a_baseline
+fr_juv_update["American River", , ] <- update_hrl_habitat_from_SBR(flows, "American River",
+                                                                                    american_juv_fn, TRUE)
+# feather add together existing hfc and VA lfc
+fr_juv_update["Feather River", , ] <- DSMhabitat::acres_to_square_meters(update_hrl_habitat_from_SBR(flows, "Feather River",
+                                                                                                     va_rearing_lfc_juv, TRUE) + update_hrl_habitat_from_SBR(flows, "Feather River",
+                                                                                                                                            existing_rearing_hfc_juv, TRUE))
+
+fr_juv_update["Mokelumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Mokelumne River",
+                                                                                    mokelumne_juv_fn, TRUE)
+fr_juv_update["Tuolumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Tuolumne River",
+                                                                                    tuolumne_juv_fn, TRUE)
+fr_juv_update["Yuba River", , ] <- update_hrl_habitat_from_SBR(flows, "Yuba River",
+                                                                                    yuba_juv_fn, TRUE)
+fr_juv <- DSMhabitat::fr_juv
+fr_juv$r_to_r_hrl <- fr_juv_update
+
+# update fp rearing
+fr_fp_update <- DSMhabitat::fr_fp$r_to_r_lto_12a_baseline
+# feather fp function by itself is fine, not distinguished by HFC and LFC
+fr_fp_update["Feather River", , ] <- DSMhabitat::acres_to_square_meters(update_hrl_habitat_from_SBR(flows, "Feather River",
+                                                                                    va_fp, TRUE))
+
+fr_fp_update["Tuolumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Tuolumne River",
+                                                                                    tuolumne_fp_fn, TRUE)
+fr_fp_update["Yuba River", , ] <- update_hrl_habitat_from_SBR(flows, "Yuba River",
+                                                                                    yuba_fp_fn, TRUE)
+fr_fp <- DSMhabitat::fr_fp
+fr_fp$r_to_r_hrl <- fr_fp_update
+```
+
+### Check
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+# spawning
+DSMhabitat::fr_juv$r_to_r_lto_12a_baseline["Tuolumne River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb) |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year", 
+               values_to = "sqm") |> 
+  mutate(scenario = "baseline") |> 
+  bind_rows(fr_juv_update["Tuolumne River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb) |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year", 
+               values_to = "sqm") |> 
+  mutate(scenario = "HRL")) |>
+  mutate(acres = DSMhabitat::square_meters_to_acres(sqm),
+         date = as.Date(paste0("1970-", month, "-01"), format = "%Y-%b-%d")) |> 
+  ggplot(aes(x = date, y = acres, color = scenario)) + 
+  geom_line() +
+  facet_wrap(~year) +
+  scale_x_date(labels = date_format("%b")) +
+  labs(x = "Model Date",
+       y = "Suitable acres",
+       title = "Tuolumne River habitat inputs: baseline (LTO flows) vs. HRL (LTO flows)") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+# floodplain
+va_fp_pre <- DSMhabitat::fr_fp$r_to_r_baseline["American River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "American River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm") |> 
+  bind_rows(DSMhabitat::fr_fp$r_to_r_baseline["Feather River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb, 
+         stream = "Feather River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_fp$r_to_r_baseline["Mokelumne River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "Mokelumne River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_fp$r_to_r_baseline["Yuba River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "Yuba River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_fp$r_to_r_baseline["Tuolumne River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "Tuolumne River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm")) |> 
+  mutate(acres = DSMhabitat::square_meters_to_acres(sqm),
+         scenario = "r_to_r_baseline")
+
+va_fp_post <- DSMhabitat::fr_fp$r_to_r_hrl["American River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "American River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm") |> 
+  bind_rows(DSMhabitat::fr_fp$r_to_r_hrl["Feather River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "Feather River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_fp$r_to_r_hrl["Mokelumne River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "Mokelumne River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_fp$r_to_r_hrl["Yuba River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "Yuba River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_fp$r_to_r_hrl["Tuolumne River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "Tuolumne River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm")) |> 
+  mutate(acres = DSMhabitat::square_meters_to_acres(sqm),
+         scenario = "LTO_12a_HRL")
+
+# plot
+va_fp_pre |> 
+  bind_rows(va_fp_post) |> 
+  mutate(date = as.Date(paste0(year, "-", month, "-01"), format = "%Y-%b-%d")) |> 
+  ggplot(aes(x = date, y = acres, color = scenario)) + 
+  geom_line() +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  labs(y = "Floodplain habitat (acres)", 
+       x = "Model date",
+       title = "Floodplain habitat") +
+  scale_color_brewer(palette = "Dark2") +
+  facet_wrap(~stream, scales = "free_y")
+  
+```
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+# spawning
+va_spawn_pre <- DSMhabitat::fr_spawn$r_to_r_baseline["American River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "American River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm") |> 
+  bind_rows(DSMhabitat::fr_spawn$r_to_r_baseline["Feather River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb, 
+         stream = "Feather River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_spawn$r_to_r_baseline["Mokelumne River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "Mokelumne River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_spawn$r_to_r_baseline["Yuba River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "Yuba River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_spawn$r_to_r_baseline["Tuolumne River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "Tuolumne River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm")) |> 
+  mutate(acres = DSMhabitat::square_meters_to_acres(sqm),
+         scenario = "r_to_r_baseline")
+
+va_spawn_post <- DSMhabitat::fr_spawn$r_to_r_hrl["American River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "American River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm") |> 
+  bind_rows(DSMhabitat::fr_spawn$r_to_r_hrl["Feather River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "Feather River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_spawn$r_to_r_hrl["Mokelumne River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "Mokelumne River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_spawn$r_to_r_hrl["Yuba River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "Yuba River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_spawn$r_to_r_hrl["Tuolumne River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "Tuolumne River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm")) |> 
+  mutate(acres = DSMhabitat::square_meters_to_acres(sqm),
+         scenario = "LTO_12a_HRL")
+
+# plot
+va_spawn_pre |> 
+  bind_rows(va_spawn_post) |> 
+  mutate(date = as.Date(paste0(year, "-", month, "-01"), format = "%Y-%b-%d")) |> 
+  ggplot(aes(x = date, y = acres, color = scenario)) + 
+  geom_line() +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  labs(y = "Spawning habitat (acres)", 
+       x = "Model date",
+       title = "Spawning habitat") +
+  scale_color_brewer(palette = "Dark2") +
+  facet_wrap(~stream, scales = "free_y")
+```
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+# inchannel
+va_rear_pre <- DSMhabitat::fr_juv$r_to_r_baseline["American River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "American River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm") |> 
+  bind_rows(DSMhabitat::fr_juv$r_to_r_baseline["Feather River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb, 
+         stream = "Feather River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_juv$r_to_r_baseline["Mokelumne River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "Mokelumne River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_juv$r_to_r_baseline["Yuba River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "Yuba River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_juv$r_to_r_baseline["Tuolumne River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "Tuolumne River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm")) |> 
+  mutate(acres = DSMhabitat::square_meters_to_acres(sqm),
+         scenario = "r_to_r_baseline")
+
+va_rear_post <- DSMhabitat::fr_juv$r_to_r_hrl["American River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "American River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm") |> 
+  bind_rows(DSMhabitat::fr_juv$r_to_r_hrl["Feather River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "Feather River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_juv$r_to_r_hrl["Mokelumne River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "Mokelumne River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_juv$r_to_r_hrl["Yuba River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "Yuba River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_juv$r_to_r_hrl["Tuolumne River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "Tuolumne River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm")) |> 
+  mutate(acres = DSMhabitat::square_meters_to_acres(sqm),
+         scenario = "LTO_12a_HRL")
+
+# plot
+va_rear_pre |> 
+  bind_rows(va_rear_post) |> 
+  mutate(date = as.Date(paste0(year, "-", month, "-01"), format = "%Y-%b-%d")) |> 
+  ggplot(aes(x = date, y = acres, color = scenario)) + 
+  geom_line() +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  labs(y = "Rearing habitat (acres)", 
+       x = "Model date",
+       title = "Rearing habitat") +
+  scale_color_brewer(palette = "Dark2") +
+  facet_wrap(~stream, scales = "free_y")
+```
+
+# Other HRL commitments
+
+We modeled additional commitments that were listed in the [Memorandum of Understanding, Appendix 2](https://resources.ca.gov/-/media/CNRA-Website/Files/NewsRoom/email-items/VoluntaryAgreementMOUTermSheet20220329_SIGNED-20220811.pdf):
+
+| Area                                        | Total acres                   |
+|---------------------------------------------|-------------------------------|
+| Sutter Bypass, Butte Sink, and Colusa Basin | 20,000 (floodplain)           |
+| Sutter Bypass, Butte Sink, and Colusa Basin | 20,000 (fish food production) |
+
+## Sacramento Floodplain improvements (Sutter, Colusa, Butte Sink)
+
+- 20,000 acres were added to the Sutter Bypass watershed **after** the existing flow-to-area relationship was modeled using HRL flows. 
+- From December 1st to March 15th, Sutter Bypass will be assumed to have 20,000 acres of suitable habitat in each year.
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+va_sutter_habitat_pre <- DSMhabitat::sutter_habitat$lto_12a |> 
+  as_tibble() |> 
+  mutate(month = month.abb) |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm") |> 
+  mutate(acres = DSMhabitat::square_meters_to_acres(sqm),
+         total_acres = ifelse(month %in% c("Dec", "Jan", "Feb") & 
+                                acres < 20000, 20000, acres),
+         sqm = DSMhabitat::acres_to_square_meters(total_acres)) |> 
+  pivot_wider(id_cols = month, 
+              values_from = sqm,
+              names_from = year) |> 
+  select(-c(month)) |> 
+  as.matrix() 
+
+rownames(va_sutter_habitat_pre) <- month.abb
+
+# plot
+va_sutter_habitat_pre |> 
+  as_tibble() |> 
+  mutate(month = month.abb) |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm") |> 
+  mutate(acres = DSMhabitat::square_meters_to_acres(sqm),
+         date = as.Date(paste0(year, "-", month, "-01"), format = "%Y-%b-%d")) |> 
+  ggplot(aes(x = date, y = acres)) + 
+  geom_line() +
+  theme_minimal() +
+  labs(x = "Model date",
+       y = "Floodplain habitat (acres)",
+       title = "Sutter Basin floodplain")
+  
+```
+
+
+## 20,000 acres fish food production
+
+- To model the effects of 20,000 acres of fish food production, we calculated the available acreage for dry side floodplain for Sutter and Colusa basins using [these data](https://urldefense.proofpoint.com/v2/url?u=https-3A__flowwest.shinyapps.io_riceflows4ff_&d=DwMGaQ&c=euGZstcaTDllvimEN8b7jXrwqOf-v5A_CdpgnVfiiMM&r=es1mYD_t8ssn_HUUEGOgPpeBoWf2_Iri3BC8scPyjqg&m=MPH46l1pSkkFUhwOq2afwCu7FQy9x-3ynNLgjT1FrFVENIGYvlHv77LDW2IA1HMx&s=gks_3V6uaP9BPa4q9vmFCDSgHkke0BCTa3QXxOITYfw&e=)
+- We then calculated the proportion of the committed 20,000 acres those acreages provide, and use that proportion to scale instream habitat for those watersheds.
+- This will occur in every year from Jan 1st to Feb 28th
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+watersheds <- 
+  riceflows4ff::ff_watersheds |> 
+  mutate(watershed_group = case_when(
+    watershed_name %in% c("Sutter Basin - Upper East", 
+                          "Sutter Basin - Lower East",
+                          "Gilsizer Slough-Snake River - Upper",
+                          "Gilsizer Slough-Snake River - Lower") ~ "Sutter Basin",
+    watershed_name %in% c("Colusa Basin Drainage Canal",
+                          "Colusa Trough - Lower", 
+                          "Colusa Trough - Middle",
+                          "Colusa Trough - Upper",
+                          "Sycamore Slough - Upper West", 
+                          "Freshwater Creek",
+                          "Stone Corral Creek", 
+                          "Logan Creek", 
+                          "Willow Creek", 
+                          "Walker Creek",
+                          "Colusa Drain") ~ "Colusa Basin")) |>
+  filter(!is.na(watershed_group)) |>
+  group_by(watershed_group) |>
+  summarize() |>
+  st_union(by_feature = TRUE)
+
+wet_dry_areas <- 
+  watersheds |>
+  st_intersection(riceflows4ff::ff_wetdry) |>
+  mutate(area_ac = st_area(geometry) |> 
+           units::set_units("acres") |>
+           units::drop_units()) |>
+  group_by(watershed_group, wet_dry) |>
+  summarize(area_ac = sum(area_ac)) |>
+  ungroup() |>
+  st_drop_geometry() |>
+  pivot_wider(names_from = wet_dry, values_from = area_ac) |> 
+  mutate(proportion = 20000 / Dry)
+
+knitr::kable(head(wet_dry_areas))
+```
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+va_sutter_habitat_pre <- DSMhabitat::sutter_habitat$lto_12a |> 
+  as_tibble() |> 
+  mutate(month = month.abb) |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm") |> 
+  mutate(acres = DSMhabitat::square_meters_to_acres(sqm),
+         scenario = "LTO_12a_baseline")
+
+va_sutter_habitat_post <- DSMhabitat::sutter_habitat$r_to_r_hrl |> 
+  as_tibble() |> 
+  mutate(month = month.abb) |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm") |> 
+  mutate(acres = DSMhabitat::square_meters_to_acres(sqm),
+         scenario = "LTO_12a_HRL")
+
+# plot
+va_sutter_habitat_pre |> 
+  bind_rows(va_sutter_habitat_post) |> 
+  mutate(date = as.Date(paste0(year, "-", month, "-01"), format = "%Y-%b-%d")) |> 
+  ggplot(aes(x = date, y = acres, color = scenario)) + 
+  geom_line() +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  labs(y = "Floodplain habitat (acres)", 
+       x = "Model year",
+       title = "Sutter Basin habitat") +
+  scale_color_brewer(palette = "Dark2")
+  
+```
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+va_sac_fp_habitat_pre <- DSMhabitat::fr_fp$lto_12a["Lower-mid Sacramento River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb) |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm") |> 
+  bind_rows(DSMhabitat::fr_fp$lto_12a["Lower Sacramento River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb) |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm")) |> 
+  mutate(acres = DSMhabitat::square_meters_to_acres(sqm),
+         scenario = "LTO_12a_baseline")
+
+va_sac_fp_habitat_post <- DSMhabitat::fr_fp$r_to_r_hrl["Lower-mid Sacramento River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb) |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm") |> 
+  bind_rows(DSMhabitat::fr_fp$r_to_r_hrl["Lower Sacramento River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb) |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm")) |> 
+  mutate(acres = DSMhabitat::square_meters_to_acres(sqm),
+         scenario = "LTO_12a_HRL")
+
+# plot
+va_sac_fp_habitat_pre |> 
+  bind_rows(va_sac_fp_habitat_post) |> 
+  mutate(date = as.Date(paste0(year, "-", month, "-01"), format = "%Y-%b-%d")) |> 
+  ggplot(aes(x = date, y = acres, color = scenario)) + 
+  geom_line() +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  labs(y = "Floodplain habitat (acres)", 
+       x = "Model year",
+       title = "Sacramento floodplain (Colusa basin and Butte sink) habitat") +
+  scale_color_brewer(palette = "Dark2")
+  
+```
+```

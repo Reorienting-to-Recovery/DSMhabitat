@@ -1,9 +1,9 @@
 # Cache HRL habitat 
 
-all_existing_and_hrl_data <- readRDS(here::here('data-raw', "R2R_HRL_habitat_inputs", "all_habitat_data_for_hrl_inputs_all_runs.rdata")) 
+all_existing_and_hrl_data <- readRDS(here::here('data-raw', "R2R_HRL_habitat_inputs", "archive", "all_habitat_data_for_hrl_inputs_all_runs.rdata")) 
 
 # source functions: 
-source(here::here('data-raw', "R2R_HRL_habitat_inputs", "hrl_helper_functions.R"))
+source(here::here("data-raw", "R2R_HRL_habitat_inputs", "hrl_helper_functions.R"))
 
 # FALL RUN ---------------------------------------------------------------------
 # spawning:  --------------------------------------------------------------
@@ -186,10 +186,8 @@ r_to_r_lto_12a_baseline_fr_fp["Feather River", , ] <- updated_habitat
 # Sutter Bypass
 # Note: all Sutter Bypass values are zero so there is no proportional change with the new HRL data 
 # THIS should probably be addressed 
-add_project_habitat <- DSMhabitat::fr_fp$r_to_r_lto_12a_baseline["Sutter Bypass" , , ] * 
-  hab_prop_change_from_projects("floodplain rearing", "Sutter Bypass", "fr", "fp", "LTO_12a")
-updated_habitat <- DSMhabitat::fr_fp$r_to_r_lto_12a_baseline["Sutter Bypass", , ] + add_project_habitat 
-r_to_r_lto_12a_baseline_fr_fp["Sutter Bypass", , ] <- updated_habitat 
+# we do not need to add proportional change here. Sutter is handled in cached-habitat.R with the 
+# LTO_12a flows. We may need to add habitat according to rulesets, but not using this method
 
 # exploratory plot: 
 r_to_r_hrl_habitat<- r_to_r_lto_12a_baseline_fr_fp |>
