@@ -90,32 +90,11 @@ yuba_hrl <- read_excel("data-raw/R2R_HRL_habitat_inputs/data/HydraulicHabFlow_LY
          above_dpd_hrl_fp_rear = above_dpd_9) |> 
   mutate(across(below_dpd_hrl_ic_rear:above_dpd_hrl_fp_rear, as.numeric)) |> 
   filter(!is.na(above_dpd_hrl_fp_rear)) |> 
-  pivot_longer(below_dpd_hrl_ic_rear:above_dpd_hrl_ic_rear,
-               names_to = "reach_ic",
-               values_to = "ic_suitable_acres") |> 
-  mutate(reach_ic = ifelse(str_detect(reach_ic, "below"), "below_dpd", "above_dpd")) |> 
-  pivot_longer(below_dpd_hrl_fp_rear:above_dpd_hrl_fp_rear,
-               names_to = "reach_fp",
-               values_to = "fp_suitable_acres") |> 
-  mutate(reach_fp = ifelse(str_detect(reach_ic, "below"), "below_dpd", "above_dpd"),
-         reach = ifelse(reach_fp == reach_ic, reach_fp, NA)) |> 
-  select(flow_cfs, reach, ic_suitable_acres, fp_suitable_acres)
+  mutate(ic_hrl_acres = below_dpd_hrl_ic_rear + above_dpd_hrl_ic_rear,
+         fp_hrl_acres = below_dpd_hrl_fp_rear + above_dpd_hrl_fp_rear) |> 
+  select(flow_cfs, ic_hrl_acres, fp_hrl_acres)
 
-# combine across reaches
-upper_reach_length = 12.7
-lower_reach_length = 11.4
-tot_study_len = upper_reach_length + lower_reach_length
-
-# combine two reaches
-yuba_hrl_combined <- yuba_hrl |> 
-  mutate(reach_length = ifelse(reach == "below_dpd", lower_reach_length, upper_reach_length)) |> 
-  group_by(flow_cfs) |> 
-  summarise(ic_hrl_acres = sum(ic_suitable_acres/reach_length * reach_length / tot_study_len, na.rm = T),
-            fp_hrl_acres = sum(fp_suitable_acres/reach_length * reach_length / tot_study_len, na.rm = T)) |> 
-  ungroup() |> 
-  glimpse()
-
-knitr::kable(head(yuba_hrl_combined))
+knitr::kable(head(yuba_hrl))
 ```
 
 ### Plot comparison
@@ -132,7 +111,7 @@ existing_fp <- DSMhabitat::yuba_river_floodplain |>
   select(flow_cfs, FR_floodplain_acres) |> 
   glimpse()
 
-existing_and_HRL <- yuba_hrl_combined |> 
+existing_and_HRL <- yuba_hrl |> 
   full_join(existing_rear) |> 
   full_join(existing_fp) |> 
   glimpse()
@@ -147,7 +126,7 @@ existing_and_HRL |>
   theme_minimal() +
   theme(legend.position = "bottom")
 
-yuba_hrl <- yuba_hrl_combined |> 
+yuba_hrl <- yuba_hrl |> 
   mutate(fr_juv_ic_sqm = DSMhabitat::acres_to_square_meters(ic_hrl_acres),
          fr_juv_fp_sqm = DSMhabitat::acres_to_square_meters(fp_hrl_acres)) |> 
   select(flow_cfs, fr_juv_ic_sqm, fr_juv_fp_sqm)

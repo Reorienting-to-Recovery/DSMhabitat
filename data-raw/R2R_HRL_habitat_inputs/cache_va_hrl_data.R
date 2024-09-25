@@ -40,7 +40,7 @@ existing_fp_fn <- approxfun(existing_floodplain$flow_cfs, existing_floodplain$FR
 existing_and_HRL <- american_hrl |> 
   mutate(existing_rear = existing_rearing_fn(flow_cfs),
          existing_fp = existing_fp_fn(flow_cfs),
-         fp_HRL = ifelse(flow_cfs <= 5200, NA, DSMhabitat::square_meters_to_acres(FR_juv_sqm_hrl)),
+         fp_HRL = ifelse(flow_cfs <= 5200, 0, DSMhabitat::square_meters_to_acres(FR_juv_sqm_hrl)),
          existing_and_HRL = ifelse(flow_cfs <= 5200, existing_rear + FR_juv_sqm_hrl, existing_fp + fp_HRL)) |> 
   select(-scenario)
 
@@ -302,12 +302,12 @@ american_juv_fn <- approxfun(american_hrl$flow_cfs,
                              rule = 2)
 
 # feather
-feather_spw_fn <- approxfun(feather_hrl$flow_cfs, feather_hrl$FR_spw_sqm_hrl,
-                            rule = 2)
-feather_juv_fn <- approxfun(feather_hrl$flow_cfs, feather_hrl$FR_juv_ic_sqm_hrl,
-                            rule = 2)
-feather_fp_fn <- approxfun(feather_hrl$flow_cfs, feather_hrl$FR_juv_fp_sqm_hrl,
-                           rule = 2)
+# feather_spw_fn <- approxfun(feather_hrl$flow_cfs, feather_hrl$FR_spw_sqm_hrl,
+#                             rule = 2)
+# feather_juv_fn <- approxfun(feather_hrl$flow_cfs, feather_hrl$FR_juv_ic_sqm_hrl,
+#                             rule = 2)
+# feather_fp_fn <- approxfun(feather_hrl$flow_cfs, feather_hrl$FR_juv_fp_sqm_hrl,
+#                            rule = 2)
 
 # mokelumne
 mokelumne_spw_fn <- approxfun(mokelumne_hrl$flow_cfs,
@@ -409,7 +409,7 @@ fr_juv_update["Mokelumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Moke
 fr_juv_update["Tuolumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Tuolumne River",
                                                                    tuolumne_juv_fn, TRUE)
 fr_juv_update["Yuba River", , ] <- update_hrl_habitat_from_SBR(flows, "Yuba River",
-                                                               feather_juv_fn, TRUE)
+                                                               yuba_juv_fn, TRUE)
 fr_juv <- DSMhabitat::fr_juv
 fr_juv$r_to_r_hrl <- fr_juv_update
 
@@ -421,7 +421,7 @@ fr_fp_update["Feather River", , ] <- DSMhabitat::acres_to_square_meters(update_h
 fr_fp_update["Tuolumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Tuolumne River",
                                                                   tuolumne_fp_fn, TRUE)
 fr_fp_update["Yuba River", , ] <- update_hrl_habitat_from_SBR(flows, "Yuba River",
-                                                              feather_fp_fn, TRUE)
+                                                              yuba_fp_fn, TRUE)
 fr_fp <- DSMhabitat::fr_fp
 fr_fp$r_to_r_hrl <- fr_fp_update
 
@@ -517,13 +517,14 @@ sutter_habitat_added <- DSMhabitat::sutter_habitat$r_to_r_hrl * (1 + sutter_prop
 
 
 sutter_habitat <- DSMhabitat::sutter_habitat
-sutter_habitat$r_to_r_hrl <- sutter_habitat_added
+sutter_habitat$r_to_r_hrl[1:2,] <- sutter_habitat_added[1:2,]
+rownames(sutter_habitat$r_to_r_hrl) <- month.abb
 
 usethis::use_data(sutter_habitat, overwrite = TRUE)
 
 fr_fp <- DSMhabitat::fr_fp
-fr_fp$r_to_r_hrl["Lower Sacramento River", , ] <- lower_sac_habitat_added
-fr_fp$r_to_r_hrl["Lower-mid Sacramento River", , ] <- lower_mid_sac_habitat_added
+fr_fp$r_to_r_hrl["Lower Sacramento River", c("Jan", "Feb"), ] <- lower_sac_habitat_added[c("Jan", "Feb"),]
+fr_fp$r_to_r_hrl["Lower-mid Sacramento River", c("Jan", "Feb"), ] <- lower_mid_sac_habitat_added[c("Jan", "Feb"),]
 
 usethis::use_data(fr_fp, overwrite = TRUE)
 

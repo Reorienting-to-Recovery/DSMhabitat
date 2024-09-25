@@ -61,7 +61,7 @@ existing_fp_fn <- approxfun(existing_floodplain$flow_cfs, existing_floodplain$FR
 existing_and_HRL <- american_hrl |> 
   mutate(existing_rear = existing_rearing_fn(flow_cfs),
          existing_fp = existing_fp_fn(flow_cfs),
-         fp_HRL = ifelse(flow_cfs <= 5200, NA, DSMhabitat::square_meters_to_acres(FR_juv_sqm_hrl)),
+         fp_HRL = ifelse(flow_cfs <= 5200, 0, DSMhabitat::square_meters_to_acres(FR_juv_sqm_hrl)),
          existing_and_HRL = ifelse(flow_cfs <= 5200, existing_rear + FR_juv_sqm_hrl, existing_fp + fp_HRL)) |> 
   select(-scenario)
 
