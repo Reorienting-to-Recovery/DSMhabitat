@@ -131,3 +131,23 @@ fp %>%
   geom_line() + 
   facet_wrap(~watershed, scales = 'free_y') + 
   theme_minimal()
+
+# flows -------------------------------------------------------------------
+
+DSMflow::flows_cfs$LTO_12a |> 
+  pivot_longer(`Antelope Creek`:`San Joaquin River`,
+               names_to = "watershed",
+               values_to = "flow_cfs") |> 
+  mutate(scenario = "LTO_12a") |> 
+  bind_rows(DSMflow::flows_cfs$biop_itp_2018_2019 |> 
+              pivot_longer(`Antelope Creek`:`San Joaquin River`,
+                           names_to = "watershed",
+                           values_to = "flow_cfs") |> 
+              mutate(scenario = "biop_18_19")) |> 
+  ggplot(aes(x = date, y = flow_cfs, color = scenario)) + 
+  geom_line(alpha = 0.8) +
+  facet_wrap(~watershed, scales = "free_y") +
+  scale_x_date(breaks = "1 month") +
+  theme(legend.position = "bottom") +
+  labs(x = "Date", y = "Flow (cfs)")
+
