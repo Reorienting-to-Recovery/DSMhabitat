@@ -26,14 +26,23 @@ William Sears and Tuolumne parties as part of the Healthy Rivers and Landscapes 
 Steelhead were assigned Fall Run Chinook values.
 
 ### Spawning and Rearing Data 
-The instream spawning and rearing habitat data described above for Fall Run Chinook Salmon (FR) were used for Steelhead (ST). Units are in suitable acres and converted to square meters.
+The instream spawning and rearing habitat data described above for Fall Run Chinook Salmon (FR) were used for Steelhead (ST). Units are in suitable acres and converted to square meters. Rearing curve provided instream and floodplain combined (with a floodplain inundation threshold of `1000 cfs`). Instream rearing was set to be its value at `1000cfs` for all values above the threshold. Tuolumne parties also provided wetted area, which was not functionalized because it did not represent suitable area.
+
 ```{r}
+instream_habitat_at_fp_cutoff_sqm <- read_excel("data-raw/watershed/tuolumne/data/VA habitat summary 20240509[44][35].xlsx",
+                                      range = "E6:G53") |> 
+  janitor::clean_names() |> 
+  filter(flow_cfs == 1000) |> 
+  mutate(existing = DSMhabitat::acres_to_square_meters(existing)) |> 
+  pull(existing)
+
 tuolumne_river_instream_rearing <- read_excel("data-raw/watershed/tuolumne/data/VA habitat summary 20240509[44][35].xlsx",
                                       range = "E6:G53") |> 
   janitor::clean_names() |> 
-  mutate(FR_fry_sqm = DSMhabitat::acres_to_square_meters(existing),
-         FR_juv_sqm = DSMhabitat::acres_to_square_meters(existing)) |> 
-  select(flow_cfs, FR_fry_sqm, FR_juv_sqm)
+  mutate(FR_fry_sqm = ifelse(flow_cfs <= 1000, DSMhabitat::acres_to_square_meters(existing), instream_habitat_at_fp_cutoff_sqm),
+         FR_juv_sqm = ifelse(flow_cfs <= 1000, DSMhabitat::acres_to_square_meters(existing), instream_habitat_at_fp_cutoff_sqm),
+         FR_fp = ifelse(flow_cfs > 1000, existing, 0)) |> # use floodplain threshold of 1000 cfs to set floodplain habitat in acres
+  select(flow_cfs, FR_fry_sqm, FR_juv_sqm, FR_fp)
 
 tuolumne_river_spawning <- read_excel("data-raw/watershed/tuolumne/data/VA habitat summary 20240509[44][35].xlsx",
                                        range = "A6:C34") |> 
@@ -46,7 +55,8 @@ tuolumne_river_instream <- full_join(tuolumne_river_instream_rearing, tuolumne_r
   mutate(ST_adult_sqm = FR_spawn_sqm,
          ST_juv_sqm = FR_juv_sqm,
          ST_fry_sqm = FR_fry_sqm,
-         watershed = "Tuolumne River")
+         watershed = "Tuolumne River") |> 
+  select(-FR_fp)
 
 usethis::use_data(tuolumne_river_instream, overwrite = TRUE)
 
@@ -79,7 +89,7 @@ tuolumne_river_instream |>
 ```
 
 ### Rearing Suitable Habitat
-The following plot shows the rearing suitable area in square meters for Fall Run Chinook Salmon and Steelhead fry and juvenile. These rates are multiplied by the total rearing reach length mapped by the SIT to estimate available habitat.
+The following plot shows the rearing suitable area in square meters for Fall Run Chinook Salmon and Steelhead fry and juvenile. Data were provided for floodplain and instream rearing combined, so they were split between instream and floodplain using a floodplain cutoff value of `1000 cfs`.
 ``` {r}
 tuolumne_river_instream |> 
   select(FR_juv_sqm, FR_fry_sqm, ST_juv_sqm, ST_fry_sqm, flow_cfs, watershed) |>
@@ -99,18 +109,17 @@ tuolumne_river_instream |>
 ```
 
 ```{r, include=FALSE}
-source('data-raw/watershed/floodplain_utils.R')
+#source('data-raw/watershed/floodplain_utils.R')
 ```
 
 ## Floodplain Rearing Habitat    
 
 ## Floodplain Data    
-The areas represent total inundated area in acres.    
+The areas are represented in suitable acres. Data in the rearing curve above `1000 cfs` were used to generate the flow-to-suitable area curve; values under `1000 cfs` were set to `0` for floodplain.
+
 ```{r}
-tuolumne_fp <- read_excel("data-raw/watershed/tuolumne/data/VA habitat summary 20240603.xlsx",
-                          range = "I6:K53") |> 
-  janitor::clean_names() |> 
-  mutate(FR_floodplain_acres = round(existing, 2),
+tuolumne_fp <- tuolumne_river_instream_rearing |> 
+  mutate(FR_floodplain_acres = round(FR_fp, 2),
          SR_floodplain_acres = FR_floodplain_acres,
          ST_floodplain_acres = FR_floodplain_acres,
          watershed = "Tuolumne River") |> 

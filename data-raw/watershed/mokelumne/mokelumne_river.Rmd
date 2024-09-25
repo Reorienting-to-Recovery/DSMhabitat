@@ -162,6 +162,6 @@ mokelumne_river_floodplain %>%
   geom_line() +
   theme_minimal() +
   scale_color_brewer(palette = 'Dark2') +
-  labs(x = 'Flow (cfs)', y = 'Total Inundated Acres') +
+  labs(x = 'Flow (cfs)', y = 'Floodplain Suitable Acres') +
   theme(legend.justification = c(1, 0), legend.position = c(.9, .1))
 ```
