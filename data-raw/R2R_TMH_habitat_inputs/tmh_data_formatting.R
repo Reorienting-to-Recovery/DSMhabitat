@@ -226,6 +226,3 @@ all_max_habitat <- fall_run_tmh |>
   bind_rows(spring_and_winter_tmh)
 
 saveRDS(all_max_habitat, "data-raw/R2R_TMH_habitat_inputs/all_habitat_data_for_tmh_inputs_all_runs.rdata")
-
-
-
