@@ -291,32 +291,33 @@ fp |>
 # SPRING RUN ---------------------------------------------------------------------
 # Update DSMhabitat values 
 # set r_to_r_baseline_fr_spawn to 
-r_to_r_lto_12a_baseline_sr_spawn <- DSMhabitat::sr_spawn$sac_eff
+# TODO is this correct? should we be using eff here?
+r_to_r_lto_12a_baseline_sr_spawn <- DSMhabitat::sr_spawn$biop_itp_2018_2019
 
 # Add cottonwood creek spawning habitat 
-add_project_habitat <- DSMhabitat::sr_spawn$sac_eff["Cottonwood Creek", , ] * 
+add_project_habitat <- DSMhabitat::sr_spawn$biop_itp_2018_2019["Cottonwood Creek", , ] * 
   hab_prop_change_from_projects("spawning", "Cottonwood Creek", "sr", "adult", "LTO_12a")
-updated_habitat <- DSMhabitat::sr_spawn$sac_eff["Cottonwood Creek", , ] + add_project_habitat
+updated_habitat <- DSMhabitat::sr_spawn$biop_itp_2018_2019["Cottonwood Creek", , ] + add_project_habitat
 
 r_to_r_lto_12a_baseline_sr_spawn["Cottonwood Creek", , ] <- updated_habitat 
 
 # add deer creek spawning habitat
-add_project_habitat <- DSMhabitat::sr_spawn$sac_eff["Deer Creek" , , ] * 
+add_project_habitat <- DSMhabitat::sr_spawn$biop_itp_2018_2019["Deer Creek" , , ] * 
   hab_prop_change_from_projects("spawning", "Deer Creek", "sr", "adult", "LTO_12a")
-updated_habitat <- DSMhabitat::sr_spawn$sac_eff["Deer Creek", , ] + add_project_habitat
+updated_habitat <- DSMhabitat::sr_spawn$biop_itp_2018_2019["Deer Creek", , ] + add_project_habitat
 
 r_to_r_lto_12a_baseline_sr_spawn["Deer Creek", , ] <- updated_habitat 
 
 # Add sacramento river spawning habitat 
-add_project_habitat <- DSMhabitat::sr_spawn$sac_eff["Upper Sacramento River" , , ] * 
+add_project_habitat <- DSMhabitat::sr_spawn$biop_itp_2018_2019["Upper Sacramento River" , , ] * 
   hab_prop_change_from_projects("spawning", "Upper Sacramento River", "sr", "adult", "LTO_12a")
-updated_habitat <- DSMhabitat::sr_spawn$sac_eff["Upper Sacramento River", , ] + add_project_habitat
+updated_habitat <- DSMhabitat::sr_spawn$biop_itp_2018_2019["Upper Sacramento River", , ] + add_project_habitat
 
 r_to_r_lto_12a_baseline_sr_spawn["Upper Sacramento River", , ] <- updated_habitat 
 
 # check habitat differences 
 # upper sac and american river should be different (larger)
-r_to_r_lto_12a_baseline_sr_spawn == DSMhabitat::sr_spawn$sac_eff
+r_to_r_lto_12a_baseline_sr_spawn == DSMhabitat::sr_spawn$biop_itp_2018_2019
 
 # Save as data object to DSMhabitat
 current_sr_spawn <- DSMhabitat::sr_spawn
