@@ -135,14 +135,26 @@ tmh_data_format <- function(run) {
   } else if (run == "Fall Run") {
     ## FALL RUN: 
     ### does not include above dam
-    total_acres <- all_below_dam_acres |> ungroup() |> 
+    total_acres <- all_below_dam_acres |> 
+      ungroup() |> 
       select(-c(mean_channel_width, mean_inflection_width)) |> 
+      # join in above dam JUST FOR SAN JOAQUIN, Liz edit 
+      left_join(above_dam_acres |> ungroup() |>  
+                  mutate(river = ifelse(grepl("San Joaquin River", river), "San Joaquin River", river)) |> 
+                  select(-c(mean_channel_width, mean_inflection_width))
+      ) |>  
       mutate(river = ifelse(grepl("San Joaquin River", river), "San Joaquin River", river)) |> 
-      group_by(river, regulated) |> 
-      summarise(max_spawning_acres = below_dam_spawning_acres, 
-                max_rearing_acres = below_dam_rearing_acres, 
-                max_floodplain_acres = below_dam_floodplain_acres) |> 
-      glimpse()
+      group_by(river, regulated) |>
+      # San Joaquin can combine above dam and below dam acres to sum. Keep the same for every other stream
+      summarise(max_spawning_acres = ifelse(river == "San Joaquin River", 
+                                            sum(below_dam_spawning_acres, above_dam_spawning_acres, na.rm = TRUE),
+                                            below_dam_spawning_acres), 
+                max_rearing_acres = ifelse(river == "San Joaquin River",
+                                           sum(below_dam_rearing_acres, above_dam_rearing_acres, na.rm = TRUE),
+                                           below_dam_rearing_acres), 
+                max_floodplain_acres = ifelse(river == "San Joaquin River",
+                                              sum(below_dam_floodplain_acres, above_dam_floodplain_acres, na.rm = TRUE),
+                                              below_dam_floodplain_acres))
   }
   # Unregulated Calculations ------------------------------------------------
   
