@@ -9,43 +9,14 @@ library(readxl)
 library(sf)
 library(riceflows4ff)
 
-dry_years <- waterYearType::water_year_indices |>
-  filter(location == "Sacramento Valley") |>
-  rename(water_year = WY) |>
-  mutate(year_type = ifelse(Yr_type %in% c("Wet", "Above Normal"), "wet", "dry")) |>
-  filter(#water_year %in% 1980:2000,
-    water_year %in% 1921:2002,
-    year_type == "dry") |>
-  pull(water_year)
-
-dry_years_model <- dry_years[dry_years %in% 1980:2000]
-dry_years_index <- which(1980:2000 %in%dry_years_model)
-
-
 # flows -------------------------------------------------------------------
-#flows <- DSMflow::flows_cfs$LTO_12a_eff_dy |> # TODO this has to be merged into main for DSMflow and re-downloaded
-
-# EFF for dry years, LTO12a for wet years
-EFF_flows <- DSMflow::flows_cfs$eff_sac |>
+flows <- DSMflow::flows_cfs$LTO_12a_eff_dy |>
   filter(year(date) >= 1979 & year(date) <= 2000) |> 
   pivot_longer(`Antelope Creek`:`San Joaquin River`,
                names_to = "watershed",
                values_to = "flow_cfs") |>
   mutate(month = month(date),
-         year = year(date)) |> 
-  filter(year %in% dry_years_model)
-
-LTO_12a_flows <- DSMflow::flows_cfs$LTO_12a |>
-  filter(year(date) >= 1979 & year(date) <= 2000) |> 
-  pivot_longer(`Antelope Creek`:`San Joaquin River`,
-               names_to = "watershed",
-               values_to = "flow_cfs") |>
-  mutate(month = month(date),
-         year = year(date)) |> 
-  filter(!year %in% dry_years_model)
-
-combined_flows <- bind_rows(EFF_flows, LTO_12a_flows) |> 
-  arrange(date)
+         year = year(date)) 
 
 # create habitat functions ------------------------------------------------
 # these are already created in another script
@@ -82,31 +53,31 @@ update_hrl_habitat_from_SBR <- function(flows, watershed_name, hab_fn,
 fr_spawn_update <- DSMhabitat::fr_spawn$r_to_r_hrl
 
 # add together existing HFC and VA LFC for Feather
-fr_spawn_update["Feather River", , ] <- DSMhabitat::acres_to_square_meters(update_hrl_habitat_from_SBR(combined_flows, "Feather River",
+fr_spawn_update["Feather River", , ] <- DSMhabitat::acres_to_square_meters(update_hrl_habitat_from_SBR(flows, "Feather River",
                                                                                                        va_spawn_lfc, FALSE) + 
-                                                                             update_hrl_habitat_from_SBR(combined_flows, "Feather River",
+                                                                             update_hrl_habitat_from_SBR(flows, "Feather River",
                                                                                                          existing_spawn_hfc, FALSE))
-fr_spawn_update["Mokelumne River", , ] <- update_hrl_habitat_from_SBR(combined_flows, "Mokelumne River",
+fr_spawn_update["Mokelumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Mokelumne River",
                                                                       mokelumne_spw_fn, FALSE)
-fr_spawn_update["Tuolumne River", , ] <- update_hrl_habitat_from_SBR(combined_flows, "Tuolumne River",
+fr_spawn_update["Tuolumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Tuolumne River",
                                                                      tuolumne_spw_fn, FALSE)
 fr_spawn <- DSMhabitat::fr_spawn
 fr_spawn$r_to_r_hrl_eff <- fr_spawn_update
 
 # update ic rearing
 fr_juv_update <- DSMhabitat::fr_juv$r_to_r_hrl
-fr_juv_update["American River", , ] <- update_hrl_habitat_from_SBR(combined_flows, "American River",
+fr_juv_update["American River", , ] <- update_hrl_habitat_from_SBR(flows, "American River",
                                                                    american_juv_fn, TRUE)
 # feather add together existing hfc and VA lfc
-fr_juv_update["Feather River", , ] <- DSMhabitat::acres_to_square_meters(update_hrl_habitat_from_SBR(combined_flows, "Feather River",
+fr_juv_update["Feather River", , ] <- DSMhabitat::acres_to_square_meters(update_hrl_habitat_from_SBR(flows, "Feather River",
                                                                                                      va_rearing_lfc_juv, TRUE) +
-                                                                           update_hrl_habitat_from_SBR(combined_flows, "Feather River",
+                                                                           update_hrl_habitat_from_SBR(flows, "Feather River",
                                                                                                        existing_rearing_hfc_juv, TRUE))
-fr_juv_update["Mokelumne River", , ] <- update_hrl_habitat_from_SBR(combined_flows, "Mokelumne River",
+fr_juv_update["Mokelumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Mokelumne River",
                                                                     mokelumne_juv_fn, TRUE)
-fr_juv_update["Tuolumne River", , ] <- update_hrl_habitat_from_SBR(combined_flows, "Tuolumne River",
+fr_juv_update["Tuolumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Tuolumne River",
                                                                    tuolumne_juv_fn, TRUE)
-fr_juv_update["Yuba River", , ] <- update_hrl_habitat_from_SBR(combined_flows, "Yuba River",
+fr_juv_update["Yuba River", , ] <- update_hrl_habitat_from_SBR(flows, "Yuba River",
                                                                yuba_juv_fn, TRUE)
 fr_juv <- DSMhabitat::fr_juv
 fr_juv$r_to_r_hrl_eff <- fr_juv_update
@@ -114,11 +85,11 @@ fr_juv$r_to_r_hrl_eff <- fr_juv_update
 # update fp rearing
 fr_fp_update <- DSMhabitat::fr_fp$r_to_r_hrl
 # feather fp function by itself is fine, not distinguished by HFC and LFC
-fr_fp_update["Feather River", , ] <- DSMhabitat::acres_to_square_meters(update_hrl_habitat_from_SBR(combined_flows, "Feather River",
+fr_fp_update["Feather River", , ] <- DSMhabitat::acres_to_square_meters(update_hrl_habitat_from_SBR(flows, "Feather River",
                                                                                                     va_fp, TRUE))
-fr_fp_update["Tuolumne River", , ] <- update_hrl_habitat_from_SBR(combined_flows, "Tuolumne River",
+fr_fp_update["Tuolumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Tuolumne River",
                                                                   tuolumne_fp_fn, TRUE)
-fr_fp_update["Yuba River", , ] <- update_hrl_habitat_from_SBR(combined_flows, "Yuba River",
+fr_fp_update["Yuba River", , ] <- update_hrl_habitat_from_SBR(flows, "Yuba River",
                                                               yuba_fp_fn, TRUE)
 fr_fp <- DSMhabitat::fr_fp
 fr_fp$r_to_r_hrl_eff <- fr_fp_update
