@@ -16,3 +16,4 @@ source("data-raw/R2R_TMH_habitat_inputs/cache_run_of_river_tmh_data.R")
 
 # HRL habitat
 source("data-raw/R2R_HRL_habitat_inputs/cache_va_hrl_data.R")
+source("data-raw/R2R_HRL_habitat_inputs/cache_va_hrl_eff_data.R") # EFF in dry years
