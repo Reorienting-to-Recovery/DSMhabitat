@@ -64,7 +64,7 @@ fr_spawn_update["Tuolumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Tuo
 fr_spawn <- DSMhabitat::fr_spawn
 fr_spawn$r_to_r_hrl_eff <- fr_spawn_update
 
-# update ic rearing
+# update ic rearing juv
 fr_juv_update <- DSMhabitat::fr_juv$r_to_r_hrl
 fr_juv_update["American River", , ] <- update_hrl_habitat_from_SBR(flows, "American River",
                                                                    american_juv_fn, TRUE)
@@ -82,6 +82,24 @@ fr_juv_update["Yuba River", , ] <- update_hrl_habitat_from_SBR(flows, "Yuba Rive
 fr_juv <- DSMhabitat::fr_juv
 fr_juv$r_to_r_hrl_eff <- fr_juv_update
 
+# update ic rearing fry
+fr_fry_update <- DSMhabitat::fr_juv$r_to_r_hrl
+fr_fry_update["American River", , ] <- update_hrl_habitat_from_SBR(flows, "American River",
+                                                                   american_juv_fn, TRUE)
+# feather add together existing hfc and VA lfc
+fr_fry_update["Feather River", , ] <- DSMhabitat::acres_to_square_meters(update_hrl_habitat_from_SBR(flows, "Feather River",
+                                                                                                     va_rearing_lfc_fry, TRUE) +
+                                                                           update_hrl_habitat_from_SBR(flows, "Feather River",
+                                                                                                       existing_rearing_hfc_fry, TRUE))
+fr_fry_update["Mokelumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Mokelumne River",
+                                                                    mokelumne_juv_fn, TRUE)
+fr_fry_update["Tuolumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Tuolumne River",
+                                                                   tuolumne_juv_fn, TRUE)
+fr_fry_update["Yuba River", , ] <- update_hrl_habitat_from_SBR(flows, "Yuba River",
+                                                               yuba_juv_fn, TRUE)
+fr_fry <- DSMhabitat::fr_fry
+fr_fry$r_to_r_hrl_eff <- fr_fry_update
+
 # update fp rearing
 fr_fp_update <- DSMhabitat::fr_fp$r_to_r_hrl
 # feather fp function by itself is fine, not distinguished by HFC and LFC
@@ -97,6 +115,7 @@ fr_fp$r_to_r_hrl_eff <- fr_fp_update
 # now update objects
 usethis::use_data(fr_spawn, overwrite = TRUE)
 usethis::use_data(fr_juv, overwrite = TRUE)
+usethis::use_data(fr_fry, overwrite = TRUE)
 usethis::use_data(fr_fp, overwrite = TRUE)
 
 

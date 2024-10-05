@@ -38,6 +38,7 @@ spawn %>%
 r2r_baseline <- DSMhabitat::fr_fry$r_to_r_baseline %>% DSMhabitat::square_meters_to_acres()
 biop <- DSMhabitat::fr_fry$biop_itp_2018_2019 %>% DSMhabitat::square_meters_to_acres()
 hrl <- DSMhabitat::fr_fry$r_to_r_hrl %>% DSMhabitat::square_meters_to_acres()
+hrl_eff <- DSMhabitat::fr_fry$r_to_r_hrl_eff |> DSMhabitat::square_meters_to_acres()
 max_hab <- DSMhabitat::fr_fry$r_to_r_tmh %>% DSMhabitat::square_meters_to_acres()
 eff_max_hab <- DSMhabitat::fr_fry$r_to_r_tmh_eff %>% DSMhabitat::square_meters_to_acres()
 eff_baseline <- DSMhabitat::fr_fry$r_to_r_eff_baseline %>% DSMhabitat::square_meters_to_acres()
@@ -52,6 +53,7 @@ fry_rear <- expand_grid(
     biop = as.vector(biop),
     r2r_baseline = as.vector(r2r_baseline),
     hrl = as.vector(hrl), 
+    hrl_eff = as.vector(hrl_eff),
     max_hab = as.vector(max_hab),
     eff_max_hab = as.vector(eff_max_hab),
     eff_baseline = as.vector(eff_baseline))
