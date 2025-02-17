@@ -159,3 +159,284 @@ DSMflow::flows_cfs$LTO_12a |>
   theme(legend.position = "bottom") +
   labs(x = "Date", y = "Flow (cfs)")
 
+
+# HRL ---------------------------------------------------------------------
+
+### Results
+
+# floodplain
+va_fp_pre <- DSMhabitat::fr_fp$r_to_r_baseline["American River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "American River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm") |> 
+  bind_rows(DSMhabitat::fr_fp$r_to_r_baseline["Feather River",,] |> 
+              as_tibble() |> 
+              mutate(month = month.abb, 
+                     stream = "Feather River") |> 
+              pivot_longer(`1980`:`2000`,
+                           names_to = "year",
+                           values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_fp$r_to_r_baseline["Mokelumne River",,] |> 
+              as_tibble() |> 
+              mutate(month = month.abb,
+                     stream = "Mokelumne River") |> 
+              pivot_longer(`1980`:`2000`,
+                           names_to = "year",
+                           values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_fp$r_to_r_baseline["Yuba River",,] |> 
+              as_tibble() |> 
+              mutate(month = month.abb,
+                     stream = "Yuba River") |> 
+              pivot_longer(`1980`:`2000`,
+                           names_to = "year",
+                           values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_fp$r_to_r_baseline["Tuolumne River",,] |> 
+              as_tibble() |> 
+              mutate(month = month.abb,
+                     stream = "Tuolumne River") |> 
+              pivot_longer(`1980`:`2000`,
+                           names_to = "year",
+                           values_to = "sqm")) |> 
+  mutate(acres = DSMhabitat::square_meters_to_acres(sqm),
+         scenario = "r_to_r_baseline")
+
+va_fp_post <- DSMhabitat::fr_fp$r_to_r_hrl["American River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "American River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm") |> 
+  bind_rows(DSMhabitat::fr_fp$r_to_r_hrl["Feather River",,] |> 
+              as_tibble() |> 
+              mutate(month = month.abb,
+                     stream = "Feather River") |> 
+              pivot_longer(`1980`:`2000`,
+                           names_to = "year",
+                           values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_fp$r_to_r_hrl["Mokelumne River",,] |> 
+              as_tibble() |> 
+              mutate(month = month.abb,
+                     stream = "Mokelumne River") |> 
+              pivot_longer(`1980`:`2000`,
+                           names_to = "year",
+                           values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_fp$r_to_r_hrl["Yuba River",,] |> 
+              as_tibble() |> 
+              mutate(month = month.abb,
+                     stream = "Yuba River") |> 
+              pivot_longer(`1980`:`2000`,
+                           names_to = "year",
+                           values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_fp$r_to_r_hrl["Tuolumne River",,] |> 
+              as_tibble() |> 
+              mutate(month = month.abb,
+                     stream = "Tuolumne River") |> 
+              pivot_longer(`1980`:`2000`,
+                           names_to = "year",
+                           values_to = "sqm")) |> 
+  mutate(acres = DSMhabitat::square_meters_to_acres(sqm),
+         scenario = "LTO_12a_HRL")
+
+# plot
+va_fp_pre |> 
+  bind_rows(va_fp_post) |>
+  #filter(month %in% c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul")) |> 
+  mutate(date = as.Date(paste0(year, "-", month, "-01"), format = "%Y-%b-%d")) |> 
+  ggplot(aes(x = date, y = acres, color = scenario)) + 
+  geom_line() +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  labs(y = "Floodplain habitat (acres)", 
+       x = "Model date",
+       title = "Floodplain habitat") +
+  scale_color_brewer(palette = "Dark2") +
+  facet_wrap(~stream, scales = "free_y")
+
+
+# spawning
+va_spawn_pre <- DSMhabitat::fr_spawn$r_to_r_baseline["American River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "American River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm") |> 
+  bind_rows(DSMhabitat::fr_spawn$r_to_r_baseline["Feather River",,] |> 
+              as_tibble() |> 
+              mutate(month = month.abb, 
+                     stream = "Feather River") |> 
+              pivot_longer(`1980`:`2000`,
+                           names_to = "year",
+                           values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_spawn$r_to_r_baseline["Mokelumne River",,] |> 
+              as_tibble() |> 
+              mutate(month = month.abb,
+                     stream = "Mokelumne River") |> 
+              pivot_longer(`1980`:`2000`,
+                           names_to = "year",
+                           values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_spawn$r_to_r_baseline["Yuba River",,] |> 
+              as_tibble() |> 
+              mutate(month = month.abb,
+                     stream = "Yuba River") |> 
+              pivot_longer(`1980`:`2000`,
+                           names_to = "year",
+                           values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_spawn$r_to_r_baseline["Tuolumne River",,] |> 
+              as_tibble() |> 
+              mutate(month = month.abb,
+                     stream = "Tuolumne River") |> 
+              pivot_longer(`1980`:`2000`,
+                           names_to = "year",
+                           values_to = "sqm")) |> 
+  mutate(acres = DSMhabitat::square_meters_to_acres(sqm),
+         scenario = "r_to_r_baseline")
+
+va_spawn_post <- DSMhabitat::fr_spawn$r_to_r_hrl["American River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "American River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm") |> 
+  bind_rows(DSMhabitat::fr_spawn$r_to_r_hrl["Feather River",,] |> 
+              as_tibble() |> 
+              mutate(month = month.abb,
+                     stream = "Feather River") |> 
+              pivot_longer(`1980`:`2000`,
+                           names_to = "year",
+                           values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_spawn$r_to_r_hrl["Mokelumne River",,] |> 
+              as_tibble() |> 
+              mutate(month = month.abb,
+                     stream = "Mokelumne River") |> 
+              pivot_longer(`1980`:`2000`,
+                           names_to = "year",
+                           values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_spawn$r_to_r_hrl["Yuba River",,] |> 
+              as_tibble() |> 
+              mutate(month = month.abb,
+                     stream = "Yuba River") |> 
+              pivot_longer(`1980`:`2000`,
+                           names_to = "year",
+                           values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_spawn$r_to_r_hrl["Tuolumne River",,] |> 
+              as_tibble() |> 
+              mutate(month = month.abb,
+                     stream = "Tuolumne River") |> 
+              pivot_longer(`1980`:`2000`,
+                           names_to = "year",
+                           values_to = "sqm")) |> 
+  mutate(acres = DSMhabitat::square_meters_to_acres(sqm),
+         scenario = "LTO_12a_HRL")
+
+# plot
+va_spawn_pre |> 
+  bind_rows(va_spawn_post) |> 
+  mutate(date = as.Date(paste0(year, "-", month, "-01"), format = "%Y-%b-%d")) |> 
+  ggplot(aes(x = date, y = acres, color = scenario)) + 
+  geom_line() +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  labs(y = "Spawning habitat (acres)", 
+       x = "Model date",
+       title = "Spawning habitat") +
+  scale_color_brewer(palette = "Dark2") +
+  facet_wrap(~stream, scales = "free_y")
+
+# inchannel
+va_rear_pre <- DSMhabitat::fr_juv$r_to_r_baseline["American River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "American River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm") |> 
+  bind_rows(DSMhabitat::fr_juv$r_to_r_baseline["Feather River",,] |> 
+              as_tibble() |> 
+              mutate(month = month.abb, 
+                     stream = "Feather River") |> 
+              pivot_longer(`1980`:`2000`,
+                           names_to = "year",
+                           values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_juv$r_to_r_baseline["Mokelumne River",,] |> 
+              as_tibble() |> 
+              mutate(month = month.abb,
+                     stream = "Mokelumne River") |> 
+              pivot_longer(`1980`:`2000`,
+                           names_to = "year",
+                           values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_juv$r_to_r_baseline["Yuba River",,] |> 
+              as_tibble() |> 
+              mutate(month = month.abb,
+                     stream = "Yuba River") |> 
+              pivot_longer(`1980`:`2000`,
+                           names_to = "year",
+                           values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_juv$r_to_r_baseline["Tuolumne River",,] |> 
+              as_tibble() |> 
+              mutate(month = month.abb,
+                     stream = "Tuolumne River") |> 
+              pivot_longer(`1980`:`2000`,
+                           names_to = "year",
+                           values_to = "sqm")) |> 
+  mutate(acres = DSMhabitat::square_meters_to_acres(sqm),
+         scenario = "r_to_r_baseline")
+
+va_rear_post <- DSMhabitat::fr_juv$r_to_r_hrl["American River",,] |> 
+  as_tibble() |> 
+  mutate(month = month.abb,
+         stream = "American River") |> 
+  pivot_longer(`1980`:`2000`,
+               names_to = "year",
+               values_to = "sqm") |> 
+  bind_rows(DSMhabitat::fr_juv$r_to_r_hrl["Feather River",,] |> 
+              as_tibble() |> 
+              mutate(month = month.abb,
+                     stream = "Feather River") |> 
+              pivot_longer(`1980`:`2000`,
+                           names_to = "year",
+                           values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_juv$r_to_r_hrl["Mokelumne River",,] |> 
+              as_tibble() |> 
+              mutate(month = month.abb,
+                     stream = "Mokelumne River") |> 
+              pivot_longer(`1980`:`2000`,
+                           names_to = "year",
+                           values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_juv$r_to_r_hrl["Yuba River",,] |> 
+              as_tibble() |> 
+              mutate(month = month.abb,
+                     stream = "Yuba River") |> 
+              pivot_longer(`1980`:`2000`,
+                           names_to = "year",
+                           values_to = "sqm")) |> 
+  bind_rows(DSMhabitat::fr_juv$r_to_r_hrl["Tuolumne River",,] |> 
+              as_tibble() |> 
+              mutate(month = month.abb,
+                     stream = "Tuolumne River") |> 
+              pivot_longer(`1980`:`2000`,
+                           names_to = "year",
+                           values_to = "sqm")) |> 
+  mutate(acres = DSMhabitat::square_meters_to_acres(sqm),
+         scenario = "LTO_12a_HRL")
+
+# plot
+va_rear_pre |> 
+  bind_rows(va_rear_post) |> 
+  mutate(date = as.Date(paste0(year, "-", month, "-01"), format = "%Y-%b-%d")) |> 
+  ggplot(aes(x = date, y = acres, color = scenario)) + 
+  geom_line() +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  labs(y = "Rearing habitat (acres)", 
+       x = "Model date",
+       title = "Rearing habitat") +
+  scale_color_brewer(palette = "Dark2") +
+  facet_wrap(~stream, scales = "free_y")
+
+
