@@ -294,11 +294,18 @@ dimnames(fr_spawn_lto_12a) <- list(watersheds, month.abb, 1979:2000)
 fr_spawn_lto_12a[which(is.na(fr_spawn_lto_12a))] <- 0
 
 # list together both fr spawning versions
-fr_spawn <- modifyList(DSMhabitat::fr_spawn, list(biop_2008_2009 = fr_spawn_2008_2009,
-                                              biop_itp_2018_2019 = fr_spawn_2018_2019,
-                                              run_of_river = fr_spawn_run_of_river,
-                                              eff = fr_spawn_eff,
-                                              lto_12a = fr_spawn_lto_12a))
+
+fr_spawn <- list(biop_2008_2009 = fr_spawn_2008_2009,
+                 biop_itp_2018_2019 = fr_spawn_2018_2019,
+                 run_of_river = fr_spawn_run_of_river,
+                 eff = fr_spawn_eff,
+                 lto_12a = fr_spawn_lto_12a)
+# because this is the first script run in update_data.R, we don't need it to be a modify List
+# fr_spawn <- modifyList(DSMhabitat::fr_spawn, list(biop_2008_2009 = fr_spawn_2008_2009,
+#                                               biop_itp_2018_2019 = fr_spawn_2018_2019,
+#                                               run_of_river = fr_spawn_run_of_river,
+#                                               eff = fr_spawn_eff,
+#                                               lto_12a = fr_spawn_lto_12a))
 
 usethis::use_data(fr_spawn, overwrite = TRUE)
 
@@ -328,11 +335,17 @@ dimnames(st_spawn_lto_12a) <- list(watersheds, month.abb, 1979:2000)
 st_spawn_lto_12a[which(is.na(st_spawn_lto_12a))] <- 0
 
 # list together both steelhead spawning versions
-st_spawn <- modifyList(DSMhabitat::st_spawn, list(biop_2008_2009 = st_spawn_2008_2009,
-                                              biop_itp_2018_2019 = st_spawn_2018_2019,
-                                              run_of_river = st_spawn_run_of_river,
-                                              eff = st_spawn_eff,
-                                              lto_12a = st_spawn_lto_12a))
+st_spawn <- list(biop_2008_2009 = st_spawn_2008_2009,
+                 biop_itp_2018_2019 = st_spawn_2018_2019,
+                 run_of_river = st_spawn_run_of_river,
+                 eff = st_spawn_eff,
+                 lto_12a = st_spawn_lto_12a)
+# because this is the first script run in update_data.R, we don't need it to be a modify List
+# st_spawn <- modifyList(DSMhabitat::st_spawn, list(biop_2008_2009 = st_spawn_2008_2009,
+#                                               biop_itp_2018_2019 = st_spawn_2018_2019,
+#                                               run_of_river = st_spawn_run_of_river,
+#                                               eff = st_spawn_eff,
+#                                               lto_12a = st_spawn_lto_12a))
 
 usethis::use_data(st_spawn, overwrite = TRUE)
 
@@ -387,11 +400,18 @@ sr_spawn_lto_12a["Cosumnes River", , ] <- fr_spawn$lto_12a["Cosumnes River", , ]
 sr_spawn_lto_12a["Merced River", , ] <- fr_spawn$lto_12a["Merced River", , ] 
 
 # Combine together 
-sr_spawn <- modifyList(DSMhabitat::sr_spawn, list(biop_2008_2009 = sr_spawn_2008_2009,
-                                              biop_itp_2018_2019 = sr_spawn_2018_2019,
-                                              run_of_river = sr_spawn_run_of_river,
-                                              sac_eff = sr_spawn_eff,
-                                              lto_12a = sr_spawn_lto_12a))
+
+sr_spawn <- list(biop_2008_2009 = sr_spawn_2008_2009,
+                 biop_itp_2018_2019 = sr_spawn_2018_2019,
+                 run_of_river = sr_spawn_run_of_river,
+                 sac_eff = sr_spawn_eff,
+                 lto_12a = sr_spawn_lto_12a)
+# because this is the first script run in update_data.R, we don't need it to be a modify List
+# sr_spawn <- modifyList(DSMhabitat::sr_spawn, list(biop_2008_2009 = sr_spawn_2008_2009,
+#                                               biop_itp_2018_2019 = sr_spawn_2018_2019,
+#                                               run_of_river = sr_spawn_run_of_river,
+#                                               sac_eff = sr_spawn_eff,
+#                                               lto_12a = sr_spawn_lto_12a))
 
 usethis::use_data(sr_spawn, overwrite = TRUE)
 
@@ -429,11 +449,17 @@ wr_spawn_eff <- generate_wr_spawn("eff")
 wr_spawn_lto_12a <- generate_wr_spawn("LTO_12a")
 # combine together
 
-wr_spawn <- modifyList(DSMhabitat::wr_spawn, list(biop_2008_2009 = wr_spawn_2008_2009,
-                                              biop_itp_2018_2019 = wr_spawn_2018_2019,
-                                              run_of_river = wr_spawn_run_of_river,
-                                              eff = wr_spawn_eff,
-                                              lto_12a = wr_spawn_lto_12a))
+wr_spawn <- list(biop_2008_2009 = wr_spawn_2008_2009,
+                 biop_itp_2018_2019 = wr_spawn_2018_2019,
+                 run_of_river = wr_spawn_run_of_river,
+                 eff = wr_spawn_eff,
+                 lto_12a = wr_spawn_lto_12a)
+# because this is the first script run in update_data.R, we don't need it to be a modify List
+# wr_spawn <- modifyList(DSMhabitat::wr_spawn, list(biop_2008_2009 = wr_spawn_2008_2009,
+#                                               biop_itp_2018_2019 = wr_spawn_2018_2019,
+#                                               run_of_river = wr_spawn_run_of_river,
+#                                               eff = wr_spawn_eff,
+#                                               lto_12a = wr_spawn_lto_12a))
 
 usethis::use_data(wr_spawn, overwrite = TRUE)
 
@@ -486,11 +512,17 @@ lfr_spawn_eff <- generate_lfr_spawn("eff")
 lfr_spawn_lto_12a <- generate_lfr_spawn("LTO_12a")
 
 # combine together
-lfr_spawn <- modifyList(DSMhabitat::lfr_spawn, list(biop_2008_2009 = lfr_spawn_2008_2009,
-                                                biop_itp_2018_2019 = lfr_spawn_2018_2019,
-                                                run_of_river = lfr_spawn_run_of_river,
-                                                eff = lfr_spawn_eff,
-                                                lto_12a = lfr_spawn_lto_12a))
+lfr_spawn <- list(biop_2008_2009 = lfr_spawn_2008_2009,
+                  biop_itp_2018_2019 = lfr_spawn_2018_2019,
+                  run_of_river = lfr_spawn_run_of_river,
+                  eff = lfr_spawn_eff,
+                  lto_12a = lfr_spawn_lto_12a)
+# because this is the first script run in update_data.R, we don't need it to be a modify List
+# lfr_spawn <- modifyList(DSMhabitat::lfr_spawn, list(biop_2008_2009 = lfr_spawn_2008_2009,
+#                                                 biop_itp_2018_2019 = lfr_spawn_2018_2019,
+#                                                 run_of_river = lfr_spawn_run_of_river,
+#                                                 eff = lfr_spawn_eff,
+#                                                 lto_12a = lfr_spawn_lto_12a))
 
 usethis::use_data(lfr_spawn, overwrite = TRUE)
 
@@ -530,11 +562,18 @@ dimnames(fr_fry_lto_12a) <- list(watersheds, month.abb, 1980:2000)
 fr_fry_lto_12a[which(is.na(fr_fry_lto_12a))] <- 0
 
 # combine together
-fr_fry <- modifyList(DSMhabitat::fr_fry, list(biop_2008_2009 = fr_fry_2008_2009,
-                                          biop_itp_2018_2019 = fr_fry_2018_2019,
-                                          run_of_river = fr_fry_run_of_river, 
-                                          eff = fr_fry_eff,
-                                          lto_12a = fr_fry_lto_12a))
+
+fr_fry <- list(biop_2008_2009 = fr_fry_2008_2009,
+               biop_itp_2018_2019 = fr_fry_2018_2019,
+               run_of_river = fr_fry_run_of_river, 
+               eff = fr_fry_eff,
+               lto_12a = fr_fry_lto_12a)
+# because this is the first script run in update_data.R, we don't need it to be a modify List
+# fr_fry <- modifyList(DSMhabitat::fr_fry, list(biop_2008_2009 = fr_fry_2008_2009,
+#                                           biop_itp_2018_2019 = fr_fry_2018_2019,
+#                                           run_of_river = fr_fry_run_of_river, 
+#                                           eff = fr_fry_eff,
+#                                           lto_12a = fr_fry_lto_12a))
 
 usethis::use_data(fr_fry, overwrite = TRUE)
 
@@ -566,11 +605,17 @@ st_fry_lto_12a[which(is.na(st_fry_lto_12a))] <- fr_fry_lto_12a[which(is.na(st_fr
 
 
 # combine together
-st_fry <- modifyList(DSMhabitat::st_fry, list(biop_2008_2009 = st_fry_2008_2009,
-                                          biop_itp_2018_2019 = st_fry_2018_2019,
-                                          run_of_river = st_fry_run_of_river,
-                                          eff = st_fry_eff,
-                                          lto_12a = st_fry_lto_12a))
+st_fry <- list(biop_2008_2009 = st_fry_2008_2009,
+               biop_itp_2018_2019 = st_fry_2018_2019,
+               run_of_river = st_fry_run_of_river,
+               eff = st_fry_eff,
+               lto_12a = st_fry_lto_12a)
+# because this is the first script run in update_data.R, we don't need it to be a modify List
+# st_fry <- modifyList(DSMhabitat::st_fry, list(biop_2008_2009 = st_fry_2008_2009,
+#                                           biop_itp_2018_2019 = st_fry_2018_2019,
+#                                           run_of_river = st_fry_run_of_river,
+#                                           eff = st_fry_eff,
+#                                           lto_12a = st_fry_lto_12a))
 
 usethis::use_data(st_fry, overwrite = TRUE)
 
@@ -601,11 +646,18 @@ dimnames(sr_fry_lto_12a) <- list(watersheds, month.abb, 1980:2000)
 sr_fry_lto_12a[which(is.na(sr_fry_lto_12a))] <- fr_fry_lto_12a[which(is.na(sr_fry_lto_12a))]
 
 # combine together
-sr_fry <- modifyList(DSMhabitat::sr_fry, list(biop_2008_2009 = sr_fry_2008_2009,
-                                          biop_itp_2018_2019 = sr_fry_2018_2019,
-                                          run_of_river = sr_fry_run_of_river,
-                                          eff = sr_fry_eff,
-                                          lto_12a = sr_fry_lto_12a))
+
+sr_fry <- list(biop_2008_2009 = sr_fry_2008_2009,
+               biop_itp_2018_2019 = sr_fry_2018_2019,
+               run_of_river = sr_fry_run_of_river,
+               eff = sr_fry_eff,
+               lto_12a = sr_fry_lto_12a)
+# because this is the first script run in update_data.R, we don't need it to be a modify List
+# sr_fry <- modifyList(DSMhabitat::sr_fry, list(biop_2008_2009 = sr_fry_2008_2009,
+#                                           biop_itp_2018_2019 = sr_fry_2018_2019,
+#                                           run_of_river = sr_fry_run_of_river,
+#                                           eff = sr_fry_eff,
+#                                           lto_12a = sr_fry_lto_12a))
 
 usethis::use_data(sr_fry, overwrite = TRUE)
 
@@ -690,11 +742,17 @@ wr_fry_lto_12a <- generate_wr_fry_or_juv(calsim_version = "LTO_12a",
                                      lifestage = "fry")
 
 # combine together
-wr_fry <- modifyList(DSMhabitat::wr_fry, list(biop_2008_2009 = wr_fry_2008_2009,
-                                          biop_itp_2018_2019 = wr_fry_2018_2019,
-                                          run_of_river = wr_fry_run_of_river,
-                                          eff = wr_fry_eff,
-                                          lto_12a = wr_fry_lto_12a))
+wr_fry <- list(biop_2008_2009 = wr_fry_2008_2009,
+               biop_itp_2018_2019 = wr_fry_2018_2019,
+               run_of_river = wr_fry_run_of_river,
+               eff = wr_fry_eff,
+               lto_12a = wr_fry_lto_12a)
+# because this is the first script run in update_data.R, we don't need it to be a modify List
+# wr_fry <- modifyList(DSMhabitat::wr_fry, list(biop_2008_2009 = wr_fry_2008_2009,
+#                                           biop_itp_2018_2019 = wr_fry_2018_2019,
+#                                           run_of_river = wr_fry_run_of_river,
+#                                           eff = wr_fry_eff,
+#                                           lto_12a = wr_fry_lto_12a))
 
 usethis::use_data(wr_fry, overwrite = TRUE)
 
@@ -777,11 +835,17 @@ lfr_fry_lto_12a <- generate_lfr_juv_or_fry(calsim_version = "LTO_12a",
                                        lifestage = "fry")
 
 # combine together
-lfr_fry <- modifyList(DSMhabitat::lfr_fry, list(biop_2008_2009 = lfr_fry_2008_2009,
-                                            biop_itp_2018_2019 = lfr_fry_2018_2019,
-                                            run_of_river = lfr_fry_run_of_river,
-                                            eff = lfr_fry_eff,
-                                            lto_12a = lfr_fry_lto_12a))
+lfr_fry <- list(biop_2008_2009 = lfr_fry_2008_2009,
+                biop_itp_2018_2019 = lfr_fry_2018_2019,
+                run_of_river = lfr_fry_run_of_river,
+                eff = lfr_fry_eff,
+                lto_12a = lfr_fry_lto_12a)
+# because this is the first script run in update_data.R, we don't need it to be a modify List
+# lfr_fry <- modifyList(DSMhabitat::lfr_fry, list(biop_2008_2009 = lfr_fry_2008_2009,
+#                                             biop_itp_2018_2019 = lfr_fry_2018_2019,
+#                                             run_of_river = lfr_fry_run_of_river,
+#                                             eff = lfr_fry_eff,
+#                                             lto_12a = lfr_fry_lto_12a))
 
 usethis::use_data(lfr_fry, overwrite = TRUE)
 
@@ -814,11 +878,17 @@ dimnames(fr_juv_lto_12a) <- list(watersheds, month.abb, 1980:2000)
 fr_juv_lto_12a[which(is.na(fr_juv_lto_12a))] <- 0
 
 # combine together
-fr_juv <- modifyList(DSMhabitat::fr_juv, list(biop_2008_2009 = fr_juv_2008_2009,
-                                          biop_itp_2018_2019 = fr_juv_2018_2019,
-                                          run_of_river = fr_juv_run_of_river,
-                                          eff = fr_juv_eff,
-                                          lto_12a = fr_juv_lto_12a))
+fr_juv <- list(biop_2008_2009 = fr_juv_2008_2009,
+               biop_itp_2018_2019 = fr_juv_2018_2019,
+               run_of_river = fr_juv_run_of_river,
+               eff = fr_juv_eff,
+               lto_12a = fr_juv_lto_12a)
+# because this is the first script run in update_data.R, we don't need it to be a modify List
+# fr_juv <- modifyList(DSMhabitat::fr_juv, list(biop_2008_2009 = fr_juv_2008_2009,
+#                                           biop_itp_2018_2019 = fr_juv_2018_2019,
+#                                           run_of_river = fr_juv_run_of_river,
+#                                           eff = fr_juv_eff,
+#                                           lto_12a = fr_juv_lto_12a))
 
 usethis::use_data(fr_juv, overwrite = TRUE)
 
@@ -849,11 +919,17 @@ dimnames(st_juv_lto_12a) <- list(watersheds, month.abb, 1980:2000)
 st_juv_lto_12a[which(is.na(st_juv_lto_12a))] <- fr_juv_lto_12a[which(is.na(st_juv_lto_12a))]
 
 # combine together
-st_juv <- modifyList(DSMhabitat::st_juv, list(biop_2008_2009 = st_juv_2008_2009,
-                                          biop_itp_2018_2019 = st_juv_2018_2019,
-                                          run_of_river = st_juv_run_of_river,
-                                          eff = st_juv_eff,
-                                          lto_12a = st_juv_lto_12a))
+st_juv <- list(biop_2008_2009 = st_juv_2008_2009,
+               biop_itp_2018_2019 = st_juv_2018_2019,
+               run_of_river = st_juv_run_of_river,
+               eff = st_juv_eff,
+               lto_12a = st_juv_lto_12a)
+# because this is the first script run in update_data.R, we don't need it to be a modify List
+# st_juv <- modifyList(DSMhabitat::st_juv, list(biop_2008_2009 = st_juv_2008_2009,
+#                                           biop_itp_2018_2019 = st_juv_2018_2019,
+#                                           run_of_river = st_juv_run_of_river,
+#                                           eff = st_juv_eff,
+#                                           lto_12a = st_juv_lto_12a))
 
 usethis::use_data(st_juv, overwrite = TRUE)
 
@@ -884,11 +960,17 @@ dimnames(sr_juv_lto_12a) <- list(watersheds, month.abb, 1980:2000)
 sr_juv_lto_12a[which(is.na(sr_juv_lto_12a))] <- fr_juv_lto_12a[which(is.na(sr_juv_lto_12a))]
 
 # combine together
-sr_juv <- modifyList(DSMhabitat::sr_juv, list(biop_2008_2009 = sr_juv_2008_2009,
-                                          biop_itp_2018_2019 = sr_juv_2018_2019,
-                                          run_of_river = sr_juv_run_of_river,
-                                          eff = sr_juv_eff,
-                                          lto_12a = sr_juv_lto_12a))
+sr_juv <- list(biop_2008_2009 = sr_juv_2008_2009,
+               biop_itp_2018_2019 = sr_juv_2018_2019,
+               run_of_river = sr_juv_run_of_river,
+               eff = sr_juv_eff,
+               lto_12a = sr_juv_lto_12a)
+# because this is the first script run in update_data.R, we don't need it to be a modify List
+# sr_juv <- modifyList(DSMhabitat::sr_juv, list(biop_2008_2009 = sr_juv_2008_2009,
+#                                           biop_itp_2018_2019 = sr_juv_2018_2019,
+#                                           run_of_river = sr_juv_run_of_river,
+#                                           eff = sr_juv_eff,
+#                                           lto_12a = sr_juv_lto_12a))
 
 usethis::use_data(sr_juv, overwrite = TRUE)
 
@@ -908,11 +990,17 @@ wr_juv_lto_12a <- generate_wr_fry_or_juv(calsim_version = "LTO_12a",
                                          lifestage = "juv")
 
 # combine together
-wr_juv <- modifyList(DSMhabitat::wr_juv, list(biop_2008_2009 = wr_juv_2008_2009,
-                                         biop_itp_2018_2019 = wr_juv_2018_2019,
-                                         run_of_river = wr_juv_run_of_river,
-                                         eff = wr_juv_eff,
-                                         lto_12a = wr_juv_lto_12a)) 
+wr_juv <- list(biop_2008_2009 = wr_juv_2008_2009,
+               biop_itp_2018_2019 = wr_juv_2018_2019,
+               run_of_river = wr_juv_run_of_river,
+               eff = wr_juv_eff,
+               lto_12a = wr_juv_lto_12a)
+# because this is the first script run in update_data.R, we don't need it to be a modify List
+# wr_juv <- modifyList(DSMhabitat::wr_juv, list(biop_2008_2009 = wr_juv_2008_2009,
+#                                          biop_itp_2018_2019 = wr_juv_2018_2019,
+#                                          run_of_river = wr_juv_run_of_river,
+#                                          eff = wr_juv_eff,
+#                                          lto_12a = wr_juv_lto_12a)) 
 
 usethis::use_data(wr_juv, overwrite = TRUE)
 
@@ -929,11 +1017,17 @@ lfr_juv_eff <- generate_lfr_juv_or_fry(calsim_version = "eff",
 lfr_juv_lto_12a <- generate_lfr_juv_or_fry(calsim_version = "LTO_12a", 
                                        lifestage = "juv")
 # combine together
-lfr_juv <- modifyList(DSMhabitat::lfr_juv, list(biop_2008_2009 = lfr_juv_2008_2009,
-                                            biop_itp_2018_2019 = lfr_juv_2018_2019,
-                                            run_of_river = lfr_juv_run_of_river,
-                                            eff = lfr_juv_eff, 
-                                            lto_12a = lfr_juv_lto_12a))
+lfr_juv <- list(biop_2008_2009 = lfr_juv_2008_2009,
+                biop_itp_2018_2019 = lfr_juv_2018_2019,
+                run_of_river = lfr_juv_run_of_river,
+                eff = lfr_juv_eff, 
+                lto_12a = lfr_juv_lto_12a)
+# because this is the first script run in update_data.R, we don't need it to be a modify List
+# lfr_juv <- modifyList(DSMhabitat::lfr_juv, list(biop_2008_2009 = lfr_juv_2008_2009,
+#                                             biop_itp_2018_2019 = lfr_juv_2018_2019,
+#                                             run_of_river = lfr_juv_run_of_river,
+#                                             eff = lfr_juv_eff, 
+#                                             lto_12a = lfr_juv_lto_12a))
 
 usethis::use_data(lfr_juv, overwrite = TRUE)
 
@@ -971,11 +1065,17 @@ fr_fp_lto_12a <- get_floodplain_hab_all(watersheds_fp, 'fr', 'LTO_12a', 1980:200
 dimnames(fr_fp_lto_12a) <- list(watersheds, month.abb, 1980:2000)
 fr_fp_lto_12a[which(is.na(fr_fp_lto_12a))] <- 0
 
-fr_fp <- modifyList(DSMhabitat::fr_fp, list(biop_2008_2009 = fr_fp_2008_2009,
-                                            biop_itp_2018_2019 = fr_fp_2018_2019,
-                                            run_of_river = fr_fp_run_of_river,
-                                            eff = fr_fp_eff,
-                                            lto_12a = fr_fp_lto_12a))
+fr_fp <- list(biop_2008_2009 = fr_fp_2008_2009,
+              biop_itp_2018_2019 = fr_fp_2018_2019,
+              run_of_river = fr_fp_run_of_river,
+              eff = fr_fp_eff,
+              lto_12a = fr_fp_lto_12a)
+# because this is the first script run in update_data.R, we don't need it to be a modify List
+# fr_fp <- modifyList(DSMhabitat::fr_fp, list(biop_2008_2009 = fr_fp_2008_2009,
+#                                             biop_itp_2018_2019 = fr_fp_2018_2019,
+#                                             run_of_river = fr_fp_run_of_river,
+#                                             eff = fr_fp_eff,
+#                                             lto_12a = fr_fp_lto_12a))
 
 usethis::use_data(fr_fp, overwrite = TRUE)
 
@@ -1005,12 +1105,17 @@ st_fp_lto_12a <- get_floodplain_hab_all(watersheds_fp, 'st', 'LTO_12a', 1980:200
 dimnames(st_fp_lto_12a) <- list(watersheds, month.abb, 1980:2000)
 st_fp_lto_12a[which(is.na(st_fp_lto_12a))] <- fr_fp_lto_12a[which(is.na(st_fp_lto_12a))]
 
-
-st_fp <- modifyList(DSMhabitat::st_fp, list(biop_2008_2009 = st_fp_2008_2009,
-                                            biop_itp_2018_2019 = st_fp_2018_2019,
-                                            run_of_river = st_fp_run_of_river,
-                                            eff = st_fp_eff,
-                                            lto_12a = st_fp_lto_12a))
+st_fp <- list(biop_2008_2009 = st_fp_2008_2009,
+              biop_itp_2018_2019 = st_fp_2018_2019,
+              run_of_river = st_fp_run_of_river,
+              eff = st_fp_eff,
+              lto_12a = st_fp_lto_12a)
+# because this is the first script run in update_data.R, we don't need it to be a modify List
+# st_fp <- modifyList(DSMhabitat::st_fp, list(biop_2008_2009 = st_fp_2008_2009,
+#                                             biop_itp_2018_2019 = st_fp_2018_2019,
+#                                             run_of_river = st_fp_run_of_river,
+#                                             eff = st_fp_eff,
+#                                             lto_12a = st_fp_lto_12a))
 
 usethis::use_data(st_fp, overwrite = TRUE)
 
@@ -1040,11 +1145,17 @@ sr_fp_lto_12a <- get_floodplain_hab_all(watersheds_fp, 'sr', 'LTO_12a', years = 
 dimnames(sr_fp_lto_12a) <- list(watersheds, month.abb, 1980:2000)
 sr_fp_lto_12a[which(is.na(sr_fp_lto_12a))] <- fr_fp_lto_12a[which(is.na(sr_fp_lto_12a))]
 
-sr_fp <- modifyList(DSMhabitat::sr_fp, list(biop_2008_2009 = sr_fp_2008_2009,
-                                            biop_itp_2018_2019 = sr_fp_2018_2019,
-                                            run_of_river = sr_fp_run_of_river,
-                                            eff = sr_fp_eff,
-                                            lto_12a = sr_fp_lto_12a))
+sr_fp <- list(biop_2008_2009 = sr_fp_2008_2009,
+              biop_itp_2018_2019 = sr_fp_2018_2019,
+              run_of_river = sr_fp_run_of_river,
+              eff = sr_fp_eff,
+              lto_12a = sr_fp_lto_12a)
+# because this is the first script run in update_data.R, we don't need it to be a modify List
+# sr_fp <- modifyList(DSMhabitat::sr_fp, list(biop_2008_2009 = sr_fp_2008_2009,
+#                                             biop_itp_2018_2019 = sr_fp_2018_2019,
+#                                             run_of_river = sr_fp_run_of_river,
+#                                             eff = sr_fp_eff,
+#                                             lto_12a = sr_fp_lto_12a))
 
 usethis::use_data(sr_fp, overwrite = TRUE)
 
@@ -1091,11 +1202,17 @@ wr_fp_lto_12a <- generate_wr_floodplain("LTO_12a")
 
 
 # combine 
-wr_fp <- modifyList(DSMhabitat::wr_fp, list(biop_2008_2009 = wr_fp_2008_2009,
-                                        biop_itp_2018_2019 = wr_fp_2018_2019,
-                                        run_of_river = wr_fp_run_of_river,
-                                        eff = wr_fp_eff,
-                                        lto_12a = wr_fp_lto_12a))
+wr_fp <- list(biop_2008_2009 = wr_fp_2008_2009,
+              biop_itp_2018_2019 = wr_fp_2018_2019,
+              run_of_river = wr_fp_run_of_river,
+              eff = wr_fp_eff,
+              lto_12a = wr_fp_lto_12a)
+# because this is the first script run in update_data.R, we don't need it to be a modify List
+# wr_fp <- modifyList(DSMhabitat::wr_fp, list(biop_2008_2009 = wr_fp_2008_2009,
+#                                         biop_itp_2018_2019 = wr_fp_2018_2019,
+#                                         run_of_river = wr_fp_run_of_river,
+#                                         eff = wr_fp_eff,
+#                                         lto_12a = wr_fp_lto_12a))
 
 usethis::use_data(wr_fp, overwrite = TRUE)
 
@@ -1139,11 +1256,18 @@ lfr_fp_run_of_river <- generate_lfr_floodplain("run_of_river")
 lfr_fp_eff <- generate_lfr_floodplain("eff")
 lfr_fp_lto_12a <- generate_lfr_floodplain("LTO_12a")
 # combine 
-lfr_fp <- modifyList(DSMhabitat::lfr_fp, list(biop_2008_2009 = lfr_fp_2008_2009,
-                                          biop_itp_2018_2019 = lfr_fp_2018_2019,
-                                          run_of_river = lfr_fp_run_of_river,
-                                          eff = lfr_fp_eff,
-                                          lto_12a = lfr_fp_lto_12a))
+
+lfr_fp <- list(biop_2008_2009 = lfr_fp_2008_2009,
+               biop_itp_2018_2019 = lfr_fp_2018_2019,
+               run_of_river = lfr_fp_run_of_river,
+               eff = lfr_fp_eff,
+               lto_12a = lfr_fp_lto_12a)
+# because this is the first script run in update_data.R, we don't need it to be a modify List
+# lfr_fp <- modifyList(DSMhabitat::lfr_fp, list(biop_2008_2009 = lfr_fp_2008_2009,
+#                                           biop_itp_2018_2019 = lfr_fp_2018_2019,
+#                                           run_of_river = lfr_fp_run_of_river,
+#                                           eff = lfr_fp_eff,
+#                                           lto_12a = lfr_fp_lto_12a))
 
 usethis::use_data(lfr_fp, overwrite = TRUE)
 
@@ -1184,10 +1308,15 @@ sutter_habitat_run_of_river <- generate_sutter_habitat("run_of_river")
 sutter_habitat_lto_12a <- generate_sutter_habitat("LTO_12a")
 
 # combine 
-sutter_habitat <- modifyList(DSMhabitat::sutter_habitat, list(biop_2008_2009 = sutter_habitat_2008_2009,
-                                                         biop_itp_2018_2019 = sutter_habitat_2018_2019,
-                                                         run_of_river = sutter_habitat_run_of_river,
-                                                         lto_12a = sutter_habitat_lto_12a))
+sutter_habitat <- list(biop_2008_2009 = sutter_habitat_2008_2009,
+                       biop_itp_2018_2019 = sutter_habitat_2018_2019,
+                       run_of_river = sutter_habitat_run_of_river,
+                       lto_12a = sutter_habitat_lto_12a)
+# because this is the first script run in update_data.R, we don't need it to be a modify List
+# sutter_habitat <- modifyList(DSMhabitat::sutter_habitat, list(biop_2008_2009 = sutter_habitat_2008_2009,
+#                                                          biop_itp_2018_2019 = sutter_habitat_2018_2019,
+#                                                          run_of_river = sutter_habitat_run_of_river,
+#                                                          lto_12a = sutter_habitat_lto_12a))
 
 usethis::use_data(sutter_habitat, overwrite = TRUE)
 
@@ -1224,10 +1353,15 @@ yolo_habitat_run_of_river <- generate_yolo_habitat("run_of_river")
 yolo_habitat_lto_12a <- generate_yolo_habitat("LTO_12a")
 
 # combine 
-yolo_habitat <- modifyList(DSMhabitat::yolo_habitat, list(biop_2008_2009 = yolo_habitat_2008_2009,
-                                                      biop_itp_2018_2019 = yolo_habitat_2018_2019,
-                                                      run_of_river = yolo_habitat_run_of_river,
-                                                      lto_12a  = yolo_habitat_lto_12a))
+yolo_habitat <- list(biop_2008_2009 = yolo_habitat_2008_2009,
+                     biop_itp_2018_2019 = yolo_habitat_2018_2019,
+                     run_of_river = yolo_habitat_run_of_river,
+                     lto_12a  = yolo_habitat_lto_12a)
+# because this is the first script run in update_data.R, we don't need it to be a modify List
+# yolo_habitat <- modifyList(DSMhabitat::yolo_habitat, list(biop_2008_2009 = yolo_habitat_2008_2009,
+#                                                       biop_itp_2018_2019 = yolo_habitat_2018_2019,
+#                                                       run_of_river = yolo_habitat_run_of_river,
+#                                                       lto_12a  = yolo_habitat_lto_12a))
 
 usethis::use_data(yolo_habitat, overwrite = TRUE)
 
@@ -1260,11 +1394,17 @@ weeks_flooded_eff <- generate_weeks_flooded("eff")
 weeks_flooded_lto_12a <- generate_weeks_flooded("LTO_12a")
 
 # combine 
-weeks_flooded <- modifyList(DSMhabitat::weeks_flooded, list(biop_2008_2009 = weeks_flooded_2008_2009,
-                                                        biop_itp_2018_2019 = weeks_flooded_2018_2019,
-                                                        run_of_river = weeks_flooded_run_of_river,
-                                                        eff = weeks_flooded_eff,
-                                                        lto_12a = weeks_flooded_lto_12a))
+weeks_flooded <- list(biop_2008_2009 = weeks_flooded_2008_2009,
+                      biop_itp_2018_2019 = weeks_flooded_2018_2019,
+                      run_of_river = weeks_flooded_run_of_river,
+                      eff = weeks_flooded_eff,
+                      lto_12a = weeks_flooded_lto_12a)
+# because this is the first script run in update_data.R, we don't need it to be a modify List
+# weeks_flooded <- modifyList(DSMhabitat::weeks_flooded, list(biop_2008_2009 = weeks_flooded_2008_2009,
+#                                                         biop_itp_2018_2019 = weeks_flooded_2018_2019,
+#                                                         run_of_river = weeks_flooded_run_of_river,
+#                                                         eff = weeks_flooded_eff,
+#                                                         lto_12a = weeks_flooded_lto_12a))
 
 usethis::use_data(weeks_flooded, overwrite = TRUE)
 
