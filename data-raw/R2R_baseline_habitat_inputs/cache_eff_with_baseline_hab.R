@@ -506,7 +506,7 @@ r_to_r_eff_baseline_sr_fp["Yuba River" , , ] <- updated_habitat
 r_to_r_eff_baseline_sr_fp == DSMhabitat::sr_fp$eff
 
 # Save as data object to DSMhabitat
-sr_fp <- modifyList(DSMhabitat::sr_jfp, list("r_to_r_eff_baseline" = r_to_r_eff_baseline_sr_jfp))
+sr_fp <- modifyList(DSMhabitat::sr_fp, list("r_to_r_eff_baseline" = r_to_r_eff_baseline_sr_fp))
 usethis::use_data(sr_fp, overwrite = TRUE)
 
 # Exploratory plot 

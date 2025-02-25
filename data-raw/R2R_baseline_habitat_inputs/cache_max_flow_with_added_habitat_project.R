@@ -405,7 +405,7 @@ r_to_r_max_flow_sr_juv == DSMhabitat::sr_juv$run_of_river
 r_to_r_max_flow_sr_fry == DSMhabitat::sr_fry$run_of_river
 
 # Save as data object to DSMhabitat
-sr_juv <- modifyList(DSMhabitat::srjuvn, list("max_flow_w_hab_projects" = r_to_r_max_flow_sr_juv))
+sr_juv <- modifyList(DSMhabitat::sr_juv, list("max_flow_w_hab_projects" = r_to_r_max_flow_sr_juv))
 usethis::use_data(sr_juv, overwrite = TRUE)
 
 # Save as data object to DSMhabitat
