@@ -392,8 +392,9 @@ fr_spawn_update["Mokelumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Mo
                                                                       mokelumne_spw_fn, FALSE)
 fr_spawn_update["Tuolumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Tuolumne River",
                                                                      tuolumne_spw_fn, FALSE)
-fr_spawn <- DSMhabitat::fr_spawn
-fr_spawn$r_to_r_hrl <- fr_spawn_update
+
+# update object
+fr_spawn <- modifyList(DSMhabitat::fr_spawn, list("r_to_r_hrl" = fr_spawn_update))
 
 # update ic rearing juv
 fr_juv_update <- DSMhabitat::fr_juv$r_to_r_lto_12a_baseline
@@ -410,8 +411,7 @@ fr_juv_update["Tuolumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Tuolu
                                                                    tuolumne_juv_fn, TRUE)
 fr_juv_update["Yuba River", , ] <- update_hrl_habitat_from_SBR(flows, "Yuba River",
                                                                yuba_juv_fn, TRUE)
-fr_juv <- DSMhabitat::fr_juv
-fr_juv$r_to_r_hrl <- fr_juv_update
+fr_juv <- modifyList(DSMhabitat::fr_juv, list("r_to_r_hrl" = fr_juv_update))
 
 # update ic rearing fry
 fr_fry_update <- DSMhabitat::fr_fry$r_to_r_lto_12a_baseline
@@ -428,8 +428,8 @@ fr_fry_update["Tuolumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Tuolu
                                                                    tuolumne_juv_fn, TRUE)
 fr_fry_update["Yuba River", , ] <- update_hrl_habitat_from_SBR(flows, "Yuba River",
                                                                yuba_juv_fn, TRUE)
-fr_fry <- DSMhabitat::fr_fry
-fr_fry$r_to_r_hrl <- fr_fry_update
+# update
+fr_fry <- modifyList(DSMhabitat::fr_fry, list("r_to_r_hrl" = fr_fry_update))
 
 # update fp rearing
 fr_fp_update <- DSMhabitat::fr_fp$r_to_r_lto_12a_baseline
@@ -440,8 +440,8 @@ fr_fp_update["Tuolumne River", , ] <- update_hrl_habitat_from_SBR(flows, "Tuolum
                                                                   tuolumne_fp_fn, TRUE)
 fr_fp_update["Yuba River", , ] <- update_hrl_habitat_from_SBR(flows, "Yuba River",
                                                               yuba_fp_fn, TRUE)
-fr_fp <- DSMhabitat::fr_fp
-fr_fp$r_to_r_hrl <- fr_fp_update
+# update
+fr_fp <- modifyList(DSMhabitat::fr_fp, list("r_to_r_hrl" = fr_fp_update))
 
 # now update objects
 usethis::use_data(fr_spawn, overwrite = TRUE)
@@ -473,10 +473,10 @@ sutter_habitat_hrl <- DSMhabitat::sutter_habitat$lto_12a |>
 
 rownames(sutter_habitat_hrl) <- month.abb
 
-sutter_habitat <- DSMhabitat::sutter_habitat
-sutter_habitat$r_to_r_hrl <- sutter_habitat_hrl
-
-usethis::use_data(sutter_habitat, overwrite = TRUE)
+# update
+# don't update until later
+# sutter_habitat <- modifyList(DSMhabitat::sutter_habitat, list("r_to_r_hrl" = sutter_habitat_hrl))
+# usethis::use_data(sutter_habitat, overwrite = TRUE)
 
 
 # fish food production ----------------------------------------------------
@@ -532,19 +532,18 @@ lower_sac_habitat_added <- DSMhabitat::fr_fp$lto_12a["Lower Sacramento River", ,
 lower_mid_sac_habitat_added <- DSMhabitat::fr_fp$lto_12a["Lower-mid Sacramento River", , ] * (1 + sac_proportion_added)
 # scale on top of 20,000 added previously
 # TODO check this assumption
-sutter_habitat_added <- DSMhabitat::sutter_habitat$r_to_r_hrl * (1 + sutter_proportion_added)
+sutter_habitat_added <- sutter_habitat_hrl * (1 + sutter_proportion_added)
+sutter_habitat_hrl[1:2,] <- sutter_habitat_added[1:2,]
+rownames(sutter_habitat_hrl) <- month.abb
 
-
-sutter_habitat <- DSMhabitat::sutter_habitat
-sutter_habitat$r_to_r_hrl[1:2,] <- sutter_habitat_added[1:2,]
-rownames(sutter_habitat$r_to_r_hrl) <- month.abb
-
+sutter_habitat <- modifyList(DSMhabitat::sutter_habitat, list("r_to_r_hrl" = sutter_habitat_hrl))
 usethis::use_data(sutter_habitat, overwrite = TRUE)
 
-fr_fp <- DSMhabitat::fr_fp
-fr_fp$r_to_r_hrl["Lower Sacramento River", c("Jan", "Feb"), ] <- lower_sac_habitat_added[c("Jan", "Feb"),]
-fr_fp$r_to_r_hrl["Lower-mid Sacramento River", c("Jan", "Feb"), ] <- lower_mid_sac_habitat_added[c("Jan", "Feb"),]
+fr_fp_updated <- DSMhabitat::fr_fp
+fr_fp_updated$r_to_r_hrl["Lower Sacramento River", c("Jan", "Feb"), ] <- lower_sac_habitat_added[c("Jan", "Feb"),]
+fr_fp_updated$r_to_r_hrl["Lower-mid Sacramento River", c("Jan", "Feb"), ] <- lower_mid_sac_habitat_added[c("Jan", "Feb"),]
 
+fr_fp <- modifyList(DSMhabitat::fr_fp, list("r_to_r_hrl" = fr_fp_updated))
 usethis::use_data(fr_fp, overwrite = TRUE)
 
 

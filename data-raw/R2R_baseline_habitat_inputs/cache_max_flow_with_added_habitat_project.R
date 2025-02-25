@@ -39,9 +39,7 @@ r_to_r_max_flow_fr_spawn["Upper Sacramento River", , ] <- updated_habitat
 r_to_r_max_flow_fr_spawn == DSMhabitat::fr_spawn$run_of_river
 
 # Save as data object to DSMhabitat
-current_fr_spawn <- DSMhabitat::fr_spawn
-current_fr_spawn$max_flow_w_hab_projects <- r_to_r_max_flow_fr_spawn
-fr_spawn <- current_fr_spawn
+fr_spawn <- modifyList(DSMhabitat::fr_spawn, list("max_flow_w_hab_projects" = r_to_r_max_flow_fr_spawn))
 usethis::use_data(fr_spawn, overwrite = TRUE)
 
 # Exploratory plot 
@@ -149,15 +147,11 @@ r_to_r_max_flow_fr_juv == DSMhabitat::fr_juv$run_of_river
 r_to_r_max_flow_fr_fry == DSMhabitat::fr_fry$run_of_river
 
 # Save as data object to DSMhabitat
-current_fr_juv <- DSMhabitat::fr_juv
-current_fr_juv$max_flow_w_hab_projects <- r_to_r_max_flow_fr_juv
-fr_juv <- current_fr_juv
+fr_juv <- modifyList(DSMhabitat::fr_juv, list("max_flow_w_hab_projects" = r_to_r_max_flow_fr_juv))
 usethis::use_data(fr_juv, overwrite = TRUE)
 
 # Save as data object to DSMhabitat
-current_fr_fry <- DSMhabitat::fr_fry
-current_fr_fry$max_flow_w_hab_projects <- r_to_r_max_flow_fr_fry
-fr_fry <- current_fr_fry
+fr_fry <- modifyList(DSMhabitat::fr_fry, list("max_flow_w_hab_projects" = r_to_r_max_flow_fr_fry))
 usethis::use_data(fr_fry, overwrite = TRUE)
 
 # Exploratory plot 
@@ -256,9 +250,7 @@ r_to_r_max_flow_fr_fp["Yuba River" , , ] <- updated_habitat
 r_to_r_max_flow_fr_fp == DSMhabitat::fr_fp$run_of_river
 
 # Save as data object to DSMhabitat
-current_fr_fp <- DSMhabitat::fr_fp
-current_fr_fp$max_flow_w_hab_projects <- r_to_r_max_flow_fr_fp
-fr_fp <- current_fr_fp
+fr_fp <- modifyList(DSMhabitat::fr_fp, list("max_flow_w_hab_projects" = r_to_r_max_flow_fr_fp))
 usethis::use_data(fr_fp, overwrite = TRUE)
 
 # Exploratory plot 
@@ -320,9 +312,7 @@ r_to_r_max_flow_sr_spawn["Upper Sacramento River", , ] <- updated_habitat
 r_to_r_max_flow_sr_spawn == DSMhabitat::sr_spawn$run_of_river
 
 # Save as data object to DSMhabitat
-current_sr_spawn <- DSMhabitat::sr_spawn
-current_sr_spawn$max_flow_w_hab_projects <- r_to_r_max_flow_sr_spawn
-sr_spawn <- current_sr_spawn
+sr_spawn <- modifyList(DSMhabitat::sr_spawn, list("max_flow_w_hab_projects" = r_to_r_max_flow_sr_spawn))
 usethis::use_data(sr_spawn, overwrite = TRUE)
 
 # Exploratory plot 
@@ -415,15 +405,11 @@ r_to_r_max_flow_sr_juv == DSMhabitat::sr_juv$run_of_river
 r_to_r_max_flow_sr_fry == DSMhabitat::sr_fry$run_of_river
 
 # Save as data object to DSMhabitat
-current_sr_juv <- DSMhabitat::sr_juv
-current_sr_juv$max_flow_w_hab_projects <- r_to_r_max_flow_sr_juv
-sr_juv <- current_sr_juv
+sr_juv <- modifyList(DSMhabitat::srjuvn, list("max_flow_w_hab_projects" = r_to_r_max_flow_sr_juv))
 usethis::use_data(sr_juv, overwrite = TRUE)
 
 # Save as data object to DSMhabitat
-current_sr_fry <- DSMhabitat::sr_fry
-current_sr_fry$max_flow_w_hab_projects <- r_to_r_max_flow_sr_fry
-sr_fry <- current_sr_fry
+sr_fry <- modifyList(DSMhabitat::sr_fry, list("max_flow_w_hab_projects" = r_to_r_max_flow_sr_fry))
 usethis::use_data(sr_fry, overwrite = TRUE)
 
 # Exploratory plot 
@@ -520,9 +506,7 @@ r_to_r_max_flow_sr_fp["Yuba River" , , ] <- updated_habitat
 r_to_r_max_flow_sr_fp == DSMhabitat::sr_fp$run_of_river
 
 # Save as data object to DSMhabitat
-current_sr_fp <- DSMhabitat::sr_fp
-current_sr_fp$max_flow_w_hab_projects <- r_to_r_max_flow_sr_fp
-sr_fp <- current_sr_fp
+sr_fp <- modifyList(DSMhabitat::sr_fp, list("max_flow_w_hab_projects" = r_to_r_max_flow_sr_fp))
 usethis::use_data(sr_fp, overwrite = TRUE)
 
 # Exploratory plot 
@@ -570,9 +554,7 @@ r_to_r_max_flow_wr_spawn["Upper Sacramento River", , ] <- updated_habitat
 r_to_r_max_flow_wr_spawn == DSMhabitat::wr_spawn$run_of_river
 
 # Save as data object to DSMhabitat
-current_wr_spawn <- DSMhabitat::wr_spawn
-current_wr_spawn$max_flow_w_hab_projects <- r_to_r_max_flow_wr_spawn
-wr_spawn <- current_wr_spawn
+wr_spawn <- modifyList(DSMhabitat::wr_spawn, list("max_flow_w_hab_projects" = r_to_r_max_flow_wr_spawn))
 usethis::use_data(wr_spawn, overwrite = TRUE)
 
 # Exploratory plot 
@@ -646,15 +628,11 @@ r_to_r_max_flow_wr_juv == DSMhabitat::wr_juv$run_of_river
 r_to_r_max_flow_wr_fry == DSMhabitat::wr_fry$run_of_river
 
 # Save as data object to DSMhabitat
-current_wr_juv <- DSMhabitat::wr_juv
-current_wr_juv$max_flow_w_hab_projects <- r_to_r_max_flow_wr_juv
-wr_juv <- current_wr_juv
+wr_juv <- modifyList(DSMhabitat::wr_juv, list("max_flow_w_hab_projects" = r_to_r_max_flow_wr_juv))
 usethis::use_data(wr_juv, overwrite = TRUE)
 
 # Save as data object to DSMhabitat
-current_wr_fry <- DSMhabitat::wr_fry
-current_wr_fry$max_flow_w_hab_projects <- r_to_r_max_flow_wr_fry
-wr_fry <- current_wr_fry
+wr_fry <- modifyList(DSMhabitat::wr_fry, list("max_flow_w_hab_projects" = r_to_r_max_flow_wr_fry))
 usethis::use_data(wr_fry, overwrite = TRUE)
 
 # Exploratory plot 
@@ -732,9 +710,7 @@ r_to_r_max_flow_wr_fp["Lower-mid Sacramento River" , , ] <- updated_habitat
 r_to_r_max_flow_wr_fp == DSMhabitat::sr_fp$run_of_river
 
 # Save as data object to DSMhabitat
-current_wr_fp <- DSMhabitat::wr_fp
-current_wr_fp$max_flow_w_hab_projects <- r_to_r_max_flow_wr_fp
-wr_fp <- current_wr_fp
+wr_fp <- modifyList(DSMhabitat::wr_fp, list("max_flow_w_hab_projects" = r_to_r_max_flow_wr_fp))
 usethis::use_data(wr_fp, overwrite = TRUE)
 
 # Exploratory plot 
