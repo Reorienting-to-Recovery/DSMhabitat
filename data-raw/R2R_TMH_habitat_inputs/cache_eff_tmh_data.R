@@ -14,31 +14,31 @@ source('data-raw/R2R_TMH_habitat_inputs/tmh_helper_functions.R')
 # update DSMhabitat values ------------------------------------------------
 watersheds_trunc <- DSMscenario::watershed_labels[!(DSMscenario::watershed_labels %in%  c('North Delta', "South Delta", "Sutter Bypass", "Yolo Bypass"))]
 
-r_to_r_tmh_fr_spawn_eff <- spawn_tmh_processing(watersheds = watersheds_trunc, species = "fr", calsim_run = "eff_sac")
-r_to_r_tmh_wr_spawn_eff <- spawn_tmh_processing(watersheds = watersheds_trunc, species = "wr", calsim_run = "eff_sac")
+r_to_r_tmh_fr_spawn_eff <- spawn_tmh_processing(watersheds = watersheds_trunc, species = "fr", calsim_run = "eff")
+r_to_r_tmh_wr_spawn_eff <- spawn_tmh_processing(watersheds = watersheds_trunc, species = "wr", calsim_run = "eff")
 r_to_r_tmh_sr_spawn_eff <- spawn_tmh_processing(watersheds = watersheds_trunc, species = "sr", calsim_run = "sac_eff")
 
 r_to_r_tmh_fr_spawn_eff - DSMhabitat::fr_spawn$r_to_r_tmh_eff # check, should be different 
 
 
 ## inchannel habitat to both fry and juvenile habitat objects ---------------
-r_to_r_tmh_fr_fry_eff <- rearing_tmh_processing(watersheds = watersheds_trunc, species = "fr", calsim_run = "eff_sac")$fry
-r_to_r_tmh_fr_juv_eff <- rearing_tmh_processing(watersheds = watersheds_trunc, species = "fr", calsim_run = "eff_sac")$juv
+r_to_r_tmh_fr_fry_eff <- rearing_tmh_processing(watersheds = watersheds_trunc, species = "fr", calsim_run = "eff")$fry
+r_to_r_tmh_fr_juv_eff <- rearing_tmh_processing(watersheds = watersheds_trunc, species = "fr", calsim_run = "eff")$juv
 
-r_to_r_tmh_wr_fry_eff <- rearing_tmh_processing(watersheds = watersheds_trunc, species = "wr", calsim_run = "eff_sac")$fry
-r_to_r_tmh_wr_juv_eff <- rearing_tmh_processing(watersheds = watersheds_trunc, species = "wr", calsim_run = "eff_sac")$juv
+r_to_r_tmh_wr_fry_eff <- rearing_tmh_processing(watersheds = watersheds_trunc, species = "wr", calsim_run = "eff")$fry
+r_to_r_tmh_wr_juv_eff <- rearing_tmh_processing(watersheds = watersheds_trunc, species = "wr", calsim_run = "eff")$juv
 
-r_to_r_tmh_sr_fry_eff <- rearing_tmh_processing(watersheds = watersheds_trunc, species = "sr", calsim_run = "eff_sac")$fry
-r_to_r_tmh_sr_juv_eff <- rearing_tmh_processing(watersheds = watersheds_trunc, species = "sr", calsim_run = "eff_sac")$juv
+r_to_r_tmh_sr_fry_eff <- rearing_tmh_processing(watersheds = watersheds_trunc, species = "sr", calsim_run = "eff")$fry
+r_to_r_tmh_sr_juv_eff <- rearing_tmh_processing(watersheds = watersheds_trunc, species = "sr", calsim_run = "eff")$juv
 r_to_r_tmh_sr_fry_eff[which(is.na(r_to_r_tmh_sr_fry_eff))] <- r_to_r_tmh_fr_fry_eff[which(is.na(r_to_r_tmh_sr_fry_eff))]
 r_to_r_tmh_sr_juv_eff[which(is.na(r_to_r_tmh_sr_juv_eff))] <- r_to_r_tmh_fr_juv_eff[which(is.na(r_to_r_tmh_sr_juv_eff))]
 
 r_to_r_tmh_fr_juv_eff - DSMhabitat::fr_juv$r_to_r_tmh_eff # test - should be different 
 
 ##floodplain: -------------------------------------------------------------
-r_to_r_tmh_fr_flood_eff <- floodplain_tmh_processing(watersheds = watersheds_trunc, species = "fr", calsim_run = "eff_sac")
-r_to_r_tmh_sr_flood_eff <- floodplain_tmh_processing(watersheds = watersheds_trunc, species = "sr", calsim_run = "eff_sac")
-r_to_r_tmh_wr_flood_eff <- floodplain_tmh_processing(watersheds = watersheds_trunc, species = "wr", calsim_run = "eff_sac")
+r_to_r_tmh_fr_flood_eff <- floodplain_tmh_processing(watersheds = watersheds_trunc, species = "fr", calsim_run = "eff")
+r_to_r_tmh_sr_flood_eff <- floodplain_tmh_processing(watersheds = watersheds_trunc, species = "sr", calsim_run = "eff")
+r_to_r_tmh_wr_flood_eff <- floodplain_tmh_processing(watersheds = watersheds_trunc, species = "wr", calsim_run = "eff")
 
 r_to_r_tmh_fr_flood_eff == r_to_r_tmh_sr_flood_eff # test - should be different 
 
