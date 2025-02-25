@@ -5,7 +5,6 @@ source("data-raw/cached-habitat.R")
 # R2R baseline scaling on various hydrologies
 source("data-raw/R2R_baseline_habitat_inputs/cache_baseline_hab.R")
 source("data-raw/R2R_baseline_habitat_inputs/cache_eff_with_baseline_hab.R")
-source("data-raw/R2R_baseline_habitat_inputs/cache_eff_sj_with_baseline_hab.R") # TODO not sure this does anything
 source("data-raw/R2R_baseline_habitat_inputs/cache_max_flow_with_added_habitat_project.R")
 source('data-raw/R2R_baseline_habitat_inputs/cache_lto_12a_with_baseline_hab.R')
 
