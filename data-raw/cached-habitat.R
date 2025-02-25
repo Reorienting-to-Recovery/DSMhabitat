@@ -374,7 +374,7 @@ sr_spawn_run_of_river["Cosumnes River", , ] <- fr_spawn$run_of_river["Cosumnes R
 sr_spawn_run_of_river["Merced River", , ] <- fr_spawn$run_of_river["Merced River", , ] 
 
 sr_spawn_eff_sac <- sr_spawn_2018_2019
-sr_spawn_eff_sac["Upper Sacramento River",,] <- fr_spawn$eff_sac["Upper Sacramento River",, ]
+sr_spawn_eff_sac["Upper Sacramento River",,] <- fr_spawn$eff["Upper Sacramento River",, ]
 
 # LTO_12a
 sr_spawn_lto_12a <- get_spawn_hab_all(spawning_watersheds_sr, 'sr', "LTO_12a")
