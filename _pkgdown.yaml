@@ -3,6 +3,8 @@ url: https://reorienting-to-recovery.github.io/DSMhabitat/
 template:
   params:
     bootswatch: flatly
+    extra_dependencies:
+      - leaflet
 
 home:
   links:

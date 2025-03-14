@@ -3,7 +3,8 @@ Type: Package
 Title: Estimate Spawning and Rearing Habitat
 Version: 1.0
 Authors@R: c(
-    person("Erin", "Cain", email = "ecain@flowwest.com", role = c("aut", "cre")), 
+    person("Liz", "Stebbins", email = "lstebbins@flowwest.com", role = c("aut", "cre")), 
+    person("Erin", "Cain", email = "ecain@flowwest.com", role = "aut"), 
     person("Emanuel", "Rodriguez", email = "erodriguez@flowwest.com", role = "aut"),
     person("Mark", "Tompkins", email = "mtompkins@flowwest.com", role = "aut"))
 Maintainer: The package maintainer <yourself@somewhere.net>
@@ -20,4 +21,4 @@ VignetteBuilder: knitr
 URL: https://reorienting-to-recovery.github.io/DSMhabitat/
 BugReports: https://github.com/reorienting-to-recovery/DSMhabitat/issues
 Depends: 
-    R (>= 2.10)
+    R (>= 3.5)
