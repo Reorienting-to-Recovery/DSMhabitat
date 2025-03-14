@@ -96,44 +96,45 @@ delta_habitat <- modifyList(DSMhabitat::delta_habitat, list(run_of_river_tmh = r
 usethis::use_data(delta_habitat, overwrite = TRUE)
 # do some checks, but make sure you build library first 
 
-table(DSMhabitat::fr_spawn$run_of_river == DSMhabitat::fr_spawn$run_of_river_tmh)
-table(DSMhabitat::fr_fp$run_of_river == DSMhabitat::fr_fp$run_of_river_tmh)
-table(DSMhabitat::sr_juv$run_of_river == DSMhabitat::sr_juv$run_of_river_tmh)
-
-# Exploratory Plots:  -----------------------------------------------------
-## spawning plot:  ---------------------------------------------------------
-### fall run: 
-tmh_comparison_plot(tmh_data = DSMhabitat::fr_spawn$run_of_river_tmh, 
-                    sit_habitat = DSMhabitat::fr_spawn$run_of_river, "spawn")
-
-tmh_comparison_plot(tmh_data = DSMhabitat::fr_spawn$run_of_river_tmh, 
-                    sit_habitat = DSMhabitat::fr_spawn$r_to_r_tmh, "spawn")
-
-tmh_comparison_plot(tmh_data =DSMhabitat::wr_spawn$run_of_river_tmh, 
-                    sit_habitat = DSMhabitat::wr_spawn$r_to_r_tmh, "spawn")
-
-tmh_comparison_plot(tmh_data = DSMhabitat::sr_spawn$run_of_river_tmh, 
-                    sit_habitat = DSMhabitat::sr_spawn$r_to_r_tmh, "spawn")
-
-## fry and juv plots:  -----------------------------------------------------
-tmh_comparison_plot(tmh_data = DSMhabitat::fr_fry$run_of_river_tmh, 
-                    sit_habitat = DSMhabitat::fr_fry$r_to_r_tmh, "fry")
-
-# winter run
-tmh_comparison_plot(tmh_data = DSMhabitat::wr_fry$run_of_river_tmh, 
-                    sit_habitat = DSMhabitat::wr_fry$r_to_r_tmh, "fry")
-# spring run 
-tmh_comparison_plot(tmh_data = DSMhabitat::sr_fry$run_of_river_tmh, 
-                    sit_habitat = DSMhabitat::sr_fry$r_to_r_tmh, "fry")
-
-## floodplain exploratory plot:  -------------------------------------------
-# fall run: 
-tmh_comparison_plot(tmh_data = DSMhabitat::fr_fp$run_of_river_tmh, 
-                    sit_habitat = DSMhabitat::fr_fp$r_to_r_tmh, "flood")
-# winter run:
-tmh_comparison_plot(tmh_data = DSMhabitat::wr_fp$run_of_river_tmh, 
-                    sit_habitat = DSMhabitat::wr_fp$r_to_r_tmh, "flood")
-# spring run: 
-tmh_comparison_plot(tmh_data = DSMhabitat::sr_fp$run_of_river_tmh, 
-                    sit_habitat = DSMhabitat::sr_fp$r_to_r_tmh, "flood")
+# commented this out because it doesn't work unless you build, and so it causes an error in sourcing update_data.R
+# table(DSMhabitat::fr_spawn$run_of_river == DSMhabitat::fr_spawn$run_of_river_tmh)
+# table(DSMhabitat::fr_fp$run_of_river == DSMhabitat::fr_fp$run_of_river_tmh)
+# table(DSMhabitat::sr_juv$run_of_river == DSMhabitat::sr_juv$run_of_river_tmh)
+# 
+# # Exploratory Plots:  -----------------------------------------------------
+# ## spawning plot:  ---------------------------------------------------------
+# ### fall run: 
+# tmh_comparison_plot(tmh_data = DSMhabitat::fr_spawn$run_of_river_tmh, 
+#                     sit_habitat = DSMhabitat::fr_spawn$run_of_river, "spawn")
+# 
+# tmh_comparison_plot(tmh_data = DSMhabitat::fr_spawn$run_of_river_tmh, 
+#                     sit_habitat = DSMhabitat::fr_spawn$r_to_r_tmh, "spawn")
+# 
+# tmh_comparison_plot(tmh_data =DSMhabitat::wr_spawn$run_of_river_tmh, 
+#                     sit_habitat = DSMhabitat::wr_spawn$r_to_r_tmh, "spawn")
+# 
+# tmh_comparison_plot(tmh_data = DSMhabitat::sr_spawn$run_of_river_tmh, 
+#                     sit_habitat = DSMhabitat::sr_spawn$r_to_r_tmh, "spawn")
+# 
+# ## fry and juv plots:  -----------------------------------------------------
+# tmh_comparison_plot(tmh_data = DSMhabitat::fr_fry$run_of_river_tmh, 
+#                     sit_habitat = DSMhabitat::fr_fry$r_to_r_tmh, "fry")
+# 
+# # winter run
+# tmh_comparison_plot(tmh_data = DSMhabitat::wr_fry$run_of_river_tmh, 
+#                     sit_habitat = DSMhabitat::wr_fry$r_to_r_tmh, "fry")
+# # spring run 
+# tmh_comparison_plot(tmh_data = DSMhabitat::sr_fry$run_of_river_tmh, 
+#                     sit_habitat = DSMhabitat::sr_fry$r_to_r_tmh, "fry")
+# 
+# ## floodplain exploratory plot:  -------------------------------------------
+# # fall run: 
+# tmh_comparison_plot(tmh_data = DSMhabitat::fr_fp$run_of_river_tmh, 
+#                     sit_habitat = DSMhabitat::fr_fp$r_to_r_tmh, "flood")
+# # winter run:
+# tmh_comparison_plot(tmh_data = DSMhabitat::wr_fp$run_of_river_tmh, 
+#                     sit_habitat = DSMhabitat::wr_fp$r_to_r_tmh, "flood")
+# # spring run: 
+# tmh_comparison_plot(tmh_data = DSMhabitat::sr_fp$run_of_river_tmh, 
+#                     sit_habitat = DSMhabitat::sr_fp$r_to_r_tmh, "flood")
 

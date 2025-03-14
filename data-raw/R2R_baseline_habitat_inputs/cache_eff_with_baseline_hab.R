@@ -4,44 +4,42 @@ source("data-raw/R2R_baseline_habitat_inputs/generate_hab_helper_functions.R")
 # FALL RUN ---------------------------------------------------------------------
 # Update DSMhabitat values 
 # set r_to_r_baseline_fr_spawn to 
-r_to_r_eff_baseline_fr_spawn <- DSMhabitat::fr_spawn$eff_sac
+r_to_r_eff_baseline_fr_spawn <- DSMhabitat::fr_spawn$eff
 
 # Add american river spawning habitat 
-add_project_habitat <- DSMhabitat::fr_spawn$eff_sac["American River" , , ] * 
-  hab_prop_change_from_projects("spawning", "American River", "fr", "adult", "eff_sac")
-updated_habitat <- DSMhabitat::fr_spawn$eff_sac["American River", , ] + add_project_habitat
+add_project_habitat <- DSMhabitat::fr_spawn$eff["American River" , , ] * 
+  hab_prop_change_from_projects("spawning", "American River", "fr", "adult", "eff")
+updated_habitat <- DSMhabitat::fr_spawn$eff["American River", , ] + add_project_habitat
 
 r_to_r_eff_baseline_fr_spawn["American River", , ] <- updated_habitat 
 
 # add clear creek spawning habitat
-add_project_habitat <- DSMhabitat::fr_spawn$eff_sac["Clear Creek" , , ] * 
-  hab_prop_change_from_projects("spawning", "Clear Creek", "fr", "adult", "eff_sac")
-updated_habitat <- DSMhabitat::fr_spawn$eff_sac["Clear Creek", , ] + add_project_habitat
+add_project_habitat <- DSMhabitat::fr_spawn$eff["Clear Creek" , , ] * 
+  hab_prop_change_from_projects("spawning", "Clear Creek", "fr", "adult", "eff")
+updated_habitat <- DSMhabitat::fr_spawn$eff["Clear Creek", , ] + add_project_habitat
 
 r_to_r_eff_baseline_fr_spawn["Clear Creek", , ] <- updated_habitat 
 
 # add paynes creek spawning habitat
-add_project_habitat <- DSMhabitat::fr_spawn$eff_sac["Paynes Creek" , , ] * 
-  hab_prop_change_from_projects("spawning", "Paynes Creek", "fr", "adult", "eff_sac")
-updated_habitat <- DSMhabitat::fr_spawn$eff_sac["Paynes Creek", , ] + add_project_habitat
+add_project_habitat <- DSMhabitat::fr_spawn$eff["Paynes Creek" , , ] * 
+  hab_prop_change_from_projects("spawning", "Paynes Creek", "fr", "adult", "eff")
+updated_habitat <- DSMhabitat::fr_spawn$eff["Paynes Creek", , ] + add_project_habitat
 
 r_to_r_eff_baseline_fr_spawn["Paynes Creek", , ] <- updated_habitat 
 
 # Add sacramento river spawning habitat 
-add_project_habitat <- DSMhabitat::fr_spawn$eff_sac["Upper Sacramento River" , , ] * 
-  hab_prop_change_from_projects("spawning", "Upper Sacramento River", "fr", "adult", "eff_sac")
-updated_habitat <- DSMhabitat::fr_spawn$eff_sac["Upper Sacramento River", , ] + add_project_habitat
+add_project_habitat <- DSMhabitat::fr_spawn$eff["Upper Sacramento River" , , ] * 
+  hab_prop_change_from_projects("spawning", "Upper Sacramento River", "fr", "adult", "eff")
+updated_habitat <- DSMhabitat::fr_spawn$eff["Upper Sacramento River", , ] + add_project_habitat
 
 r_to_r_eff_baseline_fr_spawn["Upper Sacramento River", , ] <- updated_habitat 
 
 # check habitat differences 
 # upper sac and american river should be different (larger)
-r_to_r_eff_baseline_fr_spawn == DSMhabitat::fr_spawn$eff_sac
+r_to_r_eff_baseline_fr_spawn == DSMhabitat::fr_spawn$eff
 
 # Save as data object to DSMhabitat
-current_fr_spawn <- DSMhabitat::fr_spawn
-current_fr_spawn$r_to_r_eff_baseline <- r_to_r_eff_baseline_fr_spawn
-fr_spawn <- current_fr_spawn
+fr_spawn <- modifyList(DSMhabitat::fr_spawn, list("r_to_r_eff_baseline" = r_to_r_eff_baseline_fr_spawn))
 usethis::use_data(fr_spawn, overwrite = TRUE)
 
 # Exploratory plot 
@@ -79,92 +77,88 @@ spawn |>
 
 # Add inchannel habitat to both fry and juvenile habitat objects ---------------
 # set r_to_r_baseline_fr_juv and fry 
-r_to_r_eff_baseline_fr_juv <- DSMhabitat::fr_juv$eff_sac
-r_to_r_eff_baseline_fr_fry <- DSMhabitat::fr_fry$eff_sac
+r_to_r_eff_baseline_fr_juv <- DSMhabitat::fr_juv$eff
+r_to_r_eff_baseline_fr_fry <- DSMhabitat::fr_fry$eff
 
 # Add american river juv habitat 
-add_project_habitat <- DSMhabitat::fr_juv$eff_sac["American River" , , ] * 
-  hab_prop_change_from_projects("inchannel rearing", "American River", "fr", "juv", "eff_sac")
-updated_habitat <- DSMhabitat::fr_juv$eff_sac["American River", , ] + add_project_habitat
+add_project_habitat <- DSMhabitat::fr_juv$eff["American River" , , ] * 
+  hab_prop_change_from_projects("inchannel rearing", "American River", "fr", "juv", "eff")
+updated_habitat <- DSMhabitat::fr_juv$eff["American River", , ] + add_project_habitat
 
 r_to_r_eff_baseline_fr_juv["American River", , ] <- updated_habitat 
 
 # Add american river fry habitat 
-add_project_habitat <- DSMhabitat::fr_fry$eff_sac["American River" , , ] * 
-  hab_prop_change_from_projects("inchannel rearing", "American River", "fr", "fry", "eff_sac")
-updated_habitat <- DSMhabitat::fr_fry$eff_sac["American River", , ] + add_project_habitat
+add_project_habitat <- DSMhabitat::fr_fry$eff["American River" , , ] * 
+  hab_prop_change_from_projects("inchannel rearing", "American River", "fr", "fry", "eff")
+updated_habitat <- DSMhabitat::fr_fry$eff["American River", , ] + add_project_habitat
 
 r_to_r_eff_baseline_fr_fry["American River", , ] <- updated_habitat 
 
 # add tuolumne river juv habitat
-add_project_habitat <- DSMhabitat::fr_juv$eff_sac["Tuolumne River" , , ] * 
-  hab_prop_change_from_projects("inchannel rearing", "Tuolumne River", "fr", "juv", "eff_sac")
-updated_habitat <- DSMhabitat::fr_juv$eff_sac["Tuolumne River", , ] + add_project_habitat
+add_project_habitat <- DSMhabitat::fr_juv$eff["Tuolumne River" , , ] * 
+  hab_prop_change_from_projects("inchannel rearing", "Tuolumne River", "fr", "juv", "eff")
+updated_habitat <- DSMhabitat::fr_juv$eff["Tuolumne River", , ] + add_project_habitat
 
 r_to_r_eff_baseline_fr_juv["Tuolumne River", , ] <- updated_habitat 
 
 # add tuolumne river fry habitat
-add_project_habitat <- DSMhabitat::fr_fry$eff_sac["Tuolumne River" , , ] * 
-  hab_prop_change_from_projects("inchannel rearing", "Tuolumne River", "fr", "fry", "eff_sac")
-updated_habitat <- DSMhabitat::fr_fry$eff_sac["Tuolumne River", , ] + add_project_habitat
+add_project_habitat <- DSMhabitat::fr_fry$eff["Tuolumne River" , , ] * 
+  hab_prop_change_from_projects("inchannel rearing", "Tuolumne River", "fr", "fry", "eff")
+updated_habitat <- DSMhabitat::fr_fry$eff["Tuolumne River", , ] + add_project_habitat
 
 r_to_r_eff_baseline_fr_fry["Tuolumne River", , ] <- updated_habitat 
 
 # Upper sac river 
 # Add upper sac river juv habitat 
-add_project_habitat <- DSMhabitat::fr_juv$eff_sac["Upper Sacramento River" , , ] * 
-  hab_prop_change_from_projects("inchannel rearing", "Upper Sacramento River", "fr", "juv", "eff_sac")
-updated_habitat <- DSMhabitat::fr_juv$eff_sac["Upper Sacramento River", , ] + add_project_habitat
+add_project_habitat <- DSMhabitat::fr_juv$eff["Upper Sacramento River" , , ] * 
+  hab_prop_change_from_projects("inchannel rearing", "Upper Sacramento River", "fr", "juv", "eff")
+updated_habitat <- DSMhabitat::fr_juv$eff["Upper Sacramento River", , ] + add_project_habitat
 
 r_to_r_eff_baseline_fr_juv["Upper Sacramento River", , ] <- updated_habitat 
 
 # Add upper sacramento  river fry habitat 
-add_project_habitat <- DSMhabitat::fr_fry$eff_sac["Upper Sacramento River" , , ] * 
-  hab_prop_change_from_projects("inchannel rearing", "Upper Sacramento River", "fr", "fry", "eff_sac")
+add_project_habitat <- DSMhabitat::fr_fry$eff["Upper Sacramento River" , , ] * 
+  hab_prop_change_from_projects("inchannel rearing", "Upper Sacramento River", "fr", "fry", "eff")
 
-updated_habitat <- DSMhabitat::fr_fry$eff_sac["Upper Sacramento River", , ] + add_project_habitat
+updated_habitat <- DSMhabitat::fr_fry$eff["Upper Sacramento River", , ] + add_project_habitat
 
 r_to_r_eff_baseline_fr_fry["Upper Sacramento River", , ] <- updated_habitat 
 
 # add Upper-mid Sacramento River
 # Add upper mid sac river juv habitat 
-add_project_habitat <- DSMhabitat::fr_juv$eff_sac["Upper-mid Sacramento River" , , ] * 
+add_project_habitat <- DSMhabitat::fr_juv$eff["Upper-mid Sacramento River" , , ] * 
   hab_prop_change_from_projects("inchannel rearing", "Upper-mid Sacramento River", 
-                                "fr", "juv", "eff_sac")
-updated_habitat <- DSMhabitat::fr_juv$eff_sac["Upper-mid Sacramento River", , ] + add_project_habitat
+                                "fr", "juv", "eff")
+updated_habitat <- DSMhabitat::fr_juv$eff["Upper-mid Sacramento River", , ] + add_project_habitat
 
 r_to_r_eff_baseline_fr_juv["Upper-mid Sacramento River", , ] <- updated_habitat 
 
 # Add upper mid sacramento river fry habitat 
-add_project_habitat <- DSMhabitat::fr_fry$eff_sac["Upper-mid Sacramento River" , , ] * 
+add_project_habitat <- DSMhabitat::fr_fry$eff["Upper-mid Sacramento River" , , ] * 
   hab_prop_change_from_projects("inchannel rearing", "Upper-mid Sacramento River", 
-                                "fr", "fry", "eff_sac")
-updated_habitat <- DSMhabitat::fr_fry$eff_sac["Upper-mid Sacramento River", , ] + add_project_habitat
+                                "fr", "fry", "eff")
+updated_habitat <- DSMhabitat::fr_fry$eff["Upper-mid Sacramento River", , ] + add_project_habitat
 
 r_to_r_eff_baseline_fr_fry["Upper-mid Sacramento River", , ] <- updated_habitat 
 
 # check r to r vs dsm habitat 
 # upper-mid sac, upper sac, and american river should be different 
-r_to_r_baseline_fr_juv == DSMhabitat::fr_juv$eff_sac
-r_to_r_baseline_fr_fry == DSMhabitat::fr_fry$eff_sac
+r_to_r_baseline_fr_juv == DSMhabitat::fr_juv$eff
+r_to_r_baseline_fr_fry == DSMhabitat::fr_fry$eff
 
 # Save as data object to DSMhabitat
-current_fr_juv <- DSMhabitat::fr_juv
-current_fr_juv$r_to_r_eff_baseline <- r_to_r_eff_baseline_fr_juv
-fr_juv <- current_fr_juv
+fr_juv <- modifyList(DSMhabitat::fr_juv, list("r_to_r_eff_baseline" = r_to_r_eff_baseline_fr_juv))
 usethis::use_data(fr_juv, overwrite = TRUE)
 
 # Save as data object to DSMhabitat
-current_fr_fry <- DSMhabitat::fr_fry
-current_fr_fry$r_to_r_eff_baseline <- r_to_r_eff_baseline_fr_fry
-fr_fry <- current_fr_fry
+fr_fry <- modifyList(DSMhabitat::fr_fry, list("r_to_r_eff_baseline" = r_to_r_eff_baseline_fr_fry))
 usethis::use_data(fr_fry, overwrite = TRUE)
 
 # Exploratory plot 
 r_to_r_baseline_habitat <- r_to_r_eff_baseline_fr_juv |> 
   DSMhabitat::square_meters_to_acres()
 
-sit_habitat <- DSMhabitat::fr_juv$eff_sac |> DSMhabitat::square_meters_to_acres()
+sit_habitat <- DSMhabitat::fr_juv$eff |> DSMhabitat::square_meters_to_acres()
 
 ic_juv <- expand_grid(
   watershed = factor(DSMscenario::watershed_labels, 
@@ -195,7 +189,7 @@ ic_juv |>
 r_to_r_baseline_habitat <- r_to_r_eff_baseline_fr_fry |> 
   DSMhabitat::square_meters_to_acres()
 
-sit_habitat <- DSMhabitat::fr_fry$eff_sac |> DSMhabitat::square_meters_to_acres()
+sit_habitat <- DSMhabitat::fr_fry$eff |> DSMhabitat::square_meters_to_acres()
 
 ic_fry <- expand_grid(
   watershed = factor(DSMscenario::watershed_labels, 
@@ -224,48 +218,46 @@ ic_fry|>
 
 
 # Add floodplain habitat -------------------------------------------------------
-r_to_r_eff_baseline_fr_fp <- DSMhabitat::fr_fp$eff_sac
+r_to_r_eff_baseline_fr_fp <- DSMhabitat::fr_fp$eff
 
 # Add Lower-mid sacramento river floodplain habitat 
-add_project_habitat <- DSMhabitat::fr_fp$eff_sac["Lower-mid Sacramento River" , , ] * 
+add_project_habitat <- DSMhabitat::fr_fp$eff["Lower-mid Sacramento River" , , ] * 
   hab_prop_change_from_projects("floodplain rearing", "Lower-mid Sacramento River" , 
-                                "fr", "juv", "eff_sac")
-updated_habitat <- DSMhabitat::fr_fp$eff_sac["Lower-mid Sacramento River" , , ] + add_project_habitat
+                                "fr", "juv", "eff")
+updated_habitat <- DSMhabitat::fr_fp$eff["Lower-mid Sacramento River" , , ] + add_project_habitat
 
 r_to_r_eff_baseline_fr_fp["Lower-mid Sacramento River" , , ] <- updated_habitat 
 
 # TUolumne river floodplain 
-add_project_habitat <- DSMhabitat::fr_fp$eff_sac["Tuolumne River" , , ] * 
+add_project_habitat <- DSMhabitat::fr_fp$eff["Tuolumne River" , , ] * 
   hab_prop_change_from_projects("floodplain rearing", "Tuolumne River" , 
-                                "fr", "juv", "eff_sac")
-updated_habitat <- DSMhabitat::fr_fp$eff_sac["Tuolumne River" , , ] + add_project_habitat
+                                "fr", "juv", "eff")
+updated_habitat <- DSMhabitat::fr_fp$eff["Tuolumne River" , , ] + add_project_habitat
 
 r_to_r_eff_baseline_fr_fp["Tuolumne River" , , ] <- updated_habitat 
 
 # Add Yuba floodlplain habitat 
-add_project_habitat <- DSMhabitat::fr_fp$eff_sac["Yuba River" , , ] * 
+add_project_habitat <- DSMhabitat::fr_fp$eff["Yuba River" , , ] * 
   hab_prop_change_from_projects("floodplain rearing", "Yuba River" , 
-                                "fr", "juv", "eff_sac")
-updated_habitat <- DSMhabitat::fr_fp$eff_sac["Yuba River" , , ] + add_project_habitat
+                                "fr", "juv", "eff")
+updated_habitat <- DSMhabitat::fr_fp$eff["Yuba River" , , ] + add_project_habitat
 
 r_to_r_eff_baseline_fr_fp["Yuba River" , , ] <- updated_habitat 
 
 
 # check hab differences 
 # yuba and lower-mid sac should be different 
-r_to_r_eff_baseline_fr_fp == DSMhabitat::fr_fp$eff_sac
+r_to_r_eff_baseline_fr_fp == DSMhabitat::fr_fp$eff
 
 # Save as data object to DSMhabitat
-current_fr_fp <- DSMhabitat::fr_fp
-current_fr_fp$r_to_r_eff_baseline <- r_to_r_eff_baseline_fr_fp
-fr_fp <- current_fr_fp
+fr_fp <- modifyList(DSMhabitat::fr_fp, list("r_to_r_eff_baseline" = r_to_r_eff_baseline_fr_fp))
 usethis::use_data(fr_fp, overwrite = TRUE)
 
 # Exploratory plot 
 r_to_r_baseline_habitat <- r_to_r_baseline_fr_fp |> 
   DSMhabitat::square_meters_to_acres()
 
-sit_habitat <- DSMhabitat::fr_fp$eff_sac |> DSMhabitat::square_meters_to_acres()
+sit_habitat <- DSMhabitat::fr_fp$eff |> DSMhabitat::square_meters_to_acres()
 
 fp <- expand_grid(
   watershed = factor(DSMscenario::watershed_labels, 
@@ -296,21 +288,21 @@ r_to_r_eff_baseline_sr_spawn <- DSMhabitat::sr_spawn$sac_eff
 
 # Add cottonwood creek spawning habitat 
 add_project_habitat <- DSMhabitat::sr_spawn$sac_eff["Cottonwood Creek", , ] * 
-  hab_prop_change_from_projects("spawning", "Cottonwood Creek", "sr", "adult", "eff_sac")
+  hab_prop_change_from_projects("spawning", "Cottonwood Creek", "sr", "adult", "eff")
 updated_habitat <- DSMhabitat::sr_spawn$sac_eff["Cottonwood Creek", , ] + add_project_habitat
 
 r_to_r_eff_baseline_sr_spawn["Cottonwood Creek", , ] <- updated_habitat 
 
 # add deer creek spawning habitat
 add_project_habitat <- DSMhabitat::sr_spawn$sac_eff["Deer Creek" , , ] * 
-  hab_prop_change_from_projects("spawning", "Deer Creek", "sr", "adult", "eff_sac")
+  hab_prop_change_from_projects("spawning", "Deer Creek", "sr", "adult", "eff")
 updated_habitat <- DSMhabitat::sr_spawn$sac_eff["Deer Creek", , ] + add_project_habitat
 
 r_to_r_eff_baseline_sr_spawn["Deer Creek", , ] <- updated_habitat 
 
 # Add sacramento river spawning habitat 
 add_project_habitat <- DSMhabitat::sr_spawn$sac_eff["Upper Sacramento River" , , ] * 
-  hab_prop_change_from_projects("spawning", "Upper Sacramento River", "sr", "adult", "eff_sac")
+  hab_prop_change_from_projects("spawning", "Upper Sacramento River", "sr", "adult", "eff")
 updated_habitat <- DSMhabitat::sr_spawn$sac_eff["Upper Sacramento River", , ] + add_project_habitat
 
 r_to_r_eff_baseline_sr_spawn["Upper Sacramento River", , ] <- updated_habitat 
@@ -320,9 +312,7 @@ r_to_r_eff_baseline_sr_spawn["Upper Sacramento River", , ] <- updated_habitat
 r_to_r_eff_baseline_sr_spawn == DSMhabitat::sr_spawn$sac_eff
 
 # Save as data object to DSMhabitat
-current_sr_spawn <- DSMhabitat::sr_spawn
-current_sr_spawn$r_to_r_eff_baseline <- r_to_r_eff_baseline_sr_spawn
-sr_spawn <- current_sr_spawn
+sr_spawn <- modifyList(DSMhabitat::sr_spawn, list("r_to_r_eff_baseline" = r_to_r_eff_baseline_sr_spawn))
 usethis::use_data(sr_spawn, overwrite = TRUE)
 
 # Exploratory plot 
@@ -359,78 +349,74 @@ spawn |>
 
 # Add inchannel habitat to both fry and juvenile habitat objects ---------------
 # set r_to_r_baseline_fr_juv and fry 
-r_to_r_eff_baseline_sr_juv <- DSMhabitat::sr_juv$eff_sac
-r_to_r_eff_baseline_sr_fry <- DSMhabitat::sr_fry$eff_sac
+r_to_r_eff_baseline_sr_juv <- DSMhabitat::sr_juv$eff
+r_to_r_eff_baseline_sr_fry <- DSMhabitat::sr_fry$eff
 
 # add tuolumne river juv habitat
-add_project_habitat <- DSMhabitat::sr_juv$eff_sac["Tuolumne River" , , ] * 
-  hab_prop_change_from_projects("inchannel rearing", "Tuolumne River", "sr", "juv", "eff_sac")
-updated_habitat <- DSMhabitat::sr_juv$eff_sac["Tuolumne River", , ] + add_project_habitat
+add_project_habitat <- DSMhabitat::sr_juv$eff["Tuolumne River" , , ] * 
+  hab_prop_change_from_projects("inchannel rearing", "Tuolumne River", "sr", "juv", "eff")
+updated_habitat <- DSMhabitat::sr_juv$eff["Tuolumne River", , ] + add_project_habitat
 
 r_to_r_eff_baseline_sr_juv["Tuolumne River", , ] <- updated_habitat 
 
 # add tuolumne river fry habitat
-add_project_habitat <- DSMhabitat::sr_fry$eff_sac["Tuolumne River" , , ] * 
-  hab_prop_change_from_projects("inchannel rearing", "Tuolumne River", "sr", "fry", "eff_sac")
-updated_habitat <- DSMhabitat::sr_fry$eff_sac["Tuolumne River", , ] + add_project_habitat
+add_project_habitat <- DSMhabitat::sr_fry$eff["Tuolumne River" , , ] * 
+  hab_prop_change_from_projects("inchannel rearing", "Tuolumne River", "sr", "fry", "eff")
+updated_habitat <- DSMhabitat::sr_fry$eff["Tuolumne River", , ] + add_project_habitat
 
 r_to_r_eff_baseline_sr_fry["Tuolumne River", , ] <- updated_habitat 
 
 # Upper sac river 
 # Add upper sac river juv habitat 
-add_project_habitat <- DSMhabitat::sr_juv$eff_sac["Upper Sacramento River" , , ] * 
-  hab_prop_change_from_projects("inchannel rearing", "Upper Sacramento River", "sr", "juv", "eff_sac")
-updated_habitat <- DSMhabitat::sr_juv$eff_sac["Upper Sacramento River", , ] + add_project_habitat
+add_project_habitat <- DSMhabitat::sr_juv$eff["Upper Sacramento River" , , ] * 
+  hab_prop_change_from_projects("inchannel rearing", "Upper Sacramento River", "sr", "juv", "eff")
+updated_habitat <- DSMhabitat::sr_juv$eff["Upper Sacramento River", , ] + add_project_habitat
 
 r_to_r_eff_baseline_sr_juv["Upper Sacramento River", , ] <- updated_habitat 
 
 # Add upper sacramento  river fry habitat 
-add_project_habitat <- DSMhabitat::sr_fry$eff_sac["Upper Sacramento River" , , ] * 
-  hab_prop_change_from_projects("inchannel rearing", "Upper Sacramento River", "sr", "fry", "eff_sac")
+add_project_habitat <- DSMhabitat::sr_fry$eff["Upper Sacramento River" , , ] * 
+  hab_prop_change_from_projects("inchannel rearing", "Upper Sacramento River", "sr", "fry", "eff")
 
-updated_habitat <- DSMhabitat::sr_fry$eff_sac["Upper Sacramento River", , ] + add_project_habitat
+updated_habitat <- DSMhabitat::sr_fry$eff["Upper Sacramento River", , ] + add_project_habitat
 
 r_to_r_eff_baseline_sr_fry["Upper Sacramento River", , ] <- updated_habitat 
 
 # add Upper-mid Sacramento River
 # Add upper mid sac river juv habitat 
-add_project_habitat <- DSMhabitat::sr_juv$eff_sac["Upper-mid Sacramento River" , , ] * 
+add_project_habitat <- DSMhabitat::sr_juv$eff["Upper-mid Sacramento River" , , ] * 
   hab_prop_change_from_projects("inchannel rearing", "Upper-mid Sacramento River", 
-                                "sr", "juv", "eff_sac")
-updated_habitat <- DSMhabitat::sr_juv$eff_sac["Upper-mid Sacramento River", , ] + add_project_habitat
+                                "sr", "juv", "eff")
+updated_habitat <- DSMhabitat::sr_juv$eff["Upper-mid Sacramento River", , ] + add_project_habitat
 
 r_to_r_eff_baseline_sr_juv["Upper-mid Sacramento River", , ] <- updated_habitat 
 
 # Add upper mid sacramento river fry habitat 
-add_project_habitat <- DSMhabitat::sr_fry$eff_sac["Upper-mid Sacramento River" , , ] * 
+add_project_habitat <- DSMhabitat::sr_fry$eff["Upper-mid Sacramento River" , , ] * 
   hab_prop_change_from_projects("inchannel rearing", "Upper-mid Sacramento River", 
-                                "sr", "fry", "eff_sac")
-updated_habitat <- DSMhabitat::sr_fry$eff_sac["Upper-mid Sacramento River", , ] + add_project_habitat
+                                "sr", "fry", "eff")
+updated_habitat <- DSMhabitat::sr_fry$eff["Upper-mid Sacramento River", , ] + add_project_habitat
 
 r_to_r_eff_baseline_sr_fry["Upper-mid Sacramento River", , ] <- updated_habitat 
 
 # check r to r vs dsm habitat 
 # upper-mid sac, upper sac, and american river should be different 
-r_to_r_eff_baseline_sr_juv == DSMhabitat::sr_juv$eff_sac
-r_to_r_eff_baseline_sr_fry == DSMhabitat::sr_fry$eff_sac
+r_to_r_eff_baseline_sr_juv == DSMhabitat::sr_juv$eff
+r_to_r_eff_baseline_sr_fry == DSMhabitat::sr_fry$eff
 
 # Save as data object to DSMhabitat
-current_sr_juv <- DSMhabitat::sr_juv
-current_sr_juv$r_to_r_eff_baseline <- r_to_r_eff_baseline_sr_juv
-sr_juv <- current_sr_juv
+sr_juv <- modifyList(DSMhabitat::sr_juv, list("r_to_r_eff_baseline" = r_to_r_eff_baseline_sr_juv))
 usethis::use_data(sr_juv, overwrite = TRUE)
 
 # Save as data object to DSMhabitat
-current_sr_fry <- DSMhabitat::sr_fry
-current_sr_fry$r_to_r_eff_baseline <- r_to_r_eff_baseline_sr_fry
-sr_fry <- current_sr_fry
+sr_fry <- modifyList(DSMhabitat::sr_fry, list("r_to_r_eff_baseline" = r_to_r_eff_baseline_sr_fry))
 usethis::use_data(sr_fry, overwrite = TRUE)
 
 # Exploratory plot 
 r_to_r_baseline_habitat <- r_to_r_eff_baseline_sr_juv |> 
   DSMhabitat::square_meters_to_acres()
 
-sit_habitat <- DSMhabitat::sr_juv$eff_sac |> DSMhabitat::square_meters_to_acres()
+sit_habitat <- DSMhabitat::sr_juv$eff |> DSMhabitat::square_meters_to_acres()
 
 ic_juv <- expand_grid(
   watershed = factor(DSMscenario::watershed_labels, 
@@ -460,7 +446,7 @@ ic_juv |>
 r_to_r_baseline_habitat <- r_to_r_eff_baseline_sr_fry |> 
   DSMhabitat::square_meters_to_acres()
 
-sit_habitat <- DSMhabitat::sr_fry$eff_sac |> DSMhabitat::square_meters_to_acres()
+sit_habitat <- DSMhabitat::sr_fry$eff |> DSMhabitat::square_meters_to_acres()
 
 ic_fry <- expand_grid(
   watershed = factor(DSMscenario::watershed_labels, 
@@ -488,48 +474,46 @@ ic_fry|>
 
 
 # Add floodplain habitat -------------------------------------------------------
-r_to_r_eff_baseline_sr_fp <- DSMhabitat::sr_fp$eff_sac
+r_to_r_eff_baseline_sr_fp <- DSMhabitat::sr_fp$eff
 
 # Add Lower-mid sacramento river floodplain habitat 
-add_project_habitat <- DSMhabitat::sr_fp$eff_sac["Lower-mid Sacramento River" , , ] * 
+add_project_habitat <- DSMhabitat::sr_fp$eff["Lower-mid Sacramento River" , , ] * 
   hab_prop_change_from_projects("floodplain rearing", "Lower-mid Sacramento River" , 
-                                "sr", "juv", "eff_sac")
-updated_habitat <- DSMhabitat::sr_fp$eff_sac["Lower-mid Sacramento River" , , ] + add_project_habitat
+                                "sr", "juv", "eff")
+updated_habitat <- DSMhabitat::sr_fp$eff["Lower-mid Sacramento River" , , ] + add_project_habitat
 
 r_to_r_eff_baseline_sr_fp["Lower-mid Sacramento River" , , ] <- updated_habitat 
 
 # Tuolumne river floodplain 
-add_project_habitat <- DSMhabitat::sr_fp$eff_sac["Tuolumne River" , , ] * 
+add_project_habitat <- DSMhabitat::sr_fp$eff["Tuolumne River" , , ] * 
   hab_prop_change_from_projects("floodplain rearing", "Tuolumne River" , 
-                                "sr", "juv", "eff_sac")
-updated_habitat <- DSMhabitat::sr_fp$eff_sac["Tuolumne River" , , ] + add_project_habitat
+                                "sr", "juv", "eff")
+updated_habitat <- DSMhabitat::sr_fp$eff["Tuolumne River" , , ] + add_project_habitat
 
 r_to_r_eff_baseline_sr_fp["Tuolumne River" , , ] <- updated_habitat 
 
 # Add Yuba floodlplain habitat 
-add_project_habitat <- DSMhabitat::sr_fp$eff_sac["Yuba River" , , ] * 
+add_project_habitat <- DSMhabitat::sr_fp$eff["Yuba River" , , ] * 
   hab_prop_change_from_projects("floodplain rearing", "Yuba River" , 
-                                "sr", "juv", "eff_sac")
-updated_habitat <- DSMhabitat::sr_fp$eff_sac["Yuba River" , , ] + add_project_habitat
+                                "sr", "juv", "eff")
+updated_habitat <- DSMhabitat::sr_fp$eff["Yuba River" , , ] + add_project_habitat
 
 r_to_r_eff_baseline_sr_fp["Yuba River" , , ] <- updated_habitat 
 
 
 # check hab differences 
 # yuba and lower-mid sac should be different 
-r_to_r_eff_baseline_sr_fp == DSMhabitat::sr_fp$eff_sac
+r_to_r_eff_baseline_sr_fp == DSMhabitat::sr_fp$eff
 
 # Save as data object to DSMhabitat
-current_sr_fp <- DSMhabitat::sr_fp
-current_sr_fp$r_to_r_eff_baseline <- r_to_r_eff_baseline_sr_fp
-sr_fp <- current_sr_fp
+sr_fp <- modifyList(DSMhabitat::sr_fp, list("r_to_r_eff_baseline" = r_to_r_eff_baseline_sr_fp))
 usethis::use_data(sr_fp, overwrite = TRUE)
 
 # Exploratory plot 
 r_to_r_baseline_habitat <- r_to_r_eff_baseline_sr_fp |> 
   DSMhabitat::square_meters_to_acres()
 
-sit_habitat <- DSMhabitat::sr_fp$eff_sac |> DSMhabitat::square_meters_to_acres()
+sit_habitat <- DSMhabitat::sr_fp$eff |> DSMhabitat::square_meters_to_acres()
 
 fp <- expand_grid(
   watershed = factor(DSMscenario::watershed_labels, 
@@ -556,30 +540,28 @@ fp |>
 # WINTER RUN ---------------------------------------------------------------------
 # Update DSMhabitat values 
 # set r_to_r_baseline_fr_spawn to 
-r_to_r_eff_baseline_wr_spawn <- DSMhabitat::wr_spawn$eff_sac
+r_to_r_eff_baseline_wr_spawn <- DSMhabitat::wr_spawn$eff
 
 # Add sacramento river spawning habitat 
-add_project_habitat <- DSMhabitat::wr_spawn$eff_sac["Upper Sacramento River" , , ] * 
-  hab_prop_change_from_projects("spawning", "Upper Sacramento River", "wr", "adult", "eff_sac")
-updated_habitat <- DSMhabitat::wr_spawn$eff_sac["Upper Sacramento River", , ] + add_project_habitat
+add_project_habitat <- DSMhabitat::wr_spawn$eff["Upper Sacramento River" , , ] * 
+  hab_prop_change_from_projects("spawning", "Upper Sacramento River", "wr", "adult", "eff")
+updated_habitat <- DSMhabitat::wr_spawn$eff["Upper Sacramento River", , ] + add_project_habitat
 
 r_to_r_eff_baseline_wr_spawn["Upper Sacramento River", , ] <- updated_habitat 
 
 # check habitat differences 
 # upper sac and american river should be different (larger)
-r_to_r_eff_baseline_wr_spawn == DSMhabitat::wr_spawn$eff_sac
+r_to_r_eff_baseline_wr_spawn == DSMhabitat::wr_spawn$eff
 
 # Save as data object to DSMhabitat
-current_wr_spawn <- DSMhabitat::wr_spawn
-current_wr_spawn$r_to_r_eff_baseline <- r_to_r_eff_baseline_wr_spawn
-wr_spawn <- current_wr_spawn
+wr_spawn <- modifyList(DSMhabitat::wr_spawn, list("r_to_r_eff_baseline" = r_to_r_eff_baseline_wr_spawn))
 usethis::use_data(wr_spawn, overwrite = TRUE)
 
 # Exploratory plot 
 r_to_r_baseline_habitat <- r_to_r_eff_baseline_wr_spawn |> 
   DSMhabitat::square_meters_to_acres()
 
-sit_habitat <- DSMhabitat::wr_spawn$eff_sac |> DSMhabitat::square_meters_to_acres()
+sit_habitat <- DSMhabitat::wr_spawn$eff |> DSMhabitat::square_meters_to_acres()
 
 spawn <- expand_grid(
   watershed = factor(DSMscenario::watershed_labels, 
@@ -604,64 +586,60 @@ spawn |>
 
 # Add inchannel habitat to both fry and juvenile habitat objects ---------------
 # set r_to_r_baseline_fr_juv and fry 
-r_to_r_eff_baseline_wr_juv <- DSMhabitat::wr_juv$eff_sac
-r_to_r_eff_baseline_wr_fry <- DSMhabitat::wr_fry$eff_sac
+r_to_r_eff_baseline_wr_juv <- DSMhabitat::wr_juv$eff
+r_to_r_eff_baseline_wr_fry <- DSMhabitat::wr_fry$eff
 
 # Upper sac river 
 # Add upper sac river juv habitat 
-add_project_habitat <- DSMhabitat::wr_juv$eff_sac["Upper Sacramento River" , , ] * 
-  hab_prop_change_from_projects("inchannel rearing", "Upper Sacramento River", "wr", "juv", "eff_sac")
-updated_habitat <- DSMhabitat::wr_juv$eff_sac["Upper Sacramento River", , ] + add_project_habitat
+add_project_habitat <- DSMhabitat::wr_juv$eff["Upper Sacramento River" , , ] * 
+  hab_prop_change_from_projects("inchannel rearing", "Upper Sacramento River", "wr", "juv", "eff")
+updated_habitat <- DSMhabitat::wr_juv$eff["Upper Sacramento River", , ] + add_project_habitat
 
 r_to_r_eff_baseline_wr_juv["Upper Sacramento River", , ] <- updated_habitat 
 
 # Add upper sacramento  river fry habitat 
-add_project_habitat <- DSMhabitat::wr_fry$eff_sac["Upper Sacramento River" , , ] * 
-  hab_prop_change_from_projects("inchannel rearing", "Upper Sacramento River", "wr", "fry", "eff_sac")
+add_project_habitat <- DSMhabitat::wr_fry$eff["Upper Sacramento River" , , ] * 
+  hab_prop_change_from_projects("inchannel rearing", "Upper Sacramento River", "wr", "fry", "eff")
 
-updated_habitat <- DSMhabitat::wr_fry$eff_sac["Upper Sacramento River", , ] + add_project_habitat
+updated_habitat <- DSMhabitat::wr_fry$eff["Upper Sacramento River", , ] + add_project_habitat
 
 r_to_r_eff_baseline_wr_fry["Upper Sacramento River", , ] <- updated_habitat 
 
 # add Upper-mid Sacramento River
 # Add upper mid sac river juv habitat 
-add_project_habitat <- DSMhabitat::wr_juv$eff_sac["Upper-mid Sacramento River" , , ] * 
+add_project_habitat <- DSMhabitat::wr_juv$eff["Upper-mid Sacramento River" , , ] * 
   hab_prop_change_from_projects("inchannel rearing", "Upper-mid Sacramento River", 
-                                "wr", "juv", "eff_sac")
-updated_habitat <- DSMhabitat::wr_juv$eff_sac["Upper-mid Sacramento River", , ] + add_project_habitat
+                                "wr", "juv", "eff")
+updated_habitat <- DSMhabitat::wr_juv$eff["Upper-mid Sacramento River", , ] + add_project_habitat
 
 r_to_r_eff_baseline_wr_juv["Upper-mid Sacramento River", , ] <- updated_habitat 
 
 # Add upper mid sacramento river fry habitat 
-add_project_habitat <- DSMhabitat::wr_fry$eff_sac["Upper-mid Sacramento River" , , ] * 
+add_project_habitat <- DSMhabitat::wr_fry$eff["Upper-mid Sacramento River" , , ] * 
   hab_prop_change_from_projects("inchannel rearing", "Upper-mid Sacramento River", 
-                                "wr", "fry", "eff_sac")
-updated_habitat <- DSMhabitat::wr_fry$eff_sac["Upper-mid Sacramento River", , ] + add_project_habitat
+                                "wr", "fry", "eff")
+updated_habitat <- DSMhabitat::wr_fry$eff["Upper-mid Sacramento River", , ] + add_project_habitat
 
 r_to_r_eff_baseline_wr_fry["Upper-mid Sacramento River", , ] <- updated_habitat 
 
 # check r to r vs dsm habitat 
 # upper-mid sac, upper sac, and american river should be different 
-r_to_r_eff_baseline_wr_juv == DSMhabitat::wr_juv$eff_sac
-r_to_r_eff_baseline_wr_fry == DSMhabitat::wr_fry$eff_sac
+r_to_r_eff_baseline_wr_juv == DSMhabitat::wr_juv$eff
+r_to_r_eff_baseline_wr_fry == DSMhabitat::wr_fry$eff
 
 # Save as data object to DSMhabitat
-current_wr_juv <- DSMhabitat::wr_juv
-current_wr_juv$r_to_r_eff_baseline <- r_to_r_eff_baseline_wr_juv
-wr_juv <- current_wr_juv
+wr_juv <- modifyList(DSMhabitat::wr_juv, list("r_to_r_eff_baseline" = r_to_r_eff_baseline_wr_juv))
 usethis::use_data(wr_juv, overwrite = TRUE)
 
 # Save as data object to DSMhabitat
-current_wr_fry <- DSMhabitat::wr_fry
-current_wr_fry$r_to_r_eff_baseline <- r_to_r_eff_baseline_wr_fry
-wr_fry <- current_wr_fry
+wr_fry <- modifyList(DSMhabitat::wr_fry, list("r_to_r_eff_baseline" = r_to_r_eff_baseline_wr_fry))
 usethis::use_data(wr_fry, overwrite = TRUE)
 
 # Exploratory plot 
 r_to_r_baseline_habitat <- r_to_r_eff_baseline_wr_juv |> 
   DSMhabitat::square_meters_to_acres()
 
-sit_habitat <- DSMhabitat::wr_juv$eff_sac |> DSMhabitat::square_meters_to_acres()
+sit_habitat <- DSMhabitat::wr_juv$eff |> DSMhabitat::square_meters_to_acres()
 
 ic_juv <- expand_grid(
   watershed = factor(DSMscenario::watershed_labels, 
@@ -690,7 +668,7 @@ ic_juv |>
 r_to_r_baseline_habitat <- r_to_r_eff_baseline_wr_fry |> 
   DSMhabitat::square_meters_to_acres()
 
-sit_habitat <- DSMhabitat::wr_fry$eff_sac |> DSMhabitat::square_meters_to_acres()
+sit_habitat <- DSMhabitat::wr_fry$eff |> DSMhabitat::square_meters_to_acres()
 
 ic_fry <- expand_grid(
   watershed = factor(DSMscenario::watershed_labels, 
@@ -717,31 +695,29 @@ ic_fry|>
 
 
 # Add floodplain habitat -------------------------------------------------------
-r_to_r_eff_baseline_wr_fp <- DSMhabitat::wr_fp$eff_sac
+r_to_r_eff_baseline_wr_fp <- DSMhabitat::wr_fp$eff
 
 # Add Lower-mid sacramento river floodplain habitat 
-add_project_habitat <- DSMhabitat::wr_fp$eff_sac["Lower-mid Sacramento River" , , ] * 
+add_project_habitat <- DSMhabitat::wr_fp$eff["Lower-mid Sacramento River" , , ] * 
   hab_prop_change_from_projects("floodplain rearing", "Lower-mid Sacramento River" , 
-                                "wr", "juv", "eff_sac")
-updated_habitat <- DSMhabitat::wr_fp$eff_sac["Lower-mid Sacramento River" , , ] + add_project_habitat
+                                "wr", "juv", "eff")
+updated_habitat <- DSMhabitat::wr_fp$eff["Lower-mid Sacramento River" , , ] + add_project_habitat
 
 r_to_r_eff_baseline_wr_fp["Lower-mid Sacramento River" , , ] <- updated_habitat 
 
 # check hab differences 
 # yuba and lower-mid sac should be different 
-r_to_r_eff_baseline_wr_fp == DSMhabitat::wr_fp$eff_sac
+r_to_r_eff_baseline_wr_fp == DSMhabitat::wr_fp$eff
 
 # Save as data object to DSMhabitat
-current_wr_fp <- DSMhabitat::wr_fp
-current_wr_fp$r_to_r_eff_baseline <- r_to_r_eff_baseline_wr_fp
-wr_fp <- current_wr_fp
+wr_fp <- modifyList(DSMhabitat::wr_fp, list("r_to_r_eff_baseline" = r_to_r_eff_baseline_wr_fp))
 usethis::use_data(wr_fp, overwrite = TRUE)
 
 # Exploratory plot 
 r_to_r_baseline_habitat <- r_to_r_eff_baseline_wr_fp |> 
   DSMhabitat::square_meters_to_acres()
 
-sit_habitat <- DSMhabitat::wr_fp$eff_sac |> DSMhabitat::square_meters_to_acres()
+sit_habitat <- DSMhabitat::wr_fp$eff |> DSMhabitat::square_meters_to_acres()
 
 fp <- expand_grid(
   watershed = factor(DSMscenario::watershed_labels, 
@@ -771,7 +747,7 @@ fp |>
 r_to_r_baseline_delta <- DSMhabitat::delta_habitat$sit_habitat
 add_project_habitat <- DSMhabitat::delta_habitat$sit_habitat[ , ,"North Delta" ] * 
   hab_prop_change_from_projects("floodplain rearing", "North Delta" , 
-                                "fr", "juv", "eff_sac")
+                                "fr", "juv", "eff")
 updated_habitat <- DSMhabitat::delta_habitat$sit_habitat[ , ,"North Delta" ] + add_project_habitat
 
 r_to_r_baseline_delta[ , , "North Delta"] <- updated_habitat 

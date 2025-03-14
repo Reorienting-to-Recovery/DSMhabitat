@@ -14,31 +14,31 @@ source('data-raw/R2R_TMH_habitat_inputs/tmh_helper_functions.R')
 # update DSMhabitat values ------------------------------------------------
 watersheds_trunc <- DSMscenario::watershed_labels[!(DSMscenario::watershed_labels %in%  c('North Delta', "South Delta", "Sutter Bypass", "Yolo Bypass"))]
 
-r_to_r_tmh_fr_spawn_eff <- spawn_tmh_processing(watersheds = watersheds_trunc, species = "fr", calsim_run = "eff_sac")
-r_to_r_tmh_wr_spawn_eff <- spawn_tmh_processing(watersheds = watersheds_trunc, species = "wr", calsim_run = "eff_sac")
+r_to_r_tmh_fr_spawn_eff <- spawn_tmh_processing(watersheds = watersheds_trunc, species = "fr", calsim_run = "eff")
+r_to_r_tmh_wr_spawn_eff <- spawn_tmh_processing(watersheds = watersheds_trunc, species = "wr", calsim_run = "eff")
 r_to_r_tmh_sr_spawn_eff <- spawn_tmh_processing(watersheds = watersheds_trunc, species = "sr", calsim_run = "sac_eff")
 
 r_to_r_tmh_fr_spawn_eff - DSMhabitat::fr_spawn$r_to_r_tmh_eff # check, should be different 
 
 
 ## inchannel habitat to both fry and juvenile habitat objects ---------------
-r_to_r_tmh_fr_fry_eff <- rearing_tmh_processing(watersheds = watersheds_trunc, species = "fr", calsim_run = "eff_sac")$fry
-r_to_r_tmh_fr_juv_eff <- rearing_tmh_processing(watersheds = watersheds_trunc, species = "fr", calsim_run = "eff_sac")$juv
+r_to_r_tmh_fr_fry_eff <- rearing_tmh_processing(watersheds = watersheds_trunc, species = "fr", calsim_run = "eff")$fry
+r_to_r_tmh_fr_juv_eff <- rearing_tmh_processing(watersheds = watersheds_trunc, species = "fr", calsim_run = "eff")$juv
 
-r_to_r_tmh_wr_fry_eff <- rearing_tmh_processing(watersheds = watersheds_trunc, species = "wr", calsim_run = "eff_sac")$fry
-r_to_r_tmh_wr_juv_eff <- rearing_tmh_processing(watersheds = watersheds_trunc, species = "wr", calsim_run = "eff_sac")$juv
+r_to_r_tmh_wr_fry_eff <- rearing_tmh_processing(watersheds = watersheds_trunc, species = "wr", calsim_run = "eff")$fry
+r_to_r_tmh_wr_juv_eff <- rearing_tmh_processing(watersheds = watersheds_trunc, species = "wr", calsim_run = "eff")$juv
 
-r_to_r_tmh_sr_fry_eff <- rearing_tmh_processing(watersheds = watersheds_trunc, species = "sr", calsim_run = "eff_sac")$fry
-r_to_r_tmh_sr_juv_eff <- rearing_tmh_processing(watersheds = watersheds_trunc, species = "sr", calsim_run = "eff_sac")$juv
+r_to_r_tmh_sr_fry_eff <- rearing_tmh_processing(watersheds = watersheds_trunc, species = "sr", calsim_run = "eff")$fry
+r_to_r_tmh_sr_juv_eff <- rearing_tmh_processing(watersheds = watersheds_trunc, species = "sr", calsim_run = "eff")$juv
 r_to_r_tmh_sr_fry_eff[which(is.na(r_to_r_tmh_sr_fry_eff))] <- r_to_r_tmh_fr_fry_eff[which(is.na(r_to_r_tmh_sr_fry_eff))]
 r_to_r_tmh_sr_juv_eff[which(is.na(r_to_r_tmh_sr_juv_eff))] <- r_to_r_tmh_fr_juv_eff[which(is.na(r_to_r_tmh_sr_juv_eff))]
 
 r_to_r_tmh_fr_juv_eff - DSMhabitat::fr_juv$r_to_r_tmh_eff # test - should be different 
 
 ##floodplain: -------------------------------------------------------------
-r_to_r_tmh_fr_flood_eff <- floodplain_tmh_processing(watersheds = watersheds_trunc, species = "fr", calsim_run = "eff_sac")
-r_to_r_tmh_sr_flood_eff <- floodplain_tmh_processing(watersheds = watersheds_trunc, species = "sr", calsim_run = "eff_sac")
-r_to_r_tmh_wr_flood_eff <- floodplain_tmh_processing(watersheds = watersheds_trunc, species = "wr", calsim_run = "eff_sac")
+r_to_r_tmh_fr_flood_eff <- floodplain_tmh_processing(watersheds = watersheds_trunc, species = "fr", calsim_run = "eff")
+r_to_r_tmh_sr_flood_eff <- floodplain_tmh_processing(watersheds = watersheds_trunc, species = "sr", calsim_run = "eff")
+r_to_r_tmh_wr_flood_eff <- floodplain_tmh_processing(watersheds = watersheds_trunc, species = "wr", calsim_run = "eff")
 
 r_to_r_tmh_fr_flood_eff == r_to_r_tmh_sr_flood_eff # test - should be different 
 
@@ -96,41 +96,43 @@ usethis::use_data(delta_habitat, overwrite = TRUE)
 
 # do some checks, but make sure you build library first 
 
-table(DSMhabitat::fr_spawn$biop_itp_2018_2019 == DSMhabitat::fr_spawn$r_to_r_tmh_eff)
-table(DSMhabitat::fr_fp$biop_itp_2018_2019 == DSMhabitat::fr_fp$r_to_r_tm_effh)
-table(DSMhabitat::sr_juv$biop_itp_2018_2019 == DSMhabitat::sr_juv$r_to_r_tmh_eff)
+# commented this out because it doesn't work unless you build, and so it causes an error in sourcing update_data.R
 
-# Exploratory Plots:  -----------------------------------------------------
-## spawning plot:  ---------------------------------------------------------
-### fall run: 
-tmh_comparison_plot(tmh_data = DSMhabitat::fr_spawn$r_to_r_tmh_eff, 
-                    sit_habitat = DSMhabitat::fr_spawn$biop_itp_2018_2019, "spawn")
-
-tmh_comparison_plot(tmh_data =DSMhabitat::wr_spawn$r_to_r_tmh_eff, 
-                    sit_habitat = DSMhabitat::wr_spawn$biop_itp_2018_2019, "spawn")
-
-tmh_comparison_plot(tmh_data = DSMhabitat::sr_spawn$r_to_r_tmh_eff, 
-                    sit_habitat = DSMhabitat::sr_spawn$biop_itp_2018_2019, "spawn")
-
-## fry and juv plots:  -----------------------------------------------------
-tmh_comparison_plot(tmh_data = DSMhabitat::fr_fry$r_to_r_tmh_eff, 
-                    sit_habitat = DSMhabitat::fr_fry$biop_itp_2018_2019, "fry")
-
-# winter run
-tmh_comparison_plot(tmh_data = DSMhabitat::wr_fry$r_to_r_tmh_eff, 
-                    sit_habitat = DSMhabitat::wr_fry$biop_itp_2018_2019, "fry")
-# spring run 
-tmh_comparison_plot(tmh_data = DSMhabitat::sr_fry$r_to_r_tmh_eff, 
-                    sit_habitat = DSMhabitat::sr_fry$biop_itp_2018_2019, "fry")
-
-## floodplain exploratory plot:  -------------------------------------------
-# fall run: 
-tmh_comparison_plot(tmh_data = DSMhabitat::fr_fp$r_to_r_tmh_eff, 
-                    sit_habitat = DSMhabitat::fr_fp$biop_itp_2018_2019, "flood")
-# winter run:
-tmh_comparison_plot(tmh_data = DSMhabitat::wr_fp$r_to_r_tmh_eff, 
-                    sit_habitat = DSMhabitat::wr_fp$biop_itp_2018_2019, "flood")
-# spring run: 
-tmh_comparison_plot(tmh_data = DSMhabitat::sr_fp$r_to_r_tmh_eff, 
-                    sit_habitat = DSMhabitat::sr_fp$biop_itp_2018_2019, "flood")
-
+# table(DSMhabitat::fr_spawn$biop_itp_2018_2019 == DSMhabitat::fr_spawn$r_to_r_tmh_eff)
+# table(DSMhabitat::fr_fp$biop_itp_2018_2019 == DSMhabitat::fr_fp$r_to_r_tm_effh)
+# table(DSMhabitat::sr_juv$biop_itp_2018_2019 == DSMhabitat::sr_juv$r_to_r_tmh_eff)
+# 
+# # Exploratory Plots:  -----------------------------------------------------
+# ## spawning plot:  ---------------------------------------------------------
+# ### fall run: 
+# tmh_comparison_plot(tmh_data = DSMhabitat::fr_spawn$r_to_r_tmh_eff, 
+#                     sit_habitat = DSMhabitat::fr_spawn$biop_itp_2018_2019, "spawn")
+# 
+# tmh_comparison_plot(tmh_data =DSMhabitat::wr_spawn$r_to_r_tmh_eff, 
+#                     sit_habitat = DSMhabitat::wr_spawn$biop_itp_2018_2019, "spawn")
+# 
+# tmh_comparison_plot(tmh_data = DSMhabitat::sr_spawn$r_to_r_tmh_eff, 
+#                     sit_habitat = DSMhabitat::sr_spawn$biop_itp_2018_2019, "spawn")
+# 
+# ## fry and juv plots:  -----------------------------------------------------
+# tmh_comparison_plot(tmh_data = DSMhabitat::fr_fry$r_to_r_tmh_eff, 
+#                     sit_habitat = DSMhabitat::fr_fry$biop_itp_2018_2019, "fry")
+# 
+# # winter run
+# tmh_comparison_plot(tmh_data = DSMhabitat::wr_fry$r_to_r_tmh_eff, 
+#                     sit_habitat = DSMhabitat::wr_fry$biop_itp_2018_2019, "fry")
+# # spring run 
+# tmh_comparison_plot(tmh_data = DSMhabitat::sr_fry$r_to_r_tmh_eff, 
+#                     sit_habitat = DSMhabitat::sr_fry$biop_itp_2018_2019, "fry")
+# 
+# ## floodplain exploratory plot:  -------------------------------------------
+# # fall run: 
+# tmh_comparison_plot(tmh_data = DSMhabitat::fr_fp$r_to_r_tmh_eff, 
+#                     sit_habitat = DSMhabitat::fr_fp$biop_itp_2018_2019, "flood")
+# # winter run:
+# tmh_comparison_plot(tmh_data = DSMhabitat::wr_fp$r_to_r_tmh_eff, 
+#                     sit_habitat = DSMhabitat::wr_fp$biop_itp_2018_2019, "flood")
+# # spring run: 
+# tmh_comparison_plot(tmh_data = DSMhabitat::sr_fp$r_to_r_tmh_eff, 
+#                     sit_habitat = DSMhabitat::sr_fp$biop_itp_2018_2019, "flood")
+# 

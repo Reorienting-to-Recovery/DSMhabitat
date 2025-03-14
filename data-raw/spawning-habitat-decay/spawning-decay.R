@@ -362,7 +362,7 @@ create_spawning_decays <- function(watersheds, dsm_flows) {
 watershed_spawning_decays_09 <- create_spawning_decays(watersheds_with_decay, dsm_flows = DSMflow::flows_cfs$biop_2008_2009)
 watershed_spawning_decays_19 <- create_spawning_decays(watersheds_with_decay, dsm_flows = DSMflow::flows_cfs$biop_itp_2018_2019)
 watershed_spawning_decays_rr <- create_spawning_decays(watersheds_with_decay, dsm_flows = DSMflow::flows_cfs$run_of_river)
-watershed_spawning_decays_eff <- create_spawning_decays(watersheds_with_decay, dsm_flows = DSMflow::flows_cfs$eff_sac)
+watershed_spawning_decays_eff <- create_spawning_decays(watersheds_with_decay, dsm_flows = DSMflow::flows_cfs$eff)
 
 watershed_spawning_decays <- list(
   "biop_2008_2009" = watershed_spawning_decays_09,

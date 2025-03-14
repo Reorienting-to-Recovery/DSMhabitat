@@ -96,41 +96,43 @@ usethis::use_data(delta_habitat, overwrite = TRUE)
 
 # do some checks, but make sure you build library first 
 
-table(DSMhabitat::fr_spawn$biop_itp_2018_2019 == DSMhabitat::fr_spawn$r_to_r_tmh)
-table(DSMhabitat::fr_fp$biop_itp_2018_2019 == DSMhabitat::fr_fp$r_to_r_tmh)
-table(DSMhabitat::sr_juv$biop_itp_2018_2019 == DSMhabitat::sr_juv$r_to_r_tmh)
+# commented this out because it doesn't work unless you build, and so it causes an error in sourcing update_data.R
 
-# Exploratory Plots:  -----------------------------------------------------
-## spawning plot:  ---------------------------------------------------------
-### fall run: 
-tmh_comparison_plot(tmh_data = DSMhabitat::fr_spawn$r_to_r_tmh, 
-                    sit_habitat = DSMhabitat::fr_spawn$biop_itp_2018_2019, "spawn")
-
-tmh_comparison_plot(tmh_data =DSMhabitat::wr_spawn$r_to_r_tmh, 
-                    sit_habitat = DSMhabitat::wr_spawn$biop_itp_2018_2019, "spawn")
-
-tmh_comparison_plot(tmh_data = DSMhabitat::sr_spawn$r_to_r_tmh, 
-                    sit_habitat = DSMhabitat::sr_spawn$biop_itp_2018_2019, "spawn")
-
-## fry and juv plots:  -----------------------------------------------------
-tmh_comparison_plot(tmh_data = DSMhabitat::fr_fry$r_to_r_tmh, 
-                    sit_habitat = DSMhabitat::fr_fry$biop_itp_2018_2019, "fry")
-
-# winter run
-tmh_comparison_plot(tmh_data = DSMhabitat::wr_fry$r_to_r_tmh, 
-                    sit_habitat = DSMhabitat::wr_fry$biop_itp_2018_2019, "fry")
-# spring run 
-tmh_comparison_plot(tmh_data = DSMhabitat::sr_fry$r_to_r_tmh, 
-                    sit_habitat = DSMhabitat::sr_fry$biop_itp_2018_2019, "fry")
-
-## floodplain exploratory plot:  -------------------------------------------
-# fall run: 
-tmh_comparison_plot(tmh_data = DSMhabitat::fr_fp$r_to_r_tmh, 
-                    sit_habitat = DSMhabitat::fr_fp$biop_itp_2018_2019, "flood")
-# winter run:
-tmh_comparison_plot(tmh_data = DSMhabitat::wr_fp$r_to_r_tmh, 
-                    sit_habitat = DSMhabitat::wr_fp$biop_itp_2018_2019, "flood")
-# spring run: 
-tmh_comparison_plot(tmh_data = DSMhabitat::sr_fp$r_to_r_tmh, 
-                    sit_habitat = DSMhabitat::sr_fp$biop_itp_2018_2019, "flood")
-
+# table(DSMhabitat::fr_spawn$biop_itp_2018_2019 == DSMhabitat::fr_spawn$r_to_r_tmh)
+# table(DSMhabitat::fr_fp$biop_itp_2018_2019 == DSMhabitat::fr_fp$r_to_r_tmh)
+# table(DSMhabitat::sr_juv$biop_itp_2018_2019 == DSMhabitat::sr_juv$r_to_r_tmh)
+# 
+# # Exploratory Plots:  -----------------------------------------------------
+# ## spawning plot:  ---------------------------------------------------------
+# ### fall run: 
+# tmh_comparison_plot(tmh_data = DSMhabitat::fr_spawn$r_to_r_tmh, 
+#                     sit_habitat = DSMhabitat::fr_spawn$biop_itp_2018_2019, "spawn")
+# 
+# tmh_comparison_plot(tmh_data =DSMhabitat::wr_spawn$r_to_r_tmh, 
+#                     sit_habitat = DSMhabitat::wr_spawn$biop_itp_2018_2019, "spawn")
+# 
+# tmh_comparison_plot(tmh_data = DSMhabitat::sr_spawn$r_to_r_tmh, 
+#                     sit_habitat = DSMhabitat::sr_spawn$biop_itp_2018_2019, "spawn")
+# 
+# ## fry and juv plots:  -----------------------------------------------------
+# tmh_comparison_plot(tmh_data = DSMhabitat::fr_fry$r_to_r_tmh, 
+#                     sit_habitat = DSMhabitat::fr_fry$biop_itp_2018_2019, "fry")
+# 
+# # winter run
+# tmh_comparison_plot(tmh_data = DSMhabitat::wr_fry$r_to_r_tmh, 
+#                     sit_habitat = DSMhabitat::wr_fry$biop_itp_2018_2019, "fry")
+# # spring run 
+# tmh_comparison_plot(tmh_data = DSMhabitat::sr_fry$r_to_r_tmh, 
+#                     sit_habitat = DSMhabitat::sr_fry$biop_itp_2018_2019, "fry")
+# 
+# ## floodplain exploratory plot:  -------------------------------------------
+# # fall run: 
+# tmh_comparison_plot(tmh_data = DSMhabitat::fr_fp$r_to_r_tmh, 
+#                     sit_habitat = DSMhabitat::fr_fp$biop_itp_2018_2019, "flood")
+# # winter run:
+# tmh_comparison_plot(tmh_data = DSMhabitat::wr_fp$r_to_r_tmh, 
+#                     sit_habitat = DSMhabitat::wr_fp$biop_itp_2018_2019, "flood")
+# # spring run: 
+# tmh_comparison_plot(tmh_data = DSMhabitat::sr_fp$r_to_r_tmh, 
+#                     sit_habitat = DSMhabitat::sr_fp$biop_itp_2018_2019, "flood")
+# 
