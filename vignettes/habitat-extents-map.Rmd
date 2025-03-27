@@ -1,8 +1,8 @@
 ---
-title: "Interactive Map of Spawning and Rearing Habitat"
+title: "Map of Spawning and Rearing Habitat"
 output: rmarkdown::html_document
 vignette: >
-  %\VignetteIndexEntry{Interactive Map of Spawning and Rearing Habitat}
+  %\VignetteIndexEntry{Map of Spawning and Rearing Habitat}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -17,8 +17,6 @@ knitr::opts_chunk$set(
 library(widgetframe)
 library(DSMhabitat)
 ```
-
-### Map of Spawning and Rearing Habitat
 
 The map below displays existing and theoretical maximum habitat (TMH) for chinook salmon in the Central Valley.
 
