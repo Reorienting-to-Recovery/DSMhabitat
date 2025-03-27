@@ -30,7 +30,7 @@ Additional scaling is applied to existing habitat data to account for current an
 
 ### Dependencies
 
-The `DSMhabitat` package provides data for several other packages within the [Reorienting to Recovery Project](https://github.com/Reorienting-to-Recovery. These relationships are visualized in the dependency graph below. <img src="man/figures/dependencyChain.svg" width="100%"/>
+The `DSMhabitat` package provides data for several other packages within the [Reorienting to Recovery Project](https://github.com/Reorienting-to-Recovery). These relationships are visualized in the dependency graph below. <img src="man/figures/dependencyChain.svg" width="100%"/>
 
 
 Data Assembled and Maintained by <a href = "http://www.flowwest.com/" target = "_blank"> <img src="man/figures/TransLogoTreb.png" width="150px"/>

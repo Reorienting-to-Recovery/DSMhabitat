@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document id="M_Combined_Habitat_Suitability" xsi:schemaLocation="http://www.opengis.net/kml/2.2 http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd http://www.google.com/kml/ext/2.2 http://code.google.com/apis/kml/schema/kml22gx.xsd">
+	<name>M_Combined_Habitat_Suitability</name>
+	<Snippet maxLines="0"></Snippet>
+	<GroundOverlay>
+		<name>M_Combined_Habitat_Suitability: Composite</name>
+		<Icon>
+			<href>Composite_0.png</href>
+		</Icon>
+		<LatLonBox>
+			<north>38.77108017452901</north>
+			<south>37.50609580649699</south>
+			<east>-121.1574511347317</east>
+			<west>-121.9526243226441</west>
+		</LatLonBox>
+	</GroundOverlay>
+</Document>
+</kml>
