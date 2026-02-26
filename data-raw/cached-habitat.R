@@ -89,18 +89,30 @@ get_rear_hab_all <- function(watersheds, species, life_stage, calsim_version, ye
     }
   })
   
-  # deal with sacramento special cases
-  # lower-mid sac
-  low_mid_sac_flow1 <- get_flow('Lower-mid Sacramento River1', calsim_version, range(years))
-  low_mid_sac_flow2 <- get_flow('Lower-mid Sacramento River2', calsim_version, range(years))
+  # action 5 does not have sacramento special cases
+  if(calsim_version == "action_5") {
+    low_mid_sac_action_5_flow <- get_flow("Lower-mid Sacramento River", 
+                                          calsim_version, 
+                                          range(years))
+    low_mid_sac_hab <- DSMhabitat::set_instream_habitat("Lower-mid Sacramento River",
+                                                        species = species,
+                                                        life_stage = life_stage,
+                                                        flow = low_mid_sac_action_5_flow)
+  } else {
+    # deal with sacramento special cases
+    # lower-mid sac
+    low_mid_sac_flow1 <- get_flow('Lower-mid Sacramento River1', calsim_version, range(years))
+    low_mid_sac_flow2 <- get_flow('Lower-mid Sacramento River2', calsim_version, range(years))
+    
+    low_mid_sac_hab <- map2_dbl(low_mid_sac_flow1, low_mid_sac_flow2, function(flow, flow2) {
+      DSMhabitat::set_instream_habitat('Lower-mid Sacramento River',
+                                       species = species,
+                                       life_stage = life_stage,
+                                       flow = flow, flow2 = flow2)
+    })
   
-  low_mid_sac_hab <- map2_dbl(low_mid_sac_flow1, low_mid_sac_flow2, function(flow, flow2) {
-    DSMhabitat::set_instream_habitat('Lower-mid Sacramento River',
-                                     species = species,
-                                     life_stage = life_stage,
-                                     flow = flow, flow2 = flow2)
-  })
-  
+  }
+
   low_mid_sac <- tibble(
     year = rep(years, each = 12),
     month = rep(1:12, length(years)),
@@ -132,6 +144,7 @@ get_spawn_hab_all <- function(watersheds, species, calsim_version, years = 1979:
         habitat <- DSMhabitat::set_spawning_habitat(watershed,
                                                     species = species,
                                                     flow = flows)
+        
         tibble(
           year = rep(years, each = 12),
           month = rep(1:12, length(years)),
@@ -232,10 +245,19 @@ get_floodplain_hab_all <- function(watersheds, species, calsim_version, years = 
   })
   
   # lower-mid sacramento
-  low_mid_sac_flows1 <- get_flow("Lower-mid Sacramento River1", calsim_version, range(years))
-  low_mid_sac_flows2 <- get_flow("Lower-mid Sacramento River2", calsim_version, range(years))
-  low_mid_sac_fp <- DSMhabitat::set_floodplain_habitat('Lower-mid Sacramento River', species,
-                                                       low_mid_sac_flows1, flow2 = low_mid_sac_flows2)
+  if(calsim_version == "action_5") {
+    low_mid_sac_flows_action_5 <- get_flow("Lower-mid Sacramento River",
+                                           calsim_version,
+                                           range(years))
+    low_mid_sac_fp <- DSMhabitat::set_floodplain_habitat('Lower-mid Sacramento River', species,
+                                                         low_mid_sac_flows_action_5)
+  } else {
+    low_mid_sac_flows1 <- get_flow("Lower-mid Sacramento River1", calsim_version, range(years))
+    low_mid_sac_flows2 <- get_flow("Lower-mid Sacramento River2", calsim_version, range(years))
+    low_mid_sac_fp <- DSMhabitat::set_floodplain_habitat('Lower-mid Sacramento River', species,
+                                                         low_mid_sac_flows1, flow2 = low_mid_sac_flows2)
+  }
+
   
   low_mid_sac <- tibble(
     year = rep(years, each = 12),
@@ -283,11 +305,17 @@ fr_spawn_run_of_river <- get_spawn_hab_all(spawning_watersheds, 'fr', "run_of_ri
 dimnames(fr_spawn_run_of_river) <- list(watersheds, month.abb, 1979:2000)
 fr_spawn_run_of_river[which(is.na(fr_spawn_run_of_river))] <- 0
 
+# fr spawn action 5
+fr_spawn_action_5 <- get_spawn_hab_all(spawning_watersheds, 'fr', "action_5")
+dimnames(fr_spawn_action_5) <- list(watersheds, month.abb, 1979:2000)
+fr_spawn_action_5[which(is.na(fr_spawn_action_5))] <- 0
+
 # list together both fr spawning versions
 
 fr_spawn <- list(biop_2008_2009 = fr_spawn_2008_2009,
                  biop_itp_2018_2019 = fr_spawn_2018_2019,
-                 run_of_river = fr_spawn_run_of_river)
+                 run_of_river = fr_spawn_run_of_river,
+                 action_5 = fr_spawn_action_5)
 
 # because this is the first script run in update_data.R, we don't need it to be a modify List
 # fr_spawn <- modifyList(DSMhabitat::fr_spawn, list(biop_2008_2009 = fr_spawn_2008_2009,
@@ -314,10 +342,16 @@ st_spawn_run_of_river <- get_spawn_hab_all(spawning_watersheds, 'st', "run_of_ri
 st_spawn_run_of_river[which(is.na(st_spawn_run_of_river))] <- 0
 dimnames(st_spawn_run_of_river) <- list(watersheds, month.abb, 1979:2000)
 
+# st spawn action 5
+st_spawn_action_5 <- get_spawn_hab_all(spawning_watersheds, 'st', "action_5")
+st_spawn_action_5[which(is.na(st_spawn_action_5))] <- 0
+dimnames(st_spawn_action_5) <- list(watersheds, month.abb, 1979:2000)
+
 # list together both steelhead spawning versions
 st_spawn <- list(biop_2008_2009 = st_spawn_2008_2009,
                  biop_itp_2018_2019 = st_spawn_2018_2019,
-                 run_of_river = st_spawn_run_of_river)
+                 run_of_river = st_spawn_run_of_river,
+                 action_5 = st_spawn_action_5)
 # because this is the first script run in update_data.R, we don't need it to be a modify List
 # st_spawn <- modifyList(DSMhabitat::st_spawn, list(biop_2008_2009 = st_spawn_2008_2009,
 #                                               biop_itp_2018_2019 = st_spawn_2018_2019,
@@ -364,11 +398,24 @@ sr_spawn_run_of_river["Calaveras River", , ] <- fr_spawn$run_of_river["Calaveras
 sr_spawn_run_of_river["Cosumnes River", , ] <- fr_spawn$run_of_river["Cosumnes River", , ] 
 sr_spawn_run_of_river["Merced River", , ] <- fr_spawn$run_of_river["Merced River", , ] 
 
+# sr action 5
+
+sr_spawn_action_5 <- get_spawn_hab_all(spawning_watersheds_sr, 'sr', "action_5")
+sr_spawn_action_5[which(is.na(sr_spawn_action_5))] <- 0
+dimnames(sr_spawn_action_5) <- list(watersheds, month.abb, 1979:2000)
+
+# several watershed that do not have spring run populations but SIT wants to enable colonization
+sr_spawn_action_5["Thomes Creek", , ] <- st_spawn$action_5["Thomes Creek", , ] 
+sr_spawn_action_5["Calaveras River", , ] <- fr_spawn$action_5["Calaveras River", , ] 
+sr_spawn_action_5["Cosumnes River", , ] <- fr_spawn$action_5["Cosumnes River", , ] 
+sr_spawn_action_5["Merced River", , ] <- fr_spawn$action_5["Merced River", , ]
+
 # Combine together 
 
 sr_spawn <- list(biop_2008_2009 = sr_spawn_2008_2009,
                  biop_itp_2018_2019 = sr_spawn_2018_2019,
-                 run_of_river = sr_spawn_run_of_river)
+                 run_of_river = sr_spawn_run_of_river,
+                 action_5 = sr_spawn_action_5)
 # because this is the first script run in update_data.R, we don't need it to be a modify List
 # sr_spawn <- modifyList(DSMhabitat::sr_spawn, list(biop_2008_2009 = sr_spawn_2008_2009,
 #                                               biop_itp_2018_2019 = sr_spawn_2018_2019,
@@ -408,11 +455,13 @@ generate_wr_spawn <- function(calsim_version) {
 wr_spawn_2008_2009 <- generate_wr_spawn("biop_2008_2009")
 wr_spawn_2018_2019 <- generate_wr_spawn("biop_itp_2018_2019")
 wr_spawn_run_of_river <- generate_wr_spawn("run_of_river")
+wr_spawn_action_5 <- generate_wr_spawn("action_5")
 # combine together
 
 wr_spawn <- list(biop_2008_2009 = wr_spawn_2008_2009,
                  biop_itp_2018_2019 = wr_spawn_2018_2019,
-                 run_of_river = wr_spawn_run_of_river)
+                 run_of_river = wr_spawn_run_of_river,
+                 action_5 = wr_spawn_action_5)
 # because this is the first script run in update_data.R, we don't need it to be a modify List
 # wr_spawn <- modifyList(DSMhabitat::wr_spawn, list(biop_2008_2009 = wr_spawn_2008_2009,
 #                                               biop_itp_2018_2019 = wr_spawn_2018_2019,
@@ -467,11 +516,13 @@ generate_lfr_spawn <- function(calsim_version) {
 lfr_spawn_2008_2009 <- generate_lfr_spawn("biop_2008_2009")
 lfr_spawn_2018_2019 <- generate_lfr_spawn("biop_itp_2018_2019")
 lfr_spawn_run_of_river <- generate_lfr_spawn("run_of_river")
+lfr_spawn_action_5 <- generate_lfr_spawn("action_5")
 
 # combine together
 lfr_spawn <- list(biop_2008_2009 = lfr_spawn_2008_2009,
                   biop_itp_2018_2019 = lfr_spawn_2018_2019,
-                  run_of_river = lfr_spawn_run_of_river)
+                  run_of_river = lfr_spawn_run_of_river,
+                  action_5 = lfr_spawn_action_5)
 # because this is the first script run in update_data.R, we don't need it to be a modify List
 # lfr_spawn <- modifyList(DSMhabitat::lfr_spawn, list(biop_2008_2009 = lfr_spawn_2008_2009,
 #                                                 biop_itp_2018_2019 = lfr_spawn_2018_2019,
@@ -506,11 +557,17 @@ fr_fry_run_of_river <- get_rear_hab_all(watersheds_in_order, 'fr', 'fry', "run_o
 dimnames(fr_fry_run_of_river) <- list(watersheds, month.abb, 1980:2000)
 fr_fry_run_of_river[which(is.na(fr_fry_run_of_river))] <- 0
 
+# fr fry action 5
+fr_fry_action_5 <- get_rear_hab_all(watersheds_in_order, 'fr', 'fry', "action_5", 1980:2000)
+dimnames(fr_fry_action_5) <- list(watersheds, month.abb, 1980:2000)
+fr_fry_action_5[which(is.na(fr_fry_action_5))] <- 0
+
 # combine together
 
 fr_fry <- list(biop_2008_2009 = fr_fry_2008_2009,
                biop_itp_2018_2019 = fr_fry_2018_2019,
-               run_of_river = fr_fry_run_of_river)
+               run_of_river = fr_fry_run_of_river,
+               action_5 = fr_fry_action_5)
 # because this is the first script run in update_data.R, we don't need it to be a modify List
 # fr_fry <- modifyList(DSMhabitat::fr_fry, list(biop_2008_2009 = fr_fry_2008_2009,
 #                                           biop_itp_2018_2019 = fr_fry_2018_2019,
@@ -536,11 +593,17 @@ st_fry_run_of_river <- get_rear_hab_all(watersheds_in_order, 'st', 'fry', "run_o
 dimnames(st_fry_run_of_river) <- list(watersheds, month.abb, 1980:2000)
 st_fry_run_of_river[which(is.na(st_fry_run_of_river))] <- fr_fry_run_of_river[which(is.na(st_fry_run_of_river))]
 
+# st fry action 5
+st_fry_action_5 <- get_rear_hab_all(watersheds_in_order, 'st', 'fry', "action_5", 1980:2000)
+dimnames(st_fry_action_5) <- list(watersheds, month.abb, 1980:2000)
+st_fry_action_5[which(is.na(st_fry_action_5))] <- fr_fry_action_5[which(is.na(st_fry_action_5))]
+
 
 # combine together
 st_fry <- list(biop_2008_2009 = st_fry_2008_2009,
                biop_itp_2018_2019 = st_fry_2018_2019,
-               run_of_river = st_fry_run_of_river)
+               run_of_river = st_fry_run_of_river,
+               action_5 = st_fry_action_5)
 # because this is the first script run in update_data.R, we don't need it to be a modify List
 # st_fry <- modifyList(DSMhabitat::st_fry, list(biop_2008_2009 = st_fry_2008_2009,
 #                                           biop_itp_2018_2019 = st_fry_2018_2019,
@@ -566,11 +629,17 @@ sr_fry_run_of_river <- get_rear_hab_all(watersheds_in_order, 'sr', 'fry', "run_o
 dimnames(sr_fry_run_of_river) <- list(watersheds, month.abb, 1980:2000)
 sr_fry_run_of_river[which(is.na(sr_fry_run_of_river))] <- fr_fry_run_of_river[which(is.na(sr_fry_run_of_river))]
 
+# sr fry action 5
+sr_fry_action_5 <- get_rear_hab_all(watersheds_in_order, 'sr', 'fry', "action_5", years = 1980:2000)
+dimnames(sr_fry_action_5) <- list(watersheds, month.abb, 1980:2000)
+sr_fry_action_5[which(is.na(sr_fry_action_5))] <- fr_fry_action_5[which(is.na(sr_fry_action_5))]
+
 # combine together
 
 sr_fry <- list(biop_2008_2009 = sr_fry_2008_2009,
                biop_itp_2018_2019 = sr_fry_2018_2019,
-               run_of_river = sr_fry_run_of_river)
+               run_of_river = sr_fry_run_of_river,
+               action_5 = sr_fry_action_5)
 # because this is the first script run in update_data.R, we don't need it to be a modify List
 # sr_fry <- modifyList(DSMhabitat::sr_fry, list(biop_2008_2009 = sr_fry_2008_2009,
 #                                           biop_itp_2018_2019 = sr_fry_2018_2019,
@@ -615,18 +684,18 @@ generate_wr_fry_or_juv <- function(calsim_version, lifestage = c("fry", "juv")) 
                                                                      years = c(1980, 2000)))
   # deal with sacramento special cases
   # lower-mid sac
-  low_mid_sac_flow1 <- get_flow('Lower-mid Sacramento River1', calsim_version, years = c(1980, 2000))
-  low_mid_sac_flow2 <- get_flow('Lower-mid Sacramento River2', calsim_version, years = c(1980, 2000))
+  # low_mid_sac_flow1 <- get_flow('Lower-mid Sacramento River1', calsim_version, years = c(1980, 2000))
+  # low_mid_sac_flow2 <- get_flow('Lower-mid Sacramento River2', calsim_version, years = c(1980, 2000))
+  # 
+  # low_mid_sac_hab <- map2_dbl(low_mid_sac_flow1, low_mid_sac_flow2, function(flow, flow2) {
+  #   DSMhabitat::set_instream_habitat('Lower-mid Sacramento River',
+  #                                    species = 'wr',
+  #                                    life_stage = 'fry',
+  #                                    flow = flow, flow2 = flow2)
+  # })
   
-  low_mid_sac_hab <- map2_dbl(low_mid_sac_flow1, low_mid_sac_flow2, function(flow, flow2) {
-    DSMhabitat::set_instream_habitat('Lower-mid Sacramento River',
-                                     species = 'wr',
-                                     life_stage = 'fry',
-                                     flow = flow, flow2 = flow2)
-  })
   
-  
-  wr_hab['Lower-mid Sacramento River', , ] <- low_mid_sac_hab
+  # wr_hab['Lower-mid Sacramento River', , ] <- low_mid_sac_hab
   
   wr_hab['Lower Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Lower Sacramento River',
                                                      species = 'wr',
@@ -655,11 +724,14 @@ wr_fry_2018_2019 <- generate_wr_fry_or_juv(calsim_version = "biop_itp_2018_2019"
                                            lifestage = "fry")
 wr_fry_run_of_river <- generate_wr_fry_or_juv(calsim_version = "run_of_river", 
                                            lifestage = "fry")
+wr_fry_run_action_5 <- generate_wr_fry_or_juv(calsim_version = "action_5", 
+                                              lifestage = "fry")
 
 # combine together
 wr_fry <- list(biop_2008_2009 = wr_fry_2008_2009,
                biop_itp_2018_2019 = wr_fry_2018_2019,
-               run_of_river = wr_fry_run_of_river)
+               run_of_river = wr_fry_run_of_river,
+               action_5 = wr_fry_run_action_5)
 # because this is the first script run in update_data.R, we don't need it to be a modify List
 # wr_fry <- modifyList(DSMhabitat::wr_fry, list(biop_2008_2009 = wr_fry_2008_2009,
 #                                           biop_itp_2018_2019 = wr_fry_2018_2019,
@@ -697,18 +769,6 @@ generate_lfr_juv_or_fry <- function(calsim_version, lifestage = c("juv", "fry"))
                                                      flow = get_flow('Upper-mid Sacramento River',
                                                                      calsim_version, 
                                                                      years = c(1980, 2000)))
-  # deal with sacramento special cases
-  # lower-mid sac
-  low_mid_sac_flow1 <- get_flow('Lower-mid Sacramento River1', calsim_version, years = c(1980, 2000))
-  low_mid_sac_flow2 <- get_flow('Lower-mid Sacramento River2', calsim_version, years = c(1980, 2000))
-  
-  low_mid_sac_hab <- map2_dbl(low_mid_sac_flow1, low_mid_sac_flow2, function(flow, flow2) {
-    DSMhabitat::set_instream_habitat('Lower-mid Sacramento River',
-                                     species = 'lfr',
-                                     life_stage = lifestage,
-                                     flow = flow, flow2 = flow2)
-  })
-  lfr_hab['Lower-mid Sacramento River', , ] <- low_mid_sac_hab
   
   lfr_hab['Lower Sacramento River', , ] <- DSMhabitat::set_instream_habitat('Lower Sacramento River',
                                                      species = 'lfr',
@@ -742,11 +802,14 @@ lfr_fry_2018_2019 <- generate_lfr_juv_or_fry(calsim_version = "biop_itp_2018_201
                                              lifestage = "fry")
 lfr_fry_run_of_river <- generate_lfr_juv_or_fry(calsim_version = "run_of_river", 
                                              lifestage = "fry")
+lfr_fry_action_5 <- generate_lfr_juv_or_fry(calsim_version = "action_5", 
+                                                lifestage = "fry")
 
 # combine together
 lfr_fry <- list(biop_2008_2009 = lfr_fry_2008_2009,
                 biop_itp_2018_2019 = lfr_fry_2018_2019,
-                run_of_river = lfr_fry_run_of_river)
+                run_of_river = lfr_fry_run_of_river,
+                action_5 = lfr_fry_action_5)
 # because this is the first script run in update_data.R, we don't need it to be a modify List
 # lfr_fry <- modifyList(DSMhabitat::lfr_fry, list(biop_2008_2009 = lfr_fry_2008_2009,
 #                                             biop_itp_2018_2019 = lfr_fry_2018_2019,
@@ -774,10 +837,16 @@ fr_juv_run_of_river <- get_rear_hab_all(watersheds_in_order, 'fr', 'juv', 'run_o
 dimnames(fr_juv_run_of_river) <- list(watersheds, month.abb, 1980:2000)
 fr_juv_run_of_river[which(is.na(fr_juv_run_of_river))] <- 0
 
+# fr juv action 5
+fr_juv_action_5 <- get_rear_hab_all(watersheds_in_order, 'fr', 'juv', 'action_5', 1980:2000)
+dimnames(fr_juv_action_5) <- list(watersheds, month.abb, 1980:2000)
+fr_juv_action_5[which(is.na(fr_juv_action_5))] <- 0
+
 # combine together
 fr_juv <- list(biop_2008_2009 = fr_juv_2008_2009,
                biop_itp_2018_2019 = fr_juv_2018_2019,
-               run_of_river = fr_juv_run_of_river)
+               run_of_river = fr_juv_run_of_river,
+               action_5 = fr_juv_action_5)
 # because this is the first script run in update_data.R, we don't need it to be a modify List
 # fr_juv <- modifyList(DSMhabitat::fr_juv, list(biop_2008_2009 = fr_juv_2008_2009,
 #                                           biop_itp_2018_2019 = fr_juv_2018_2019,
@@ -803,10 +872,16 @@ st_juv_run_of_river <- get_rear_hab_all(watersheds_in_order, 'st', 'juv', 'run_o
 dimnames(st_juv_run_of_river) <- list(watersheds, month.abb, 1980:2000)
 st_juv_run_of_river[which(is.na(st_juv_run_of_river))] <- fr_juv_run_of_river[which(is.na(st_juv_run_of_river))]
 
+# st juv action 5
+st_juv_action_5 <- get_rear_hab_all(watersheds_in_order, 'st', 'juv', 'action_5', 1980:2000)
+dimnames(st_juv_action_5) <- list(watersheds, month.abb, 1980:2000)
+st_juv_action_5[which(is.na(st_juv_action_5))] <- fr_juv_action_5[which(is.na(st_juv_action_5))]
+
 # combine together
 st_juv <- list(biop_2008_2009 = st_juv_2008_2009,
                biop_itp_2018_2019 = st_juv_2018_2019,
-               run_of_river = st_juv_run_of_river)
+               run_of_river = st_juv_run_of_river,
+               action_5 = st_juv_action_5)
 # because this is the first script run in update_data.R, we don't need it to be a modify List
 # st_juv <- modifyList(DSMhabitat::st_juv, list(biop_2008_2009 = st_juv_2008_2009,
 #                                           biop_itp_2018_2019 = st_juv_2018_2019,
@@ -832,10 +907,16 @@ sr_juv_run_of_river <- get_rear_hab_all(watersheds_in_order, 'sr', 'juv', 'run_o
 dimnames(sr_juv_run_of_river) <- list(watersheds, month.abb, 1980:2000)
 sr_juv_run_of_river[which(is.na(sr_juv_run_of_river))] <- fr_juv_run_of_river[which(is.na(sr_juv_run_of_river))]
 
+# sr juv action 5
+sr_juv_action_5 <- get_rear_hab_all(watersheds_in_order, 'sr', 'juv', 'action_5', years = 1980:2000)
+dimnames(sr_juv_action_5) <- list(watersheds, month.abb, 1980:2000)
+sr_juv_action_5[which(is.na(sr_juv_action_5))] <- fr_juv_action_5[which(is.na(sr_juv_action_5))]
+
 # combine together
 sr_juv <- list(biop_2008_2009 = sr_juv_2008_2009,
                biop_itp_2018_2019 = sr_juv_2018_2019,
-               run_of_river = sr_juv_run_of_river)
+               run_of_river = sr_juv_run_of_river,
+               action_5 = sr_juv_action_5)
 # because this is the first script run in update_data.R, we don't need it to be a modify List
 # sr_juv <- modifyList(DSMhabitat::sr_juv, list(biop_2008_2009 = sr_juv_2008_2009,
 #                                           biop_itp_2018_2019 = sr_juv_2018_2019,
@@ -853,11 +934,14 @@ wr_juv_2018_2019 <- generate_wr_fry_or_juv(calsim_version = "biop_itp_2018_2019"
                                            lifestage = "juv")
 wr_juv_run_of_river <- generate_wr_fry_or_juv(calsim_version = "run_of_river", 
                                            lifestage = "juv")
+wr_juv_action_5 <- generate_wr_fry_or_juv(calsim_version = "action_5", 
+                                              lifestage = "juv")
 
 # combine together
 wr_juv <- list(biop_2008_2009 = wr_juv_2008_2009,
                biop_itp_2018_2019 = wr_juv_2018_2019,
-               run_of_river = wr_juv_run_of_river)
+               run_of_river = wr_juv_run_of_river,
+               action_5 = wr_juv_action_5)
 # because this is the first script run in update_data.R, we don't need it to be a modify List
 # wr_juv <- modifyList(DSMhabitat::wr_juv, list(biop_2008_2009 = wr_juv_2008_2009,
 #                                          biop_itp_2018_2019 = wr_juv_2018_2019,
@@ -875,10 +959,13 @@ lfr_juv_2018_2019 <- generate_lfr_juv_or_fry(calsim_version = "biop_itp_2018_201
                                              lifestage = "juv")
 lfr_juv_run_of_river <- generate_lfr_juv_or_fry(calsim_version = "run_of_river", 
                                              lifestage = "juv")
+lfr_juv_action_5 <- generate_lfr_juv_or_fry(calsim_version = "action_5", 
+                                            lifestage = "juv")
 # combine together
 lfr_juv <- list(biop_2008_2009 = lfr_juv_2008_2009,
                 biop_itp_2018_2019 = lfr_juv_2018_2019,
-                run_of_river = lfr_juv_run_of_river)
+                run_of_river = lfr_juv_run_of_river,
+                action_5 = lfr_juv_action_5)
 # because this is the first script run in update_data.R, we don't need it to be a modify List
 # lfr_juv <- modifyList(DSMhabitat::lfr_juv, list(biop_2008_2009 = lfr_juv_2008_2009,
 #                                             biop_itp_2018_2019 = lfr_juv_2018_2019,
@@ -912,9 +999,15 @@ fr_fp_run_of_river <- get_floodplain_hab_all(watersheds_fp, 'fr', 'run_of_river'
 dimnames(fr_fp_run_of_river) <- list(watersheds, month.abb, 1980:2000)
 fr_fp_run_of_river[which(is.na(fr_fp_run_of_river))] <- 0
 
+# fr floodplain action 5
+fr_fp_action_5 <- get_floodplain_hab_all(watersheds_fp, 'fr', 'action_5', 1980:2000)
+dimnames(fr_fp_action_5) <- list(watersheds, month.abb, 1980:2000)
+fr_fp_action_5[which(is.na(fr_fp_action_5))] <- 0
+
 fr_fp <- list(biop_2008_2009 = fr_fp_2008_2009,
               biop_itp_2018_2019 = fr_fp_2018_2019,
-              run_of_river = fr_fp_run_of_river)
+              run_of_river = fr_fp_run_of_river,
+              action_5 = fr_fp_action_5)
 # because this is the first script run in update_data.R, we don't need it to be a modify List
 # fr_fp <- modifyList(DSMhabitat::fr_fp, list(biop_2008_2009 = fr_fp_2008_2009,
 #                                             biop_itp_2018_2019 = fr_fp_2018_2019,
@@ -940,9 +1033,15 @@ st_fp_run_of_river <- get_floodplain_hab_all(watersheds_fp, 'st', 'run_of_river'
 dimnames(st_fp_run_of_river) <- list(watersheds, month.abb, 1980:2000)
 st_fp_run_of_river[which(is.na(st_fp_run_of_river))] <- fr_fp_run_of_river[which(is.na(st_fp_run_of_river))]
 
+# st fp action 5
+st_fp_action_5 <- get_floodplain_hab_all(watersheds_fp, 'st', 'run_of_river', 1980:2000)
+dimnames(st_fp_action_5) <- list(watersheds, month.abb, 1980:2000)
+st_fp_action_5[which(is.na(st_fp_action_5))] <- fr_fp_action_5[which(is.na(st_fp_action_5))]
+
 st_fp <- list(biop_2008_2009 = st_fp_2008_2009,
               biop_itp_2018_2019 = st_fp_2018_2019,
-              run_of_river = st_fp_run_of_river)
+              run_of_river = st_fp_run_of_river,
+              action_5 = st_fp_action_5)
 # because this is the first script run in update_data.R, we don't need it to be a modify List
 # st_fp <- modifyList(DSMhabitat::st_fp, list(biop_2008_2009 = st_fp_2008_2009,
 #                                             biop_itp_2018_2019 = st_fp_2018_2019,
@@ -968,9 +1067,15 @@ sr_fp_run_of_river <- get_floodplain_hab_all(watersheds_fp, 'sr', 'run_of_river'
 dimnames(sr_fp_run_of_river) <- list(watersheds, month.abb, 1980:2000)
 sr_fp_run_of_river[which(is.na(sr_fp_run_of_river))] <- fr_fp_run_of_river[which(is.na(sr_fp_run_of_river))]
 
+# sr floodplain action 5
+sr_fp_action_5 <- get_floodplain_hab_all(watersheds_fp, 'sr', 'action_5', years = 1980:2000)
+dimnames(sr_fp_action_5) <- list(watersheds, month.abb, 1980:2000)
+sr_fp_action_5[which(is.na(sr_fp_action_5))] <- fr_fp_action_5[which(is.na(sr_fp_action_5))]
+
 sr_fp <- list(biop_2008_2009 = sr_fp_2008_2009,
               biop_itp_2018_2019 = sr_fp_2018_2019,
-              run_of_river = sr_fp_run_of_river)
+              run_of_river = sr_fp_run_of_river,
+              action_5 = sr_fp_action_5)
 # because this is the first script run in update_data.R, we don't need it to be a modify List
 # sr_fp <- modifyList(DSMhabitat::sr_fp, list(biop_2008_2009 = sr_fp_2008_2009,
 #                                             biop_itp_2018_2019 = sr_fp_2018_2019,
@@ -1004,11 +1109,19 @@ generate_wr_floodplain <- function(calsim_version) {
                                                              years = c(1980, 2000)))
   
   # lower-mid sacramento
-  low_mid_sac_flows1 <- get_flow("Lower-mid Sacramento River1", calsim_version, years = c(1980, 2000))
-  low_mid_sac_flows2 <- get_flow("Lower-mid Sacramento River2", calsim_version, years = c(1980, 2000))
-  low_mid_sac_fp <- DSMhabitat::set_floodplain_habitat('Lower-mid Sacramento River', 'wr',
-                                                       low_mid_sac_flows1, flow2 = low_mid_sac_flows2)
-  
+  if(calsim_version == "action_5") {
+    low_mid_sac_flows_action_5 <- get_flow("Lower-mid Sacramento River",
+                                           calsim_version,
+                                           years = c(1980, 2000))
+    low_mid_sac_fp <- DSMhabitat::set_floodplain_habitat('Lower-mid Sacramento River', 'wr',
+                                                         low_mid_sac_flows_action_5)
+  } else {
+    low_mid_sac_flows1 <- get_flow("Lower-mid Sacramento River1", calsim_version, years = c(1980, 2000))
+    low_mid_sac_flows2 <- get_flow("Lower-mid Sacramento River2", calsim_version, years = c(1980, 2000))
+    low_mid_sac_fp <- DSMhabitat::set_floodplain_habitat('Lower-mid Sacramento River', 'wr',
+                                                         low_mid_sac_flows1, flow2 = low_mid_sac_flows2)
+  }
+
   wr_fp['Lower-mid Sacramento River',,] <- low_mid_sac_fp
   dimnames(wr_fp) <- list(watersheds, month.abb, 1980:2000)
   return(wr_fp)
@@ -1018,12 +1131,14 @@ generate_wr_floodplain <- function(calsim_version) {
 wr_fp_2008_2009 <- generate_wr_floodplain("biop_2008_2009")
 wr_fp_2018_2019 <- generate_wr_floodplain("biop_itp_2018_2019")
 wr_fp_run_of_river <- generate_wr_floodplain("run_of_river")
+wr_fp_action_5 <- generate_wr_floodplain("action_5")
 
 
 # combine 
 wr_fp <- list(biop_2008_2009 = wr_fp_2008_2009,
               biop_itp_2018_2019 = wr_fp_2018_2019,
-              run_of_river = wr_fp_run_of_river)
+              run_of_river = wr_fp_run_of_river,
+              action_5 = wr_fp_action_5)
 # because this is the first script run in update_data.R, we don't need it to be a modify List
 # wr_fp <- modifyList(DSMhabitat::wr_fp, list(biop_2008_2009 = wr_fp_2008_2009,
 #                                         biop_itp_2018_2019 = wr_fp_2018_2019,
@@ -1056,10 +1171,17 @@ generate_lfr_floodplain <- function(calsim_version) {
                                                              years = c(1980, 2000)))
   
   # lower-mid sacramento
-  low_mid_sac_flows1 <- get_flow("Lower-mid Sacramento River1", calsim_version, years = c(1980, 2000))
-  low_mid_sac_flows2 <- get_flow("Lower-mid Sacramento River2", calsim_version, years = c(1980, 2000))
-  low_mid_sac_fp <- DSMhabitat::set_floodplain_habitat('Lower-mid Sacramento River', 'lfr',
-                                                       low_mid_sac_flows1, flow2 = low_mid_sac_flows2)
+  if(calsim_version == "action_5") {
+    low_mid_sac_flows_action_5 <- get_flow("Lower-mid Sacramento River",
+                                           calsim_version, years = c(1980, 2000))
+    low_mid_sac_fp <- DSMhabitat::set_floodplain_habitat('Lower-mid Sacramento River', 'lfr',
+                                                         low_mid_sac_flows_action_5)
+  } else {
+    low_mid_sac_flows1 <- get_flow("Lower-mid Sacramento River1", calsim_version, years = c(1980, 2000))
+    low_mid_sac_flows2 <- get_flow("Lower-mid Sacramento River2", calsim_version, years = c(1980, 2000))
+    low_mid_sac_fp <- DSMhabitat::set_floodplain_habitat('Lower-mid Sacramento River', 'lfr',
+                                                         low_mid_sac_flows1, flow2 = low_mid_sac_flows2)
+  }
   
   lfr_fp['Lower-mid Sacramento River',,] <- low_mid_sac_fp
   dimnames(lfr_fp) <- list(watersheds, month.abb, 1980:2000)
@@ -1070,11 +1192,13 @@ generate_lfr_floodplain <- function(calsim_version) {
 lfr_fp_2008_2009 <- generate_lfr_floodplain("biop_2008_2009")
 lfr_fp_2018_2019 <- generate_lfr_floodplain("biop_itp_2018_2019")
 lfr_fp_run_of_river <- generate_lfr_floodplain("run_of_river")
+lfr_fp_run_action_5 <- generate_lfr_floodplain("action_5")
 # combine 
 
 lfr_fp <- list(biop_2008_2009 = lfr_fp_2008_2009,
                biop_itp_2018_2019 = lfr_fp_2018_2019,
-               run_of_river = lfr_fp_run_of_river)
+               run_of_river = lfr_fp_run_of_river,
+               action_5 = lfr_fp_run_action_5)
 # because this is the first script run in update_data.R, we don't need it to be a modify List
 # lfr_fp <- modifyList(DSMhabitat::lfr_fp, list(biop_2008_2009 = lfr_fp_2008_2009,
 #                                           biop_itp_2018_2019 = lfr_fp_2018_2019,
@@ -1118,11 +1242,14 @@ generate_sutter_habitat <- function(calsim_version) {
 sutter_habitat_2008_2009 <- generate_sutter_habitat("biop_2008_2009")
 sutter_habitat_2018_2019 <- generate_sutter_habitat("biop_itp_2018_2019")
 sutter_habitat_run_of_river <- generate_sutter_habitat("run_of_river")
+# TODO update when we know the correct mapping
+sutter_habitat_action_5 <- 0 #generate_sutter_habitat("action_5")
 
 # combine 
 sutter_habitat <- list(biop_2008_2009 = sutter_habitat_2008_2009,
                        biop_itp_2018_2019 = sutter_habitat_2018_2019,
-                       run_of_river = sutter_habitat_run_of_river)
+                       run_of_river = sutter_habitat_run_of_river,
+                       action_5 = sutter_habitat_action_5)
 # because this is the first script run in update_data.R, we don't need it to be a modify List
 # sutter_habitat <- modifyList(DSMhabitat::sutter_habitat, list(biop_2008_2009 = sutter_habitat_2008_2009,
 #                                                          biop_itp_2018_2019 = sutter_habitat_2018_2019,
@@ -1161,12 +1288,14 @@ generate_yolo_habitat <- function(calsim_version) {
 yolo_habitat_2008_2009 <- generate_yolo_habitat("biop_2008_2009")
 yolo_habitat_2018_2019 <- generate_yolo_habitat("biop_itp_2018_2019")
 yolo_habitat_run_of_river <- generate_yolo_habitat("run_of_river")
+# TODO update when we fix bypass flows
+yolo_habitat_action_5 <- 0 # generate_yolo_habitat("run_of_river")
 
 # combine 
 yolo_habitat <- list(biop_2008_2009 = yolo_habitat_2008_2009,
                      biop_itp_2018_2019 = yolo_habitat_2018_2019,
                      run_of_river = yolo_habitat_run_of_river,
-                     lto_12a  = yolo_habitat_lto_12a)
+                     action_5 = yolo_habitat_action_5)
 # because this is the first script run in update_data.R, we don't need it to be a modify List
 # yolo_habitat <- modifyList(DSMhabitat::yolo_habitat, list(biop_2008_2009 = yolo_habitat_2008_2009,
 #                                                       biop_itp_2018_2019 = yolo_habitat_2018_2019,
@@ -1200,11 +1329,14 @@ generate_weeks_flooded <- function(calsim_version) {
 weeks_flooded_2008_2009 <- generate_weeks_flooded("biop_2008_2009")
 weeks_flooded_2018_2019 <- generate_weeks_flooded("biop_itp_2018_2019")
 weeks_flooded_run_of_river <- generate_weeks_flooded("run_of_river")
+# TODO update when we have bypass_flows
+weeks_flooded_action_5 <- 0 #generate_weeks_flooded("action_5")
 
 # combine 
 weeks_flooded <- list(biop_2008_2009 = weeks_flooded_2008_2009,
                       biop_itp_2018_2019 = weeks_flooded_2018_2019,
-                      run_of_river = weeks_flooded_run_of_river)
+                      run_of_river = weeks_flooded_run_of_river,
+                      action_5 = weeks_flooded_action_5)
 # because this is the first script run in update_data.R, we don't need it to be a modify List
 # weeks_flooded <- modifyList(DSMhabitat::weeks_flooded, list(biop_2008_2009 = weeks_flooded_2008_2009,
 #                                                         biop_itp_2018_2019 = weeks_flooded_2018_2019,
