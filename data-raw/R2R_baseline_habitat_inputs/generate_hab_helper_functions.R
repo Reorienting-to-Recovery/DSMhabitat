@@ -43,12 +43,22 @@ existing_cfs_median_comparison_point <- function (habitat_type, watershed, speci
       median()
   } else if (habitat_type == "floodplain rearing") {
     if (watershed == "Lower-mid Sacramento River") {
-      flood = DSMflow::flows_cfs[[calsim_version]] |>
-        filter(date >= as_date("1979-01-01")) |> 
-        filter(month(date) %in% rearing_months) |> 
-        select(`Lower-mid Sacramento River1`, `Lower-mid Sacramento River2`, date) |>
-        mutate(flow_cfs = 35.6/58 * `Lower-mid Sacramento River1` + 22.4/58 * `Lower-mid Sacramento River2`)
+      if(calsim_version == "action_5") {
+        # TODO remove once we have the lower mid sac 1 and 2 node mapping
+        flood = DSMflow::flows_cfs[[calsim_version]] |>
+          filter(date >= as_date("1979-01-01")) |> 
+          filter(month(date) %in% rearing_months) |> 
+          select(watershed, date) |>
+          rename(flow_cfs = watershed)
         calsim_30_day(flood)
+      } else {
+        flood = DSMflow::flows_cfs[[calsim_version]] |>
+          filter(date >= as_date("1979-01-01")) |> 
+          filter(month(date) %in% rearing_months) |> 
+          select(`Lower-mid Sacramento River1`, `Lower-mid Sacramento River2`, date) |>
+          mutate(flow_cfs = 35.6/58 * `Lower-mid Sacramento River1` + 22.4/58 * `Lower-mid Sacramento River2`)
+        calsim_30_day(flood)
+      }
     } else {
     flood = DSMflow::flows_cfs[[calsim_version]] |>
       filter(date >= as_date("1979-01-01")) |> 

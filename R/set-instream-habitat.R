@@ -123,7 +123,7 @@ set_sac_habitat <- function(watershed, flow, flow2 = NULL) {
   if (watershed == 'Lower-mid Sacramento River') {
     if (is.null(flow2)) {
       warning('For CVPIA purposes: Lower-mid Sacramento River requires two flow values, one above and below Fremont Weir. Running with one flow value...')
-      return(fp_approx(flow))
+      return(rear_approx(flow))
     } else {
       return(35.6/58 * rear_approx(flow) + 22.4/58 * rear_approx(flow2))
     }
