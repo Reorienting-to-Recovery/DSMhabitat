@@ -1242,8 +1242,7 @@ generate_sutter_habitat <- function(calsim_version) {
 sutter_habitat_2008_2009 <- generate_sutter_habitat("biop_2008_2009")
 sutter_habitat_2018_2019 <- generate_sutter_habitat("biop_itp_2018_2019")
 sutter_habitat_run_of_river <- generate_sutter_habitat("run_of_river")
-# TODO update when we know the correct mapping
-sutter_habitat_action_5 <- 0 #generate_sutter_habitat("action_5")
+sutter_habitat_action_5 <- generate_sutter_habitat("action_5")
 
 # combine 
 sutter_habitat <- list(biop_2008_2009 = sutter_habitat_2008_2009,
@@ -1288,8 +1287,7 @@ generate_yolo_habitat <- function(calsim_version) {
 yolo_habitat_2008_2009 <- generate_yolo_habitat("biop_2008_2009")
 yolo_habitat_2018_2019 <- generate_yolo_habitat("biop_itp_2018_2019")
 yolo_habitat_run_of_river <- generate_yolo_habitat("run_of_river")
-# TODO update when we fix bypass flows
-yolo_habitat_action_5 <- 0 # generate_yolo_habitat("run_of_river")
+yolo_habitat_action_5 <- generate_yolo_habitat("action_5")
 
 # combine 
 yolo_habitat <- list(biop_2008_2009 = yolo_habitat_2008_2009,
@@ -1329,8 +1327,7 @@ generate_weeks_flooded <- function(calsim_version) {
 weeks_flooded_2008_2009 <- generate_weeks_flooded("biop_2008_2009")
 weeks_flooded_2018_2019 <- generate_weeks_flooded("biop_itp_2018_2019")
 weeks_flooded_run_of_river <- generate_weeks_flooded("run_of_river")
-# TODO update when we have bypass_flows
-weeks_flooded_action_5 <- 0 #generate_weeks_flooded("action_5")
+weeks_flooded_action_5 <- generate_weeks_flooded("action_5")
 
 # combine 
 weeks_flooded <- list(biop_2008_2009 = weeks_flooded_2008_2009,
